@@ -1,0 +1,24 @@
+#
+# OpenTHC .ackrc
+#
+
+--break
+--color
+--heading
+--smart-case
+--sort-files
+
+--ignore-dir=.cache/
+--ignore-dir=.composer/
+--ignore-dir=.git/
+--ignore-dir=.local/
+--ignore-dir=.npm/
+--ignore-dir=node_modules/
+--ignore-dir=public/
+--ignore-dir=scrape/
+--ignore-dir=var/
+--ignore-dir=vendor/
+
+--ignore-file=is:composer.lock
+--ignore-file=is:composer.phar
+--ignore-file=is:phpcpd.phar
