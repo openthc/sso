@@ -1,0 +1,52 @@
+{% extends "layout/html.html" %}
+
+{% block body %}
+
+<form method="post">
+<div class="container mt-4">
+
+<div class="auth-wrap">
+
+	<div class="card">
+	<div class="card-body">
+
+	<h1 class="card-title">{{ Page.title }}</h1>
+	{{ auth_hint|raw }}
+
+	<div class="form-group">
+		<label>Email</label>
+		<input autofocus class="form-control" name="username" placeholder="email" type="email" value="{{ auth_username }}">
+	</div>
+
+	<div class="form-group">
+		<label>Password</label>
+		<input class="form-control" name="password" type="password">
+	</div>
+
+	<div class="form-actions">
+		<div class="row no-gutters">
+			<div class="col-md-6">
+				<button class="btn btn-outline-primary" name="a" type="submit" value="Sign In">Sign In</button>
+				<button class="btn btn-outline-secondary" name="a" type="submit" value="reset">Reset Password</button>
+				{#
+				<?php
+				if (!empty($_SESSION['show-email'])) {
+					echo '<button class="btn btn-outline-secondary" name="a" type="submit" value="resec">Resend Confirmation</button> ';
+				}
+				?>
+				#}
+			</div>
+			<div class="col-md-6 r">
+				<a class="btn btn-outline-secondary" href="/auth/sign-up">Create an Account</a>
+			</div>
+		</div>
+	</div>
+
+	</div>
+	</div>
+
+</div>
+</div>
+</form>
+
+{% endblock %}
