@@ -5,9 +5,6 @@
 
 namespace App\Controller\Auth;
 
-use Edoceo\Radix;
-use Edoceo\Radix\Session;
-
 class Shut extends \OpenTHC\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)

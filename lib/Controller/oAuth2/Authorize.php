@@ -5,10 +5,14 @@
 
 namespace App\Controller\oAuth2;
 
+use \Edoceo\Radix\DB\SQL;
+
 class Authorize extends \OpenTHC\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{
+		header('X-Frame-Options: DENY');
+
 		$this->verifyRequest();
 
 		// Validate Client
@@ -27,6 +31,30 @@ class Authorize extends \OpenTHC\Controller\Base
 		if (200 != $RES->getStatusCode()) {
 			return $RES;
 		}
+
+		// Permit Link
+		$link_crypt = _encrypt(json_encode($_GET));
+
+		// Did you already Authorize this Application?
+		$sql = 'SELECT count(auth_program_id) FROM auth_program_contact WHERE auth_program_id = ? AND auth_contact_id = ? AND expires_at > now()';
+		$arg = array($Auth_Program['id'], $_SESSION['uid']);
+		$chk = SQL::fetch_one($sql, $arg);
+		if (!empty($chk)) {
+			// return $RES->withRedirect('/oauth2/permit?_=' . $link_crypt_permit);
+		}
+
+		// Permit & Remember
+		$_GET['auth-commit'] = true;
+		$link_crypt_save = _encrypt(json_encode($_GET));
+
+		$data = [];
+		$data['Page'] = [ 'title' => 'Authorize' ];
+		$data['link_crypt'] = $link_crypt;
+		$data['link_crypt_save'] = $link_crypt_save;
+
+		$file = 'page/oauth2/authorize.html';
+
+		return $this->_container->view->render($RES, $file, $data);
 
 	}
 
@@ -72,6 +100,11 @@ class Authorize extends \OpenTHC\Controller\Base
 
 	}
 
+	/**
+	 * [verifyScope description]
+	 * Modifies the Scope in $_GET
+	 * @return void
+	 */
 	function verifyScope()
 	{
 		$scope_list_may = [
@@ -96,12 +129,16 @@ class Authorize extends \OpenTHC\Controller\Base
 			}
 			$scope_list_ask[] = $x;
 		}
+		$scope_list_ask = array_unique($scope_list_ask);
+		sort($scope_list_ask);
 
 		foreach ($scope_list_ask as $s) {
 			if (!in_array($s, $scope_list_may)) {
 				_exit_text("Unknown Scope '$s' [COA#088]", 400);
 			}
 		}
+
+		$_GET['scope'] = implode(' ', $scope_list_ask);
 
 	}
 

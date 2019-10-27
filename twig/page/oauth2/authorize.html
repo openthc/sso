@@ -1,0 +1,47 @@
+{% extends "layout/html.html" %}
+
+{% block body %}
+
+<div class="container">
+<div class="auth-wrap">
+<div class="card">
+
+	<div class="card-header">Application Authorization</div>
+	<div class="card-body">
+		<h2 class="card-title">Authorize: <strong>{{ Program.name }}</strong>?</h2>
+		<p>The application will be able to see data in scope: <code><?= h(implode(', ', $scope_list_may)) ?></code>.</p>
+		<div class="row">
+		<div class="col">
+			<div class="btn-group">
+				<a
+					class="btn btn-outline-success"
+					href="/oauth2/permit?_={{ link_crypt }}"
+					style="width:8em;">Yes</a>
+				</a>
+				<a class="btn btn-outline-success dropdown-toggle dropdown-toggle-split"
+					data-toggle="dropdown">
+					<span class="sr-only">Toggle Dropdown</span>
+				</a>
+				<div class="dropdown-menu">
+					<a
+						class="dropdown-item"
+						href="/oauth2/permit?_={{ link_crypt_save }}"
+						><i class="fas fa-check-square-o"></i> Yes &amp; Remember</a>
+				</div>
+			</div>
+		</div>
+
+		<div class="col r">
+			<a
+				class="btn btn-outline-danger"
+				href="/oauth2/reject?_={{ link_crypt }}"
+				style="width: 8em;">No</a>
+		</div>
+		</div>
+	</div>
+
+</div>
+</div>
+</div>
+
+{% endblock %}

@@ -1,7 +1,7 @@
 {
 	"name": "openthc/auth",
 	"description": "OpenTHC Authentication Server",
-	"license": "GPL",
+	"license": "GPL-3.0-only",
 	"autoload": {
 		"psr-4": {
 			"App\\": "./lib",
