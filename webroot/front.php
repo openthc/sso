@@ -6,11 +6,11 @@
 // We may start with an error code from the PHP interpreter
 $e0 = error_get_last();
 
-header('Cache-Control: no-cache, must-revalidate');
-header('Content-Language: en');
-header('X-Content-Type-Options: nosniff');
-header('X-Frame-Options: DENY'); // SAMEORIGIN
-header('X-XSS-Protection: 1; mode=block');
+header('cache-control: no-cache, must-revalidate');
+header('content-language: en');
+header('x-content-type-options: nosniff');
+header('x-frame-options: deny'); // sameorigin
+header('x-xss-protection: 1; mode=block');
 
 require_once('../boot.php');
 
@@ -22,16 +22,17 @@ $app = new \OpenTHC\App($cfg);
 $con = $app->getContainer();
 $con['DB'] = function() {
 	$cfg = \OpenTHC\Config::get('database_main');
-	return new \Edoceo\Radix\DB\SQL(sprintf('pgsql:host=%s;dbname=%s', $cfg['hostname'], $cfg['database']), $cfg['username'], $cfg['password']);
+	$dsn = sprintf('pgsql:host=%s;dbname=%s', $cfg['hostname'], $cfg['database']);
+	return new \Edoceo\Radix\DB\SQL($dsn, $cfg['username'], $cfg['password']);
 };
 
 
 // Authentication
 $app->group('/auth', function() {
 
-	// $this->get('', 'App\Controller\Auth\Open');
 	$this->get('/open', 'App\Controller\Auth\Open');
 	$this->post('/open', 'App\Controller\Auth\Open:post');
+
 	// $this->get('/back', 'App\Controller\Auth\Back');
 	$this->get('/fail', 'App\Controller\Auth\Fail');
 	$this->get('/ping', 'App\Controller\Auth\Ping');

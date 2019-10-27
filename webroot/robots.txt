@@ -1,8 +1,7 @@
 #
-# Hello Robots!
-# We love you but, please go away!
-# 
+# Hello robots!
+# Nobody is allowed
+#
 
 user-agent: *
 disallow: /
-

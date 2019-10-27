@@ -3,12 +3,14 @@
  * Sign In
  */
 
- namespace App\Controller\Auth;
+namespace App\Controller\Auth;
 
 use Edoceo\Radix;
 use Edoceo\Radix\Filter;
 use Edoceo\Radix\Session;
 use Edoceo\Radix\DB\SQL;
+
+use App\Contact;
 
 class Open extends \OpenTHC\Controller\Base
 {
@@ -38,12 +40,14 @@ class Open extends \OpenTHC\Controller\Base
 
 	function post($REQ, $RES, $ARG)
 	{
+		Contact::setDB($this->_container->DB);
+
 		switch (strtolower($_POST['a'])) {
 		case 'email-confirm': // @todo should be via /once
 
 			Auth::clear_session();
 
-			$AU = AppUser::findByUsername($_POST['username']);
+			$AU = Contact::findByUsername($_POST['username']);
 			if (empty($AU)) {
 				Session::flash('fail', 'Failed to process confirmation request');
 				return(0);
@@ -97,7 +101,7 @@ class Open extends \OpenTHC\Controller\Base
 			$_SESSION['email'] = $u;
 
 			// Auto Create User if they don't exist
-			$chk = AppUser::findByUsername($u);
+			$chk = Contact::findByUsername($u);
 			if (empty($chk)) {
 				// Bounce to Sign-Up
 				Session::flash('info', 'Please Create an Account to use OpenTHC');
@@ -126,7 +130,7 @@ class Open extends \OpenTHC\Controller\Base
 
 			$_SESSION['uid'] = $chk['id'];
 
-			Radix::redirect('/auth/init-session');
+			Radix::redirect('/auth/init');
 
 			break;
 		}
