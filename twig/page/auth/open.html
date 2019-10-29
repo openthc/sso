@@ -3,14 +3,12 @@
 {% block body %}
 
 <form method="post">
-<div class="container mt-4">
-
 <div class="auth-wrap">
 
 	<div class="card">
+	<h1 class="card-header">{{ Page.title }}</h1>
 	<div class="card-body">
 
-	<h1 class="card-title">{{ Page.title }}</h1>
 	{{ auth_hint|raw }}
 
 	<div class="form-group">
@@ -22,11 +20,12 @@
 		<label>Password</label>
 		<input class="form-control" name="password" type="password">
 	</div>
+	</div>
 
-	<div class="form-actions">
+	<div class="card-footer">
 		<div class="row no-gutters">
 			<div class="col-md-6">
-				<button class="btn btn-outline-primary" name="a" type="submit" value="Sign In">Sign In</button>
+				<button class="btn btn-success" name="a" type="submit" value="Sign In">Sign In</button>
 				<button class="btn btn-outline-secondary" name="a" type="submit" value="reset">Reset Password</button>
 				{#
 				<?php
@@ -43,9 +42,7 @@
 	</div>
 
 	</div>
-	</div>
 
-</div>
 </div>
 </form>
 

@@ -2,19 +2,17 @@
 
 {% block body %}
 
-<div class="container">
 <div class="auth-wrap">
 <div class="card">
 
-	<div class="card-header">Application Authorization</div>
+	<h1 class="card-header">Application Permitted</h1>
 	<div class="card-body">
-		<h2 class="card-title">Return To: <em>{{ Program.name }}</em></h2>
-		<div>
-			<a class="btn btn-outline-success" href="{{ return_url }}">Return <i class="fas fa-arrow-right"></i></a>
-		</div>
+		<p>Return To: <strong>{{ Program.name }}</strong></p>
+	</div>
+	<div class="card-footer">
+		<a class="btn btn-success" href="{{ return_url }}">Continue <i class="fas fa-arrow-right"></i></a>
 	</div>
 
-</div>
 </div>
 </div>
 
