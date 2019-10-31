@@ -1,6 +1,6 @@
 {
-	"name": "openthc/auth",
-	"description": "OpenTHC Authentication Server",
+	"name": "openthc/sso",
+	"description": "OpenTHC Single Sign On Server",
 	"license": "GPL-3.0-only",
 	"autoload": {
 		"psr-4": {
@@ -17,10 +17,8 @@
 		"ext-session": "*",
 		"ext-sockets": "*",
 		"edoceo/radix": "dev-master",
-		"erusev/parsedown": "1.7.1",
 		"league/oauth2-client": "2.4.1",
 		"openthc/common": "dev-master",
-		"pear/net_smtp": "1.8.1"
 	},
 	"require-dev": {
 		"behat/behat": "3.5.0",

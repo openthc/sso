@@ -49,6 +49,8 @@ class Authorize extends \OpenTHC\Controller\Base
 
 		$data = [];
 		$data['Page'] = [ 'title' => 'Authorize' ];
+		$data['Program'] = $Auth_Program;
+		$data['scope_list'] = $_GET['scope'];
 		$data['link_crypt'] = $link_crypt;
 		$data['link_crypt_save'] = $link_crypt_save;
 
@@ -107,17 +109,11 @@ class Authorize extends \OpenTHC\Controller\Base
 	 */
 	function verifyScope()
 	{
-		$scope_list_may = [
-			'aux',
-			'profile',
-			'crm',
-			'dump',
-			'lab',
-			'menu',
-			'ops',
-			'p2p',
-			'pos',
-		];
+		$res = $this->_container->DB->fetchAll('SELECT code FROM auth_scope');
+		$scope_list_all = array_reduce($res, function($ret, $cur) {
+			$ret[] = $cur['code'];
+			return $ret;
+		}, []);
 
 		// Scope List being asked for by Client
 		$scope_list_ask = array();
@@ -133,7 +129,7 @@ class Authorize extends \OpenTHC\Controller\Base
 		sort($scope_list_ask);
 
 		foreach ($scope_list_ask as $s) {
-			if (!in_array($s, $scope_list_may)) {
+			if (!in_array($s, $scope_list_all)) {
 				_exit_text("Unknown Scope '$s' [COA#088]", 400);
 			}
 		}
