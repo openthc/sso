@@ -20,6 +20,9 @@ class Permit extends \OpenTHC\Controller\Base
 
 		$_GET = $x;
 
+		$cfg = \OpenTHC\Config::get('oauth');
+		$_ENV['fast-redirect'] = $cfg['fast-redirect'];
+
 		// Load & Validate The Client
 		$Auth_Program = $this->_container->DB->fetchRow('SELECT id,name,code,hash FROM auth_program WHERE code = ?', array($_GET['client_id']));
 		if (empty($Auth_Program['id'])) {
@@ -37,7 +40,8 @@ class Permit extends \OpenTHC\Controller\Base
 			'scope' => $_GET['scope'],
 		));
 
-		$hash = hash('sha256', $data . openssl_random_pseudo_bytes(256));
+		$hash = hash('sha256', $data . openssl_random_pseudo_bytes(256), true);
+		$hash = base64_encode_url($hash);
 
 		$sql = 'INSERT INTO auth_hash (ts_expires, hash, json) VALUES (?, ?, ?)';
 		$arg = array(
@@ -81,6 +85,9 @@ class Permit extends \OpenTHC\Controller\Base
 
 	}
 
+	/**
+	 * Save Permit Commit
+	 */
 	function _permit_and_save()
 	{
 		// Remember this application authorization
@@ -89,14 +96,9 @@ class Permit extends \OpenTHC\Controller\Base
 			$arg = array(
 				':a' => $Auth_Program['id'],
 				':u' => $_SESSION['uid'],
+				// 'expires_at'
 			);
 			$res = $this->_container->DB->query($sql, $arg);
-			// var_dump($_COOKIE);
-			// var_dump($_SESSION);
-			// var_dump($sql);
-			// var_dump($arg);
-			//var_dump($res);
-			//die("COMMIT");
 		}
 	}
 }

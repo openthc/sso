@@ -18,7 +18,7 @@ class Init extends \OpenTHC\Controller\Base
 		$U = new Contact($_SESSION['uid']);
 
 		if (empty($U['id'])) {
-			_exit_text('Unexpected account issue, please contact support [CAI#016]', 400);
+			_exit_html('Unexpected Session State<br>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support [CAI#016]', 400);
 		}
 
 		// if (!$chk->hasFlag(Contact::FLAG_MAILGOOD)) {

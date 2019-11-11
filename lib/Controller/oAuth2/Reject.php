@@ -9,7 +9,19 @@ class Reject extends \OpenTHC\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{
-		$_ENV['fast-redirect'] = false;
+		if (empty($_GET['_'])) {
+			_exit_text('COP#010 Invalid Input', 400);
+		}
+
+		$x = json_decode(_decrypt($_GET['_']), true);
+		if (empty($x)) {
+			_exit_text('COP#015 Invalid Input', 400);
+		}
+
+		$_GET = $x;
+
+		$cfg = \OpenTHC\Config::get('oauth');
+		$_ENV['fast-redirect'] = $cfg['fast-redirect'];
 
 		// Rebuild URL
 		if (empty($uri['query'])) {
