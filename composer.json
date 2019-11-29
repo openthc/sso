@@ -18,7 +18,7 @@
 		"ext-sockets": "*",
 		"edoceo/radix": "dev-master",
 		"league/oauth2-client": "2.4.1",
-		"openthc/common": "dev-master",
+		"openthc/common": "dev-master"
 	},
 	"require-dev": {
 		"behat/behat": "3.5.0",

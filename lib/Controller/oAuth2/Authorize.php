@@ -15,8 +15,14 @@ class Authorize extends \OpenTHC\Controller\Base
 
 		$this->verifyRequest();
 
-		// Validate Client
-		$Auth_Program = $this->_container->DB->fetchRow('SELECT id,name,code,hash FROM auth_program WHERE code = ?', array($_GET['client_id']));
+		// Good Session?
+		$RES = $this->verifySession($RES);
+		if (200 != $RES->getStatusCode()) {
+			return $RES;
+		}
+
+		// Validate Program
+		$Auth_Program = $this->_container->DB->fetchRow('SELECT id,name,code,hash,scope_list FROM auth_program WHERE code = ?', array($_GET['client_id']));
 		if (empty($Auth_Program['id'])) {
 			_exit_json(array(
 				'error' => 'invalid_client',
@@ -25,12 +31,10 @@ class Authorize extends \OpenTHC\Controller\Base
 			), 401);
 		}
 
-		$this->verifyScope();
+		$scope_want = $this->verifyScope();
 
-		$RES = $this->verifySession($RES);
-		if (200 != $RES->getStatusCode()) {
-			return $RES;
-		}
+		$this->verifyScopeAccess($Auth_Program, $scope_want);
+
 
 		// Permit Link
 		$link_crypt = _encrypt(json_encode($_GET));
@@ -40,7 +44,7 @@ class Authorize extends \OpenTHC\Controller\Base
 		$arg = array($Auth_Program['id'], $_SESSION['uid']);
 		$chk = SQL::fetch_one($sql, $arg);
 		if (!empty($chk)) {
-			// return $RES->withRedirect('/oauth2/permit?_=' . $link_crypt_permit);
+			// return $RES->withRedirect('/oauth2/permit?_=' . $link_crypt);
 		}
 
 		// Permit & Remember
@@ -79,7 +83,7 @@ class Authorize extends \OpenTHC\Controller\Base
 
 		// Validate Response Type
 		if ('code' != $_GET['response_type']) {
-			_exit_text('Invalid Response Type [VOA#031]', 400);
+			_exit_text('Invalid Response Type [COA#031]', 400);
 		}
 
 		// Validate Redirect URI
@@ -135,6 +139,23 @@ class Authorize extends \OpenTHC\Controller\Base
 		}
 
 		$_GET['scope'] = implode(' ', $scope_list_ask);
+
+		return $scope_list_ask;
+
+	}
+
+	function verifyScopeAccess($Program, $scope_ask)
+	{
+		$scope_may = explode(' ', $Program['scope_list']);
+
+		foreach ($scope_ask as $s) {
+			if (!in_array($s, $scope_may, true)) {
+				_exit_html("Access Denied to Scope '$s' [VOA#131]<br><a href='/auth/shut'>sign-out</a>", 403);
+			}
+			$scope_ret[] = $s;
+		}
+
+		return $scope_ret;
 
 	}
 
