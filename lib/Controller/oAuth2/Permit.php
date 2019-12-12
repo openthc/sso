@@ -51,7 +51,7 @@ class Permit extends \OpenTHC\Controller\Base
 		);
 		$this->_container->DB->query($sql, $arg);
 
-		$this->_permit_and_save();
+		$this->_permit_and_save($Auth_Program);
 
 		// Rebuild URL (it's checked before input to this page)
 		$ruri = parse_url($_GET['redirect_uri']);
@@ -88,7 +88,7 @@ class Permit extends \OpenTHC\Controller\Base
 	/**
 	 * Save Permit Commit
 	 */
-	function _permit_and_save()
+	function _permit_and_save($Auth_Program)
 	{
 		// Remember this application authorization
 		if (!empty($_GET['auth-commit'])) {
