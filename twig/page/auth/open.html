@@ -26,7 +26,7 @@
 		<div class="row no-gutters">
 			<div class="col-md-6">
 				<button class="btn btn-success" name="a" type="submit" value="Sign In">Sign In</button>
-				<button class="btn btn-outline-secondary" name="a" type="submit" value="reset">Reset Password</button>
+				<a class="btn btn-outline-secondary" href="/auth/lost">Reset Password</a>
 				{#
 				<?php
 				if (!empty($_SESSION['show-email'])) {
@@ -36,7 +36,7 @@
 				#}
 			</div>
 			<div class="col-md-6 r">
-				<a class="btn btn-outline-secondary" href="/auth/sign-up">Create an Account</a>
+				<a class="btn btn-outline-secondary" href="/account/create">Create an Account</a>
 			</div>
 		</div>
 	</div>

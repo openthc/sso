@@ -23,10 +23,29 @@ class Open extends \OpenTHC\Controller\Base
 		$data = [];
 		$data['Page'] = [ 'title' => 'Sign In' ];
 
+		if (!empty($_GET['e'])) {
+			switch ($_GET['e']) {
+			case 'cao049':
+				$data['Page']['flash'] = '<div class="alert alert-danger">Invalid email, please use a proper email address</div>';
+				break;
+			case 'cao069':
+				$data['Page']['flash'] = '<div class="alert alert-danger">Invalid Password, must be at least 8 characters</div>';
+				break;
+			case 'cao093':
+				$data['Page']['flash'] = '<div class="alert alert-danger">Invalid Username or Password</div>';
+				break;
+			default:
+				$data['Page']['flash'] = sprintf('<div class="alert alert-warning">Unexpected Error "%s"</div>', h($_GET['e']));
+				break;
+			}
+		}
+
 		$data['auth_username'] = $_SESSION['email'];
 
 		$data['auth_goto'] = $_GET['r'];
-		$data['auth_hint'] = '<p>You will sign in, and then authorize the application via <a href="https://oauth.net/2/" target="_blank">OAuth2</a></p>';
+		if (!empty($data['auth_goto'])) {
+			$data['auth_hint'] = '<p>You will sign in, and then authorize the application via <a href="https://oauth.net/2/" target="_blank">OAuth2</a></p>';
+		}
 
 		// Carry forward the Redirect Values
 		// Can't this be handled by auth_goto?
@@ -42,76 +61,26 @@ class Open extends \OpenTHC\Controller\Base
 	{
 		Contact::setDB($this->_container->DB);
 
+		$username = strtolower(trim($_POST['username']));
+		$username = \Edoceo\Radix\Filter::email($username);
+		if (empty($username)) {
+			return $RES->withRedirect('/auth/open?e=cao049');
+		}
+		$_SESSION['email'] = $username;
+
 		switch (strtolower($_POST['a'])) {
-		case 'email-confirm': // @todo should be via /once
-
-			Auth::clear_session();
-
-			$AU = Contact::findByUsername($_POST['username']);
-			if (empty($AU)) {
-				Session::flash('fail', 'Failed to process confirmation request');
-				return(0);
-			}
-
-			if ($AU->hasFlag(Contact::FLAG_DISABLED)) {
-				Session::flash('fail', 'CAS#028: There is some issue with your account, please contact support');
-				return(0);
-			}
-
-			// Auth Link
-			$ah = new Auth_Hash();
-			$ah['json'] = json_encode(array(
-				'uid' => $AU['id'],
-				'action' => 'email-confirm',
-			));
-			$ah['hash'] = sha1(serialize($AU) . serialize($ah));
-			$ah->save();
-
-			putenv("MAIL_RCPT={$AU['username']}");
-			putenv("MAIL_HASH={$ah['hash']}");
-			$cmd = (APP_ROOT . '/bin/mail-auth-mail-confirm.php');
-			shell_exec("$cmd >>/tmp/mail-auth-mail-confirm.log 2>&1 &");
-
-			Session::flash('info', 'An Email Confirmation message has been sent to your address');
-
-			break;
-
-		case 'reset':
-
-			$_POST['username'] = trim($_POST['username']);
-			if (!empty($_POST['username'])) {
-				$_SESSION['email'] = $_POST['username'];
-			}
-
-			Radix::redirect('/auth/reset');
-
-			break;
-
 		case 'sign in': // Sign In
 
-			// New User
-			$u = strtolower(trim($_POST['username']));
-			$p = trim($_POST['password']);
-
-			$u = Filter::email($u);
-			if (empty($u)) {
-				Session::flash('fail', 'Invalid email, please use a proper email address');
-				return $RES->withRedirect('/auth/open');
-			}
-			$_SESSION['email'] = $u;
-
 			// Auto Create User if they don't exist
-			$chk = Contact::findByUsername($u);
+			$chk = Contact::findByUsername($username);
 			if (empty($chk)) {
-				// Bounce to Sign-Up
 				Session::flash('info', 'Please Create an Account to use OpenTHC');
-				Radix::redirect('/auth/sign-up');
+				return $RES->withRedirect('/auth/create?e=cao063');
 			}
-			$_SESSION['email'] = $u;
 
-			if (empty($p) || (strlen($p) < 6) || (strlen($p) > 60)) {
-				Session::flash('fail', 'Invalid Password');
-				return $RES->withRedirect('/auth/open');
+			$password = trim($_POST['password']);
+			if (empty($password) || (strlen($password) < 6) || (strlen($password) > 60)) {
+				return $RES->withRedirect('/auth/open?e=cao069');
 			}
 
 			// Check
@@ -124,13 +93,12 @@ class Open extends \OpenTHC\Controller\Base
 
 			if (!$good) {
 				$_SESSION['show-reset'] = true;
-				Session::flash('fail', 'Invalid username or password');
-				return $RES->withRedirect('/auth/open');
+				return $RES->withRedirect('/auth/open?e=cao093');
 			}
 
 			$_SESSION['uid'] = $chk['id'];
 
-			Radix::redirect('/auth/init');
+			return $RES->withRedirect('/auth/init');
 
 			break;
 		}
