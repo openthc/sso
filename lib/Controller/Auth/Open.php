@@ -1,11 +1,10 @@
 <?php
 /**
- * Sign In
+ * Authenticate
  */
 
 namespace App\Controller\Auth;
 
-use Edoceo\Radix;
 use Edoceo\Radix\Filter;
 use Edoceo\Radix\Session;
 use Edoceo\Radix\DB\SQL;
