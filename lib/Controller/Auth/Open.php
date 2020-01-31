@@ -33,6 +33,9 @@ class Open extends \OpenTHC\Controller\Base
 			case 'cao093':
 				$data['Page']['flash'] = '<div class="alert alert-danger">Invalid Username or Password</div>';
 				break;
+			case 'cap080':
+				$data['Page']['flash'] = '<div class="alert alert-info">Your Password has been updated</div>';
+				break;
 			default:
 				$data['Page']['flash'] = sprintf('<div class="alert alert-warning">Unexpected Error "%s"</div>', h($_GET['e']));
 				break;

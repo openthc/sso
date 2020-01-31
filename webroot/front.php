@@ -18,26 +18,46 @@ $cfg = [];
 $cfg['debug'] = true;
 $app = new \OpenTHC\App($cfg);
 
+
 // App Container
 $con = $app->getContainer();
 $con['DB'] = function() {
-	$cfg = \OpenTHC\Config::get('database_main');
+	$cfg = \OpenTHC\Config::get('database');
 	$dsn = sprintf('pgsql:host=%s;dbname=%s', $cfg['hostname'], $cfg['database']);
 	return new \Edoceo\Radix\DB\SQL($dsn, $cfg['username'], $cfg['password']);
 };
 
 
-// Authentication
+// Custom Response Object
+$con['response'] = function() {
+	$RES = new App\Response(200);
+	$RES = $RES->withHeader('content-type', 'text/html; charset=utf-8');
+	return $RES;
+};
+
+
+// Authentication Routes
 $app->group('/auth', function() {
 
 	$this->get('/open', 'App\Controller\Auth\Open');
 	$this->post('/open', 'App\Controller\Auth\Open:post');
 
-	// $this->get('/back', 'App\Controller\Auth\Back');
-	$this->get('/fail', 'App\Controller\Auth\Fail');
-	$this->get('/ping', 'App\Controller\Auth\Ping');
-	$this->get('/shut', 'App\Controller\Auth\Shut');
+	$this->get('/once', 'App\Controller\Auth\Once');
+	$this->post('/once', 'App\Controller\Auth\Once:post');
+
 	$this->get('/init', 'App\Controller\Auth\Init');
+
+	// $this->get('/ping', 'App\Controller\Auth\Ping');
+	$this->get('/ping', function() {
+		_exit_text([
+			'_COOKIE' => $_COOKIE,
+			'_SESSION' => $_SESSION,
+		]);
+	});
+
+	$this->get('/done', 'App\Controller\Auth\Done');
+
+	$this->get('/shut', 'App\Controller\Auth\Shut');
 
 })->add('OpenTHC\Middleware\Session');
 
@@ -56,7 +76,21 @@ $app->group('/oauth2', function() {
 })->add('OpenTHC\Middleware\Session');
 
 
+// Account
+$app->group('/account', function() {
+
+	$this->get('/create', 'App\Controller\Account\Create');
+	$this->post('/create', 'App\Controller\Account\Create:post');
+
+	$this->get('/password', 'App\Controller\Account\Password');
+	$this->post('/password', 'App\Controller\Account\Password:post');
+
+	$this->get('/verify', 'App\Controller\Account\Verify');
+
+})->add('OpenTHC\Middleware\Session');
+
+
 // Go!
-$ret = $app->run();
+$app->run();
 
 exit(0);

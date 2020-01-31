@@ -22,7 +22,8 @@
 	},
 	"require-dev": {
 		"behat/behat": "3.5.0",
-		"phpunit/phpunit": "8.2.5"
+		"php-webdriver/webdriver": "1.7.1",
+		"phpunit/phpunit": "8.4.3"
 	}
 
 }
