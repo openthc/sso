@@ -61,44 +61,45 @@ class Open extends \OpenTHC\Controller\Base
 
 	function post($REQ, $RES, $ARG)
 	{
-		Contact::setDB($this->_container->DB);
-
 		$username = strtolower(trim($_POST['username']));
 		$username = \Edoceo\Radix\Filter::email($username);
 		if (empty($username)) {
 			return $RES->withRedirect('/auth/open?e=cao049');
 		}
-		$_SESSION['email'] = $username;
+
+		$password = trim($_POST['password']);
+		if (empty($password) || (strlen($password) < 6) || (strlen($password) > 60)) {
+			return $RES->withRedirect('/auth/open?e=cao069');
+		}
 
 		switch (strtolower($_POST['a'])) {
 		case 'sign in': // Sign In
 
-			// Auto Create User if they don't exist
-			$chk = Contact::findByUsername($username);
-			if (empty($chk)) {
+			// Find Contact
+			$dbc = $this->_container->DB;
+			$sql = 'SELECT id, username, password FROM auth_contact WHERE username = :un';
+			$arg = [ ':un' => $username ];
+			$chk = $dbc->fetchRow($sql, $arg);
+			if (empty($chk['id'])) {
 				Session::flash('info', 'Please Create an Account to use OpenTHC');
 				return $RES->withRedirect('/auth/create?e=cao063');
 			}
 
-			$password = trim($_POST['password']);
-			if (empty($password) || (strlen($password) < 6) || (strlen($password) > 60)) {
-				return $RES->withRedirect('/auth/open?e=cao069');
-			}
-
 			// Check
-			$good = false;
-			if ($p == $chk['password']) {
-				$good = true;
-			} elseif (password_verify($_POST['password'], $chk['password'])) {
-				$good = true;
-			}
-
-			if (!$good) {
+			if (!password_verify($password, $chk['password'])) {
 				$_SESSION['show-reset'] = true;
 				return $RES->withRedirect('/auth/open?e=cao093');
 			}
 
 			$_SESSION['uid'] = $chk['id'];
+			$_SESSION['Contact'] = [
+				'id' => $chk['id'],
+				'username' => $chk['username'],
+			];
+
+			// $acl = new ACL($_SESSION['Contact']['username']);
+			// $acl->setPolicyForUser('authn/init');
+			// $acl->save();
 
 			return $RES->withRedirect('/auth/init');
 

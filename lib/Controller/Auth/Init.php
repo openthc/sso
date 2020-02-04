@@ -13,11 +13,11 @@ class Init extends \OpenTHC\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{
-		Contact::setDB($this->_container->DB);
-
-		$U = new Contact($_SESSION['uid']);
-
-		if (empty($U['id'])) {
+		$dbc = $this->_container->DB;
+		$sql = 'SELECT id, company_id, username, flag FROM auth_contact WHERE id = :pk';
+		$arg = [ ':pk' => $_SESSION['uid'] ];
+		$chk = $dbc->fetchRow($sql, $arg);
+		if (empty($chk['id'])) {
 			_exit_html('Unexpected Session State<br>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support [CAI#016]', 400);
 		}
 
@@ -26,33 +26,33 @@ class Init extends \OpenTHC\Controller\Base
 		// 	Session::flash('fail', 'You must confirm your email before using OpenTHC');
 		// 	return(0);
 		// }
+		if (0 == ($chk['flag'] & Contact::FLAG_EMAIL_GOOD)) {
+			// _exit_text('Validate Email!');
+			// return $RES->withRedirect('/account/verify');
+		}
 
-		if ($U->hasFlag(Contact::FLAG_DISABLED)) {
-			_exit_text('There is some issue with your account, please contact support [CAI#020]', 400);
+		if (0 == ($chk['flag'] & Contact::FLAG_PHONE_GOOD)) {
+			// _exit_text('Validate Phone!');
+			// return $RES->withRedirect('/account/verify');
+		}
+
+		if (0 != ($chk['flag'] & Contact::FLAG_DISABLED)) {
+			_exit_text('Invalid Account [CAI#038]', 403);
 		}
 
 		// Save State
-		$_SESSION['uid'] = $U['id'];
 		$_SESSION['gid'] = $U['company_id'];
 		$_SESSION['email'] = $U['username'];
-
-		// Update Sign-In Time - User
-		// $sql = 'UPDATE auth_contact SET ts_sign_in = now() WHERE id = ?';
-		// $arg = array($_SESSION['uid']);
-		// $this->_container->DB->query($sql, $arg);
-
-		// return $RES->withRedirect('/profile/verify');
-
-		// Implement your own Here, or use Middleware
-		$cfg = \OpenTHC\Config::get('openthc_app');
-		$ret = $cfg['url'];
 
 		if (!empty($_SESSION['return-link'])) {
 			$ret = $_SESSION['return-link'];
 			unset($_SESSION['return-link']);
 		}
+		if (empty($ret)) {
+			$cfg = \OpenTHC\Config::get('openthc_app');
+			$ret = $cfg['url'];
+		}
 
-		// _exit_html("<a href='$ret'>$ret</a>");
 		return $RES->withRedirect($ret);
 
 	}

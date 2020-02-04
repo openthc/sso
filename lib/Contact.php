@@ -8,28 +8,58 @@ namespace App;
 
 use Edoceo\Radix\DB\SQL;
 
-class Contact extends \OpenTHC\Contact // \OpenTHC\SQL\Record
+class Contact //  extends \OpenTHC\Contact // \OpenTHC\SQL\Record
 {
 	const FLAG_MAILGOOD = 0x00000001;
 
-	const FLAG_BILLING  = 0x00000010; // Billing Contact
+	const FLAG_EMAIL_GOOD = 0x00000001;
+	const FLAG_PHONE_GOOD = 0x00000002;
+	const FLAG_EMAIL_WANT = 0x00000004;
+	const FLAG_PHONE_WANT = 0x00000008;
+
+	const FLAG_PRIMARY  = 0x00000100; // Primary Contact
+	const FLAG_BILLING  = 0x00000010; // Billing Contact, move to 0x0200
 
 	const FLAG_DISABLED = 0x01000000;
-	const FLAG_DELETED  = 0x08000000;
+	const FLAG_DEAD     = 0x08000000;
+	// const FLAG_DELETED  = 0x08000000; // @deprecated
 
-	protected static $_dbc;
+	protected $_dbc;
 
 	protected $_table = 'auth_contact';
 
-	static function setDB($dbc)
+	function __construct($dbc)
 	{
-		self::$_dbc = $dbc;
+		$this->_dbc = $dbc;
 	}
 
-	static function findByUsername($x)
+	function findBy($a)
 	{
-		$x = strtolower($x);
-		$res = static::$_dbc->fetchRow('SELECT * FROM auth_contact WHERE username = ?', array($x));
+		$sql_select = sprintf('SELECT * FROM %s WHERE ', $this->_table);
+
+		$sql_filter = [];
+		foreach ($a as $c => $v) {
+			$k = sprintf(':%08x', crc32($v));
+			$sql_filter[$k] = sprintf('%s = %s', $c, $k);
+			$sql_params[$k] = $v;
+		}
+
+
+		$sql = $sql_select . implode(' AND ', $sql_filter);
+		// var_dump($sql);
+		// var_dump($sql_params);
+		$rec = $this->_dbc->fetchRow($sql, $sql_params);
+		// var_dump($rec);
+
+		// exit;
+
+	}
+
+	function findByUsername($x)
+	{
+		$x = trim(strtolower($x));
+		$x = iconv('UTF-8', 'US-ASCII//IGNORE', $x);
+		$res = $this->_dbc->fetchRow('SELECT * FROM auth_contact WHERE username = ?', array($x));
 		if (!empty($res)) {
 			return new self($res);
 		}
