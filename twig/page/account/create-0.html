@@ -1,0 +1,58 @@
+{% extends "layout/html.html" %}
+
+{% block body %}
+
+<form autocomplete="off" method="post">
+<div class="auth-wrap">
+
+	<div class="card">
+	<h1 class="card-header">{{ Page.title }}</h1>
+	<div class="card-body">
+
+	<div class="form-group">
+		<label>Where Are You</label>
+		<select class="form-control" name="region">
+			<option value="">- Select Location -</option>
+			<optgroup label="USA">
+				<option value="usa/ak">Alaska</option>
+				<option value="usa/ca">California</option>
+				<option value="usa/co">Colorado</option>
+				<option value="usa/hi">Hawai'i</option>
+				<option value="usa/il">Illinois</option>
+				<option value="usa/la">Louisiana</option>
+				<option value="usa/me">Maine</option>
+				<option value="usa/md">Maryland</option>
+				<option value="usa/ma">Massachusetts</option>
+				<option value="usa/mi">Michigan</option>
+				<option value="usa/mo">Missouri</option>
+				<option value="usa/mt">Montana</option>
+				<option value="usa/nv">Nevada</option>
+				<option value="usa/nm">New Mexico</option>
+				<option value="usa/oh">Ohio</option>
+				<option value="usa/ok">Oklahoma</option>
+				<option value="usa/or">Oregon</option>
+				<option value="usa/wa">Washington</option>
+			</optgroup>
+			<optgroup label="Global">
+				<option value="can/ca">Canada</option>
+				<option value="col/co">Colombia</option>
+				<option value="prt/pt">Portgual</option>
+				<option value="esp/es">Spain</option value="">
+				<option value="zaf/za"></option>South Africa</option>
+			</optgroup>
+			<option value="xxx/xx">Other / Not Listed</option>
+		</select>
+	</div>
+
+	</div>
+
+	<div class="card-footer r">
+		<button class="btn btn-outline-success" name="a" type="submit" value="region-next">Next &gt;&gt;</button>
+	</div>
+
+	</div>
+
+</div>
+</form>
+
+{% endblock %}
