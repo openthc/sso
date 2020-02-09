@@ -5,7 +5,8 @@
 	"autoload": {
 		"psr-4": {
 			"App\\": "./lib",
-			"Custom\\": "./Custom"
+			"Custom\\": "./Custom",
+			"Test\\": "./test"
 		}
 	},
 	"require": {
@@ -23,7 +24,8 @@
 	"require-dev": {
 		"behat/behat": "3.5.0",
 		"php-webdriver/webdriver": "1.7.1",
-		"phpunit/phpunit": "8.4.3"
+		"phpunit/phpunit": "8.4.3",
+		"phpunit/phpunit-selenium": "dev-master"
 	}
 
 }
