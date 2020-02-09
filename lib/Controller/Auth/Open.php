@@ -82,7 +82,7 @@ class Open extends \OpenTHC\Controller\Base
 			$chk = $dbc->fetchRow($sql, $arg);
 			if (empty($chk['id'])) {
 				Session::flash('info', 'Please Create an Account to use OpenTHC');
-				return $RES->withRedirect('/auth/create?e=cao063');
+				return $RES->withRedirect('/account/create?e=cao063');
 			}
 
 			// Check

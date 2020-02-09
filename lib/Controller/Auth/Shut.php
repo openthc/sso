@@ -33,7 +33,8 @@ class Shut extends \OpenTHC\Controller\Base
 		$file = 'page/auth/done.html';
 		$data = [];
 		$data['Page'] = [ 'title' => 'Session Closed' ];
-		// $data['info'] =
+		$data['body'] = '<p>Your session has been closed</p><p>';
+		$data['foot'] = '<a class="btn btn-outline-secondary" href="/auth/open">Sign In Again</a>';
 
 		return $this->_container->view->render($RES, $file, $data);
 
