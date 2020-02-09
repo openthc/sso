@@ -1,0 +1,87 @@
+{% extends "layout/html.html" %}
+
+{% block body %}
+
+<form autocomplete="off" method="post">
+<div class="auth-wrap">
+
+	<div class="card">
+	<h1 class="card-header">{{ Page.title }}</h1>
+	<div class="card-body">
+
+	<div class="form-group">
+		<label>Company Name / License ID</label>
+		<div class="input-group">
+			<input autofocus class="form-control" id="license-autocomplete" name="license-name" placeholder="- Company, Inc. -" required>
+			<div class="input-group-append"><div class="input-group-text">&cir;</div></div>
+		</div>
+		<div>Should be your registered company name or your government issued business license ID</div>
+	</div>
+
+	<div class="form-group">
+		<label>Contact Name</label>
+		<input class="form-control" name="contact-name" placeholder="- Your Full Name -" required>
+	</div>
+
+	<div class="form-group">
+		<label>Email</label>
+		<input class="form-control" inputmode="email" name="email" placeholder="email" required type="email" value="">
+	</div>
+
+	<div class="form-group">
+		<label>Phone</label>
+		<input class="form-control" inputmode="tel" name="phone" required type="phone">
+	</div>
+	</div>
+
+	<div class="card-footer r">
+		<input id="company-id" name="company-id" type="hidden" value="">
+		<input id="license-id" name="license-id" type="hidden" value="">
+		<button class="btn btn-outline-primary" name="a" type="submit" value="contact-next">Create Account &gt;&gt;</button>
+	</div>
+
+	</div>
+
+</div>
+</form>
+
+{% endblock %}
+
+{% block foot_script %}
+{{ parent() }}
+<script>
+$(function() {
+	$('#license-autocomplete').autocomplete({
+		source: 'https://directory.openthc.com/api/autocomplete/license?cre={{ region }}',
+		change: function(e, ui) {
+			if (!ui.item) {
+				$('#company-id').val('');
+				$('#license-id').val('');
+				var icon = $('#license-autocomplete').closest('.input-group').find('.input-group-text');
+				icon.html('&cir;');
+				icon.removeClass('text-success');
+			} else {
+				$('#company-id').val(ui.item.company.id);
+				$('#license-id').val(ui.item.license.id);
+				var icon = $('#license-autocomplete').closest('.input-group').find('.input-group-text');
+				icon.html('&starf;');
+				icon.addClass('text-success');
+			}
+		},
+		search: function(e, ui) {
+			$('#company-id').val('');
+			$('#license-id').val('');
+			var icon = $('#license-autocomplete').closest('.input-group').find('.input-group-text');
+			icon.html('&cir;');
+			icon.removeClass('text-success');
+		},
+		select: function(e, ui) {
+			if (ui.item.id) {
+				$('#license-autocomplete').val(ui.item.name);
+				return false;
+			}
+		}
+	});
+});
+</script>
+{% endblock %}
