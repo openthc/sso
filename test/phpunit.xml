@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit
+	backupGlobals="false"
+	backupStaticAttributes="false"
+	bootstrap="boot.php"
+	cacheResult="false"
+	colors="true"
+	convertErrorsToExceptions="true"
+	convertNoticesToExceptions="true"
+	convertWarningsToExceptions="true"
+	processIsolation="false"
+	stopOnError="false"
+	stopOnFailure="false"
+	stopOnRisky="false"
+	timeoutForSmallTests="1"
+	timeoutForMediumTests="10"
+	timeoutForLargeTests="60"
+	verbose="false"
+>
+
+<php>
+
+	<env name="debug-http" value="false" />
+
+	<const name="TEST_SITE" value="https://sso.openthc.dev" />
+
+	<const name="TEST_BROWSERSTACK_USER" value="" />
+	<const name="TEST_BROWSERSTACK_AUTH" value="" />
+	<const name="TEST_BROWSERSTACK_BASE" value="hub-cloud.browserstack.com" />
+
+	<const name="USER_A_USERNAME" value="test@openthc.com" />
+	<const name="USER_A_PASSWORD" value="password" />
+	<const name="USER_A_PASSWORD_FAIL" value="password-fail" />
+
+</php>
+
+<testsuites>
+	<testsuite name="Authentication">
+		<file>OAuth_Test.php</file>
+	</testsuite>
+</testsuites>
+
+<logging>
+	<!-- <log type="coverage-html" target="../webroot/test-output" /> -->
+	<log type="junit" target="../webroot/test-output/phpunit.xml" />
+	<log type="testdox-html" target="../webroot/test-output/testdox.html" />
+</logging>
+
+</phpunit>
