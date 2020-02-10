@@ -6,12 +6,6 @@
 // We may start with an error code from the PHP interpreter
 $e0 = error_get_last();
 
-header('cache-control: no-cache, must-revalidate');
-header('content-language: en');
-header('x-content-type-options: nosniff');
-header('x-frame-options: deny'); // sameorigin
-header('x-xss-protection: 1; mode=block');
-
 require_once('../boot.php');
 
 $cfg = [];
@@ -88,6 +82,13 @@ $app->group('/account', function() {
 	$this->get('/verify', 'App\Controller\Account\Verify');
 
 })->add('OpenTHC\Middleware\Session');
+
+
+// Custom Middleware?
+$f = sprintf('%s/Custom/boot.php');
+if (is_file($f) {
+	require_once($f);
+}
 
 
 // Go!
