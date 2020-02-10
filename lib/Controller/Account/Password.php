@@ -17,6 +17,7 @@ class Password extends \OpenTHC\Controller\Base
 		$file = 'page/account/password.html';
 		$data = [];
 		$data['Page'] = [ 'title' => 'Set Password' ];
+		$data['username'] = $ARG['contact']['username'];
 
 		if (!empty($_GET['e'])) {
 			switch ($_GET['e']) {
@@ -91,8 +92,9 @@ class Password extends \OpenTHC\Controller\Base
 
 	private function parseArg()
 	{
-		$ARG = _decrypt($_GET['_'], $_SESSION['key']);
+		$ARG = _decrypt($_GET['_'], $_SESSION['crypt-key']);
 		$ARG = json_decode($ARG, true);
+
 		if (empty($ARG)) {
 			_exit_text('Invalid Request [CAP#019]');
 		}
