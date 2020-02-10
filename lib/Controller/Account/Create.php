@@ -87,14 +87,14 @@ class Create extends \OpenTHC\Controller\Base
 		$arg = array($email);
 		$res = $dbc->fetchRow($sql, $arg);
 		if (!empty($res)) {
-			return $RES->withRedirect('/auth/done?e=cac065');
+			return $RES->withRedirect('/done?e=cac065');
 		}
 
 		if (!empty($_POST['company-id'])) {
 			$chk = $dbc->fetchRow('SELECT id FROM company WHERE id = ?', [$_POST['company-id']]);
 			if (empty($chk['id'])) {
 				$_SESSION['account-create']['company-create'] = true;
-				// return $RES->withRedirect('/auth/done?e=cac093');
+				// return $RES->withRedirect('/done?e=cac093');
 			}
 		}
 
@@ -102,7 +102,7 @@ class Create extends \OpenTHC\Controller\Base
 			$chk = $dbc->fetchRow('SELECT id FROM license WHERE id = ?', [$_POST['license-id']]);
 			if (empty($chk['id'])) {
 				$_SESSION['account-create']['license-create'] = true;
-				// return $RES->withRedirect('/auth/done?e=cac093');
+				// return $RES->withRedirect('/done?e=cac093');
 			}
 		}
 
@@ -169,7 +169,7 @@ class Create extends \OpenTHC\Controller\Base
 		$cic = new \App\Service\OpenTHC('cic');
 		$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
 
-		return $RES->withRedirect('/auth/done?e=cac111');
+		return $RES->withRedirect('/done?e=cac111');
 
 	}
 }
