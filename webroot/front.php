@@ -85,8 +85,8 @@ $app->group('/account', function() {
 
 
 // Custom Middleware?
-$f = sprintf('%s/Custom/boot.php');
-if (is_file($f) {
+$f = sprintf('%s/Custom/boot.php', APP_ROOT);
+if (is_file($f)) {
 	require_once($f);
 }
 
