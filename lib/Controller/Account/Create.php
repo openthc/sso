@@ -63,7 +63,7 @@ class Create extends \OpenTHC\Controller\Base
 		}
 
 		// Lookup Company
-		// $dir = new \Service_OpenTHC('dir');
+		// $dir = new \App\Service\OpenTHC('dir');
 		// $chk = $dir->get('company?q=' . $_POST['company-name']);
 		// switch ($chk['code']) {
 		// case '404':
@@ -108,6 +108,7 @@ class Create extends \OpenTHC\Controller\Base
 
 		$company_id = $dbc->insert('company', [
 			'id' => \Edoceo\Radix\ULID::generate(),
+			'cre' => $_SESSION['account-create']['region'],
 			'stat' => 100,
 			'type' => 'X',
 			'name' => $_POST['license-name'],
@@ -120,7 +121,7 @@ class Create extends \OpenTHC\Controller\Base
 		// Contact Table
 		$contact_id = $dbc->insert('contact', [
 			'id' => \Edoceo\Radix\ULID::generate(),
-			'fullname' => $_POST['contact-name'],
+			'name' => $_POST['contact-name'],
 			'email' => $email,
 			'phone' => $phone,
 		]);
@@ -165,7 +166,7 @@ class Create extends \OpenTHC\Controller\Base
 		$arg['data']['account_create_hash'] = $ah['hash'];
 		$arg['data']['sign_up_hash'] = $ah['hash']; // @deprecated
 
-		$cic = new \Service_OpenTHC('cic');
+		$cic = new \App\Service\OpenTHC('cic');
 		$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
 
 		return $RES->withRedirect('/auth/done?e=cac111');
