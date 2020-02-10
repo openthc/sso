@@ -19,6 +19,10 @@ class Once extends \OpenTHC\Controller\Base
 			_exit_html('<h1>Invalid Request [CAO#020]</h1>', 400);
 		}
 
+		if (empty($_SESSION['crypt-key'])) {
+			$_SESSION['crypt-key'] = sha1(openssl_random_pseudo_bytes(256));
+		}
+
 		// Well known actions
 		switch ($_GET['a']) {
 		case 'password-reset':
@@ -37,6 +41,19 @@ class Once extends \OpenTHC\Controller\Base
 
 		if (!preg_match('/^([0-9a-f]{32,128})$/', $_GET['a'], $m)) {
 			_exit_html('<h1>Invalid Request [CAO#024]</h1>', 400);
+		}
+
+		// $file = sprintf('%s/var/%s.json', APP_ROOT, $_GET['a']);
+		// if (is_file($file)) {
+		// 	_exit_text('NEw THING');
+		// }
+		$hash = $_GET['a'];
+
+		$R = new \Redis();
+		$R->connect('127.0.0.1');
+		$chk = $R->get($hash);
+		if (!empty($chk)) {
+			_exit_json($chk);
 		}
 
 		$dbc = $this->_container->DB;
@@ -62,12 +79,11 @@ class Once extends \OpenTHC\Controller\Base
 			return $this->accountCreate($RES, $data);
 			break;
 		case 'password-reset':
-			$_SESSION['key'] = sha1(openssl_random_pseudo_bytes(256));
 			$val = [
 				'contact' => $data['contact']
 			];
 			$val = json_encode($val);
-			$x = _encrypt($val, $_SESSION['key']);
+			$x = _encrypt($val, $_SESSION['crypt-key']);
 			return $RES->withRedirect('/account/password?_=' . $x);
 		}
 
@@ -107,9 +123,16 @@ class Once extends \OpenTHC\Controller\Base
 		];
 		$dbc->query($sql, $arg);
 
-		// $_SESSION['uid'] = $data['account']['contact']['id'];
-		// $_SESSION['gid'] = $data['account']['company']['id'];
 		$_SESSION['email'] = $data['account']['contact']['email'];
+
+		$val = [
+			'contact' => [
+				'id' => $data['account']['contact']['id'],
+				'username' => $data['account']['contact']['email'],
+			]
+		];
+		$val = json_encode($val);
+		$_SESSION['account-create']['password-args'] = _encrypt($val, $_SESSION['crypt-key']);
 
 		return $RES->withRedirect('/auth/done?e=cao073');
 
@@ -117,7 +140,7 @@ class Once extends \OpenTHC\Controller\Base
 
 	private function sendPasswordReset($RES)
 	{
-		_check_recaptcha();
+		// _check_recaptcha();
 
 		$username = strtolower(trim($_POST['username']));
 		$username = \Edoceo\Radix\Filter::email($username);
