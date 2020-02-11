@@ -30,7 +30,7 @@ class Shut extends \OpenTHC\Controller\Base
 		session_destroy();
 		session_write_close();
 
-		$file = 'page/auth/done.html';
+		$file = 'page/done.html';
 		$data = [];
 		$data['Page'] = [ 'title' => 'Session Closed' ];
 		$data['body'] = '<p>Your session has been closed</p><p>';

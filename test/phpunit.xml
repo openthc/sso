@@ -35,8 +35,11 @@
 </php>
 
 <testsuites>
-	<testsuite name="Authentication">
-		<file>OAuth_Test.php</file>
+	<testsuite name="All">
+		<directory>.</directory>
+		<!-- <file>OAuth_Test.php</file> -->
+		<!-- <file>Account_Test.php</file> -->
+		<!-- <file>UI_Auth_Test</file> -->
 	</testsuite>
 </testsuites>
 

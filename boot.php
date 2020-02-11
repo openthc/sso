@@ -3,11 +3,8 @@
  * OpenTHC Auth Bootstrap
  */
 
-define('APP_NAME', 'OpenTHC | SSO');
 define('APP_ROOT', __DIR__);
-define('APP_SALT', '01DDS3VMHTWT05SMAPFB8DBW5G');
-
-define('APP_BUILD', '420.19.053');
+define('APP_BUILD', '420.20.040');
 
 error_reporting(E_ALL & ~ E_NOTICE);
 

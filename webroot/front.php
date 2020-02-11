@@ -49,8 +49,6 @@ $app->group('/auth', function() {
 		]);
 	});
 
-	$this->get('/done', 'App\Controller\Auth\Done');
-
 	$this->get('/shut', 'App\Controller\Auth\Shut');
 
 })->add('OpenTHC\Middleware\Session');
@@ -82,6 +80,8 @@ $app->group('/account', function() {
 	$this->get('/verify', 'App\Controller\Account\Verify');
 
 })->add('OpenTHC\Middleware\Session');
+
+$app->get('/done', 'App\Controller\Done');
 
 
 // Custom Middleware?

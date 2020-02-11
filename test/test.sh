@@ -1,6 +1,6 @@
 #!/bin/bash -x
 #
-# Test our API
+# Test the SSO
 #
 
 set -o errexit
@@ -13,11 +13,15 @@ cd "$d"
 
 #
 #
-../vendor/bin/phpunit 2>&1 |tee ../webroot/test-output/output.txt
+(../vendor/bin/phpunit 2>&1 \
+	| tee ../webroot/test-output/output.txt \
+	) || true
 
+#
+# Get Transform
 if [ ! -f "phpunit-report.xsl" ]
 then
-	wget https://openthc.com/css/phpunit-report.xsl
+	wget https://cdn.openthc.com/css/phpunit-report.xsl
 fi
 
 xsltproc \
@@ -31,8 +35,8 @@ dt=$(date)
 cat > ../webroot/test-output/index.html <<HTML
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="viewport" content="initial-scale=1, user-scalable=yes">
@@ -40,8 +44,7 @@ cat > ../webroot/test-output/index.html <<HTML
 <meta name="apple-mobile-web-app-title" content="OpenTHC">
 <meta name="msapplication-TileColor" content="#247420">
 <meta name="theme-color" content="#247420">
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha256-eSi1q2PG6J7g7ib17yAaWMcrr5GrtohYChqibrV7PBE=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.openthc.com/bootstrap/4.4.1/bootstrap.css" integrity="sha256-L/W5Wfqfa0sdBNIKN9cG6QA5F2qx4qICmU2VgLruv9Y=" crossorigin="anonymous">
 <title>Test Result</title>
 </head>
 <body>
