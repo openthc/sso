@@ -13,27 +13,64 @@
 	<div class="form-group">
 		<label>Email Address:</label>
 		<div class="input-group">
+			{% if verify_email %}
+			<div class="input-group-prepend">
+				<div class="input-group-text text-danger">
+					<i class="icon icon-times-circle-o"></i>
+				</div>
+			</div>
 			<input class="form-control" name="contact-email" value="{{ contact_email }}">
 			<div class="input-group-append">
-				<div class="input-group-text text-danger">Not Verified</div>
+				<button class="btn btn-outline-primary" name="a" type="submit" value="email-verify-send">Resend <i class="icon icon-arrow-right"></i></button>
 			</div>
+			{% else %}
+				<div class="input-group-prepend">
+					<div class="input-group-text text-success">
+						<i class="icon icon-check-circle-o"></i>
+					</div>
+				</div>
+				<input class="form-control" disabled name="contact-email" value="{{ contact_email }}">
+			{% endif %}
 		</div>
 	</div>
 
 	<div class="form-group">
 		<label>Phone Number:</label>
 		<div class="input-group">
+			{% if verify_phone %}
+			<div class="input-group-prepend">
+				<div class="input-group-text text-danger">
+					<i class="icon icon-times-circle-o"></i>
+				</div>
+			</div>
 			<input class="form-control" id="contact-phone" inputmode="tel" name="contact-phone" value="{{ contact_phone }}">
 			<div class="input-group-append">
-				<div class="input-group-text text-danger">Not Verified</div>
+				<button class="btn btn-outline-primary" name="a" type="submit" value="phone-verify-send">Resend <i class="icon icon-arrow-right"></i></button>
 			</div>
+			{% else %}
+				<div class="input-group-prepend">
+					<div class="input-group-text text-success">
+						<i class="icon icon-check-circle-o"></i>
+					</div>
+				</div>
+				<input class="form-control" id="contact-phone" inputmode="tel" name="contact-phone" value="{{ contact_phone }}">
+			{% endif %}
 		</div>
 	</div>
 
+	{% if verify_phone_code %}
+	<div class="form-group">
+		<label>Verification Code:</label>
+		<div class="input-group">
+			<input class="form-control" id="phone-verify-code" name="phone-verify-code" value="">
+			<div class="input-group-append">
+				<button class="btn btn-outline-primary" name="a" type="submit" value="phone-verify-save">Verify</button>
+			</div>
+		</div>
+	</div>
+	{% endif %}
+
 </div>
-<!-- <div class="card-footer">
-	<button class="btn btn-outline-primary" disabled id="btn-password-update" name="a" type="submit" value="update"><i class="fas fa-lock"></i> Update</button>
-</div> -->
 </div>
 </div>
 
