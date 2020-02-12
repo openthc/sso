@@ -21,14 +21,13 @@ The oAuth2 interface requires all oAuth2 service requestors to have a Client ID.
 
 ## API
 
-An API exists to query Company and Contact information as well the the
-
+An API exists to query Company and Contact information as well the directory of Licenses. See the [OpenTHC API Documentation](https://api.openthc.org/doc/#_authentication) for more information.
 
 ## Profile
 
-A Company profile provides information about the billing plan too
+A [Company profile](https://api.openthc.org/doc/#_company) provides information about the billing, contacts, and licenses.
 
-A Contact profile is a name, email and phone number.
+Contact profiles consist of a name, email and phone number.
 
 
 ## SMS-2FA
