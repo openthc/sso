@@ -6,6 +6,7 @@ Custom/
 node_modules/
 var/
 vendor/
+webroot/test-output/
 
 composer.lock
 etc/app.ini

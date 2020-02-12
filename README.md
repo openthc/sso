@@ -5,36 +5,42 @@ Account Creation, Sign-In, Profile Settings and Authentication methods are manag
 
 Corporate or Government implementers would extend this SSO to integrate with their own environment through Middlware or custom Controllers.
 
+
 ## Configuration
 
-* Hostname
-* SMTP
-* SMS (Carrier & Tokens)
+* Database
+* Communications Service
 * oAuth2
 * U2F / FIDO
 
 
+## Database
+
+SSO expects to connect to a database following the OpenTHC data models as described in the API.
+An example schema is provided in `etc/sql/`
+
+
+## Communications
+
+The SSO system doesn't support sending emails or text messages directly.
+An external service must be provided to respond to some simple POST messages, similar to web-hooks
+
+
 ## oAuth2
 
-The oAuth2 interface requires all oAuth2 service requestors to have a Client ID.
+The oAuth2 interface requires all oAuth2 service requestors to have a Service Client ID.
 
 
 ## API
 
 An API exists to query Company and Contact information as well the directory of Licenses. See the [OpenTHC API Documentation](https://api.openthc.org/doc/#_authentication) for more information.
 
-## Profile
-
-A [Company profile](https://api.openthc.org/doc/#_company) provides information about the billing, contacts, and licenses.
-
-Contact profiles consist of a name, email and phone number.
-
 
 ## SMS-2FA
 
-If you want to use SMS for two-factor authentication you will need to configure.
+If you want to use SMS for two-factor authentication you will need to configure the necessary webhooks.
 
 
-## U2F / FIDO2
+## U2F
 
 The service is enabled for use with U2F such as RSA Secure ID and Solokeys.
