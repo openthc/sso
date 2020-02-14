@@ -2,7 +2,6 @@
 
 {% block body %}
 
-<form method="post">
 <div class="auth-wrap">
 <div class="card">
 <h1 class="card-header">{{ Page.title }}</h1>
@@ -10,6 +9,7 @@
 
 	<p>All users must verify their email address and phone number to use these services.</p>
 
+	<form method="post">
 	<div class="form-group">
 		<label>Email Address:</label>
 		<div class="input-group">
@@ -33,7 +33,9 @@
 			{% endif %}
 		</div>
 	</div>
+	</form>
 
+	<form method="post">
 	<div class="form-group">
 		<label>Phone Number:</label>
 		<div class="input-group">
@@ -57,6 +59,7 @@
 			{% endif %}
 		</div>
 	</div>
+	</form>
 
 	{% if verify_phone_code %}
 	<div class="form-group">
@@ -73,8 +76,6 @@
 </div>
 </div>
 </div>
-
-</form>
 
 {% endblock %}
 
