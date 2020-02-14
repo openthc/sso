@@ -37,9 +37,9 @@ class Token extends \OpenTHC\Controller\Base
 			'scope' => $this->_auth_token['scope'],
 		));
 
-		$hash = hash('sha256', $data . openssl_random_pseudo_bytes(256));
+		$hash = base64_encode_url(hash('sha256', openssl_random_pseudo_bytes(256), true));
 
-		$sql = 'INSERT INTO auth_hash (ts_expires, hash, json) VALUES (?, ?, ?)';
+		$sql = 'INSERT INTO auth_context_secret (ts_expires, hash, json) VALUES (?, ?, ?)';
 		$arg = array(
 			strftime('%Y-%m-%d %H:%M:%S', $_SERVER['REQUEST_TIME'] + 86400),
 			sprintf('oauth-token:%s', $hash),

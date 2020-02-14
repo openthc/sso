@@ -2,18 +2,15 @@
 
 {% block body %}
 
-<!-- Framekiller -->
-<script>
-if(top != self) {
-	top.location = location;
-}
-</script>
-
 <div class="auth-wrap">
 
 	<div class="card">
 	<h1 class="card-header">{{ Page.title }}</h1>
 	<div class="card-body">
+
+		{% if fail %}
+			<div class="alert alert-danger">{{ fail }}</div>
+		{% endif %}
 
 		{% if warn %}
 			<div class="alert alert-waring">{{ warn }}</div>

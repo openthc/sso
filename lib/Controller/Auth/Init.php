@@ -15,37 +15,49 @@ class Init extends \OpenTHC\Controller\Base
 	{
 		$dbc = $this->_container->DB;
 
-		// Contact
+		// Auth_Contact
 		$sql = 'SELECT id, company_id, username, password, flag FROM auth_contact WHERE id = :pk';
-		$arg = [ ':pk' => $_SESSION['uid'] ];
+		$arg = [ ':pk' => $_SESSION['Contact']['id'] ];
 		$chk = $dbc->fetchRow($sql, $arg);
 		if (empty($chk['id'])) {
-			_exit_html('Unexpected Session State<br>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support [CAI#016]', 400);
+			_exit_html('Unexpected Session State<br>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support [CAI#023]', 400);
+		}
+		$Contact = $chk;
+
+		// Contact
+		$sql = 'SELECT id, name, phone, email FROM contact WHERE id = :pk';
+		$arg = [ ':pk' => $_SESSION['Contact']['id'] ];
+		$chk = $dbc->fetchRow($sql, $arg);
+		if (empty($chk['id'])) {
+			_exit_html('Unexpected Session State<br>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support [CAI#033]', 400);
 		}
 
-		if (0 != ($chk['flag'] & Contact::FLAG_DISABLED)) {
+		$Contact = array_merge($Contact, $chk);
+
+		if (0 != ($Contact['flag'] & Contact::FLAG_DISABLED)) {
 			_exit_text('Invalid Account [CAI#038]', 403);
 		}
 
-		if (0 == ($chk['flag'] & Contact::FLAG_EMAIL_GOOD)) {
-			_exit_text('Validate Email!');
-			// return $RES->withRedirect('/account/verify');
+		if (0 == ($Contact['flag'] & Contact::FLAG_EMAIL_GOOD)) {
+			$val = [ 'contact' => $Contact ];
+			$val = json_encode($val);
+			$arg = _encrypt($val, $_SESSION['crypt-key']);
+			return $RES->withRedirect('/account/verify?_=' . $arg);
 		}
 
-		if (0 == ($chk['flag'] & Contact::FLAG_PHONE_GOOD)) {
-			// _exit_text('Validate Phone!');
-			// return $RES->withRedirect('/account/verify');
+		if (0 == ($Contact['flag'] & Contact::FLAG_PHONE_GOOD)) {
+			$val = [ 'contact' => $Contact ];
+			$val = json_encode($val);
+			$arg = _encrypt($val, $_SESSION['crypt-key']);
+			return $RES->withRedirect('/account/verify?_=' . $arg);
 		}
-
-		$Contact = $chk;
-		$_SESSION['email'] = $Contact['username'];
 
 		// Company
-		$sql = 'SELECT id, name FROM company WHERE id = :pk';
+		$sql = 'SELECT id, name, cre FROM company WHERE id = :pk';
 		$arg = [ ':pk' => $Contact['company_id'] ];
 		$chk = $dbc->fetchRow($sql, $arg);
 		if (empty($chk['id'])) {
-			_exit_html('Unexpected Session State<br>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support [CAI#016]', 400);
+			_exit_html('Unexpected Session State<br>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support [CAI#051]', 400);
 		}
 		$Company = $chk;
 		$_SESSION['gid'] = $Company['id'];
@@ -58,7 +70,7 @@ class Init extends \OpenTHC\Controller\Base
 		// No Return? Load Default
 		if (empty($ret)) {
 
-			$hash = sha1(openssl_random_pseudo_bytes(256));
+			$hash = base64_encode_url(hash('sha256', openssl_random_pseudo_bytes(256), true));
 			$data = json_encode([
 				'contact' => [
 					'id' => $_SESSION['uid'],

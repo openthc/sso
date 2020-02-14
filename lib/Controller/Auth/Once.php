@@ -32,6 +32,7 @@ class Once extends \OpenTHC\Controller\Base
 			$file = 'page/auth/once-password-reset.html';
 			$data = [];
 			$data['Page'] = [ 'title' => 'Password Reset '];
+			$data['email'] = $_SESSION['email'];
 			$data['Google']['recaptcha_public'] = $cfg['recaptcha-public'];
 
 			return $this->_container->view->render($RES, $file, $data);
@@ -39,7 +40,7 @@ class Once extends \OpenTHC\Controller\Base
 			break;
 		}
 
-		if (!preg_match('/^([0-9a-f]{32,128})$/', $_GET['a'], $m)) {
+		if (!preg_match('/^([\w\-]{32,128})$/i', $_GET['a'], $m)) {
 			_exit_html('<h1>Invalid Request [CAO#024]</h1>', 400);
 		}
 
@@ -47,6 +48,8 @@ class Once extends \OpenTHC\Controller\Base
 		// if (is_file($file)) {
 		// 	_exit_text('NEw THING');
 		// }
+
+		// If the Hash is in Redis, then pass it back
 		$hash = $_GET['a'];
 
 		$R = new \Redis();
@@ -58,26 +61,39 @@ class Once extends \OpenTHC\Controller\Base
 
 		$dbc = $this->_container->DB;
 
-		$chk = $dbc->fetchRow('SELECT * FROM auth_hash WHERE hash = ?', $_GET['a']);
+		$chk = $dbc->fetchRow('SELECT * FROM auth_context_secret WHERE code = ?', $_GET['a']);
 		if (empty($chk)) {
-			_exit_html('<h1>Invalid Token [CAO#023]</h1><p>The link you followed is not valid</p><p>You may need to ', 400);
+			return $RES->withRedirect('/done?e=cao066');
 		}
 
-		if (strtotime($chk['ts_expires']) < $_SERVER['REQUEST_TIME']) {
-			$dbc->query('DELETE FROM auth_hash WHERE id = ?', $chk['id']);
-			_exit_html('<h1>Invalid Token [CAO#028]</h2><p>The link you followed has expired</p>', 400);
-		}
+		// if (strtotime($chk['ts_expires']) < $_SERVER['REQUEST_TIME']) {
+			// $dbc->query('DELETE FROM auth_context_secret WHERE id = ?', $chk['id']);
+			// _exit_html('<h1>Invalid Token [CAO#028]</h2><p>The link you followed has expired</p>', 400);
+		// }
 
-		$data = json_decode($chk['json'], true);
+		$data = json_decode($chk['meta'], true);
 		if (empty($data)) {
-			$dbc->query('DELETE FROM auth_hash WHERE id = ?', $chk['id']);
-			_exit_html('<h1>Invalid Token [CAO#040]</h2><p>The token provided was not valid.</p>', 400);
+			// $dbc->query('DELETE FROM auth_context_secret WHERE id = ?', $chk['id']);
+			return $RES->withRedirect('/done?e=cao077');
 		}
+		// var_dump($data);
 
 		switch ($data['action']) {
 		case 'account-create':
+
 			return $this->accountCreate($RES, $data);
-			break;
+
+		case 'email-verify':
+
+			$arg = [
+				'action' => 'email-verify-save',
+				'contact' => $data['contact'],
+			];
+			$arg = json_encode($arg);
+			$arg = _encrypt($arg, $_SESSION['crypt-key']);
+
+			return $RES->withRedirect('/account/verify?_=' . $arg);
+
 		case 'password-reset':
 			$val = [
 				'contact' => $data['contact']
@@ -87,7 +103,10 @@ class Once extends \OpenTHC\Controller\Base
 			return $RES->withRedirect('/account/password?_=' . $x);
 		}
 
-		_exit_text($data);
+		$data = [];
+		$data['Page']['title'] = 'Error';
+		$RES = $this->_container->view->render($RES, 'page/done.html', $data);
+		return $RES->withStatus(400);
 
 	}
 
@@ -134,10 +153,13 @@ class Once extends \OpenTHC\Controller\Base
 		$val = json_encode($val);
 		$_SESSION['account-create']['password-args'] = _encrypt($val, $_SESSION['crypt-key']);
 
-		return $RES->withRedirect('/auth/done?e=cao073');
+		return $RES->withRedirect('/done?e=cao073');
 
 	}
 
+	/**
+	 * Do the Password Reset Thing
+	 */
 	private function sendPasswordReset($RES)
 	{
 		// _check_recaptcha();
@@ -152,38 +174,34 @@ class Once extends \OpenTHC\Controller\Base
 		$dbc = $this->_container->DB;
 		$Contact = $dbc->fetchRow('SELECT id, username FROM auth_contact WHERE username = ?', [ $username ]);
 		if (empty($Contact)) {
-			Session::flash('info', 'Please Create an Account to use OpenTHC');
-			return $RES->withRedirect('/auth/create?e=cao063');
+			return $RES->withRedirect('/done?e=cao100');
 		}
 
-		// if ($AU->hasFlag(Contact::FLAG_DISABLED)) {
-		// 	Session::flash('fail', 'There is some issue with your account, please contact support [CAR#032]');
-		// 	Radix::redirect();
-		// }
 
 		// Generate Authentication Hash
-		$ah = [];
-		$ah['json'] = json_encode(array(
+		$acs = [];
+		$acs['id'] = \Edoceo\Radix\ULID::generate();
+		$acs['meta'] = json_encode(array(
 			'action' => 'password-reset',
 			'contact' => $Contact,
 			'geoip' => geoip_record_by_name($_SERVER['REMOTE_ADDR']),
 		));
-		$ah['hash'] = sha1(microtime(true) . serialize($ah) . serialize($_SESSION));
-		$ah['id'] = $dbc->insert('auth_hash', $ah);
-		// var_dump($ah);
+		$acs['code'] = base64_encode_url(hash('sha256', openssl_random_pseudo_bytes(256), true));
+		$dbc->insert('auth_context_secret', $acs);
+
 
 		// Use CIC to Send
-		$cic = new \Service_OpenTHC('cic');
+		$cic = new \OpenTHC\Service\OpenTHC('cic');
 		$arg['to'] = $Contact['username'];
 		$arg['file'] = 'sso/password-reset.tpl';
 		$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
 		$arg['data']['mail_subj'] = 'Password Reset Request';
-		$arg['data']['auth_hash'] = $ah['hash'];
+		$arg['data']['auth_hash'] = $acs['code'];
 
 		$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
 		// var_dump($res);
 
-		return $RES->withRedirect('/auth/done?e=cao100');
+		return $RES->withRedirect('/done?e=cao100');
 
 	}
 }

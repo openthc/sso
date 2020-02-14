@@ -78,10 +78,12 @@ $app->group('/account', function() {
 	$this->post('/password', 'App\Controller\Account\Password:post');
 
 	$this->get('/verify', 'App\Controller\Account\Verify');
+	$this->post('/verify', 'App\Controller\Account\Verify:post');
 
 })->add('OpenTHC\Middleware\Session');
 
-$app->get('/done', 'App\Controller\Done');
+$app->get('/done', 'App\Controller\Done')
+	->add('OpenTHC\Middleware\Session');;
 
 
 // Custom Middleware?

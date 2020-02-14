@@ -40,10 +40,9 @@ class Permit extends \OpenTHC\Controller\Base
 			'scope' => $_GET['scope'],
 		));
 
-		$hash = hash('sha256', $data . openssl_random_pseudo_bytes(256), true);
-		$hash = base64_encode_url($hash);
+		$hash = base64_encode_url(hash('sha256', openssl_random_pseudo_bytes(256), true));
 
-		$sql = 'INSERT INTO auth_hash (ts_expires, hash, json) VALUES (?, ?, ?)';
+		$sql = 'INSERT INTO auth_context_secret (ts_expires, hash, json) VALUES (?, ?, ?)';
 		$arg = array(
 			strftime('%Y-%m-%d %H:%M:%S', $_SERVER['REQUEST_TIME'] + 300),
 			sprintf('oauth-authorize-code:%s', $hash),

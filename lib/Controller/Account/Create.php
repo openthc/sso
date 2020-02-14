@@ -25,12 +25,20 @@ class Create extends \OpenTHC\Controller\Base
 			$_SESSION['account-create']['origin'] = $_GET['origin'];
 		}
 
+		// Ask for Region first!
 		if (empty($_SESSION['account-create']['region'])) {
 			$file = 'page/account/create-0.html';
 			return $this->_container->view->render($RES, $file, $data);
 		}
 
 		$data['region'] = $_SESSION['account-create']['region'];
+
+
+		switch ($_GET['e']) {
+		case 'cac035':
+			// Invalid Email Address
+			break;
+		}
 
 		$cfg = \OpenTHC\Config::get('google');
 		$data['Google']['recaptcha_public'] = $cfg['recaptcha-public'];
@@ -57,8 +65,8 @@ class Create extends \OpenTHC\Controller\Base
 	private function _create_account($RES)
 	{
 		$_POST['email'] = strtolower(trim($_POST['email']));
-		$email = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
-		if (empty($email)) {
+		$_POST['email'] = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
+		if (empty($_POST['email'])) {
 			return $RES->withRedirect('/account/create?e=cac035');
 		}
 
@@ -84,7 +92,7 @@ class Create extends \OpenTHC\Controller\Base
 
 		// Contact
 		$sql = 'SELECT * FROM auth_contact WHERE username = ?';
-		$arg = array($email);
+		$arg = array($_POST['email']);
 		$res = $dbc->fetchRow($sql, $arg);
 		if (!empty($res)) {
 			return $RES->withRedirect('/done?e=cac065');
@@ -109,33 +117,37 @@ class Create extends \OpenTHC\Controller\Base
 		$company_id = $dbc->insert('company', [
 			'id' => \Edoceo\Radix\ULID::generate(),
 			'cre' => $_SESSION['account-create']['region'],
+			'name' => $_POST['license-name'],
 			'stat' => 100,
 			'type' => 'X',
-			'name' => $_POST['license-name'],
+			'hash' => '-',
 		]);
 
 		$dbc->insert('auth_company', [
 			'id' => $company_id,
+			'code' => '-',
 		]);
 
 		// Contact Table
 		$contact_id = $dbc->insert('contact', [
 			'id' => \Edoceo\Radix\ULID::generate(),
 			'name' => $_POST['contact-name'],
-			'email' => $email,
-			'phone' => $phone,
+			'email' => $_POST['email'],
+			'phone' => $_POST['phone'],
+			'hash' => '-',
 		]);
 
 		$contact_id = $dbc->insert('auth_contact', array(
 			'id' => $contact_id,
 			'company_id' => $company_id,
-			'username' => $email,
+			'username' => $_POST['email'],
 			'password' => 'NONE:' . sha1(json_encode($_SERVER).json_encode($_POST)),
 		));
 
 		// Auth Hash Link
 		$ah = [];
-		$ah['json'] = json_encode(array(
+		$ah['id'] = \Edoceo\Radix\ULID::generate();
+		$ah['meta'] = json_encode(array(
 			'action' => 'account-create',
 			'account' => [
 				'company' => [
@@ -149,24 +161,24 @@ class Create extends \OpenTHC\Controller\Base
 				'contact' => [
 					'id' => $contact_id,
 					'name' => $_POST['contact-name'],
-					'email' => $email,
+					'email' => $_POST['email'],
 					'phone' => $_POST['phone'],
 				]
 			],
 			'geoip' => geoip_record_by_name($_SERVER['REMOTE_ADDR']),
 		));
-		$ah['hash'] = sha1(microtime(true) . serialize($ah) . serialize($_SESSION));
-		$ah['id'] = $dbc->insert('auth_hash', $ah);
+		$ah['code'] = base64_encode_url(hash('sha256', openssl_random_pseudo_bytes(256), true));
+		$dbc->insert('auth_context_secret', $ah);
 
 		$arg = [];
-		$arg['to'] = $email;
+		$arg['to'] = $_POST['email'];
 		$arg['file'] = 'sso/account-create.tpl';
 		$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
 		$arg['data']['mail_subj'] = 'Account Confirmation';
-		$arg['data']['account_create_hash'] = $ah['hash'];
-		$arg['data']['sign_up_hash'] = $ah['hash']; // @deprecated
+		$arg['data']['once_hash'] = $ah['code'];
+		$arg['data']['sign_up_hash'] = $ah['code'];
 
-		$cic = new \App\Service\OpenTHC('cic');
+		$cic = new \OpenTHC\Service\OpenTHC('cic');
 		$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
 
 		return $RES->withRedirect('/done?e=cac111');

@@ -180,7 +180,7 @@ class Verify extends \OpenTHC\Controller\Base
 		$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
 		$arg['data']['mail_subj'] = 'Email Verification';
 		$arg['data']['once_code'] = $acs['code'];
-		$cic = new \App\Service\OpenTHC('cic');
+		$cic = new \OpenTHC\Service\OpenTHC('cic');
 		$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
 		if (200 == $res['code']) {
 			$data = [];
@@ -202,7 +202,7 @@ class Verify extends \OpenTHC\Controller\Base
 		$arg = [];
 		$arg['target'] = $_SESSION['phone-verify-e164'];
 		$arg['body'] = sprintf('Account Verification Code: %s', $_SESSION['phone-verify-code']);
-		$cic = new \App\Service\OpenTHC('cic');
+		$cic = new \OpenTHC\Service\OpenTHC('cic');
 		$res = $cic->post('/api/v2018/phone/send', [ 'form_params' => $arg ]);
 		if (200 == $res['code']) {
 			return $RES->withRedirect($_SERVER['HTTP_REFERER']);

@@ -15,9 +15,6 @@ class Open extends \OpenTHC\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{
-		unset($_SESSION['sign-in']); // @deprecated
-		unset($_SESSION['sign-up']); // @deprecated
-
 		$file = 'page/auth/open.html';
 		$data = [];
 		$data['Page'] = [ 'title' => 'Sign In' ];
@@ -59,6 +56,9 @@ class Open extends \OpenTHC\Controller\Base
 
 	}
 
+	/**
+	 * Auth Open POST Handler
+	 */
 	function post($REQ, $RES, $ARG)
 	{
 		$username = strtolower(trim($_POST['username']));
@@ -67,8 +67,10 @@ class Open extends \OpenTHC\Controller\Base
 			return $RES->withRedirect('/auth/open?e=cao049');
 		}
 
+		$_SESSION['email'] = $username;
+
 		$password = trim($_POST['password']);
-		if (empty($password) || (strlen($password) < 6) || (strlen($password) > 60)) {
+		if (empty($password) || (strlen($password) < 8) || (strlen($password) > 60)) {
 			return $RES->withRedirect('/auth/open?e=cao069');
 		}
 
@@ -80,18 +82,15 @@ class Open extends \OpenTHC\Controller\Base
 			$sql = 'SELECT id, username, password FROM auth_contact WHERE username = :un';
 			$arg = [ ':un' => $username ];
 			$chk = $dbc->fetchRow($sql, $arg);
-			if (empty($chk['id'])) {
-				Session::flash('info', 'Please Create an Account to use OpenTHC');
-				return $RES->withRedirect('/account/create?e=cao063');
-			}
 
-			// Check
-			if (!password_verify($password, $chk['password'])) {
-				$_SESSION['show-reset'] = true;
+			if (empty($chk['id'])) {
 				return $RES->withRedirect('/auth/open?e=cao093');
 			}
 
-			$_SESSION['uid'] = $chk['id'];
+			if (!password_verify($password, $chk['password'])) {
+				return $RES->withRedirect('/auth/open?e=cao093');
+			}
+
 			$_SESSION['Contact'] = [
 				'id' => $chk['id'],
 				'username' => $chk['username'],
@@ -106,6 +105,10 @@ class Open extends \OpenTHC\Controller\Base
 			break;
 		}
 
+		$data = [];
+		$data['Page']['title'] = 'Error';
+		$RES = $this->_container->view->render($RES, 'page/done.html', $data);
 		return $RES->withStatus(400);
+
 	}
 }
