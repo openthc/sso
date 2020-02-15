@@ -13,7 +13,8 @@ class Permit extends \OpenTHC\Controller\Base
 			_exit_text('COP#010 Invalid Input', 400);
 		}
 
-		$x = json_decode(_decrypt($_GET['_']), true);
+		$x = _decrypt($_GET['_'], $_SESSION['crypt-key']);
+		$x = json_decode($x, true);
 		if (empty($x)) {
 			_exit_text('COP#015 Invalid Input', 400);
 		}
@@ -94,7 +95,7 @@ class Permit extends \OpenTHC\Controller\Base
 			$sql = 'INSERT INTO auth_program_contact (auth_program_id, auth_contact_id) VALUES (:a, :u)';
 			$arg = array(
 				':a' => $Auth_Program['id'],
-				':u' => $_SESSION['uid'],
+				':u' => $_SESSION['Contact']['id'],
 				// 'expires_at'
 			);
 			$res = $this->_container->DB->query($sql, $arg);

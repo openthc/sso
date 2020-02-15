@@ -5,8 +5,6 @@
 
 namespace App\Controller\oAuth2;
 
-use \Edoceo\Radix\DB\SQL;
-
 class Authorize extends \OpenTHC\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
@@ -37,11 +35,11 @@ class Authorize extends \OpenTHC\Controller\Base
 
 
 		// Permit Link
-		$link_crypt = _encrypt(json_encode($_GET));
+		$link_crypt = _encrypt(json_encode($_GET), $_SESSION['crypt-key']);
 
 		// Did you already Authorize this Application?
 		$sql = 'SELECT count(auth_program_id) FROM auth_program_contact WHERE auth_program_id = ? AND auth_contact_id = ? AND expires_at > now()';
-		$arg = array($Auth_Program['id'], $_SESSION['uid']);
+		$arg = array($Auth_Program['id'], $_SESSION['Contact']['id']);
 		$chk = $dbc->fetchOne($sql, $arg);
 		if (!empty($chk)) {
 			// return $RES->withRedirect('/oauth2/permit?_=' . $link_crypt);
@@ -49,7 +47,7 @@ class Authorize extends \OpenTHC\Controller\Base
 
 		// Permit & Remember
 		$_GET['auth-commit'] = true;
-		$link_crypt_save = _encrypt(json_encode($_GET));
+		$link_crypt_save = _encrypt(json_encode($_GET), $_SESSION['crypt-key']);
 
 		$data = [];
 		$data['Page'] = [ 'title' => 'Authorize' ];

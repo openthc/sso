@@ -60,7 +60,6 @@ class Init extends \OpenTHC\Controller\Base
 			_exit_html('Unexpected Session State<br>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support [CAI#051]', 400);
 		}
 		$Company = $chk;
-		$_SESSION['gid'] = $Company['id'];
 
 		if (!empty($_SESSION['return-link'])) {
 			$ret = $_SESSION['return-link'];

@@ -13,7 +13,8 @@ class Reject extends \OpenTHC\Controller\Base
 			_exit_text('COP#010 Invalid Input', 400);
 		}
 
-		$x = json_decode(_decrypt($_GET['_']), true);
+		$x = _decrypt($_GET['_'], $_SESSION['crypt-key']);
+		$x = json_decode($x, true);
 		if (empty($x)) {
 			_exit_text('COP#015 Invalid Input', 400);
 		}
