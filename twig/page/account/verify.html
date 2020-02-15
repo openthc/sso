@@ -61,6 +61,10 @@
 	</div>
 	</form>
 
+	{% if verify_phone_warn %}
+		<div class="alert alert-warning">{{ verify_phone_warn }}</div>
+	{% endif %}
+
 	{% if verify_phone_code %}
 	<form method="post">
 	<div class="form-group">

@@ -20,35 +20,34 @@ class Profile extends \OpenTHC\Controller\Base
 		if (empty($auth)) {
 			return $RES->withJSON([
 				'meta' => [ 'detail' => 'Invalid Request [COP#022]' ]
-			], 400);
+			], 403);
 		}
 
 		// Find Bearer Token
-		$sql = 'SELECT * FROM auth_hash WHERE hash = ?';
+		$sql = 'SELECT id, meta FROM auth_context_secret WHERE code = ?';
 		$arg = array(sprintf('oauth-token:%s', $auth));
 		$tok = $dbc->fetchRow($sql, $arg);
 		if (empty($tok)) {
 			return $RES->withJSON([
-				'error' => 'Invalid Token [COP#030]'
+				'meta' => ['detail' => 'Invalid Token [COP#030]' ]
 			], 400);
 		}
 
 		// Find Bearer Token
-		$tok['json'] = json_decode($tok['json'], true);
+		$tok['meta'] = json_decode($tok['meta'], true);
 
-		$Profile['Token'] = $tok['json'];
-		$Profile['scope'] = $tok['json']['scope'];
+		$Profile['Token'] = $tok['meta'];
+		$Profile['scope'] = $tok['meta']['scope'];
 
-
-		// AppUser
+		// Contact/Auth
 		$sql = 'SELECT * FROM auth_contact WHERE id = ?';
-		$arg = array($tok['json']['contact_id']);
+		$arg = array($tok['meta']['contact_id']);
 		$AppUser = $dbc->fetchRow($sql, $arg);
 		// echo '<pre>';
 		// var_dump($AppUser);
 		if (empty($AppUser['id'])) {
 			return $RES->withJSON([
-				'error' => 'Invalid Token [COP#033]',
+				'meta' => ['detail' => 'Invalid Token [COP#033]' ],
 			], 400);
 		}
 

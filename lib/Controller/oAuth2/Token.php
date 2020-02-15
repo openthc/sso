@@ -14,11 +14,6 @@ class Token extends \OpenTHC\Controller\Base
 	{
 		$this->_cfg = \OpenTHC\Config::get('openthc_sso');
 
-		header('Content-Type: application/json');
-		header('Cache-Control: no-store');
-		header('Pragma: no-cache');
-		header('X-Frame-Options: DENY');
-
 		$RES = $this->verifyRequest($REQ, $RES);
 		if (200 != $RES->getStatusCode()) {
 			return $RES;
@@ -39,7 +34,7 @@ class Token extends \OpenTHC\Controller\Base
 
 		$hash = base64_encode_url(hash('sha256', openssl_random_pseudo_bytes(256), true));
 
-		$sql = 'INSERT INTO auth_context_secret (ts_expires, hash, json) VALUES (?, ?, ?)';
+		$sql = 'INSERT INTO auth_context_secret (expires_at, code, meta) VALUES (?, ?, ?)';
 		$arg = array(
 			strftime('%Y-%m-%d %H:%M:%S', $_SERVER['REQUEST_TIME'] + 86400),
 			sprintf('oauth-token:%s', $hash),
@@ -103,19 +98,19 @@ class Token extends \OpenTHC\Controller\Base
 	{
 		$dbc = $this->_container->DB;
 
-		$sql = 'SELECT * FROM auth_hash WHERE hash = ?';
+		$sql = 'SELECT * FROM auth_context_secret WHERE code = ?';
 		$arg = array(sprintf('oauth-authorize-code:%s', $_POST['code']));
 		$res = $dbc->fetchRow($sql, $arg);
 
 		// And Delete it
-		$sql = 'DELETE FROM auth_hash WHERE hash = ?';
+		$sql = 'DELETE FROM auth_context_secret WHERE code = ?';
 		$arg = array(sprintf('oauth-authorize-code:%s', $_POST['code']));
 		$dbc->query($sql, $arg);
 
 		if (empty($res)) {
 			return $this->makeError($RES, 'access_denied', 'Invalid Code [COT#113]', 401);
 		}
-		$tok = json_decode($res['json'], true);
+		$tok = json_decode($res['meta'], true);
 
 		if (empty($tok['contact_id'])) {
 			return $this->makeError($RES, 'access_denied', 'Invalid Token Data [COT#118]', 401);
