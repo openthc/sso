@@ -12,6 +12,7 @@ class Profile extends \OpenTHC\Controller\Base
 		$dbc = $this->_container->DB;
 
 		$Profile = array(
+			'scope' => [],
 			'Contact' => [],
 			'Company' => [],
 		);
@@ -36,30 +37,27 @@ class Profile extends \OpenTHC\Controller\Base
 		// Find Bearer Token
 		$tok['meta'] = json_decode($tok['meta'], true);
 
-		$Profile['Token'] = $tok['meta'];
-		$Profile['scope'] = $tok['meta']['scope'];
-
 		// Contact/Auth
 		$sql = 'SELECT * FROM auth_contact WHERE id = ?';
 		$arg = array($tok['meta']['contact_id']);
-		$AppUser = $dbc->fetchRow($sql, $arg);
-		// echo '<pre>';
-		// var_dump($AppUser);
-		if (empty($AppUser['id'])) {
+		$Contact = $dbc->fetchRow($sql, $arg);
+		if (empty($Contact['id'])) {
 			return $RES->withJSON([
 				'meta' => ['detail' => 'Invalid Token [COP#033]' ],
 			], 400);
 		}
 
-		$Profile['Contact']['id'] = $AppUser['id'];
-		$Profile['Contact']['id_int8'] = $AppUser['id'];
-		$Profile['Contact']['id_ulid'] = $AppUser['contact_id'];
-		$Profile['Contact']['fullname'] = $AppUser['fullname'];
-		$Profile['Contact']['username'] = $AppUser['username'];
+		$Profile['scope'] = explode(' ', $Contact['scope_permit']);
+
+		$Profile['Contact']['id'] = $Contact['id'];
+		$Profile['Contact']['id_int8'] = $Contact['id'];
+		$Profile['Contact']['id_ulid'] = $Contact['contact_id'];
+		$Profile['Contact']['fullname'] = $Contact['fullname'];
+		$Profile['Contact']['username'] = $Contact['username'];
 
 		// Contact
 		$sql = 'SELECT * FROM contact WHERE id = ?';
-		$arg = array($AppUser['contact_id']);
+		$arg = array($Contact['contact_id']);
 		$res = $dbc->fetchRow($sql, $arg);
 		if (!empty($res['email'])) {
 			$Profile['Contact']['email'] = true;
@@ -69,8 +67,8 @@ class Profile extends \OpenTHC\Controller\Base
 		}
 
 		// Company
-		$sql = 'SELECT * FROM company WHERE id = ?';
-		$arg = array($AppUser['company_id']);
+		$sql = 'SELECT id,guid,name,type FROM company WHERE id = ?';
+		$arg = array($Contact['company_id']);
 		$res = $dbc->fetchRow($sql, $arg);
 		if (!empty($res['id'])) {
 			$Profile['Company']['id'] = $res['id'];
