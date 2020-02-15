@@ -16,7 +16,7 @@ class Profile extends \OpenTHC\Controller\Base
 			'Company' => [],
 		);
 
-		$auth = preg_match('/^Bearer (\w+)$/', $_SERVER['HTTP_AUTHORIZATION'], $m) ? $m[1] : null;
+		$auth = preg_match('/^Bearer ([\w\-]+)$/', $_SERVER['HTTP_AUTHORIZATION'], $m) ? $m[1] : null;
 		if (empty($auth)) {
 			return $RES->withJSON([
 				'meta' => [ 'detail' => 'Invalid Request [COP#022]' ]
