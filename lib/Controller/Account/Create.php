@@ -91,7 +91,7 @@ class Create extends \OpenTHC\Controller\Base
 		$dbc = $this->_container->DB;
 
 		// Contact
-		$sql = 'SELECT * FROM auth_contact WHERE username = ?';
+		$sql = 'SELECT id, username FROM auth_contact WHERE username = ?';
 		$arg = array($_POST['email']);
 		$res = $dbc->fetchRow($sql, $arg);
 		if (!empty($res)) {
@@ -115,7 +115,7 @@ class Create extends \OpenTHC\Controller\Base
 		}
 
 		$company_id = $dbc->insert('company', [
-			'id' => \Edoceo\Radix\ULID::generate(),
+			'id' => \Edoceo\Radix\ULID::create(),
 			'cre' => $_SESSION['account-create']['region'],
 			'name' => $_POST['license-name'],
 			'stat' => 100,
@@ -130,7 +130,7 @@ class Create extends \OpenTHC\Controller\Base
 
 		// Contact Table
 		$contact_id = $dbc->insert('contact', [
-			'id' => \Edoceo\Radix\ULID::generate(),
+			'id' => \Edoceo\Radix\ULID::create(),
 			'name' => $_POST['contact-name'],
 			'email' => $_POST['email'],
 			'phone' => $_POST['phone'],
@@ -145,9 +145,9 @@ class Create extends \OpenTHC\Controller\Base
 		));
 
 		// Auth Hash Link
-		$ah = [];
-		$ah['id'] = \Edoceo\Radix\ULID::generate();
-		$ah['meta'] = json_encode(array(
+		$acs = [];
+		$acs['id'] = \Edoceo\Radix\ULID::create();
+		$acs['meta'] = json_encode(array(
 			'action' => 'account-create',
 			'account' => [
 				'company' => [
@@ -165,18 +165,19 @@ class Create extends \OpenTHC\Controller\Base
 					'phone' => $_POST['phone'],
 				]
 			],
+			'origin' => $_SESSION['account-create']['origin'],
 			'geoip' => geoip_record_by_name($_SERVER['REMOTE_ADDR']),
 		));
-		$ah['code'] = base64_encode_url(hash('sha256', openssl_random_pseudo_bytes(256), true));
-		$dbc->insert('auth_context_secret', $ah);
+		$acs['code'] = base64_encode_url(hash('sha256', openssl_random_pseudo_bytes(256), true));
+		$dbc->insert('auth_context_secret', $acs);
 
 		$arg = [];
 		$arg['to'] = $_POST['email'];
 		$arg['file'] = 'sso/account-create.tpl';
 		$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
 		$arg['data']['mail_subj'] = 'Account Confirmation';
-		$arg['data']['once_hash'] = $ah['code'];
-		$arg['data']['sign_up_hash'] = $ah['code'];
+		$arg['data']['once_hash'] = $acs['code'];
+		$arg['data']['sign_up_hash'] = $acs['code']; // @deprecated
 
 		$cic = new \OpenTHC\Service\OpenTHC('cic');
 		$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);

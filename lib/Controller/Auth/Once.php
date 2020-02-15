@@ -180,7 +180,7 @@ class Once extends \OpenTHC\Controller\Base
 
 		// Generate Authentication Hash
 		$acs = [];
-		$acs['id'] = \Edoceo\Radix\ULID::generate();
+		$acs['id'] = \Edoceo\Radix\ULID::create();
 		$acs['meta'] = json_encode(array(
 			'action' => 'password-reset',
 			'contact' => $Contact,
@@ -196,7 +196,8 @@ class Once extends \OpenTHC\Controller\Base
 		$arg['file'] = 'sso/password-reset.tpl';
 		$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
 		$arg['data']['mail_subj'] = 'Password Reset Request';
-		$arg['data']['auth_hash'] = $acs['code'];
+		$arg['data']['once_hash'] = $acs['code'];
+		$arg['data']['auth_hash'] = $acs['code']; // @deprecated
 
 		$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
 		// var_dump($res);

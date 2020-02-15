@@ -11,9 +11,9 @@ class Authorize extends \OpenTHC\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{
-		header('X-Frame-Options: DENY');
-
 		$this->verifyRequest();
+
+		$dbc = $this->_container->DB;
 
 		// Good Session?
 		$RES = $this->verifySession($RES);
@@ -22,7 +22,7 @@ class Authorize extends \OpenTHC\Controller\Base
 		}
 
 		// Validate Program
-		$Auth_Program = $this->_container->DB->fetchRow('SELECT id,name,code,hash,scope_list FROM auth_program WHERE code = ?', array($_GET['client_id']));
+		$Auth_Program = $dbc->fetchRow('SELECT id,name,code,hash,scope_list FROM auth_program WHERE code = ?', array($_GET['client_id']));
 		if (empty($Auth_Program['id'])) {
 			_exit_json(array(
 				'error' => 'invalid_client',
@@ -42,7 +42,7 @@ class Authorize extends \OpenTHC\Controller\Base
 		// Did you already Authorize this Application?
 		$sql = 'SELECT count(auth_program_id) FROM auth_program_contact WHERE auth_program_id = ? AND auth_contact_id = ? AND expires_at > now()';
 		$arg = array($Auth_Program['id'], $_SESSION['uid']);
-		$chk = SQL::fetch_one($sql, $arg);
+		$chk = $dbc->fetchOne($sql, $arg);
 		if (!empty($chk)) {
 			// return $RES->withRedirect('/oauth2/permit?_=' . $link_crypt);
 		}
@@ -162,7 +162,7 @@ class Authorize extends \OpenTHC\Controller\Base
 	function verifySession($RES)
 	{
 		// If no session then sign-in and come back here
-		if (empty($_SESSION['uid'])) {
+		if (empty($_SESSION['Contact']['id'])) {
 
 			$ret = sprintf('https://%s/auth/open?', $_SERVER['SERVER_NAME']);
 			$ret.= http_build_query([

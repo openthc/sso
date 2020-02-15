@@ -52,6 +52,8 @@ class Verify extends \OpenTHC\Controller\Base
 			$data['verify_phone_code'] = true;
 		}
 
+		$data['verify_phone_warn'] = $_SESSION['phone-verify-warn'];
+
 		return $this->_container->view->render($RES, $file, $data);
 
 	}
@@ -185,8 +187,7 @@ class Verify extends \OpenTHC\Controller\Base
 		if (200 == $res['code']) {
 			$data = [];
 			$data['Page']['title'] = 'Email Verification';
-			// $data['info'] = 'Check Your Inbox';
-			// $data['foot'] = '<div class="r"><a class="btn btn-outline-primary" href="/auth/init">Continue <i class="icon icon-arrow	-right"></i></a></div>';
+			$data['info'] = 'Check Your Inbox';
 			return $this->_container->view->render($RES, 'page/done.html', $data);
 		}
 
@@ -195,9 +196,10 @@ class Verify extends \OpenTHC\Controller\Base
 
 	function phoneVerifySend($RES, $ARG)
 	{
+		unset($_SESSION['phone-verify-warn']);
 		$_SESSION['phone-verify-e164'] = _phone_e164($_POST['contact-phone']);
 
-		$_SESSION['phone-verify-code'] = substr(str_shuffle('ABCDEFGHJKMNPQRSTUVWXYZ23456789'), 0, 8);
+		$_SESSION['phone-verify-code'] = substr(str_shuffle('ABCDEFGHJKMNPQRSTUVWXYZ23456789'), 0, 6);
 
 		$arg = [];
 		$arg['target'] = $_SESSION['phone-verify-e164'];
@@ -208,6 +210,10 @@ class Verify extends \OpenTHC\Controller\Base
 			return $RES->withRedirect($_SERVER['HTTP_REFERER']);
 		}
 
-		_exit_text('Failure in SMS', 500);
+		$_SESSION['phone-verify-code'] = null;
+		$_SESSION['phone-verify-e164'] = null;
+		$_SESSION['phone-verify-warn'] = 'Double check this number and try again';
+		return $RES->withRedirect($_SERVER['HTTP_REFERER']);
+
 	}
 }

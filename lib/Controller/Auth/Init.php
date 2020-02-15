@@ -73,7 +73,7 @@ class Init extends \OpenTHC\Controller\Base
 			$hash = base64_encode_url(hash('sha256', openssl_random_pseudo_bytes(256), true));
 			$data = json_encode([
 				'contact' => [
-					'id' => $_SESSION['uid'],
+					'id' => $Contact['id'],
 					'username' => $Contact['username'],
 					'password' => $Contact['password'],
 				],

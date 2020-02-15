@@ -36,13 +36,13 @@ class Permit extends \OpenTHC\Controller\Base
 		// Save the Authorization Code for the remote-application to callback with
 		$data = json_encode(array(
 			'client_id' => $_GET['client_id'],
-			'contact_id' => $_SESSION['uid'],
+			'contact_id' => $_SESSION['Contact']['id'],
 			'scope' => $_GET['scope'],
 		));
 
 		$hash = base64_encode_url(hash('sha256', openssl_random_pseudo_bytes(256), true));
 
-		$sql = 'INSERT INTO auth_context_secret (ts_expires, hash, json) VALUES (?, ?, ?)';
+		$sql = 'INSERT INTO auth_context_secret (expires_at, code, meta) VALUES (?, ?, ?)';
 		$arg = array(
 			strftime('%Y-%m-%d %H:%M:%S', $_SERVER['REQUEST_TIME'] + 300),
 			sprintf('oauth-authorize-code:%s', $hash),
