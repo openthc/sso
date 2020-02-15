@@ -19,10 +19,6 @@ class Once extends \OpenTHC\Controller\Base
 			_exit_html('<h1>Invalid Request [CAO#020]</h1>', 400);
 		}
 
-		if (empty($_SESSION['crypt-key'])) {
-			$_SESSION['crypt-key'] = sha1(openssl_random_pseudo_bytes(256));
-		}
-
 		// Well known actions
 		switch ($_GET['a']) {
 		case 'password-reset':
