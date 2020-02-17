@@ -178,7 +178,7 @@ class Verify extends \OpenTHC\Controller\Base
 
 		$arg = [];
 		$arg['to'] = $ARG['contact']['email'];
-		$arg['file'] = 'sso/email-verify.tpl';
+		$arg['file'] = 'sso/contact-email-verify.tpl';
 		$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
 		$arg['data']['mail_subj'] = 'Email Verification';
 		$arg['data']['once_code'] = $acs['code'];

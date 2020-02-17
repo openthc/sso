@@ -189,7 +189,7 @@ class Once extends \OpenTHC\Controller\Base
 		// Use CIC to Send
 		$cic = new \OpenTHC\Service\OpenTHC('cic');
 		$arg['to'] = $Contact['username'];
-		$arg['file'] = 'sso/password-reset.tpl';
+		$arg['file'] = 'sso/contact-password-reset.tpl';
 		$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
 		$arg['data']['mail_subj'] = 'Password Reset Request';
 		$arg['data']['once_hash'] = $acs['code'];
