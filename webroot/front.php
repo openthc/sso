@@ -75,7 +75,7 @@ $app->group('/account', function() {
 	$this->post('/create', 'App\Controller\Account\Create:post');
 
 	$this->get('/password', 'App\Controller\Account\Password');
-	$this->post('/password', 'App\Controller\Account\Password:post');
+	$this->post('/password', 'App\Controller\Account\Password:post')->setName('account/password/update');
 
 	$this->get('/verify', 'App\Controller\Account\Verify');
 	$this->post('/verify', 'App\Controller\Account\Verify:post');

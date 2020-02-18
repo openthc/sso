@@ -80,9 +80,11 @@ class Password extends \OpenTHC\Controller\Base
 			$dbc = $this->_container->DB;
 			$dbc->query($sql, $arg);
 
-			$RES = $RES->withAttribute('contact-id', $ARG['contact']['id']);
-			$RES = $RES->withAttribute('contact-username', $ARG['contact']['username']);
-			$RES = $RES->withAttribute('contact-password-hash', $new_password_hash);
+			$RES = $RES->withAttribute('Contact', [
+				'id' => $ARG['contact']['id'],
+				'username' => $ARG['contact']['username'],
+				'password' => $new_password_hash,
+			]);
 
 			return $RES->withRedirect('/auth/open?e=cap080');
 
