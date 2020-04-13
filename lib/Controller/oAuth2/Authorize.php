@@ -111,7 +111,7 @@ class Authorize extends \OpenTHC\Controller\Base
 	 */
 	function verifyScope()
 	{
-		$res = $this->_container->DB->fetchAll('SELECT code FROM auth_scope');
+		$res = $this->_container->DB->fetchAll('SELECT code FROM auth_context');
 		$scope_list_all = array_reduce($res, function($ret, $cur) {
 			$ret[] = $cur['code'];
 			return $ret;
