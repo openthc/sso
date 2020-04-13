@@ -6,6 +6,9 @@ INSERT INTO auth_company (id, name) VALUES ('019KAGVSC05RHV4QAS76VPV6J7', '-open
 INSERT INTO auth_contact (id, username, password) values ('019KAGVX9MQRRV9H0G9N3Q9FMC', 'root@openthc.dev', ('LOCK:' || md5(random()::text)::text));
 INSERT INTO auth_company_contact (company_id, contact_id) VALUES ('019KAGVSC05RHV4QAS76VPV6J7', '019KAGVX9MQRRV9H0G9N3Q9FMC');
 
+INSERT INTO company (id, name) VALUES ('019KAGVSC05RHV4QAS76VPV6J7', '-openthc-system-');
+INSERT INTO contact (id, name, email, phone) VALUES ('019KAGVX9MQRRV9H0G9N3Q9FMC', '-openthc-system-', 'root@openthc.dev', '+18559769333');
+
 
 insert into auth_scope (id, code, name) VALUES (ulid_create(), 'ops', 'OPS');
 insert into auth_scope (id, code, name) VALUES (ulid_create(), 'cic', 'Communications Information Center');

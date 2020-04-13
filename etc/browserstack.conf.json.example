@@ -1,0 +1,15 @@
+{
+  "server": "hub-cloud.browserstack.com",
+  "user": "",
+  "key": "",
+  "capabilities": {
+    "browserstack.debug": true,
+    "project": "OpenTHC/SSO",
+    "name": "PHPUnit/BrowserStack Test Cases"
+  },
+  "environments": [
+    {
+      "browser": "chrome"
+    }
+  ]
+}

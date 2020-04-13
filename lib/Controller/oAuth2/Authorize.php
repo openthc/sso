@@ -148,7 +148,7 @@ class Authorize extends \OpenTHC\Controller\Base
 
 		foreach ($scope_ask as $s) {
 			if (!in_array($s, $scope_may, true)) {
-				_exit_html("Access Denied to Scope '$s' [VOA#131]<br><a href='/auth/shut'>sign-out</a>", 403);
+				_exit_html("Access Denied to Scope '$s' [COA#151]<br><a href='/auth/shut'>sign-out</a>", 403);
 			}
 			$scope_ret[] = $s;
 		}

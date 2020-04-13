@@ -187,7 +187,7 @@ class Once extends \OpenTHC\Controller\Base
 
 
 		// Use CIC to Send
-		$cic = new \OpenTHC\Service\OpenTHC('cic');
+		$arg = [];
 		$arg['to'] = $Contact['username'];
 		$arg['file'] = 'sso/contact-password-reset.tpl';
 		$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
@@ -195,8 +195,12 @@ class Once extends \OpenTHC\Controller\Base
 		$arg['data']['once_hash'] = $acs['code'];
 		$arg['data']['auth_hash'] = $acs['code']; // @deprecated
 
-		$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
-		// var_dump($res);
+		try {
+			$cic = new \OpenTHC\Service\OpenTHC('cic');
+			$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
+		} catch (\Exception $e) {
+			// Ignore
+		}
 
 		return $RES->withRedirect('/done?e=cao100');
 

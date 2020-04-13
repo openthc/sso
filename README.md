@@ -17,23 +17,26 @@ Corporate or Government implementers would extend this SSO to integrate with the
 ## Database
 
 SSO expects to connect to a database following the OpenTHC data models as described in the API.
-An example schema is provided in `etc/sql/`
+An example schema is provided in `etc/sql/` and could/should be executed directly in a new environment.
 
 
 ## Communications
 
 The SSO system doesn't support sending emails or text messages directly.
-An external service must be provided to respond to some simple POST messages, similar to web-hooks
+An external service must be provided to respond to some simple POST messages, similar to web-hooks.
+This is called "CIC", and is configured in `etc/app.ini`, an empty setting disabled this service.
 
 
 ## oAuth2
 
 The oAuth2 interface requires all oAuth2 service requestors to have a Service Client ID.
+These are registered in the *auth_program* table.
 
 
 ## API
 
-An API exists to query Company and Contact information as well the directory of Licenses. See the [OpenTHC API Documentation](https://api.openthc.org/doc/#_authentication) for more information.
+An API exists to query Company and Contact information as well the directory of Licenses.
+See the [OpenTHC API Documentation](https://api.openthc.org/doc/#_authentication) for more information.
 
 
 ## SMS-2FA

@@ -9,7 +9,7 @@ $e0 = error_get_last();
 require_once('../boot.php');
 
 $cfg = [];
-$cfg['debug'] = true;
+// $cfg['debug'] = true;
 $app = new \OpenTHC\App($cfg);
 
 
@@ -21,12 +21,38 @@ $con['DB'] = function() {
 	return new \Edoceo\Radix\DB\SQL($dsn, $cfg['username'], $cfg['password']);
 };
 
-
 // Custom Response Object
 $con['response'] = function() {
 	$RES = new App\Response(200);
 	$RES = $RES->withHeader('content-type', 'text/html; charset=utf-8');
 	return $RES;
+};
+
+// Error Handler
+$con['errorHandler'] = function($c0) {
+
+	return function($REQ, $RES, $ERR) use ($c0) {
+
+		$dump = [];
+		$dump['note'] = $ERR->getMessage();
+		$dump['code'] = $ERR->getCode();
+		$dump['file'] = $ERR->getFile();
+		$dump['line'] = $ERR->getLine();
+		$dump['stack'] = $ERR->getTrace();
+
+		$file = sprintf('/tmp/err%s.json', $_SERVER['UNIQUE_ID']);
+		file_put_contents($file, json_encode($dump));
+
+		$RES = new App\Response(500);
+		$RES = $RES->withJSON([
+			'error' => 'server_error',
+			'error_description' => $dump['note'],
+			'error_uri' => 'https://openthc.com/auth/doc#err051',
+		]);
+
+		return $RES;
+
+	};
 };
 
 

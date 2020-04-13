@@ -179,8 +179,12 @@ class Create extends \OpenTHC\Controller\Base
 		$arg['data']['once_hash'] = $acs['code'];
 		$arg['data']['sign_up_hash'] = $acs['code']; // @deprecated
 
-		$cic = new \OpenTHC\Service\OpenTHC('cic');
-		$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
+		try {
+			$cic = new \OpenTHC\Service\OpenTHC('cic');
+			$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
+		} catch (\Exception $e) {
+			// Ignore
+		}
 
 		return $RES->withRedirect('/done?e=cac111');
 

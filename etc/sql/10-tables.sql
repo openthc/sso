@@ -102,3 +102,17 @@ CREATE TABLE log_event (
 	link character varying(256),
 	meta jsonb
 );
+
+
+CREATE TABLE company (
+	id character varying(32) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
+	name text
+);
+
+CREATE TABLE contact (
+	id character varying(32) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
+	created_at timestamp with time zone DEFAULT now() NOT NULL,
+	name text,
+	email text,
+	phone text
+);

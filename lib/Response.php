@@ -21,11 +21,13 @@ class Response extends \Slim\Http\Response
 		return $obj1;
 	}
 
-	// @todo Use Improved Encoding Options
-	// function withJson($data, $status=null, $encodingOptions=0)
-	// {
-	// 	$RES = $this->withBody(new Body(fopen('php://temp', 'r+')));
-	// 	$response->body->write($json = json_encode($data, $encodingOptions));
-	// }
+	function withJSON($data, $code=null, $flag=null)
+	{
+		if (empty($flag)) {
+			$flag = JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
+		}
+
+		return parent::withJSON($data, $code, $flag);
+	}
 
 }
