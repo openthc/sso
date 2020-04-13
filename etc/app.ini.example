@@ -1,0 +1,69 @@
+;
+; SSO Application Configuration
+;
+
+;
+;
+[database]
+	hostname = "127.0.0.1"
+	database = "openthc"
+	username = "openthc"
+	password = ""
+
+
+;
+;
+[Google]
+	recaptcha-public = ""
+	recaptcha-secret = ""
+
+
+;
+;
+[openthc_app]
+	url = "https://app.openthc.dev"
+	hostname = "app.openthc.dev"
+	client = ""
+	secret = ""
+
+
+;
+;
+[openthc_cic]
+	api_base = "https://cic.openthc.dev/"
+	api_auth = ""
+
+
+;
+;
+[openthc_cre]
+	url = "https://cre.openthc.dev"
+	hostname = "cre.openthc.dev"
+	client = ""
+	secret = ""
+
+
+;
+;
+[openthc_dir]
+	hostname = "dir.openthc.dev"
+	client = ""
+	secret = ""
+
+
+;
+;
+[openthc_lab]
+	url = "https://lab.openthc.dev"
+	hostname = "lab.openthc.dev"
+	client = ""
+	secret = ""
+
+
+;
+;
+[openthc_sso]
+	url = "https://sso.openthc.dev"
+	hostname = "sso.openthc.dev"
+	client = ""
+	secret = ""

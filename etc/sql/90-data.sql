@@ -3,7 +3,8 @@
 --
 
 INSERT INTO auth_company (id, name) VALUES ('019KAGVSC05RHV4QAS76VPV6J7', '-openthc-system-');
-INSERT INTO auth_contact (id, company_id, username, password) values ('019KAGVX9MQRRV9H0G9N3Q9FMC', '019KAGVSC05RHV4QAS76VPV6J7', 'root@openthc.dev', ('LOCK:' || md5(random()::text)::text));
+INSERT INTO auth_contact (id, username, password) values ('019KAGVX9MQRRV9H0G9N3Q9FMC', 'root@openthc.dev', ('LOCK:' || md5(random()::text)::text));
+INSERT INTO auth_company_contact (company_id, contact_id) VALUES ('019KAGVSC05RHV4QAS76VPV6J7', '019KAGVX9MQRRV9H0G9N3Q9FMC');
 
 
 insert into auth_scope (id, code, name) VALUES (ulid_create(), 'ops', 'OPS');

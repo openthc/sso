@@ -1,12 +1,6 @@
 
-ALTER TABLE ONLY auth_contact ADD FOREIGN KEY (company_id) REFERENCES auth_company(id);
-
---
--- Name: auth_company_company auth_company_company_company_id_alpha_fkey; Type: FK CONSTRAINT;
---
-
 ALTER TABLE ONLY auth_company_company
-    ADD CONSTRAINT auth_company_company_company_id_alpha_fkey FOREIGN KEY (company_id_alpha) REFERENCES auth_company(id);
+    ADD CONSTRAINT auth_company_company_company_id_prime_fkey FOREIGN KEY (company_id_prime) REFERENCES auth_company(id);
 
 
 --
