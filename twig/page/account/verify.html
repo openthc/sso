@@ -19,7 +19,7 @@
 					<i class="icon icon-times-circle-o"></i>
 				</div>
 			</div>
-			<input class="form-control" name="contact-email" value="{{ contact_email }}">
+			<input autofocus class="form-control" name="contact-email" value="{{ contact_email }}">
 			<div class="input-group-append">
 				<button class="btn btn-outline-primary" name="a" type="submit" value="email-verify-send">Resend <i class="icon icon-arrow-right"></i></button>
 			</div>
@@ -45,7 +45,7 @@
 					<i class="icon icon-times-circle-o"></i>
 				</div>
 			</div>
-			<input class="form-control" id="contact-phone" inputmode="tel" name="contact-phone" value="{{ contact_phone }}">
+			<input {{ verify_phone_code ?? "autofocus" }} class="form-control" id="contact-phone" inputmode="tel" name="contact-phone" value="{{ contact_phone }}">
 			<div class="input-group-append">
 				<button class="btn btn-outline-primary" name="a" type="submit" value="phone-verify-send">Resend <i class="icon icon-arrow-right"></i></button>
 			</div>
@@ -70,7 +70,7 @@
 	<div class="form-group">
 		<label>Verification Code:</label>
 		<div class="input-group">
-			<input class="form-control" id="phone-verify-code" name="phone-verify-code" value="">
+			<input autofocus class="form-control" id="phone-verify-code" name="phone-verify-code" value="">
 			<div class="input-group-append">
 				<button class="btn btn-outline-primary" name="a" type="submit" value="phone-verify-save">Verify</button>
 			</div>
