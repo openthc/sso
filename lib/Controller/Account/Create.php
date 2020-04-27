@@ -70,6 +70,8 @@ class Create extends \OpenTHC\Controller\Base
 			return $RES->withRedirect('/account/create?e=cac035');
 		}
 
+		$_POST['phone'] = _phone_e164($_POST['phone']);
+
 		// Lookup Company
 		// $dir = new \App\Service\OpenTHC('dir');
 		// $chk = $dir->get('company?q=' . $_POST['company-name']);
@@ -185,6 +187,12 @@ class Create extends \OpenTHC\Controller\Base
 		} catch (\Exception $e) {
 			// Ignore
 		}
+
+		$RES = $RES->withAttribute('Contact', [
+			'id' => $contact_id,
+			'username' => $_POST['email'],
+			'company_name' => $_POST['license-name'],
+		]);
 
 		return $RES->withRedirect('/done?e=cac111');
 

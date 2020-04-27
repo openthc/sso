@@ -22,8 +22,8 @@ class Done extends \OpenTHC\Controller\Base
 				break;
 				case 'cac111':
 					$data['Page']['title'] = 'Account Confirmation';
-					$data['info'] = 'Please check your email to confirm your account';
-					$data['body'] = '<p>We have just sent you an email, with the next steps.<p><p>You will need to confirm your request through a link in that email</p><p>Maybe you want to read more about regulations?</p><a class="btn btn-outline-success" href="https://openthc.com/intro">Introduction to Track and Trace <i class="icon icon-arrow-right"></i></a></div>';
+					$data['info'] = 'Please check your email to confirm your account.';
+					$data['body'] = '<p>We have just sent you an email, with the next steps.<p><p>You will need to confirm your request through a link in that message.</p><p>Maybe you want to read more about regulations?</p><a class="btn btn-outline-success" href="https://openthc.com/intro">Introduction to Track and Trace <i class="icon icon-arrow-right"></i></a></div>';
 				break;
 				case 'cao066':
 				case 'ca0077':
@@ -33,7 +33,7 @@ class Done extends \OpenTHC\Controller\Base
 				case 'cao073':
 					$data['Page']['title'] = 'Account Confirmed';
 					$data['info'] = 'Account Confirmed';
-					$data['body'] = '<p>Thank you, your email has been verified and your account request confirmed.</p><p>Next, you will need to set a password</p>';
+					$data['body'] = '<p>Thank you, your email has been verified and your account request confirmed.</p><p>Next, you will need to set a password.</p>';
 					$data['foot'] = sprintf('<div class="r"><a class="btn btn-outline-success" href="/account/password?_=%s">Set Password <i class="icon icon-arrow-right"></i></a></div>', $_SESSION['account-create']['password-args']);
 				break;
 				case 'cao100':
