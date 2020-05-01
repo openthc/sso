@@ -16,7 +16,7 @@
 			{% if verify_email %}
 			<div class="input-group-prepend">
 				<div class="input-group-text text-danger">
-					<i class="icon icon-times-circle-o"></i>
+					&otimes;
 				</div>
 			</div>
 			<input autofocus class="form-control" name="contact-email" value="{{ contact_email }}">
@@ -26,7 +26,7 @@
 			{% else %}
 				<div class="input-group-prepend">
 					<div class="input-group-text text-success">
-						<i class="icon icon-check-circle-o"></i>
+						&check;
 					</div>
 				</div>
 				<input class="form-control" disabled name="contact-email" value="{{ contact_email }}">
@@ -42,7 +42,7 @@
 			{% if verify_phone %}
 			<div class="input-group-prepend">
 				<div class="input-group-text text-danger">
-					<i class="icon icon-times-circle-o"></i>
+					&otimes;
 				</div>
 			</div>
 			<input {{ verify_phone_code ?? "autofocus" }} class="form-control" id="contact-phone" inputmode="tel" name="contact-phone" value="{{ contact_phone }}">
@@ -52,7 +52,7 @@
 			{% else %}
 				<div class="input-group-prepend">
 					<div class="input-group-text text-success">
-						<i class="icon icon-check-circle-o"></i>
+						&check;
 					</div>
 				</div>
 				<input class="form-control" id="contact-phone" inputmode="tel" name="contact-phone" value="{{ contact_phone }}">
