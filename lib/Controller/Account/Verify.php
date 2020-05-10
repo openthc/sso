@@ -113,7 +113,7 @@ class Verify extends \OpenTHC\Controller\Base
 				$data = [];
 				$data['Page']['title'] = 'Phone Verification';
 				$data['info'] = 'Phone Number has been validated';
-				$data['foot'] = '<div class="r"><a class="btn btn-outline-primary" href="/auth/init">Continue <i class="icon icon-arrow	-right"></i></a></div>';
+				$data['foot'] = '<div class="r"><a class="btn btn-outline-primary" href="/auth/init">Continue <i class="icon icon-arrow-right"></i></a></div>';
 				return $this->_container->view->render($RES, 'page/done.html', $data);
 
 			}
@@ -154,7 +154,7 @@ class Verify extends \OpenTHC\Controller\Base
 		$data = [];
 		$data['Page']['title'] = 'Email Verification';
 		$data['info'] = 'Email address has been validated';
-		$data['foot'] = '<div class="r"><a class="btn btn-outline-primary" href="/auth/init">Continue <i class="icon icon-arrow	-right"></i></a></div>';
+		$data['foot'] = '<div class="r"><a class="btn btn-outline-primary" href="/auth/init">Continue <i class="icon icon-arrow-right"></i></a></div>';
 
 		return $this->_container->view->render($RES, 'page/done.html', $data);
 

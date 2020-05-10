@@ -25,15 +25,6 @@ class Create extends \OpenTHC\Controller\Base
 			$_SESSION['account-create']['origin'] = $_GET['origin'];
 		}
 
-		// Ask for Region first!
-		if (empty($_SESSION['account-create']['region'])) {
-			$file = 'page/account/create-0.html';
-			return $this->_container->view->render($RES, $file, $data);
-		}
-
-		$data['region'] = $_SESSION['account-create']['region'];
-
-
 		switch ($_GET['e']) {
 		case 'cac035':
 			// Invalid Email Address
