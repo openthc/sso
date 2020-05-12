@@ -154,7 +154,11 @@ class Verify extends \OpenTHC\Controller\Base
 		$data = [];
 		$data['Page']['title'] = 'Email Verification';
 		$data['info'] = 'Email address has been validated';
-		$data['foot'] = '<div class="r"><a class="btn btn-outline-primary" href="/auth/init">Continue <i class="icon icon-arrow-right"></i></a></div>';
+		if (empty($_SESSION['Contact'])) {
+			$data['foot'] = '<div class="r"><a class="btn btn-outline-primary" href="/auth/open">Sign In <i class="icon icon-arrow-right"></i></a></div>';
+		} else {
+			$data['foot'] = '<div class="r"><a class="btn btn-outline-primary" href="/auth/init">Continue <i class="icon icon-arrow-right"></i></a></div>';
+		}
 
 		return $this->_container->view->render($RES, 'page/done.html', $data);
 
