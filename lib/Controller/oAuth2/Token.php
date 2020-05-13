@@ -34,12 +34,8 @@ class Token extends \OpenTHC\Controller\Base
 
 		$hash = base64_encode_url(hash('sha256', openssl_random_pseudo_bytes(256), true));
 
-		$sql = 'INSERT INTO auth_context_secret (expires_at, code, meta) VALUES (?, ?, ?)';
-		$arg = array(
-			strftime('%Y-%m-%d %H:%M:%S', $_SERVER['REQUEST_TIME'] + 86400),
-			sprintf('oauth-token:%s', $hash),
-			$data,
-		);
+		$sql = 'INSERT INTO auth_context_token (id, meta) VALUES (?, ?)';
+		$arg = array($hash, $data);
 		$this->_container->DB->query($sql, $arg);
 
 		// Generate Data Response
@@ -98,13 +94,13 @@ class Token extends \OpenTHC\Controller\Base
 	{
 		$dbc = $this->_container->DB;
 
-		$sql = 'SELECT * FROM auth_context_secret WHERE code = ?';
-		$arg = array(sprintf('oauth-authorize-code:%s', $_POST['code']));
+		$sql = 'SELECT * FROM auth_context_token WHERE id = ?';
+		$arg = array($_POST['code']);
 		$res = $dbc->fetchRow($sql, $arg);
 
 		// And Delete it
-		$sql = 'DELETE FROM auth_context_secret WHERE code = ?';
-		$arg = array(sprintf('oauth-authorize-code:%s', $_POST['code']));
+		$sql = 'DELETE FROM auth_context_token WHERE id = ?';
+		$arg = array($_POST['code']);
 		$dbc->query($sql, $arg);
 
 		if (empty($res)) {

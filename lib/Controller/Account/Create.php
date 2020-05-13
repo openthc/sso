@@ -139,7 +139,7 @@ class Create extends \OpenTHC\Controller\Base
 
 		// Auth Hash Link
 		$acs = [];
-		$acs['id'] = \Edoceo\Radix\ULID::create();
+		$acs['id'] = base64_encode_url(hash('sha256', openssl_random_pseudo_bytes(256), true));
 		$acs['meta'] = json_encode(array(
 			'action' => 'account-create',
 			'account' => [
@@ -161,8 +161,7 @@ class Create extends \OpenTHC\Controller\Base
 			'origin' => $_SESSION['account-create']['origin'],
 			'geoip' => geoip_record_by_name($_SERVER['REMOTE_ADDR']),
 		));
-		$acs['code'] = base64_encode_url(hash('sha256', openssl_random_pseudo_bytes(256), true));
-		$dbc->insert('auth_context_secret', $acs);
+		$dbc->insert('auth_context_token', $acs);
 
 		$arg = [];
 		$arg['to'] = $_POST['email'];

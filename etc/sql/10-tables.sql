@@ -68,16 +68,19 @@ CREATE TABLE auth_context (
 );
 
 --
--- Name: auth_hash; Type: TABLE; Schema: public;
+-- Name: auth_context_token; Type: TABLE; Schema: public;
 --
 
-CREATE TABLE auth_context_secret (
-	id character varying(32) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
-	code character varying(128),
+CREATE TABLE auth_context_token (
+	id varchar(64) PRIMARY KEY,
+	created_at timestamp with time zone not null default now(),
+	expires_at timestamp with time zone not null default now() + '60 minutes',
 	meta jsonb
 );
 
-
+--
+-- Name: auth_program_contact; Type: TABLE; Schema: public;
+--
 
 CREATE TABLE auth_program_contact (
 	auth_program_id varchar(32) not null,

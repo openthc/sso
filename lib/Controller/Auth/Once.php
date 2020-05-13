@@ -57,19 +57,19 @@ class Once extends \OpenTHC\Controller\Base
 
 		$dbc = $this->_container->DB;
 
-		$chk = $dbc->fetchRow('SELECT * FROM auth_context_secret WHERE code = ?', $_GET['a']);
+		$chk = $dbc->fetchRow('SELECT * FROM auth_context_token WHERE id = ?', $_GET['a']);
 		if (empty($chk)) {
 			return $RES->withRedirect('/done?e=cao066');
 		}
 
 		// if (strtotime($chk['ts_expires']) < $_SERVER['REQUEST_TIME']) {
-			// $dbc->query('DELETE FROM auth_context_secret WHERE id = ?', $chk['id']);
+			// $dbc->query('DELETE FROM auth_context_token WHERE id = ?', $chk['id']);
 			// _exit_html('<h1>Invalid Token [CAO#028]</h2><p>The link you followed has expired</p>', 400);
 		// }
 
 		$data = json_decode($chk['meta'], true);
 		if (empty($data)) {
-			// $dbc->query('DELETE FROM auth_context_secret WHERE id = ?', $chk['id']);
+			$dbc->query('DELETE FROM auth_context_token WHERE id = ?', $chk['id']);
 			return $RES->withRedirect('/done?e=cao077');
 		}
 		// var_dump($data);
@@ -128,7 +128,7 @@ class Once extends \OpenTHC\Controller\Base
 		$email = $data['account']['contact']['email'];
 		$chk = $dbc->fetchOne('SELECT id FROM auth_contact WHERE username = ?', [ $email ]);
 		if (empty($chk)) {
-			_exit_text('Invalid [CAO#073]');
+			_exit_text('Invalid [CAO#073]', 400);
 		}
 
 		$sql = 'UPDATE auth_contact SET flag = flag | :f1 WHERE id = :pk';
@@ -170,20 +170,19 @@ class Once extends \OpenTHC\Controller\Base
 		$dbc = $this->_container->DB;
 		$Contact = $dbc->fetchRow('SELECT id, username FROM auth_contact WHERE username = ?', [ $username ]);
 		if (empty($Contact)) {
-			return $RES->withRedirect('/done?e=cao100');
+			return $RES->withRedirect('/done?e=cao100&l=173');
 		}
 
 
 		// Generate Authentication Hash
 		$acs = [];
-		$acs['id'] = \Edoceo\Radix\ULID::create();
+		$acs['id'] = base64_encode_url(hash('sha256', openssl_random_pseudo_bytes(256), true));
 		$acs['meta'] = json_encode(array(
 			'action' => 'password-reset',
 			'contact' => $Contact,
 			'geoip' => geoip_record_by_name($_SERVER['REMOTE_ADDR']),
 		));
-		$acs['code'] = base64_encode_url(hash('sha256', openssl_random_pseudo_bytes(256), true));
-		$dbc->insert('auth_context_secret', $acs);
+		$dbc->insert('auth_context_token', $acs);
 
 
 		// Use CIC to Send
@@ -194,6 +193,7 @@ class Once extends \OpenTHC\Controller\Base
 		$arg['data']['mail_subj'] = 'Password Reset Request';
 		$arg['data']['once_hash'] = $acs['code'];
 		$arg['data']['auth_hash'] = $acs['code']; // @deprecated
+		$arg['data']['auth_context_token'] = $acs['code'];
 
 		try {
 			$cic = new \OpenTHC\Service\OpenTHC('cic');
@@ -202,7 +202,7 @@ class Once extends \OpenTHC\Controller\Base
 			// Ignore
 		}
 
-		return $RES->withRedirect('/done?e=cao100');
+		return $RES->withRedirect('/done?e=cao100&l=200');
 
 	}
 }

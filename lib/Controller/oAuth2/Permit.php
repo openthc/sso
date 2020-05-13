@@ -43,11 +43,11 @@ class Permit extends \OpenTHC\Controller\Base
 
 		$hash = base64_encode_url(hash('sha256', openssl_random_pseudo_bytes(256), true));
 
-		$sql = 'INSERT INTO auth_context_secret (expires_at, code, meta) VALUES (?, ?, ?)';
+		$sql = 'INSERT INTO auth_context_token (id, meta, expires_at) VALUES (?, ?, ?)';
 		$arg = array(
-			strftime('%Y-%m-%d %H:%M:%S', $_SERVER['REQUEST_TIME'] + 300),
-			sprintf('oauth-authorize-code:%s', $hash),
+			$hash,
 			$data,
+			strftime('%Y-%m-%d %H:%M:%S', $_SERVER['REQUEST_TIME'] + 300),
 		);
 		$this->_container->DB->query($sql, $arg);
 

@@ -172,13 +172,12 @@ class Verify extends \OpenTHC\Controller\Base
 		$dbc = $this->_container->DB;
 
 		$acs = [];
-		$acs['id'] = \Edoceo\Radix\ULID::generate();
-		$acs['code'] = base64_encode_url(hash('sha256', openssl_random_pseudo_bytes(256), true));
+		$acs['id'] = base64_encode_url(hash('sha256', openssl_random_pseudo_bytes(256), true));
 		$acs['meta'] = json_encode([
 			'action' => 'email-verify',
 			'contact' => $ARG['contact'],
 		]);
-		$dbc->insert('auth_context_secret', $acs);
+		$dbc->insert('auth_context_token', $acs);
 
 		$arg = [];
 		$arg['to'] = $ARG['contact']['email'];
