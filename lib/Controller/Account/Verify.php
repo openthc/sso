@@ -184,7 +184,7 @@ class Verify extends \OpenTHC\Controller\Base
 		$arg['file'] = 'sso/contact-email-verify.tpl';
 		$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
 		$arg['data']['mail_subj'] = 'Email Verification';
-		$arg['data']['once_code'] = $acs['code'];
+		$arg['data']['auth_context_token'] = $acs['code'];
 		$cic = new \OpenTHC\Service\OpenTHC('cic');
 		$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
 		if (200 == $res['code']) {

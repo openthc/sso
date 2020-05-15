@@ -168,8 +168,7 @@ class Create extends \OpenTHC\Controller\Base
 		$arg['file'] = 'sso/account-create.tpl';
 		$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
 		$arg['data']['mail_subj'] = 'Account Confirmation';
-		$arg['data']['once_hash'] = $acs['code'];
-		$arg['data']['sign_up_hash'] = $acs['code']; // @deprecated
+		$arg['data']['auth_context_token'] = $acs['id'];
 
 		try {
 			$cic = new \OpenTHC\Service\OpenTHC('cic');
