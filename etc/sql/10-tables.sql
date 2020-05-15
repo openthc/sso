@@ -10,7 +10,7 @@ SET standard_conforming_strings = on;
 --
 
 CREATE TABLE auth_company (
-	id character varying(32) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
+	id character varying(26) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
 	stat integer DEFAULT 100 NOT NULL,
 	flag integer DEFAULT 0 NOT NULL,
 	created_at timestamp without time zone DEFAULT now() NOT NULL,
@@ -24,13 +24,13 @@ CREATE TABLE auth_company (
 
 -- Company Relationships
 CREATE TABLE auth_company_company (
-	company_id_prime character varying(32) NOT NULL,
-	company_id_child character varying(32) NOT NULL
+	company_id_prime character varying(26) NOT NULL,
+	company_id_child character varying(26) NOT NULL
 );
 
 CREATE TABLE auth_company_contact (
-	company_id character varying(32) NOT NULL,
-	contact_id character varying(32) NOT NULL,
+	company_id character varying(26) NOT NULL,
+	contact_id character varying(26) NOT NULL,
 	stat integer DEFAULT 200 NOT NULL,
 	flag integer DEFAULT 0 NOT NULL,
 	created_at timestamp with time zone DEFAULT now() NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE auth_company_contact (
 --
 
 CREATE TABLE auth_contact (
-	id character varying(32) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
+	id character varying(26) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
 	stat integer DEFAULT 100 NOT NULL,
 	flag integer DEFAULT 0 NOT NULL,
 	created_at timestamp with time zone DEFAULT now() NOT NULL,
@@ -63,7 +63,7 @@ CREATE TABLE auth_contact (
 
 
 CREATE TABLE auth_context (
-	id varchar(32) not null default ulid_create() primary key,
+	id varchar(26) not null default ulid_create() primary key,
 	code varchar(256)
 );
 
@@ -83,8 +83,8 @@ CREATE TABLE auth_context_token (
 --
 
 CREATE TABLE auth_program_contact (
-	auth_program_id varchar(32) not null,
-	auth_contact_id varchar(32) not null,
+	auth_program_id varchar(26) not null,
+	auth_contact_id varchar(26) not null,
 	created_at timestamp with time zone default now() not null,
 	expires_at timestamp with time zone default (now() + '365 days'::interval) not null
 );
@@ -94,7 +94,7 @@ CREATE TABLE auth_program_contact (
 --
 
 CREATE TABLE log_delta (
-	id character varying(32) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
+	id character varying(26) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
 	ct timestamp with time zone DEFAULT now() NOT NULL,
 	op smallint,
 	tb character varying(64) NOT NULL,
@@ -109,10 +109,10 @@ CREATE TABLE log_delta (
 --
 
 CREATE TABLE log_event (
-	id character varying(32) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
+	id character varying(26) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
 	ct timestamp with time zone DEFAULT now() NOT NULL,
-	company_id character varying(32),
-	contact_id character varying(32),
+	company_id character varying(26),
+	contact_id character varying(26),
 	code character varying(64) NOT NULL,
 	link character varying(256),
 	meta jsonb
@@ -120,12 +120,12 @@ CREATE TABLE log_event (
 
 
 CREATE TABLE company (
-	id character varying(32) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
+	id character varying(26) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
 	name text
 );
 
 CREATE TABLE contact (
-	id character varying(32) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
+	id character varying(26) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
 	created_at timestamp with time zone DEFAULT now() NOT NULL,
 	name text,
 	email text,
