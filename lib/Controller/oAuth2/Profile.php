@@ -25,8 +25,8 @@ class Profile extends \OpenTHC\Controller\Base
 		}
 
 		// Find Bearer Token
-		$sql = 'SELECT id, meta FROM auth_context_secret WHERE code = ?';
-		$arg = array(sprintf('oauth-token:%s', $auth));
+		$sql = 'SELECT id, meta FROM auth_context_token WHERE id = ?';
+		$arg = array($auth);
 		$tok = $dbc->fetchRow($sql, $arg);
 		if (empty($tok)) {
 			return $RES->withJSON([
@@ -47,11 +47,11 @@ class Profile extends \OpenTHC\Controller\Base
 			], 400);
 		}
 
+		$RES = $RES->withAttribute('Contact', $Contact);
+
 		$Profile['scope'] = explode(' ', $Contact['scope_permit']);
 
 		$Profile['Contact']['id'] = $Contact['id'];
-		$Profile['Contact']['id_int8'] = $Contact['id'];
-		$Profile['Contact']['id_ulid'] = $Contact['contact_id'];
 		$Profile['Contact']['fullname'] = $Contact['fullname'];
 		$Profile['Contact']['username'] = $Contact['username'];
 
@@ -72,7 +72,7 @@ class Profile extends \OpenTHC\Controller\Base
 		$res = $dbc->fetchRow($sql, $arg);
 		if (!empty($res['id'])) {
 			$Profile['Company']['id'] = $res['id'];
-			$Profile['Company']['ulid'] = $res['id'];
+			$Profile['Company']['ulid'] = $res['id']; // @deprecated
 			$Profile['Company']['guid'] = $res['guid'];
 			$Profile['Company']['name'] = $res['name'];
 			$Profile['Company']['type'] = $res['type'];

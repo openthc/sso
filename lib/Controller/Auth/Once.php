@@ -167,6 +167,8 @@ class Once extends \OpenTHC\Controller\Base
 			return $RES->withRedirect('/auth/once?a=password-reset&e=cao075');
 		}
 
+		$_SESSION['email'] = $username;
+
 		$dbc = $this->_container->DB;
 		$Contact = $dbc->fetchRow('SELECT id, username FROM auth_contact WHERE username = ?', [ $username ]);
 		if (empty($Contact)) {
@@ -191,9 +193,7 @@ class Once extends \OpenTHC\Controller\Base
 		$arg['file'] = 'sso/contact-password-reset.tpl';
 		$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
 		$arg['data']['mail_subj'] = 'Password Reset Request';
-		$arg['data']['once_hash'] = $acs['code'];
-		$arg['data']['auth_hash'] = $acs['code']; // @deprecated
-		$arg['data']['auth_context_token'] = $acs['code'];
+		$arg['data']['auth_context_token'] = $acs['id'];
 
 		try {
 			$cic = new \OpenTHC\Service\OpenTHC('cic');
