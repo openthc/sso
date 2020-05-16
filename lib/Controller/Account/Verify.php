@@ -26,7 +26,7 @@ class Verify extends \OpenTHC\Controller\Base
 		case 'email-verify-save':
 			return $this->emailVerifyConfirm($RES, $ARG);
 		}
-		// var_dump($ARG);
+
 		$Contact = $ARG['contact'];
 
 		$file = 'page/account/verify.html';
@@ -82,43 +82,8 @@ class Verify extends \OpenTHC\Controller\Base
 
 		case 'phone-verify-save':
 
-			$_POST['phone-verify-code'] = strtoupper($_POST['phone-verify-code']);
-			if ($_SESSION['phone-verify-code'] == $_POST['phone-verify-code']) {
+			return $this->phoneVerifySave($RES, $ARG);
 
-				$dbc = $this->_container->DB;
-
-				// Is Good
-				$sql = 'UPDATE auth_contact SET flag = flag | :f1 WHERE id = :pk';
-				$arg = [
-					':pk' => $ARG['contact']['id'],
-					':f1' => Contact::FLAG_PHONE_GOOD,
-				];
-				$dbc->query($sql, $arg);
-
-				$sql = 'UPDATE auth_contact SET flag = flag & ~:f0::int WHERE id = :pk';
-				$arg = [
-					':pk' => $ARG['contact']['id'],
-					':f0' => Contact::FLAG_PHONE_WANT,
-				];
-				$dbc->query($sql, $arg);
-
-				// Update Phone
-				$sql = 'UPDATE contact SET phone = :p0 WHERE id = :pk';
-				$arg = [
-					':pk' => $ARG['contact']['id'],
-					':p0' => $_SESSION['phone-verify-e164'],
-				];
-				$dbc->query($sql, $arg);
-
-				$data = [];
-				$data['Page']['title'] = 'Phone Verification';
-				$data['info'] = 'Phone Number has been validated';
-				$data['foot'] = '<div class="r"><a class="btn btn-outline-primary" href="/auth/init">Continue <i class="icon icon-arrow-right"></i></a></div>';
-				return $this->_container->view->render($RES, 'page/done.html', $data);
-
-			}
-
-			break;
 		}
 
 		$data = [];
@@ -160,7 +125,62 @@ class Verify extends \OpenTHC\Controller\Base
 			$data['foot'] = '<div class="r"><a class="btn btn-outline-primary" href="/auth/init">Continue <i class="icon icon-arrow-right"></i></a></div>';
 		}
 
+		// Set Contact Model on Response
+		$RES = $RES->withAttribute('Contact', [
+			'id' => $ARG['contact']['id'],
+			'username' => $ARG['contact']['username'],
+			'flag' => Contact::FLAG_EMAIL_GOOD,
+		]);
+
 		return $this->_container->view->render($RES, 'page/done.html', $data);
+
+	}
+
+	function phoneVerifySave($RES, $ARG)
+	{
+		$_POST['phone-verify-code'] = strtoupper($_POST['phone-verify-code']);
+		if ($_SESSION['phone-verify-code'] == $_POST['phone-verify-code']) {
+
+			$dbc = $this->_container->DB;
+
+			// Is Good
+			$sql = 'UPDATE auth_contact SET flag = flag | :f1 WHERE id = :pk';
+			$arg = [
+				':pk' => $ARG['contact']['id'],
+				':f1' => Contact::FLAG_PHONE_GOOD,
+			];
+			$dbc->query($sql, $arg);
+
+			$sql = 'UPDATE auth_contact SET flag = flag & ~:f0::int WHERE id = :pk';
+			$arg = [
+				':pk' => $ARG['contact']['id'],
+				':f0' => Contact::FLAG_PHONE_WANT,
+			];
+			$dbc->query($sql, $arg);
+
+			// Update Phone
+			$sql = 'UPDATE contact SET phone = :p0 WHERE id = :pk';
+			$arg = [
+				':pk' => $ARG['contact']['id'],
+				':p0' => $_SESSION['phone-verify-e164'],
+			];
+			$dbc->query($sql, $arg);
+
+			$data = [];
+			$data['Page']['title'] = 'Phone Verification';
+			$data['info'] = 'Phone Number has been validated';
+			$data['foot'] = '<div class="r"><a class="btn btn-outline-primary" href="/auth/init">Continue <i class="icon icon-arrow-right"></i></a></div>';
+
+			// Set Contact Model on Response
+			$RES = $RES->withAttribute('Contact', [
+				'id' => $ARG['contact']['id'],
+				'username' => $ARG['contact']['username'],
+				'flag' => Contact::FLAG_PHONE_GOOD,
+			]);
+
+			return $this->_container->view->render($RES, 'page/done.html', $data);
+
+		}
 
 	}
 
@@ -184,25 +204,26 @@ class Verify extends \OpenTHC\Controller\Base
 		$arg['file'] = 'sso/contact-email-verify.tpl';
 		$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
 		$arg['data']['mail_subj'] = 'Email Verification';
-		$arg['data']['auth_context_token'] = $acs['code'];
+		$arg['data']['auth_context_token'] = $acs['id'];
 		$cic = new \OpenTHC\Service\OpenTHC('cic');
 		$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
-		if (200 == $res['code']) {
+		if (201 == $res['code']) {
 			$data = [];
 			$data['Page']['title'] = 'Email Verification';
 			$data['info'] = 'Check Your Inbox';
 			return $this->_container->view->render($RES, 'page/done.html', $data);
 		}
 
-		_exit_text('Failure in Email', 500);
+		_exit_text("Email Verification Send Failure [CAV#217]\nPlease Contact Support", 500);
+
 	}
 
 	function phoneVerifySend($RES, $ARG)
 	{
 		unset($_SESSION['phone-verify-warn']);
-		$_SESSION['phone-verify-e164'] = _phone_e164($_POST['contact-phone']);
 
 		$_SESSION['phone-verify-code'] = substr(str_shuffle('ABCDEFGHJKMNPQRSTUVWXYZ23456789'), 0, 6);
+		$_SESSION['phone-verify-e164'] = _phone_e164($_POST['contact-phone']);
 
 		$arg = [];
 		$arg['target'] = $_SESSION['phone-verify-e164'];
@@ -216,6 +237,7 @@ class Verify extends \OpenTHC\Controller\Base
 		$_SESSION['phone-verify-code'] = null;
 		$_SESSION['phone-verify-e164'] = null;
 		$_SESSION['phone-verify-warn'] = 'Double check this number and try again';
+
 		return $RES->withRedirect($_SERVER['HTTP_REFERER']);
 
 	}

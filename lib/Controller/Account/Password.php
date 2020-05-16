@@ -69,21 +69,19 @@ class Password extends \OpenTHC\Controller\Base
 				return $RES->withRedirect('/account/password?e=cap062');
 			}
 
-			$new_password_hash = password_hash($_POST['p0'], PASSWORD_DEFAULT);
+			$dbc = $this->_container->DB;
 
 			$arg = [];
-			$arg[] = $new_password_hash;
-			$arg[] = $ARG['contact']['id'];
+			$arg[':c0'] = $ARG['contact']['ulid'];
+			$arg[':pw'] = password_hash($_POST['p0'], PASSWORD_DEFAULT);
 
-			$sql = 'UPDATE auth_contact SET password = ? WHERE id = ?';
-
-			$dbc = $this->_container->DB;
+			$sql = 'UPDATE auth_contact SET password = :pw WHERE id = :c0';
 			$dbc->query($sql, $arg);
 
 			$RES = $RES->withAttribute('Contact', [
 				'id' => $ARG['contact']['id'],
 				'username' => $ARG['contact']['username'],
-				'password' => $new_password_hash,
+				'password' => $arg[':pw'],
 			]);
 
 			return $RES->withRedirect('/auth/open?e=cap080');
