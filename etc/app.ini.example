@@ -12,6 +12,13 @@
 
 
 ;
+; Need redis for passing data around
+[redis]
+	hostname = "127.0.0.1"
+	database = 0
+
+
+;
 ;
 [Google]
 	recaptcha-public = ""

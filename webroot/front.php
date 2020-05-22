@@ -20,6 +20,12 @@ $con['DB'] = function() {
 	$dsn = sprintf('pgsql:host=%s;dbname=%s', $cfg['hostname'], $cfg['database']);
 	return new \Edoceo\Radix\DB\SQL($dsn, $cfg['username'], $cfg['password']);
 };
+$con['Redis'] = function() {
+	$cfg = \OpenTHC\Config::get('redis');
+	$r = new \Redis();
+	$r->connect($cfg['hostname']);
+	return $r;
+};
 
 // Custom Response Object
 $con['response'] = function() {
@@ -98,13 +104,13 @@ $app->group('/oauth2', function() {
 $app->group('/account', function() {
 
 	$this->get('/create', 'App\Controller\Account\Create');
-	$this->post('/create', 'App\Controller\Account\Create:post');
+	$this->post('/create', 'App\Controller\Account\Create:post')->setName('account/create');
 
 	$this->get('/password', 'App\Controller\Account\Password');
 	$this->post('/password', 'App\Controller\Account\Password:post')->setName('account/password/update');
 
-	$this->get('/verify', 'App\Controller\Account\Verify');
-	$this->post('/verify', 'App\Controller\Account\Verify:post');
+	$this->get('/verify', 'App\Controller\Account\Verify')->setName('account/verify');
+	$this->post('/verify', 'App\Controller\Account\Verify:post')->setName('account/verify/update');
 
 })->add('OpenTHC\Middleware\Session');
 
