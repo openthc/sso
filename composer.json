@@ -22,10 +22,9 @@
 		"openthc/common": "dev-master"
 	},
 	"require-dev": {
-		"behat/behat": "3.5.0",
-		"php-webdriver/webdriver": "1.7.1",
-		"phpunit/phpunit": "8.4.3",
-		"phpunit/phpunit-selenium": "dev-master"
+		"behat/behat": "3.6.1",
+		"php-webdriver/webdriver": "1.8.2",
+		"phpunit/phpunit": "8.5.5",
+		"phpunit/phpunit-selenium": "8.0.0"
 	}
-
 }
