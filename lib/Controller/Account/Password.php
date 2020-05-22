@@ -72,7 +72,7 @@ class Password extends \OpenTHC\Controller\Base
 			$dbc = $this->_container->DB;
 
 			$arg = [];
-			$arg[':c0'] = $ARG['contact']['ulid'];
+			$arg[':c0'] = $ARG['contact']['id'];
 			$arg[':pw'] = password_hash($_POST['p0'], PASSWORD_DEFAULT);
 
 			$sql = 'UPDATE auth_contact SET password = :pw WHERE id = :c0';
@@ -83,6 +83,14 @@ class Password extends \OpenTHC\Controller\Base
 				'username' => $ARG['contact']['username'],
 				'password' => $arg[':pw'],
 			]);
+
+			// Password reset from email link, routes to verify
+			if ('email' == $ARG['source']) {
+				$ARG['action'] = 'email-verify-save';
+				$ARG['source'] = 'password-reset';
+				$x = _encrypt(json_encode($ARG), $_SESSION['crypt-key']);
+				return $RES->withRedirect('/account/verify?_=' . $x);
+			}
 
 			return $RES->withRedirect('/auth/open?e=cap080');
 

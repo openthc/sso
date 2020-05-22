@@ -13,6 +13,30 @@ class Once extends \OpenTHC\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{
+		// Hash Links
+		// Should be using a different controller?
+		if (!empty($_GET['_'])) {
+
+			$code = $_GET['_'];
+			if (!preg_match('/^([\w\-]{32,128})$/i', $code, $m)) {
+				_exit_json([
+					'data' => null,
+					'meta' => [ 'detail' => 'Invalid Request [CAO#024]' ]
+				], 400);
+			}
+
+			$chk = $this->_container->Redis->get($code);
+			if (empty($chk)) {
+				_exit_json([
+					'data' => null,
+					'meta' => [ 'detail' => 'Invalid Request [CAO#032]' ]
+				], 400);
+			}
+
+			_exit_json($chk);
+
+		}
+
 		session_start();
 
 		if (empty($_GET['a'])) {
@@ -23,13 +47,14 @@ class Once extends \OpenTHC\Controller\Base
 		switch ($_GET['a']) {
 		case 'password-reset':
 
-			$cfg = \OpenTHC\Config::get('google');
-
-			$file = 'page/auth/once-password-reset.html';
 			$data = [];
 			$data['Page'] = [ 'title' => 'Password Reset '];
 			$data['email'] = $_SESSION['email'];
+
+			$cfg = \OpenTHC\Config::get('google');
 			$data['Google']['recaptcha_public'] = $cfg['recaptcha-public'];
+
+			$file = 'page/auth/once-password-reset.html';
 
 			return $this->_container->view->render($RES, $file, $data);
 
@@ -40,39 +65,25 @@ class Once extends \OpenTHC\Controller\Base
 			_exit_html('<h1>Invalid Request [CAO#024]</h1>', 400);
 		}
 
-		// $file = sprintf('%s/var/%s.json', APP_ROOT, $_GET['a']);
-		// if (is_file($file)) {
-		// 	_exit_text('NEw THING');
-		// }
-
-		// If the Hash is in Redis, then pass it back
-		$hash = $_GET['a'];
-
-		$R = new \Redis();
-		$R->connect('127.0.0.1');
-		$chk = $R->get($hash);
-		if (!empty($chk)) {
-			_exit_json($chk);
-		}
+		$auth = $_GET['a'];
 
 		$dbc = $this->_container->DB;
 
-		$chk = $dbc->fetchRow('SELECT * FROM auth_context_token WHERE id = ?', $_GET['a']);
-		if (empty($chk)) {
+		$act = $dbc->fetchRow('SELECT * FROM auth_context_token WHERE id = ?', $auth);
+		if (empty($act)) {
 			return $RES->withRedirect('/done?e=cao066');
 		}
 
-		// if (strtotime($chk['ts_expires']) < $_SERVER['REQUEST_TIME']) {
-			// $dbc->query('DELETE FROM auth_context_token WHERE id = ?', $chk['id']);
+		// if (strtotime($act['ts_expires']) < $_SERVER['REQUEST_TIME']) {
+			// $dbc->query('DELETE FROM auth_context_token WHERE id = ?', $act['id']);
 			// _exit_html('<h1>Invalid Token [CAO#028]</h2><p>The link you followed has expired</p>', 400);
 		// }
 
-		$data = json_decode($chk['meta'], true);
+		$data = json_decode($act['meta'], true);
 		if (empty($data)) {
-			$dbc->query('DELETE FROM auth_context_token WHERE id = ?', $chk['id']);
+			$dbc->query('DELETE FROM auth_context_token WHERE id = ?', $act['id']);
 			return $RES->withRedirect('/done?e=cao077');
 		}
-		// var_dump($data);
 
 		switch ($data['action']) {
 		case 'account-create':
@@ -91,11 +102,14 @@ class Once extends \OpenTHC\Controller\Base
 			return $RES->withRedirect('/account/verify?_=' . $arg);
 
 		case 'password-reset':
+
 			$val = [
-				'contact' => $data['contact']
+				'source' => 'email',
+				'contact' => $data['contact'],
 			];
 			$val = json_encode($val);
 			$x = _encrypt($val, $_SESSION['crypt-key']);
+
 			return $RES->withRedirect('/account/password?_=' . $x);
 		}
 

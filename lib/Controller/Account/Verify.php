@@ -15,19 +15,34 @@ class Verify extends \OpenTHC\Controller\Base
 		$ARG = json_decode($ARG, true);
 
 		if (empty($ARG)) {
-			_exit_text('Invalid Request [CAP#019]');
+			_exit_text('Invalid Request [CAV#018]');
 		}
 
-		if (empty($ARG['contact'])) {
-			_exit_text('No [CAP#015]', 400);
+		if (empty($ARG['contact']['id'])) {
+			_exit_text('Invalid Request [CAV#022]', 400);
+		}
+
+		// Load Contact
+		$sql = <<<SQL
+SELECT auth_contact.id
+, auth_contact.flag, auth_contact.username
+, base_contact.email, base_contact.phone
+FROM auth_contact
+LEFT JOIN contact AS base_contact ON base_contact.id = auth_contact.id
+WHERE auth_contact.id = :c0
+SQL;
+		$arg = [
+			':c0' => $ARG['contact']['id']
+		];
+		$Contact = $this->_container->DB->fetchRow($sql, $arg);
+		if (empty($Contact['id'])) {
+			_exit_text('Invalid Request [CAV#037]', 400);
 		}
 
 		switch ($ARG['action']) {
 		case 'email-verify-save':
 			return $this->emailVerifyConfirm($RES, $ARG);
 		}
-
-		$Contact = $ARG['contact'];
 
 		$file = 'page/account/verify.html';
 
@@ -38,7 +53,6 @@ class Verify extends \OpenTHC\Controller\Base
 		if (!empty($_SESSION['phone-verify-e164'])) {
 			$data['contact_phone'] = $_SESSION['phone-verify-e164'];
 		}
-
 
 		if (0 == ($Contact['flag'] & Contact::FLAG_EMAIL_GOOD)) {
 			$data['verify_email'] = true;
@@ -131,6 +145,15 @@ class Verify extends \OpenTHC\Controller\Base
 			'username' => $ARG['contact']['username'],
 			'flag' => Contact::FLAG_EMAIL_GOOD,
 		]);
+
+		// Landed here from Password Reset?
+		// No prompt, just show verifications
+		if ('password-reset' == $ARG['source']) {
+			unset($ARG['action']);
+			unset($ARG['source']);
+			$x = _encrypt(json_encode($ARG), $_SESSION['crypt-key']);
+			return $RES->withRedirect('/account/verify?_=' . $x);
+		}
 
 		return $this->_container->view->render($RES, 'page/done.html', $data);
 

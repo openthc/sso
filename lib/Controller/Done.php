@@ -23,7 +23,7 @@ class Done extends \OpenTHC\Controller\Base
 				case 'cac111':
 					$data['Page']['title'] = 'Account Confirmation';
 					$data['info'] = 'Please check your email to confirm your account.';
-					$data['body'] = '<p>We have just sent you an email, with the next steps.<p><p>You will need to confirm your request through a link in that message.</p><p>Maybe you want to read more about regulations?</p><a class="btn btn-outline-success" href="https://openthc.com/intro">Introduction to Track and Trace <i class="icon icon-arrow-right"></i></a></div>';
+					$data['body'] = '<p>We have just sent you an email, with the next steps.<p><p>You will need to confirm your request through a link in that message.</p><p>Maybe you want to read more about regulations?</p><div><a class="btn btn-outline-success" href="https://openthc.com/intro">Introduction to Track and Trace <i class="icon icon-arrow-right"></i></a></div>';
 				break;
 				case 'cao066':
 				case 'ca0077':

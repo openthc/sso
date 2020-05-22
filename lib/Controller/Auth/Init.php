@@ -62,22 +62,20 @@ class Init extends \OpenTHC\Controller\Base
 		$Company = $chk;
 
 
-		$hash = base64_encode_url(hash('sha256', openssl_random_pseudo_bytes(256), true));
+		$hash = _random_hash();
 		$data = json_encode([
 			'contact' => [
 				'id' => $Contact['id'],
+				'flag' => $Contact['flag'],
 				'username' => $Contact['username'],
 				'password' => $Contact['password'],
 			],
 			'company' => $Company,
 		]);
 
-		$R = new \Redis();
-		$R->connect('127.0.0.1');
-		$R->set($hash, $data);
-		//$R->ttl($hash, 300);
+		$this->_container->Redis->set($hash, $data, 240);
 
-		$ping = sprintf('https://%s/auth/once?a=%s', $_SERVER['SERVER_NAME'], $hash);
+		$ping = sprintf('https://%s/auth/once?_=%s', $_SERVER['SERVER_NAME'], $hash);
 
 		if (!empty($_SESSION['return-link'])) {
 			$ret = $_SESSION['return-link'];
@@ -88,11 +86,10 @@ class Init extends \OpenTHC\Controller\Base
 		if (empty($ret)) {
 			$cfg = \OpenTHC\Config::get('openthc_app');
 			$ret = trim($cfg['url'], '/');
-			$ret.= '/auth/back';
-			$ret.= '?' . http_build_query([ 'ping' => $ping ]);
+			$ret.= '/auth/back?ping={PING}';
 		}
 
-		// Append Ping Back Token
+		// Place Ping Back Token
 		$ret = str_replace('{PING}', $ping, $ret);
 
 		return $RES->withRedirect($ret);
