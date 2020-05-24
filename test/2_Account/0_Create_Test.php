@@ -3,34 +3,21 @@
  * Base Class for API Testing
  */
 
-namespace Test;
+namespace Test\Account;
 
-class Account_Test extends \Test\Base_Test_Case
+class Create_Test extends \Test\Base_Test_Case
 {
 	function test_account_create_pass()
 	{
 		$c = $this->_ua();
-		$res = $c->get('/account/create');
-		$this->assertValidResponse($res);
+		$res = $c->get('/account/create?_t=' . \OpenTHC\Config::get('application_test.secret'));
+		$res = $this->assertValidResponse($res);
 
-		$html = $this->raw; //$res->getBody()->getContents();
+		$html = $res;
+		// $html = $this->raw; //$res->getBody()->getContents();
 
-		$this->assertRegExp('/select.+id="account-region"/', $html);
-		$this->assertRegExp('/button.+id="btn-region-next"/', $html);
-
-		$res = $c->post('/account/create', [ 'form_params' => [
-			'a' => 'region-next',
-			'region' => 'xxx/xx',
-		]]);
-
-		$this->assertValidResponse($res, 302);
-		$l = $res->getHeaderLine('location');
-		$this->assertEquals('/account/create', $l);
-
-		$res = $c->get($l);
-		$this->assertValidResponse($res);
-
-		$html = $this->raw;
+		// $html = $this->raw;
+		$this->assertRegExp('/TEST MODE/', $html);
 		$this->assertRegExp('/Create Account/', $html);
 		$this->assertRegExp('/input.+id="license\-name"/', $html);
 		$this->assertRegExp('/input.+id="contact\-name"/', $html);
@@ -49,7 +36,9 @@ class Account_Test extends \Test\Base_Test_Case
 		$this->assertValidResponse($res, 302);
 
 		$l = $res->getHeaderLine('location');
-		$this->assertEquals('/done?e=cac111', $l);
+		$this->assertRegExp('/^\/done\?e=cac111/', $l);
+
+		$res = $res->getBody()->getContents();
 
 		$res = $c->get($l);
 		$this->assertValidResponse($res);
@@ -67,31 +56,13 @@ class Account_Test extends \Test\Base_Test_Case
 	{
 		$c = $this->_ua();
 		$res = $c->get('/account/create');
-		$this->assertValidResponse($res);
+		$res = $this->assertValidResponse($res);
 
-		$html = $this->raw; //$res->getBody()->getContents();
-
-		$this->assertRegExp('/select.+id="account-region"/', $html);
-		$this->assertRegExp('/button.+id="btn-region-next"/', $html);
-
-		$res = $c->post('/account/create', [ 'form_params' => [
-			'a' => 'region-next',
-			'region' => 'xxx/xx',
-		]]);
-
-		$this->assertValidResponse($res, 302);
-		$l = $res->getHeaderLine('location');
-		$this->assertEquals('/account/create', $l);
-
-		$res = $c->get($l);
-		$this->assertValidResponse($res);
-
-		$html = $this->raw;
-		$this->assertRegExp('/Create Account/', $html);
-		$this->assertRegExp('/input.+id="license\-name"/', $html);
-		$this->assertRegExp('/input.+id="contact\-name"/', $html);
-		$this->assertRegExp('/input.+id="contact\-email"/', $html);
-		$this->assertRegExp('/input.+id="contact\-phone"/', $html);
+		$this->assertRegExp('/Create Account/', $res);
+		$this->assertRegExp('/input.+id="license\-name"/', $res);
+		$this->assertRegExp('/input.+id="contact\-name"/', $res);
+		$this->assertRegExp('/input.+id="contact\-email"/', $res);
+		$this->assertRegExp('/input.+id="contact\-phone"/', $res);
 
 		$res = $c->post('/account/create', [ 'form_params' => [
 			'a' => 'contact-next',
@@ -118,34 +89,13 @@ class Account_Test extends \Test\Base_Test_Case
 
 		// Create0/GET
 		$res = $c->get('/account/create');
-		$this->assertValidResponse($res);
+		$res = $this->assertValidResponse($res);
 
-		$html = $this->raw;
-
-		$this->assertRegExp('/select.+id="account-region"/', $html);
-		$this->assertRegExp('/button.+id="btn-region-next"/', $html);
-
-		// Create0/POST
-		$res = $c->post('/account/create', [ 'form_params' => [
-			'a' => 'region-next',
-			'region' => 'xxx/xx',
-		]]);
-
-		// Create0/REDIRECT
-		$this->assertValidResponse($res, 302);
-		$l = $res->getHeaderLine('location');
-		$this->assertEquals('/account/create', $l);
-
-		// Create1/GET
-		$res = $c->get($l);
-		$this->assertValidResponse($res);
-
-		$html = $this->raw;
-		$this->assertRegExp('/Create Account/', $html);
-		$this->assertRegExp('/input.+id="license\-name"/', $html);
-		$this->assertRegExp('/input.+id="contact\-name"/', $html);
-		$this->assertRegExp('/input.+id="contact\-email"/', $html);
-		$this->assertRegExp('/input.+id="contact\-phone"/', $html);
+		$this->assertRegExp('/Create Account/', $res);
+		$this->assertRegExp('/input.+id="license\-name"/', $res);
+		$this->assertRegExp('/input.+id="contact\-name"/', $res);
+		$this->assertRegExp('/input.+id="contact\-email"/', $res);
+		$this->assertRegExp('/input.+id="contact\-phone"/', $res);
 
 		// Create1/POST
 		$res = $c->post('/account/create', [ 'form_params' => [
@@ -173,8 +123,8 @@ class Account_Test extends \Test\Base_Test_Case
 
 		// GET
 		$res = $c->get('/auth/open');
-		$this->assertValidResponse($res);
-		$this->assertStringContainsString('/auth/once?a=password-reset', $this->raw);
+		$res = $this->assertValidResponse($res);
+		$this->assertStringContainsString('/auth/once?a=password-reset', $res);
 
 		// GET
 		$res = $c->get('/auth/once?a=password-reset');

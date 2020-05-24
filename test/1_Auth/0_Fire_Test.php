@@ -1,20 +1,20 @@
 <?php
 /**
- * Base Class for API Testing
+ * Test the Authentication Pages
  */
 
-namespace Test;
+namespace Test\Auth;
 
-class Auth_Test extends \Test\Base_Test_Case
+class Fire_Test extends \Test\Base_Test_Case
 {
 	function test_auth_pass()
 	{
 		$c = $this->_ua();
 		$res = $c->get('/auth/open');
-		$this->assertValidResponse($res);
+		$res = $this->assertValidResponse($res);
 
-		$this->assertRegExp('/input.+id="username"/', $this->raw);
-		$this->assertStringContainsString('<input class="form-control" id="password" name="password" type="password">', $this->raw);
+		$this->assertRegExp('/input.+id="username"/', $res);
+		$this->assertRegExp('/input.+id="password" name="password" type="password"/', $res);
 
 		$res = $c->post('/auth/open', [ 'form_params' => [
 			'a' => 'sign in',
@@ -32,10 +32,10 @@ class Auth_Test extends \Test\Base_Test_Case
 	{
 		$c = $this->_ua();
 		$res = $c->get('/auth/open');
-		$this->assertValidResponse($res);
+		$res = $this->assertValidResponse($res);
 
-		$this->assertRegExp('/input.+id="username"/', $this->raw);
-		$this->assertStringContainsString('<input class="form-control" id="password" name="password" type="password">', $this->raw);
+		$this->assertRegExp('/input.+id="username"/', $res);
+		$this->assertRegExp('/input.+id="password" name="password" type="password"/', $res);
 
 		$res = $c->post('/auth/open', [ 'form_params' => [
 			'a' => 'sign in',

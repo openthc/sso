@@ -37,7 +37,7 @@ class Base_Test_Case extends \PHPUnit\Framework\TestCase
 	}
 
 
-	function assertValidResponse($res, $code=200, $dump=null)
+	function assertValidResponse($res, $code=200, $type_expect='text/html', $dump=null)
 	{
 		$this->raw = $res->getBody()->getContents();
 
@@ -54,9 +54,9 @@ class Base_Test_Case extends \PHPUnit\Framework\TestCase
 		}
 
 		$this->assertEquals($code, $res->getStatusCode());
-		$type = $res->getHeaderLine('content-type');
-		$type = strtok($type, ';');
-		$this->assertEquals('text/html', $type);
+		$type_actual = $res->getHeaderLine('content-type');
+		$type_actual = strtok($type_actual, ';');
+		$this->assertEquals($type_expect, $type_actual);
 
 		// $ret = \json_decode($this->raw, true);
 

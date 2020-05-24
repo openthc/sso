@@ -25,7 +25,7 @@
 
 		<env name="debug-http" value="false" />
 
-		<const name="TEST_SITE" value="https://sso.openthc.dev" />
+		<const name="TEST_SITE" value="https://sso.openthc.com" />
 
 		<const name="TEST_BROWSERSTACK_USER" value="" />
 		<const name="TEST_BROWSERSTACK_AUTH" value="" />
