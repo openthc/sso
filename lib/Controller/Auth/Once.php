@@ -5,11 +5,9 @@
 
 namespace App\Controller\Auth;
 
-use Edoceo\Radix\Session;
-
 use App\Contact;
 
-class Once extends \OpenTHC\Controller\Base
+class Once extends \App\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{
@@ -37,17 +35,17 @@ class Once extends \OpenTHC\Controller\Base
 
 		}
 
-		session_start();
-
 		if (empty($_GET['a'])) {
-			_exit_html('<h1>Invalid Request [CAO#020]</h1>', 400);
+			_exit_text('Invalid Request [CAO#020]', 400);
 		}
+
+
+		$data = $this->data;
 
 		// Well known actions
 		switch ($_GET['a']) {
 		case 'password-reset':
 
-			$data = [];
 			$data['Page'] = [ 'title' => 'Password Reset '];
 			$data['email'] = $_SESSION['email'];
 
@@ -73,28 +71,27 @@ class Once extends \OpenTHC\Controller\Base
 		if (empty($act)) {
 			return $RES->withRedirect('/done?e=cao066');
 		}
-
 		// if (strtotime($act['ts_expires']) < $_SERVER['REQUEST_TIME']) {
 			// $dbc->query('DELETE FROM auth_context_token WHERE id = ?', $act['id']);
 			// _exit_html('<h1>Invalid Token [CAO#028]</h2><p>The link you followed has expired</p>', 400);
 		// }
-
-		$data = json_decode($act['meta'], true);
-		if (empty($data)) {
+		$chk = json_decode($act['meta'], true);
+		if (empty($chk)) {
 			$dbc->query('DELETE FROM auth_context_token WHERE id = ?', $act['id']);
 			return $RES->withRedirect('/done?e=cao077');
 		}
+		$act = $chk;
 
-		switch ($data['action']) {
+		switch ($act['action']) {
 		case 'account-create':
 
-			return $this->accountCreate($RES, $data);
+			return $this->accountCreate($RES, $act);
 
 		case 'email-verify':
 
 			$arg = [
 				'action' => 'email-verify-save',
-				'contact' => $data['contact'],
+				'contact' => $act['contact'],
 			];
 			$arg = json_encode($arg);
 			$arg = _encrypt($arg, $_SESSION['crypt-key']);
@@ -105,7 +102,7 @@ class Once extends \OpenTHC\Controller\Base
 
 			$val = [
 				'source' => 'email',
-				'contact' => $data['contact'],
+				'contact' => $act['contact'],
 			];
 			$val = json_encode($val);
 			$x = _encrypt($val, $_SESSION['crypt-key']);
@@ -113,7 +110,6 @@ class Once extends \OpenTHC\Controller\Base
 			return $RES->withRedirect('/account/password?_=' . $x);
 		}
 
-		$data = [];
 		$data['Page']['title'] = 'Error';
 		$RES = $this->_container->view->render($RES, 'page/done.html', $data);
 		return $RES->withStatus(400);
@@ -200,23 +196,44 @@ class Once extends \OpenTHC\Controller\Base
 		));
 		$dbc->insert('auth_context_token', $acs);
 
+		$ret_args = [
+			'e' => 'cao100',
+			'l' => '200',
+		];
+		$ret_path = '/done';
 
-		// Use CIC to Send
-		$arg = [];
-		$arg['to'] = $Contact['username'];
-		$arg['file'] = 'sso/contact-password-reset.tpl';
-		$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
-		$arg['data']['mail_subj'] = 'Password Reset Request';
-		$arg['data']['auth_context_token'] = $acs['id'];
+		if ($_ENV['test']) {
 
-		try {
-			$cic = new \OpenTHC\Service\OpenTHC('cic');
-			$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
-		} catch (\Exception $e) {
-			// Ignore
+			// Pass Information Back
+			// Test Runner has to parse the Location URL
+			$ret_args['r'] = "https://{$_SERVER['SERVER_NAME']}/auth/once";
+			$ret_args['a'] = $acs['id'];
+
+		} else {
+
+			$arg = [];
+			$arg['to'] = $Contact['username'];
+			$arg['file'] = 'sso/contact-password-reset.tpl';
+			$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
+			$arg['data']['mail_subj'] = 'Password Reset Request';
+			$arg['data']['auth_context_token'] = $acs['id'];
+
+			// Use CIC to Send
+			try {
+
+				$cic = new \OpenTHC\Service\OpenTHC('cic');
+				$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
+
+				$ret_args['s'] = 't';
+
+			} catch (\Exception $e) {
+				// Ignore
+				$ret_args['s'] = 'f';
+			}
+
 		}
 
-		return $RES->withRedirect('/done?e=cao100&l=200');
+		return $RES->withRedirect($ret_path . '?' . http_build_query($ret_args));
 
 	}
 }

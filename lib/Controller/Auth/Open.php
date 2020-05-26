@@ -11,12 +11,12 @@ use Edoceo\Radix\DB\SQL;
 
 use App\Contact;
 
-class Open extends \OpenTHC\Controller\Base
+class Open extends \App\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{
 		$file = 'page/auth/open.html';
-		$data = [];
+		$data = $this->data;
 		$data['Page'] = [ 'title' => 'Sign In' ];
 
 		if (!empty($_GET['e'])) {
@@ -105,7 +105,7 @@ class Open extends \OpenTHC\Controller\Base
 			break;
 		}
 
-		$data = [];
+		$data = $this->data;
 		$data['Page']['title'] = 'Error';
 		$RES = $this->_container->view->render($RES, 'page/done.html', $data);
 		return $RES->withStatus(400);

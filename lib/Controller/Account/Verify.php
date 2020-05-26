@@ -7,7 +7,7 @@ namespace App\Controller\Account;
 
 use App\Contact;
 
-class Verify extends \OpenTHC\Controller\Base
+class Verify extends \App\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{
@@ -46,7 +46,7 @@ SQL;
 
 		$file = 'page/account/verify.html';
 
-		$data = [];
+		$data = $this->data;
 		$data['Page'] = [ 'title' => 'Account Verification' ];
 		$data['contact_email'] = $Contact['email'];
 		$data['contact_phone'] = $Contact['phone'];
@@ -100,7 +100,7 @@ SQL;
 
 		}
 
-		$data = [];
+		$data = $this->data;
 		$data['Page']['title'] = 'Error';
 		$RES = $this->_container->view->render($RES, 'page/done.html', $data);
 		return $RES->withStatus(400);
@@ -130,7 +130,7 @@ SQL;
 		];
 		$dbc->query($sql, $arg);
 
-		$data = [];
+		$data = $this->data;
 		$data['Page']['title'] = 'Email Verification';
 		$data['info'] = 'Email address has been validated';
 		if (empty($_SESSION['Contact'])) {
@@ -189,7 +189,7 @@ SQL;
 			];
 			$dbc->query($sql, $arg);
 
-			$data = [];
+			$data = $this->data;
 			$data['Page']['title'] = 'Phone Verification';
 			$data['info'] = 'Phone Number has been validated';
 			$data['foot'] = '<div class="r"><a class="btn btn-outline-primary" href="/auth/init">Continue <i class="icon icon-arrow-right"></i></a></div>';
@@ -222,46 +222,94 @@ SQL;
 		]);
 		$dbc->insert('auth_context_token', $acs);
 
-		$arg = [];
-		$arg['to'] = $ARG['contact']['email'];
-		$arg['file'] = 'sso/contact-email-verify.tpl';
-		$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
-		$arg['data']['mail_subj'] = 'Email Verification';
-		$arg['data']['auth_context_token'] = $acs['id'];
-		$cic = new \OpenTHC\Service\OpenTHC('cic');
-		$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
-		if (201 == $res['code']) {
-			$data = [];
-			$data['Page']['title'] = 'Email Verification';
-			$data['info'] = 'Check Your Inbox';
-			return $this->_container->view->render($RES, 'page/done.html', $data);
+		// Return/Redirect
+		$ret_path = '/done';
+		$ret_args = [
+			'e' => 'cav228'
+		];
+
+		// Test Mode
+		if ($_ENV['test']) {
+
+			$ret_args['r'] = "https://{$_SERVER['SERVER_NAME']}/auth/once";
+			$reg_args['a'] = $acs['id'];
+
+		} else {
+
+			$arg = [];
+			$arg['to'] = $ARG['contact']['email'];
+			$arg['file'] = 'sso/contact-email-verify.tpl';
+			$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
+			$arg['data']['mail_subj'] = 'Email Verification';
+			$arg['data']['auth_context_token'] = $acs['id'];
+
+			try {
+
+				$cic = new \OpenTHC\Service\OpenTHC('cic');
+				$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
+
+				if (201 == $res['code']) {
+					$ret_args['s'] = 't';
+				}
+
+			} catch (Exception $e) {
+				$ret_args['e'] = 'cav255';
+				$ret_args['s'] = 'f';
+			}
+
 		}
 
-		_exit_text("Email Verification Send Failure [CAV#217]\nPlease Contact Support", 500);
+		return $RES->withRedirect($ret_path . '?' . http_build_query($ret_args));
 
 	}
 
+	/**
+	 * Send the Phone Verification Text
+	 */
 	function phoneVerifySend($RES, $ARG)
 	{
 		unset($_SESSION['phone-verify-warn']);
 
-		$_SESSION['phone-verify-code'] = substr(str_shuffle('ABCDEFGHJKMNPQRSTUVWXYZ23456789'), 0, 6);
+		$_SESSION['phone-verify-code'] = substr(str_shuffle('ADEFHJKMNPRTWXY34679'), 0, 6);
 		$_SESSION['phone-verify-e164'] = _phone_e164($_POST['contact-phone']);
 
-		$arg = [];
-		$arg['target'] = $_SESSION['phone-verify-e164'];
-		$arg['body'] = sprintf('Account Verification Code: %s', $_SESSION['phone-verify-code']);
-		$cic = new \OpenTHC\Service\OpenTHC('cic');
-		$res = $cic->post('/api/v2018/phone/send', [ 'form_params' => $arg ]);
-		if (200 == $res['code']) {
-			return $RES->withRedirect($_SERVER['HTTP_REFERER']);
+		$ret_path = $_SERVER['HTTP_REFERER'];
+		$ret_args = [];
+
+		// Test Mode
+		if ($_ENV['test']) {
+
+			$ret_args['c'] = $_SESSION['phone-verify-code'];
+
+		} else {
+
+			$arg = [];
+			$arg['target'] = $_SESSION['phone-verify-e164'];
+			$arg['body'] = sprintf('Account Verification Code: %s', $_SESSION['phone-verify-code']);
+
+			try {
+
+				$cic = new \OpenTHC\Service\OpenTHC('cic');
+				$res = $cic->post('/api/v2018/phone/send', [ 'form_params' => $arg ]);
+				if (200 == $res['code']) {
+					$ret_args['e'] = 'cav294';
+					$ret_args['s'] = 't'; // Send=True
+				} else {
+					$ret_args['e'] = 'cav297';
+					$ret_args['s'] = 'f'; // Send=False
+					$_SESSION['phone-verify-code'] = null;
+					$_SESSION['phone-verify-e164'] = null;
+					$_SESSION['phone-verify-warn'] = 'Double check this number and try again';
+				}
+
+			} catch (Exception $e) {
+				$ret_args['e'] = 'cav304';
+				$reg_args['s'] = 'e'; // Exception Notice
+			}
+
 		}
 
-		$_SESSION['phone-verify-code'] = null;
-		$_SESSION['phone-verify-e164'] = null;
-		$_SESSION['phone-verify-warn'] = 'Double check this number and try again';
-
-		return $RES->withRedirect($_SERVER['HTTP_REFERER']);
+		return $RES->withRedirect($ret_path . '?' . http_build_query($ret_args));
 
 	}
 }

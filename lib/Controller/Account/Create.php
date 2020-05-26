@@ -5,12 +5,12 @@
 
 namespace App\Controller\Account;
 
-class Create extends \OpenTHC\Controller\Base
+class Create extends \App\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{
 		$file = 'page/account/create.html';
-		$data = [];
+		$data = $this->data;
 		$data['Page'] = [ 'title' => 'Create Account' ];
 
 		if (!empty($_GET['r'])) {
@@ -163,18 +163,38 @@ class Create extends \OpenTHC\Controller\Base
 		));
 		$dbc->insert('auth_context_token', $acs);
 
-		$arg = [];
-		$arg['to'] = $_POST['email'];
-		$arg['file'] = 'sso/account-create.tpl';
-		$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
-		$arg['data']['mail_subj'] = 'Account Confirmation';
-		$arg['data']['auth_context_token'] = $acs['id'];
+		// Return/Redirect
+		$ret_args = [
+			'e' => 'cac111',
+		];
+		$ret_path = '/done';
 
-		try {
-			$cic = new \OpenTHC\Service\OpenTHC('cic');
-			$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
-		} catch (\Exception $e) {
-			// Ignore
+		// Test Mode
+		if ($_ENV['test']) {
+
+			$ret_args['a'] = $acs['id'];
+			$ret_args['r'] = "https://{$_SERVER['SERVER_NAME']}/auth/once";
+
+		} else {
+
+			$arg = [];
+			$arg['to'] = $_POST['email'];
+			$arg['file'] = 'sso/account-create.tpl';
+			$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
+			$arg['data']['mail_subj'] = 'Account Confirmation';
+			$arg['data']['auth_context_token'] = $acs['id'];
+
+			try {
+
+				$cic = new \OpenTHC\Service\OpenTHC('cic');
+				$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
+
+			} catch (\Exception $e) {
+				// Ignore
+				$ret_args['e'] = 'cac190';
+				$ret_args['s'] = 'e';
+			}
+
 		}
 
 		$RES = $RES->withAttribute('Contact', [
@@ -183,7 +203,7 @@ class Create extends \OpenTHC\Controller\Base
 			'company_name' => $_POST['license-name'],
 		]);
 
-		return $RES->withRedirect('/done?e=cac111');
+		return $RES->withRedirect($ret_path . '?' . http_build_query($ret_args));
 
 	}
 }

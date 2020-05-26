@@ -40,6 +40,14 @@ class Done extends \OpenTHC\Controller\Base
 					$data['Page']['title'] = 'Check Your Inbox';
 					$data['body'] = '<p>If the email address submitted was valid and has an account then an email should arrive shortly with password reset instructions.</p><p>Check your mailbox (or SPAM folder) for this message and follow the steps indicated.</p><hr><p>Contact <em><a href="mailto:help@openthc.com">help@openthc.com</a></em> if you need additional assistance</p>';
 				break;
+				case 'cav228':
+					$data['Page']['title'] = 'Email Verification';
+					$data['body'] = '<div class="alert alert-success">Check Your Inbox!</div><p>Your your inbox for a message from us, there is a link we want you to click.</p>';
+				break;
+				case 'cav255':
+					$data['Page']['title'] = 'Email Verification';
+					$data['body'] = '<div class="alert alert-danger">Email Verification Send Failure [CAV#255]</div><p>Please contact support</p>';
+				break;
 			}
 		}
 
