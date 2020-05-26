@@ -11,4 +11,7 @@ webroot/test-output/
 composer.lock
 etc/app.ini
 etc/browserstack.conf.json
+
 test/phpunit-report.xsl
+test/phpunit.xsl
+test/report.xsl

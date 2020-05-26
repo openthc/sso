@@ -2,6 +2,17 @@
 ; SSO Application Configuration
 ;
 
+[application]
+	hostname = "sso.openthc.dev"
+
+
+;
+; Enable Middleware and Pass this secret to enable TEST mode
+; If empty, TEST_MODE is not possible
+[application_test]
+	secret = "PUT_A_BIG_URL_SAFE_RANDOM_KEY_HERE_TO_TRIGGER_TEST_MODE"
+
+
 ;
 ;
 [database]
