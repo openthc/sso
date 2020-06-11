@@ -9,12 +9,13 @@
 <link rel="stylesheet" href="https://cdn.openthc.com/bootstrap/4.4.1/bootstrap.css" integrity="sha256-L/W5Wfqfa0sdBNIKN9cG6QA5F2qx4qICmU2VgLruv9Y=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdn.openthc.com/css/www/0.0.1/www.css">
 <!-- <link rel="stylesheet" href="https://cdn.openthc.dev/css/sso/0.0.1/sso.css"> -->
+<link rel="stylesheet" href="/font/font.css">
 <style>
 #alert-test-mode {
-	position: absolute;
-	bottom: 0;
-	left: 0;
-	right: 0;
+	bottom: 5vh;
+	position: fixed;
+	left: 5vw;
+	right: 5vw;
 	z-index: 16384;
 }
 #alert-test-mode .alert {
@@ -22,8 +23,18 @@
 	margin: 0;
 	text-align: center;
 }
+footer.foot-wrap {
+	background: #343a40;
+	border: 1px solid #343a40;
+	margin: 0;
+}
+div.foot {
+	margin: 2em;
+}
+div.foot a {
+	color: #ffffffaa;
+}
 </style>
-{% block head_link %}{% endblock %}
 <title>{{ Page.title ?: "SSO" }}</title>
 </head>
 <body>
@@ -37,21 +48,27 @@ OgM6WU6M5QS99O57L3+f63177XXFoY5wpHgw8BioEOEH60S58Zw7JhsJx4/cSgJTDgSrAZOAl8Atar8G
 kW46bNYGGhoOUlMxPAj8LvA9sSLNes3BiiyrVpbbzN0Ao/BOl9oKhIxBpODhNVbcBJcCoNIZPAOuBHOAr4Ok0czuBkKq+U2ovOJsyAuFI8HFgF/BqGkM9wHGBTZblHB2QKgf4BHgR8KWx8T2w2racawN3wSsZwKuBl23LmWFZztFIH6UnxBpMRG068F0aOwuBqakisBjYN2DyLSAELLct5+pd1YmGgxNRrQZsYMyA37Nsy6nPVAcuArZtOfNty7l6N3s7fOxn7JL5F2zLKQPmAK3DKURdBnMu+ZKsB9kMe/prfV/PJ7Rzb5Xwfg3zP5GRVKBHEuG63+Mv4FQ/AqZ2DbblNNuW8wTwcUI0OSMImgtcBnnXtpyptuVcm3xgFgB+AG/FDkxNRbEf+ce2nM9CkWCVqs42MiLgcWCtovWlltP21JH5+fGYW9g09/Dp/rmoXbMU1TqUdX6P2tiqnZ0jGfcpv8zN93yyRoxsVdd7o2nO4R8GasBDBIx86frljKmpWAFgvl0/bNCCxsUAFNWXvae55rT4ZCsCKN5gEWq/tZMQqTE1FXu52TUl+dG/c1VG0Cd/nXvnOe/mjWeKjszbj5HPgYIBp+gAArdjKTaLLMEnZ0xNRR2AW1Hdu+jr1SnBJx6YSdOcwxTum5FbVF8WxMgphIWDRNHR03HHqTuU3LiKpzBYeX5ElpraNS6eLsKNH/TerupKRSAnP2/Mk/Vlr4uRuiEbCFfxetQbRIBu9zKj4pDnH2qtDyP7yfVHTM1aRzTeHl9Z1Zvj38oEo+MQc1iE4nQp8rpcvFtu9+AUGGnRfzs7stCWBd72+Moq/MHeZuns7EMKZi8ZwFUVtzXWJn5pTtkRSWX5HxgplvFjQDIUAc9b7q2s2pVQ+XqMbEtbeONK96VO8DQSDYTsoer/OjxFW26inW76jk/M5j5i3TAksKfE23voOncLPAVYkvIwkspydOOeBuBNfAY6utBrHWhnT+poCONNzepHio7OexRhfKpjzm2PEYvexr0eQ/wGYF40ELpYsLs0fVsuleUlwA5gGqqQ40fy88DXL2BXUIonFzblS45pRBJdj4DG4vS0dqMxL0n+JFAeDYTOZOwHkpHQjXueB2YicgM3jl6/jbZ3gmqqpl4QUE/pudxJrLkL7VEQuQC8FA2EXogGQmf6ep7xYiJb30I/rEuS2g4sAh7CU3hwFJLrv4IxxZMLzo7FJ41eR3y029aVrCOtQE00EPoIoGCXTXRZeHg3oz6EJiCyGfgABXxyBSPFBRPOj9Y4jbg6NlHnt6ho5aVAuGVEL6eINOvGPRuA5xAa8XQUrofXrR5x9SEcU5gUXRbaLF5uS9Zm76qP6tUHUlmem+j/T0547LxPkKlAKBoIxSfsLqU5EMra5n9rjuwHDvgo6gAAAABJRU5ErkJggg==">
 	</a>
 
-	<!-- <ul class="navbar-nav ml-auto">
-			<li class="nav-item"><a class="nav-link" href="/auth/open" title="Sign In"><i class="fas fa-sign-in-alt"></i> Sign In</a></li>
-	</ul> -->
-
 </nav>
 
 
 {% if Page.flash %}
-	<div class="container-fluid">
+	<div class="container mt-4">
 	{{ Page.flash|raw }}
 	</div>
 {% endif %}
 
+<div style="min-height: 90vh;">
 {% block body %}
 {% endblock %}
+</div>
+
+<footer class="foot-wrap">
+<div class="foot">
+	<a href="https://openthc.com/">openthc.com</a> |
+	<a href="https://openthc.com/about/tos">Terms of Service</a> |
+	<a href="https://openthc.com/about/privacy">Privacy</a> |
+</div>
+</footer>
 
 {% if Site.test %}
 	<div id="alert-test-mode">

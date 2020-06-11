@@ -124,6 +124,8 @@ if (is_file($f)) {
 	require_once($f);
 }
 
+// Enable Test Options
+// $app->add('App\Middleware\TestMode');
 
 // Go!
 $app->run();
