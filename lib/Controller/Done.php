@@ -19,6 +19,7 @@ class Done extends \OpenTHC\Controller\Base
 			switch ($_GET['e']) {
 				case 'cac065':
 					$data['warn'] = 'You have already created an account, sign in to that one';
+					$data['foot'] = '<div class="r"><a class="btn btn-outline-primary" href="/auth/open">Sign In <i class="icon icon-arrow-right"></i></a></div>';
 				break;
 				case 'cac111':
 					$data['Page']['title'] = 'Account Confirmation';
