@@ -26,43 +26,35 @@
 ; Need redis for passing data around
 [redis]
 	hostname = "127.0.0.1"
-	database = 0
+	database = "0"
 
 
 ;
-;
-[Google]
-	recaptcha-public = ""
-	recaptcha-secret = ""
-
-
-;
-;
+; Application
 [openthc_app]
-	url = "https://app.openthc.dev"
 	hostname = "app.openthc.dev"
 	client = ""
 	secret = ""
 
 
 ;
-;
+; CIC
 [openthc_cic]
-	api_base = "https://cic.openthc.dev/"
-	api_auth = ""
+	hostname = "cic.openthc.dev"
+	client = ""
+	secret = ""
 
 
 ;
-;
+; CRE
 [openthc_cre]
-	url = "https://cre.openthc.dev"
 	hostname = "cre.openthc.dev"
 	client = ""
 	secret = ""
 
 
 ;
-;
+; Directory
 [openthc_dir]
 	hostname = "dir.openthc.dev"
 	client = ""
@@ -70,18 +62,23 @@
 
 
 ;
-;
+; Laboratory
 [openthc_lab]
-	url = "https://lab.openthc.dev"
 	hostname = "lab.openthc.dev"
 	client = ""
 	secret = ""
 
 
 ;
-;
+; SSO
 [openthc_sso]
-	url = "https://sso.openthc.dev"
 	hostname = "sso.openthc.dev"
 	client = ""
 	secret = ""
+
+
+;
+;
+[Google]
+	recaptcha-public = ""
+	recaptcha-secret = ""

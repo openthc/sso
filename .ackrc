@@ -18,6 +18,7 @@
 --ignore-dir=scrape/
 --ignore-dir=var/
 --ignore-dir=vendor/
+--ignore-dir=webroot/test-output/
 
 --ignore-file=is:composer.lock
 --ignore-file=is:composer.phar
