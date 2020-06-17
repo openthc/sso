@@ -5,7 +5,7 @@
 
 namespace Test\Core;
 
-class Config_Test extends \Test\Base_Test_Case
+class Config_Test extends \Test\Base_Case
 {
 	function test_config()
 	{

@@ -5,7 +5,7 @@
 
 namespace Test\Core;
 
-class Site_Test extends \Test\Base_Test_Case
+class Site_Test extends \Test\Base_Case
 {
 	function test_auth_pass()
 	{
@@ -33,6 +33,9 @@ class Site_Test extends \Test\Base_Test_Case
 		$this->assertValidResponse($res);
 
 		$res = $ghc->get('/auth/shut');
+		$this->assertValidResponse($res);
+
+		$res = $ghc->get('/done');
 		$this->assertValidResponse($res);
 
 	}

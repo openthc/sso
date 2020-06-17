@@ -5,7 +5,7 @@
 
 namespace Test\Auth;
 
-class Fire_Test extends \Test\Base_Test_Case
+class Fire_Test extends \Test\Base_Case
 {
 	function test_auth_pass()
 	{

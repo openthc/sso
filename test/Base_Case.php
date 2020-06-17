@@ -5,7 +5,7 @@
 
 namespace Test;
 
-class Base_Test_Case extends \PHPUnit\Framework\TestCase
+class Base_Case extends \PHPUnit\Framework\TestCase
 {
 	protected $_pid = null;
 
@@ -31,6 +31,10 @@ class Base_Test_Case extends \PHPUnit\Framework\TestCase
 			'http_errors' => false,
 			'cookies' => true,
 		));
+
+		// $test_secret = \OpenTHC\Config::get('application_test.secret');
+		// $this->assertNotEmpty($test_secret);
+
 
 		return $c;
 

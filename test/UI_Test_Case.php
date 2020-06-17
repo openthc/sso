@@ -11,7 +11,7 @@ namespace Test;
 
 use \Facebook\WebDriver\Remote\RemoteWebDriver;
 
-class UI_Test_Case extends \Test\Base_Test_Case
+class UI_Test_Case extends \Test\Base_Case
 {
 	protected static $driver;
 	// protected static $bs_local;

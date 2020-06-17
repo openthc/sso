@@ -5,7 +5,7 @@
 
 namespace Test;
 
-class oAuth_Test extends \Test\Base_Test_Case
+class oAuth_Test extends \Test\Base_Case
 {
 	function test_auth_pass()
 	{

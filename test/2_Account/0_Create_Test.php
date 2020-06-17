@@ -5,18 +5,19 @@
 
 namespace Test\Account;
 
-class Create_Test extends \Test\Base_Test_Case
+class Create_Test extends \Test\Base_Case
 {
 	function test_account_create_pass()
 	{
+		$test_secret = \OpenTHC\Config::get('application_test.secret');
+		$this->assertNotEmpty($test_secret);
+
 		$c = $this->_ua();
-		$res = $c->get('/account/create?_t=' . \OpenTHC\Config::get('application_test.secret'));
+		$res = $c->get('/account/create?_t=' . $test_secret);
 		$res = $this->assertValidResponse($res);
 
 		$html = $res;
-		// $html = $this->raw; //$res->getBody()->getContents();
 
-		// $html = $this->raw;
 		$this->assertRegExp('/TEST MODE/', $html);
 		$this->assertRegExp('/Create Account/', $html);
 		$this->assertRegExp('/input.+id="license\-name"/', $html);
