@@ -48,6 +48,7 @@ SQL;
 
 		$data = $this->data;
 		$data['Page'] = [ 'title' => 'Account Verification' ];
+		$data['Contact'] = $Contact;
 		$data['contact_email'] = $Contact['email'];
 		$data['contact_phone'] = $Contact['phone'];
 		if (!empty($_SESSION['phone-verify-e164'])) {
@@ -62,11 +63,15 @@ SQL;
 			$data['verify_phone'] = true;
 		}
 
-		if (!empty($_SESSION['phone-verify-code'])) {
-			$data['verify_phone_code'] = true;
-		}
+		if ($data['verify_phone']) {
 
-		$data['verify_phone_warn'] = $_SESSION['phone-verify-warn'];
+			if (!empty($_SESSION['phone-verify-code'])) {
+				$data['verify_phone_code'] = true;
+			}
+
+			$data['verify_phone_warn'] = $_SESSION['phone-verify-warn'];
+
+		}
 
 		return $this->_container->view->render($RES, $file, $data);
 
@@ -274,7 +279,10 @@ SQL;
 		$_SESSION['phone-verify-e164'] = _phone_e164($_POST['contact-phone']);
 
 		$ret_path = $_SERVER['HTTP_REFERER'];
-		$ret_args = [];
+		$ret_path = strtok($ret_path, '?');
+		$ret_args = [
+			'_' => $_GET['_'],
+		];
 
 		// Test Mode
 		if ($_ENV['test']) {

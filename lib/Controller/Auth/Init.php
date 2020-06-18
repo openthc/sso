@@ -85,8 +85,7 @@ class Init extends \OpenTHC\Controller\Base
 		// No Return? Load Default
 		if (empty($ret)) {
 			$cfg = \OpenTHC\Config::get('openthc_app');
-			$ret = trim($cfg['url'], '/');
-			$ret.= '/auth/back?ping={PING}';
+			$ret = sprintf('https://%s/auth/back?ping={PING}', $cfg['hostname']);
 		}
 
 		// Place Ping Back Token
