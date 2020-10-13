@@ -35,7 +35,7 @@ class Done extends \OpenTHC\Controller\Base
 					$data['Page']['title'] = 'Account Confirmed';
 					$data['info'] = 'Account Confirmed';
 					$data['body'] = '<p>Thank you, your email has been verified and your account request confirmed.</p><p>Next, you will need to set a password.</p>';
-					$data['foot'] = sprintf('<div class="r"><a class="btn btn-outline-success" href="/account/password?_=%s">Set Password <i class="icon icon-arrow-right"></i></a></div>', $_SESSION['account-create']['password-args']);
+					$data['foot'] = sprintf('<div class="r"><a class="btn btn-outline-success" href="/account/password?_=%s">Set Password <i class="icon icon-arrow-right"></i></a></div>', $_GET['_']);
 				break;
 				case 'cao100':
 					$data['Page']['title'] = 'Check Your Inbox';
@@ -46,6 +46,7 @@ class Done extends \OpenTHC\Controller\Base
 					$data['body'] = '<div class="alert alert-success">Check Your Inbox!</div><p>Your your inbox for a message from us, there is a link we want you to click.</p>';
 				break;
 				case 'cav255':
+				case 'cac190':
 					$data['Page']['title'] = 'Email Verification';
 					$data['body'] = '<div class="alert alert-danger">Email Verification Send Failure [CAV#255]</div><p>Please contact support</p>';
 				break;

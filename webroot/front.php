@@ -114,8 +114,14 @@ $app->group('/account', function() {
 
 })->add('OpenTHC\Middleware\Session');
 
+
+// the Done/Stop Page
 $app->get('/done', 'App\Controller\Done')
 	->add('OpenTHC\Middleware\Session');;
+
+
+// Enable Test Options
+// $app->add('App\Middleware\TestMode');
 
 
 // Custom Middleware?
@@ -124,8 +130,6 @@ if (is_file($f)) {
 	require_once($f);
 }
 
-// Enable Test Options
-// $app->add('App\Middleware\TestMode');
 
 // Go!
 $app->run();
