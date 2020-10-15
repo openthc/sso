@@ -125,8 +125,8 @@ class Create extends \App\Controller\Base
 		$contact_id = $dbc->insert('contact', [
 			'id' => \Edoceo\Radix\ULID::create(),
 			'name' => $_POST['contact-name'],
-			'email' => $_POST['email'],
-			'phone' => $_POST['phone'],
+			'email' => $_POST['contact-email'],
+			'phone' => $_POST['contact-phone'],
 			'hash' => '-',
 		]);
 
@@ -154,8 +154,8 @@ class Create extends \App\Controller\Base
 				'contact' => [
 					'id' => $contact_id,
 					'name' => $_POST['contact-name'],
-					'email' => $_POST['email'],
-					'phone' => $_POST['phone'],
+					'email' => $_POST['contact-email'],
+					'phone' => $_POST['contact-phone'],
 				]
 			],
 			'origin' => $_SESSION['account-create']['origin'],
@@ -201,6 +201,7 @@ class Create extends \App\Controller\Base
 			'id' => $contact_id,
 			'username' => $_POST['email'],
 			'company_name' => $_POST['license-name'],
+			'contact_phone' => $_POST['contact-phone'],
 		]);
 
 		return $RES->withRedirect($ret_path . '?' . http_build_query($ret_args));
