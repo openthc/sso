@@ -35,8 +35,14 @@ These are registered in the *auth_service* table.
 
 ### API
 
+An API exists to query Company and Contact information as well.
+The API calls and data structures follow those outlined in the OpenTHC API.
+
+
+## Profiles
+
 An API exists to query Company and Contact information as well the directory of Licenses.
-See the [OpenTHC API Documentation](https://api.openthc.org/doc/#_authentication) for more information.
+See the [OpenTHC API Documentation](https://api.openthc.org/) for more information.
 
 
 ### SMS-2FA
@@ -47,3 +53,5 @@ If you want to use SMS for two-factor authentication you will need to configure 
 ### U2F
 
 The service is enabled for use with U2F such as RSA Secure ID and Solokeys.
+
+* https://webauthn.me/introduction

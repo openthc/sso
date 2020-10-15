@@ -17,14 +17,15 @@
 		"ext-PDO": "*",
 		"ext-session": "*",
 		"ext-sockets": "*",
+		"edoceo/lowline_php": "dev-master",
 		"edoceo/radix": "dev-master",
-		"league/oauth2-client": "2.4.1",
+		"league/oauth2-client": "2.5.0",
 		"openthc/common": "dev-master"
 	},
 	"require-dev": {
 		"behat/behat": "3.7.0",
 		"php-webdriver/webdriver": "1.8.2",
-		"phpunit/phpunit": "8.5.6",
-		"phpunit/phpunit-selenium": "8.0.0"
+		"phpstan/phpstan": "0.12.39",
+		"phpunit/phpunit": "9.4.1"
 	}
 }
