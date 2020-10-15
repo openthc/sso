@@ -12,6 +12,6 @@ Copy the etc/app.ini.example file to etc/app.ini and edit as necessary for your 
 If you need to create the database, use the files in ./etc/sql/* to create the schema.
 If you are tying OpenTHC into an existing environment, the schema could be a guide for creating compatible views / table aliases.
 
-You may need to create the necessary auth_program and auth_context entries that are suitable for your environment.
+You may need to create the necessary **auth_service** and **auth_context_ticket** entries that are suitable for your environment.
 
 Run ./test/test.sh to verify things are working OK.

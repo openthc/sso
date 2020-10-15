@@ -3,14 +3,13 @@
 **/.idea/tasks.xml
 .vscode/
 Custom/
+etc/
 node_modules/
 var/
 vendor/
 webroot/test-output/
 
 composer.lock
-etc/app.ini
-etc/browserstack.conf.json
 
 test/phpunit-report.xsl
 test/phpunit.xsl
