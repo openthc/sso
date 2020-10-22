@@ -15,11 +15,11 @@ class Verify extends \App\Controller\Base
 		$ARG = json_decode($ARG, true);
 
 		if (empty($ARG)) {
-			_exit_text('Invalid Request [CAV#018]');
+			__exit_text('Invalid Request [CAV#018]', 400);
 		}
 
 		if (empty($ARG['contact']['id'])) {
-			_exit_text('Invalid Request [CAV#022]', 400);
+			__exit_text('Invalid Request [CAV#022]', 400);
 		}
 
 		// Load Contact
@@ -36,7 +36,7 @@ SQL;
 		];
 		$Contact = $this->_container->DB->fetchRow($sql, $arg);
 		if (empty($Contact['id'])) {
-			_exit_text('Invalid Request [CAV#037]', 400);
+			__exit_text('Invalid Request [CAV#037]', 400);
 		}
 
 		switch ($ARG['action']) {
@@ -83,11 +83,11 @@ SQL;
 		$ARG = json_decode($ARG, true);
 
 		if (empty($ARG)) {
-			_exit_text('Invalid Request [CAP#055]', 400);
+			__exit_text('Invalid Request [CAP#055]', 400);
 		}
 
 		if (empty($ARG['contact'])) {
-			_exit_text('Invalid Request [CAP#059]', 400);
+			__exit_text('Invalid Request [CAP#059]', 400);
 		}
 
 		switch ($_POST['a']) {

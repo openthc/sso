@@ -10,13 +10,13 @@ class Permit extends \OpenTHC\Controller\Base
 	function __invoke($REQ, $RES, $ARG)
 	{
 		if (empty($_GET['_'])) {
-			_exit_text('COP#010 Invalid Input', 400);
+			__exit_text('Invalid Input [COP#013]', 400);
 		}
 
 		$x = _decrypt($_GET['_'], $_SESSION['crypt-key']);
 		$x = json_decode($x, true);
 		if (empty($x)) {
-			_exit_text('COP#015 Invalid Input', 400);
+			__exit_text('Invalid Input [COP#019]', 400);
 		}
 
 		$_GET = $x;
@@ -73,7 +73,6 @@ class Permit extends \OpenTHC\Controller\Base
 			return $RES->withRedirect($ret);
 		}
 
-		// _exit_text('hfdsfda');
 		$data = [];
 		$data['Page'] = ['title' => 'Permit' ];
 		$data['Program'] = $Auth_Program;

@@ -36,7 +36,7 @@ class Once extends \App\Controller\Base
 		}
 
 		if (empty($_GET['a'])) {
-			_exit_text('Invalid Request [CAO#020]', 400);
+			__exit_text('Invalid Request [CAO#020]', 400);
 		}
 
 
@@ -60,7 +60,7 @@ class Once extends \App\Controller\Base
 		}
 
 		if (!preg_match('/^([\w\-]{32,128})$/i', $_GET['a'], $m)) {
-			_exit_html('<h1>Invalid Request [CAO#024]</h1>', 400);
+			__exit_text('Invalid Request [CAO#024]', 400);
 		}
 
 		$auth = $_GET['a'];
@@ -73,7 +73,7 @@ class Once extends \App\Controller\Base
 		}
 		// if (strtotime($act['ts_expires']) < $_SERVER['REQUEST_TIME']) {
 			// $dbc->query('DELETE FROM auth_context_ticket WHERE id = ?', $act['id']);
-			// _exit_html('<h1>Invalid Token [CAO#028]</h2><p>The link you followed has expired</p>', 400);
+			// __exit_html('<h1>Invalid Token [CAO#028]</h2><p>The link you followed has expired</p>', 400);
 		// }
 		$chk = json_decode($act['meta'], true);
 		if (empty($chk)) {
@@ -138,7 +138,7 @@ class Once extends \App\Controller\Base
 		$email = $data['account']['contact']['email'];
 		$chk = $dbc->fetchOne('SELECT id FROM auth_contact WHERE username = ?', [ $email ]);
 		if (empty($chk)) {
-			_exit_text('Invalid [CAO#073]', 400);
+			__exit_text('Invalid [CAO#073]', 400);
 		}
 
 		$sql = 'UPDATE auth_contact SET flag = flag | :f1 WHERE id = :pk';
