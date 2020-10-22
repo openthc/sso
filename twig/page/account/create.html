@@ -14,7 +14,7 @@
 		<div class="input-group">
 			<input autocomplete="off" autofocus class="form-control" id="license-name" name="license-name" placeholder="- Company, Inc. -" required>
 			<div class="input-group-append">
-				<div class="input-group-text"><i class="icon icon-circle"></i></div>
+				<div class="input-group-text"><i class="icon icon-circle-o"></i></div>
 			</div>
 		</div>
 		<div>Should be your registered company name or your government issued business license ID</div>
@@ -54,13 +54,13 @@
 <script>
 $(function() {
 	$('#license-name').autocomplete({
-		source: 'https://directory.openthc.com/api/autocomplete/license',
+		source: 'https://{{ OpenTHC.dir.hostname }}/api/autocomplete/license',
 		change: function(e, ui) {
 			if (!ui.item) {
 				$('#company-id').val('');
 				$('#license-id').val('');
 				var icon = $('#license-name').closest('.input-group').find('.input-group-text');
-				icon.html('<i class="icon icon-circle"></i>');
+				icon.html('<i class="icon icon-circle-o"></i>');
 				icon.removeClass('text-success');
 			} else {
 				$('#company-id').val(ui.item.company.id);
@@ -70,11 +70,17 @@ $(function() {
 				icon.addClass('text-success');
 			}
 		},
+		response: function(e, ui) {
+			if (0 == ui.content.length) {
+				var $icon = $('#license-name').closest('.input-group').find('.input-group-text');
+				$icon.addClass('text-danger');
+			}
+		},
 		search: function(e, ui) {
 			$('#company-id').val('');
 			$('#license-id').val('');
 			var icon = $('#license-name').closest('.input-group').find('.input-group-text');
-			icon.html('<i class="icon icon-circle"></i>');
+			icon.html('<i class="icon icon-circle-o"></i>');
 			icon.removeClass('text-success');
 		},
 		select: function(e, ui) {

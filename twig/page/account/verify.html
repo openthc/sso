@@ -26,7 +26,7 @@
 			{% else %}
 				<div class="input-group-prepend">
 					<div class="input-group-text text-success">
-						&check;
+						<i class="icon icon-check-circle-o"></i>
 					</div>
 				</div>
 				<input class="form-control" disabled name="contact-email" value="{{ contact_email }}">
@@ -55,7 +55,7 @@
 						<i class="icon icon-check-circle-o"></i>
 					</div>
 				</div>
-				<input class="form-control" id="contact-phone" inputmode="tel" name="contact-phone" value="{{ contact_phone }}">
+				<input class="form-control" disabled id="contact-phone" inputmode="tel" name="contact-phone" value="{{ contact_phone }}">
 			{% endif %}
 		</div>
 	</div>
@@ -83,90 +83,4 @@
 </div>
 </div>
 
-{% endblock %}
-
-{% block foot_script %}
-{{ parent() }}
-<script>
-function password_checker(e) {
-
-	// this is the element being evented on
-	var n = this;
-	var p = n.value;
-	var s = password_score(p);
-
-	$(n).removeClass('border-success border-warning border-danger');
-
-	if (s >= 3) {
-		$(n).addClass('border-success');
-	} else if (s >= 2) {
-		$(n).addClass('border-warning');
-	} else if (s >= 1) {
-		$(n).addClass('border-danger');
-	}
-
-	$('#password-hint span').removeClass('text-success');
-
-	if (p.length >= 8) {
-		$('#password-length').addClass('text-success');
-	}
-
-	if (p.match(/[A-Z]/)) {
-		$('#password-upper').addClass('text-success');
-	}
-	if (p.match(/[a-z]/)) {
-		$('#password-lower').addClass('text-success');
-	}
-	if (p.match(/[0-9]/)) {
-		$('#password-number').addClass('text-success');
-	}
-
-	// $('#auth-password-hint').html(hint);
-
-}
-
-
-function password_matcher(e)
-{
-	var p0 = $('#password0').val();
-	var p1 = $('#password1').val();
-
-	if (p0 === p1) {
-		$('#password-match').addClass('text-success');
-		$('#btn-password-update').prop('disabled', false);
-	} else {
-		$('#password-match').removeClass('text-success');
-		$('#btn-password-update').prop('disabled', true);
-	}
-
-}
-
-function password_score(p)
-{
-	var min = 8;
-
-	var s = 0;
-
-	if (p.length < min) {
-		return s;
-	}
-
-	s = Math.ceil((p.length - min) / (min / 3));
-
-	s += (p.match(/[A-Z]+[a-z]+/));
-	s += (p.match(/\d+/));
-	s += (p.match(/[^\d\w]+/));
-
-	return s;
-
-};
-
-// 	$('.password-input').on('blur keyup', dbpie);
-
-
-$(function() {
-	$('#password0').on('blur change keyup', password_checker);
-	$('#password1').on('blur change keyup', password_matcher);
-});
-</script>
 {% endblock %}
