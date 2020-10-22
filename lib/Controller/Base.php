@@ -19,6 +19,10 @@ class Base extends \OpenTHC\Controller\Base
 		$data['Page'] = [];
 		$data['Page']['title'] = 'OpenTHC';
 
+		$data['OpenTHC'] = [];
+		$data['OpenTHC']['cic'] = \OpenTHC\Config::get('openthc/cic');
+		$data['OpenTHC']['dir'] = \OpenTHC\Config::get('openthc/dir');
+
 		$this->data = $data;
 
 	}

@@ -2,9 +2,6 @@
 -- PostgreSQL database dump
 --
 
-SET client_encoding = 'UTF8';
-SET standard_conforming_strings = on;
-
 --
 -- Name: auth_company; Type: TABLE; Schema: public;
 --
@@ -22,11 +19,13 @@ CREATE TABLE auth_company (
 	cre_meta jsonb
 );
 
+
 -- Company Relationships
 CREATE TABLE auth_company_company (
 	company_id_prime character varying(26) NOT NULL,
 	company_id_child character varying(26) NOT NULL
 );
+
 
 CREATE TABLE auth_company_contact (
 	company_id character varying(26) NOT NULL,
@@ -68,10 +67,10 @@ CREATE TABLE auth_context (
 );
 
 --
--- Name: auth_context_token; Type: TABLE; Schema: public;
+-- Name: auth_context_ticket; Type: TABLE; Schema: public;
 --
 
-CREATE TABLE auth_context_token (
+CREATE TABLE auth_context_ticket (
 	id varchar(64) PRIMARY KEY,
 	created_at timestamp with time zone not null default now(),
 	expires_at timestamp with time zone not null default now() + '60 minutes',
@@ -82,9 +81,9 @@ CREATE TABLE auth_context_token (
 -- Name: auth_program_contact; Type: TABLE; Schema: public;
 --
 
-CREATE TABLE auth_program_contact (
-	auth_program_id varchar(26) not null,
-	auth_contact_id varchar(26) not null,
+CREATE TABLE auth_service_contact (
+	service_id varchar(26) not null,
+	contact_id varchar(26) not null,
 	created_at timestamp with time zone default now() not null,
 	expires_at timestamp with time zone default (now() + '365 days'::interval) not null
 );
@@ -96,7 +95,7 @@ CREATE TABLE auth_program_contact (
 CREATE TABLE log_delta (
 	id character varying(26) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
 	ct timestamp with time zone DEFAULT now() NOT NULL,
-	op smallint,
+	op varchar(8),
 	tb character varying(64) NOT NULL,
 	pk character varying(32) NOT NULL,
 	v0 jsonb,
@@ -119,15 +118,15 @@ CREATE TABLE log_event (
 );
 
 
-CREATE TABLE company (
-	id character varying(26) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
-	name text
-);
+-- CREATE TABLE company (
+-- 	id character varying(26) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
+-- 	name text
+-- );
 
-CREATE TABLE contact (
-	id character varying(26) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
-	created_at timestamp with time zone DEFAULT now() NOT NULL,
-	name text,
-	email text,
-	phone text
-);
+-- CREATE TABLE contact (
+-- 	id character varying(26) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
+-- 	created_at timestamp with time zone DEFAULT now() NOT NULL,
+-- 	name text,
+-- 	email text,
+-- 	phone text
+-- );

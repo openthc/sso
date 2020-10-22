@@ -67,17 +67,17 @@ class Once extends \App\Controller\Base
 
 		$dbc = $this->_container->DB;
 
-		$act = $dbc->fetchRow('SELECT * FROM auth_context_token WHERE id = ?', $auth);
+		$act = $dbc->fetchRow('SELECT * FROM auth_context_ticket WHERE id = ?', $auth);
 		if (empty($act)) {
 			return $RES->withRedirect('/done?e=cao066');
 		}
 		// if (strtotime($act['ts_expires']) < $_SERVER['REQUEST_TIME']) {
-			// $dbc->query('DELETE FROM auth_context_token WHERE id = ?', $act['id']);
+			// $dbc->query('DELETE FROM auth_context_ticket WHERE id = ?', $act['id']);
 			// _exit_html('<h1>Invalid Token [CAO#028]</h2><p>The link you followed has expired</p>', 400);
 		// }
 		$chk = json_decode($act['meta'], true);
 		if (empty($chk)) {
-			$dbc->query('DELETE FROM auth_context_token WHERE id = ?', $act['id']);
+			$dbc->query('DELETE FROM auth_context_ticket WHERE id = ?', $act['id']);
 			return $RES->withRedirect('/done?e=cao077');
 		}
 		$act = $chk;
@@ -188,13 +188,13 @@ class Once extends \App\Controller\Base
 
 		// Generate Authentication Hash
 		$acs = [];
-		$acs['id'] = base64_encode_url(hash('sha256', openssl_random_pseudo_bytes(256), true));
+		$acs['id'] = _random_hash();
 		$acs['meta'] = json_encode(array(
 			'action' => 'password-reset',
 			'contact' => $Contact,
 			'geoip' => geoip_record_by_name($_SERVER['REMOTE_ADDR']),
 		));
-		$dbc->insert('auth_context_token', $acs);
+		$dbc->insert('auth_context_ticket', $acs);
 
 		$ret_args = [
 			'e' => 'cao100',
@@ -206,7 +206,7 @@ class Once extends \App\Controller\Base
 
 			// Pass Information Back
 			// Test Runner has to parse the Location URL
-			$ret_args['r'] = "https://{$_SERVER['SERVER_NAME']}/auth/once";
+			$ret_args['r'] = sprintf('https://%s/auth/once', $_SERVER['SERVER_NAME']);
 			$ret_args['a'] = $acs['id'];
 
 		} else {
@@ -216,7 +216,8 @@ class Once extends \App\Controller\Base
 			$arg['file'] = 'sso/contact-password-reset.tpl';
 			$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
 			$arg['data']['mail_subj'] = 'Password Reset Request';
-			$arg['data']['auth_context_token'] = $acs['id'];
+			$arg['data']['auth_context_ticket'] = $acs['id']; // v1
+			$arg['data']['auth_context_token'] = $acs['id']; // v0
 
 			// Use CIC to Send
 			try {

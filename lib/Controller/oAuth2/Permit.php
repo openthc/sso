@@ -41,9 +41,9 @@ class Permit extends \OpenTHC\Controller\Base
 			'scope' => $_GET['scope'],
 		));
 
-		$hash = base64_encode_url(hash('sha256', openssl_random_pseudo_bytes(256), true));
+		$hash = _random_hash();
 
-		$sql = 'INSERT INTO auth_context_token (id, meta, expires_at) VALUES (?, ?, ?)';
+		$sql = 'INSERT INTO auth_context_ticket (id, meta, expires_at) VALUES (?, ?, ?)';
 		$arg = array(
 			$hash,
 			$data,

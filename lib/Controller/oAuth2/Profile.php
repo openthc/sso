@@ -25,7 +25,7 @@ class Profile extends \OpenTHC\Controller\Base
 		}
 
 		// Find Bearer Token
-		$sql = 'SELECT id, meta FROM auth_context_token WHERE id = ?';
+		$sql = 'SELECT id, meta FROM auth_context_ticket WHERE id = ?';
 		$arg = array($auth);
 		$tok = $dbc->fetchRow($sql, $arg);
 		if (empty($tok)) {

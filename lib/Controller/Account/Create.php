@@ -55,13 +55,13 @@ class Create extends \App\Controller\Base
 
 	private function _create_account($RES)
 	{
-		$_POST['email'] = strtolower(trim($_POST['email']));
-		$_POST['email'] = filter_var($_POST['email'], FILTER_VALIDATE_EMAIL);
-		if (empty($_POST['email'])) {
+		$_POST['contact-email'] = strtolower(trim($_POST['contact-email']));
+		$_POST['contact-email'] = filter_var($_POST['contact-email'], FILTER_VALIDATE_EMAIL);
+		if (empty($_POST['contact-email'])) {
 			return $RES->withRedirect('/account/create?e=cac035');
 		}
 
-		$_POST['phone'] = _phone_e164($_POST['phone']);
+		$_POST['contact-phone'] = _phone_e164($_POST['contact-phone']);
 
 		// Lookup Company
 		// $dir = new \App\Service\OpenTHC('dir');
@@ -73,7 +73,7 @@ class Create extends \App\Controller\Base
 		// }
 		// var_dump($chk);
 
-		// $chk = $dir->get('contact?q=' . $_POST['email']);
+		// $chk = $dir->get('contact?q=' . $_POST['contact-email']);
 		// switch ($chk['code']) {
 		// case '404':
 		// 	$_SESSION['contact-create'] = true;
@@ -81,18 +81,19 @@ class Create extends \App\Controller\Base
 		// }
 		// var_dump($dir);
 
-		$dbc = $this->_container->DB;
+		$dbc_auth = $this->_container->DBC_AUTH;
+		$dbc_main = $this->_container->DB;
 
 		// Contact
-		$sql = 'SELECT id, username FROM auth_contact WHERE username = ?';
-		$arg = array($_POST['email']);
+		$sql = 'SELECT id, email FROM contact WHERE email = ?';
+		$arg = array($_POST['contact-email']);
 		$res = $dbc->fetchRow($sql, $arg);
 		if (!empty($res)) {
 			return $RES->withRedirect('/done?e=cac065');
 		}
 
 		if (!empty($_POST['company-id'])) {
-			$chk = $dbc->fetchRow('SELECT id FROM company WHERE id = ?', [$_POST['company-id']]);
+			$chk = $dbc_main->fetchRow('SELECT id FROM company WHERE id = ?', [$_POST['company-id']]);
 			if (empty($chk['id'])) {
 				$_SESSION['account-create']['company-create'] = true;
 				// return $RES->withRedirect('/done?e=cac093');
@@ -100,15 +101,15 @@ class Create extends \App\Controller\Base
 		}
 
 		if (!empty($_POST['license-id'])) {
-			$chk = $dbc->fetchRow('SELECT id FROM license WHERE id = ?', [$_POST['license-id']]);
+			$chk = $dbc_main->fetchRow('SELECT id FROM license WHERE id = ?', [$_POST['license-id']]);
 			if (empty($chk['id'])) {
 				$_SESSION['account-create']['license-create'] = true;
 				// return $RES->withRedirect('/done?e=cac093');
 			}
 		}
 
-		$company_id = $dbc->insert('company', [
-			'id' => \Edoceo\Radix\ULID::create(),
+		$company_id = $dbc_main->insert('company', [
+			'id' => _ulid(),
 			'cre' => $_SESSION['account-create']['region'],
 			'name' => $_POST['license-name'],
 			'stat' => 100,
@@ -116,22 +117,23 @@ class Create extends \App\Controller\Base
 			'hash' => '-',
 		]);
 
-		$dbc->insert('auth_company', [
+		$dbc_auth->insert('auth_company', [
 			'id' => $company_id,
 			'code' => '-',
 		]);
 
 		// Contact Table
-		$contact_id = $dbc->insert('contact', [
-			'id' => \Edoceo\Radix\ULID::create(),
+		$contact_id = $dbc_main->insert('contact', [
+			'id' => _ulid(),
 			'name' => $_POST['contact-name'],
 			'email' => $_POST['contact-email'],
 			'phone' => $_POST['contact-phone'],
 			'hash' => '-',
 		]);
 
-		$contact_id = $dbc->insert('auth_contact', array(
+		$dbc_auth->insert('auth_contact', array(
 			'id' => $contact_id,
+			'ulid' => $contact_id,
 			'company_id' => $company_id,
 			'username' => $_POST['email'],
 			'password' => 'NONE:' . sha1(json_encode($_SERVER).json_encode($_POST)),
@@ -139,7 +141,7 @@ class Create extends \App\Controller\Base
 
 		// Auth Hash Link
 		$acs = [];
-		$acs['id'] = base64_encode_url(hash('sha256', openssl_random_pseudo_bytes(256), true));
+		$acs['id'] = _random_hash();
 		$acs['meta'] = json_encode(array(
 			'action' => 'account-create',
 			'account' => [
@@ -161,7 +163,8 @@ class Create extends \App\Controller\Base
 			'origin' => $_SESSION['account-create']['origin'],
 			'geoip' => geoip_record_by_name($_SERVER['REMOTE_ADDR']),
 		));
-		$dbc->insert('auth_context_token', $acs);
+
+		$dbc_auth->insert('auth_context_ticket', $acs);
 
 		// Return/Redirect
 		$ret_args = [
@@ -173,7 +176,7 @@ class Create extends \App\Controller\Base
 		if ($_ENV['test']) {
 
 			$ret_args['a'] = $acs['id'];
-			$ret_args['r'] = "https://{$_SERVER['SERVER_NAME']}/auth/once";
+			$ret_args['r'] = sprintf('https://%s/auth/once', $_SERVER['SERVER_NAME']);
 
 		} else {
 
@@ -182,7 +185,7 @@ class Create extends \App\Controller\Base
 			$arg['file'] = 'sso/account-create.tpl';
 			$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
 			$arg['data']['mail_subj'] = 'Account Confirmation';
-			$arg['data']['auth_context_token'] = $acs['id'];
+			$arg['data']['auth_context_ticket'] = $acs['id'];
 
 			try {
 

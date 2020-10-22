@@ -12,7 +12,7 @@ class Token extends \OpenTHC\Controller\Base
 
 	function __invoke($REQ, $RES, $ARG)
 	{
-		$this->_cfg = \OpenTHC\Config::get('openthc_sso');
+		$this->_cfg = \OpenTHC\Config::get('openthc/sso');
 
 		$RES = $this->verifyRequest($REQ, $RES);
 		if (200 != $RES->getStatusCode()) {
@@ -32,11 +32,11 @@ class Token extends \OpenTHC\Controller\Base
 			'scope' => $this->_auth_token['scope'],
 		));
 
-		$hash = base64_encode_url(hash('sha256', openssl_random_pseudo_bytes(256), true));
+		$hash = _random_hash();
 
-		$sql = 'INSERT INTO auth_context_token (id, meta) VALUES (?, ?)';
+		$sql = 'INSERT INTO auth_context_ticket (id, meta) VALUES (?, ?)';
 		$arg = array($hash, $data);
-		$this->_container->DB->query($sql, $arg);
+		$this->_container->DBC_AUTH->query($sql, $arg);
 
 		// Generate Data Response
 		$ret = [];
@@ -92,16 +92,16 @@ class Token extends \OpenTHC\Controller\Base
 	 */
 	function _load_auth_code($RES)
 	{
-		$dbc = $this->_container->DB;
+		$dbc_auth = $this->_container->DBC_AUTH;
 
-		$sql = 'SELECT * FROM auth_context_token WHERE id = ?';
+		$sql = 'SELECT * FROM auth_context_ticket WHERE id = ?';
 		$arg = array($_POST['code']);
-		$res = $dbc->fetchRow($sql, $arg);
+		$res = $dbc_auth->fetchRow($sql, $arg);
 
 		// And Delete it
-		$sql = 'DELETE FROM auth_context_token WHERE id = ?';
+		$sql = 'DELETE FROM auth_context_ticket WHERE id = ?';
 		$arg = array($_POST['code']);
-		$dbc->query($sql, $arg);
+		$dbc_auth->query($sql, $arg);
 
 		if (empty($res)) {
 			return $this->makeError($RES, 'access_denied', 'Invalid Code [COT#113]', 401);

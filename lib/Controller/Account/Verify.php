@@ -220,12 +220,12 @@ SQL;
 		$dbc = $this->_container->DB;
 
 		$acs = [];
-		$acs['id'] = base64_encode_url(hash('sha256', openssl_random_pseudo_bytes(256), true));
+		$acs['id'] = _random_hash();
 		$acs['meta'] = json_encode([
 			'action' => 'email-verify',
 			'contact' => $ARG['contact'],
 		]);
-		$dbc->insert('auth_context_token', $acs);
+		$dbc->insert('auth_context_ticket', $acs);
 
 		// Return/Redirect
 		$ret_path = '/done';
@@ -246,7 +246,8 @@ SQL;
 			$arg['file'] = 'sso/contact-email-verify.tpl';
 			$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
 			$arg['data']['mail_subj'] = 'Email Verification';
-			$arg['data']['auth_context_token'] = $acs['id'];
+			$arg['data']['auth_context_ticket'] = $acs['id']; // v1
+			$arg['data']['auth_context_token'] = $acs['id']; // v0
 
 			try {
 
