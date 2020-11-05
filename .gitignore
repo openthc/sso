@@ -10,7 +10,9 @@ vendor/
 webroot/test-output/
 
 composer.lock
+env
 
+test/env
 test/phpunit-report.xsl
 test/phpunit.xsl
 test/report.xsl
