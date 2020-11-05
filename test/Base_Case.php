@@ -22,7 +22,7 @@ class Base_Case extends \PHPUnit\Framework\TestCase
 	protected function _ua()
 	{
 		$c = new \GuzzleHttp\Client(array(
-			'base_uri' => TEST_SITE,
+			'base_uri' => sprintf('https://%s', $_ENV['test-host']),
 			'allow_redirects' => false,
 			'debug' => $_ENV['debug-http'],
 			'request.options' => array(
@@ -34,7 +34,6 @@ class Base_Case extends \PHPUnit\Framework\TestCase
 
 		// $test_secret = \OpenTHC\Config::get('application_test.secret');
 		// $this->assertNotEmpty($test_secret);
-
 
 		return $c;
 
