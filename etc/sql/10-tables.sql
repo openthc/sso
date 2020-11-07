@@ -28,6 +28,7 @@ CREATE TABLE auth_company_company (
 
 
 CREATE TABLE auth_company_contact (
+	id character varying(26) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
 	company_id character varying(26) NOT NULL,
 	contact_id character varying(26) NOT NULL,
 	stat integer DEFAULT 200 NOT NULL,
@@ -78,7 +79,7 @@ CREATE TABLE auth_context_ticket (
 );
 
 --
--- Name: auth_program_contact; Type: TABLE; Schema: public;
+-- Name: auth_service_contact; Type: TABLE; Schema: public;
 --
 
 CREATE TABLE auth_service_contact (

@@ -6,13 +6,13 @@ BEGIN
 
  CASE TG_OP
  WHEN 'UPDATE' THEN
-  INSERT INTO log_delta (op, tb, pk, v0, v1) VALUES (2, TG_TABLE_NAME, OLD.id, row_to_json(OLD), row_to_json(NEW));
+  INSERT INTO log_delta (op, tb, pk, v0, v1) VALUES (TG_OP, TG_TABLE_NAME, OLD.id, row_to_json(OLD), row_to_json(NEW));
   RETURN NEW;
  WHEN 'INSERT' THEN
-  INSERT INTO log_delta (op, tb, pk, v1) VALUES (3, TG_TABLE_NAME, NEW.id, row_to_json(NEW));
+  INSERT INTO log_delta (op, tb, pk, v1) VALUES (TG_OP, TG_TABLE_NAME, NEW.id, row_to_json(NEW));
   RETURN NEW;
  WHEN 'DELETE' THEN
-  INSERT INTO log_delta (op, tb, pk, v0) VALUES (4, TG_TABLE_NAME, OLD.id, row_to_json(OLD));
+  INSERT INTO log_delta (op, tb, pk, v0) VALUES (TG_OP, TG_TABLE_NAME, OLD.id, row_to_json(OLD));
   RETURN OLD;
  END CASE;
 

@@ -25,7 +25,7 @@
 	"require-dev": {
 		"behat/behat": "3.7.0",
 		"php-webdriver/webdriver": "1.8.3",
-		"phpstan/phpstan": "0.12.50",
+		"phpstan/phpstan": "0.12.54",
 		"phpunit/phpunit": "9.4.2"
 	}
 }
