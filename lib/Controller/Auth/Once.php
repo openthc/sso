@@ -17,7 +17,7 @@ class Once extends \App\Controller\Base
 
 			$code = $_GET['_'];
 			if (!preg_match('/^([\w\-]{32,128})$/i', $code, $m)) {
-				_exit_json([
+				return $RES->withJSON([
 					'data' => null,
 					'meta' => [ 'detail' => 'Invalid Request [CAO#024]' ]
 				], 400);
@@ -25,13 +25,21 @@ class Once extends \App\Controller\Base
 
 			$chk = $this->_container->Redis->get($code);
 			if (empty($chk)) {
-				_exit_json([
+				return $RES->withJSON([
 					'data' => null,
 					'meta' => [ 'detail' => 'Invalid Request [CAO#032]' ]
 				], 400);
 			}
 
-			_exit_json($chk);
+			$chk = json_decode($chk, true);
+			if (empty($chk)) {
+				return $RES->withJSON([
+					'data' => null,
+					'meta' => [ 'detail' => 'Invalid Request [CAO#038]' ]
+				], 500);
+			}
+
+			return $RES->withJSON($chk);
 
 		}
 
@@ -65,9 +73,9 @@ class Once extends \App\Controller\Base
 
 		$auth = $_GET['a'];
 
-		$dbc = $this->_container->DB;
+		$dbc_auth = $this->_container->DBC_AUTH;
 
-		$act = $dbc->fetchRow('SELECT * FROM auth_context_ticket WHERE id = ?', $auth);
+		$act = $dbc_auth->fetchRow('SELECT * FROM auth_context_ticket WHERE id = ?', $auth);
 		if (empty($act)) {
 			return $RES->withRedirect('/done?e=cao066');
 		}
@@ -77,7 +85,7 @@ class Once extends \App\Controller\Base
 		// }
 		$chk = json_decode($act['meta'], true);
 		if (empty($chk)) {
-			$dbc->query('DELETE FROM auth_context_ticket WHERE id = ?', $act['id']);
+			$dbc_auth->query('DELETE FROM auth_context_ticket WHERE id = ?', $act['id']);
 			return $RES->withRedirect('/done?e=cao077');
 		}
 		$act = $chk;
@@ -132,7 +140,7 @@ class Once extends \App\Controller\Base
 	 */
 	private function accountCreate($RES, $data)
 	{
-		$dbc = $this->_container->DB;
+		$dbc = $this->_container->DBC_AUTH;
 
 		// Update Contact
 		$email = $data['account']['contact']['email'];
@@ -157,9 +165,13 @@ class Once extends \App\Controller\Base
 			]
 		];
 		$val = json_encode($val);
-		$_SESSION['account-create']['password-args'] = _encrypt($val, $_SESSION['crypt-key']);
 
-		return $RES->withRedirect('/done?e=cao073');
+		$arg = [
+			'e' => 'cao073',
+			'_' => _encrypt($val, $_SESSION['crypt-key']),
+		];
+
+		return $RES->withRedirect('/done?' . http_build_query($arg));
 
 	}
 
@@ -179,22 +191,22 @@ class Once extends \App\Controller\Base
 
 		$_SESSION['email'] = $username;
 
-		$dbc = $this->_container->DB;
-		$Contact = $dbc->fetchRow('SELECT id, username FROM auth_contact WHERE username = ?', [ $username ]);
+		$dbc_auth = $this->_container->DBC_AUTH;
+		$Contact = $dbc_auth->fetchRow('SELECT id, username FROM auth_contact WHERE username = ?', [ $username ]);
 		if (empty($Contact)) {
 			return $RES->withRedirect('/done?e=cao100&l=173');
 		}
 
 
 		// Generate Authentication Hash
-		$acs = [];
-		$acs['id'] = _random_hash();
-		$acs['meta'] = json_encode(array(
+		$act = [];
+		$act['id'] = _random_hash();
+		$act['meta'] = json_encode(array(
 			'action' => 'password-reset',
 			'contact' => $Contact,
 			'geoip' => geoip_record_by_name($_SERVER['REMOTE_ADDR']),
 		));
-		$dbc->insert('auth_context_ticket', $acs);
+		$dbc_auth->insert('auth_context_ticket', $act);
 
 		$ret_args = [
 			'e' => 'cao100',
@@ -207,7 +219,7 @@ class Once extends \App\Controller\Base
 			// Pass Information Back
 			// Test Runner has to parse the Location URL
 			$ret_args['r'] = sprintf('https://%s/auth/once', $_SERVER['SERVER_NAME']);
-			$ret_args['a'] = $acs['id'];
+			$ret_args['a'] = $act['id'];
 
 		} else {
 
@@ -216,12 +228,12 @@ class Once extends \App\Controller\Base
 			$arg['file'] = 'sso/contact-password-reset.tpl';
 			$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
 			$arg['data']['mail_subj'] = 'Password Reset Request';
-			$arg['data']['auth_context_ticket'] = $acs['id']; // v1
-			$arg['data']['auth_context_token'] = $acs['id']; // v0
+			$arg['data']['auth_context_ticket'] = $act['id']; // v1
+			$arg['data']['auth_context_token'] = $act['id']; // v0
 
 			// Use CIC to Send
 			try {
-
+				die("CIC");
 				$cic = new \OpenTHC\Service\OpenTHC('cic');
 				$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
 

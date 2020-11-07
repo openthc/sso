@@ -24,20 +24,23 @@ class Verify extends \App\Controller\Base
 
 		// Load Contact
 		$sql = <<<SQL
-SELECT auth_contact.id
-, auth_contact.flag, auth_contact.username
-, base_contact.email, base_contact.phone
+SELECT auth_contact.id, auth_contact.flag, auth_contact.username
 FROM auth_contact
-LEFT JOIN contact AS base_contact ON base_contact.id = auth_contact.id
 WHERE auth_contact.id = :c0
 SQL;
 		$arg = [
 			':c0' => $ARG['contact']['id']
 		];
-		$Contact = $this->_container->DB->fetchRow($sql, $arg);
+		$Contact = $this->_container->DBC_AUTH->fetchRow($sql, $arg);
 		if (empty($Contact['id'])) {
 			__exit_text('Invalid Request [CAV#037]', 400);
 		}
+		$Contact_Base = $this->_container->DBC_MAIN->fetchRow('SELECT id, email, phone FROM contact WHERE id = :c0', $arg);
+		if (empty($Contact_Base['id'])) {
+			var_dump($arg); exit;
+			__exit_text('Invalid Request [CAV#040]', 400);
+		}
+
 
 		switch ($ARG['action']) {
 		case 'email-verify-save':
@@ -47,10 +50,10 @@ SQL;
 		$file = 'page/account/verify.html';
 
 		$data = $this->data;
-		$data['Page'] = [ 'title' => 'Account Verification' ];
+		$data['Page']['title'] = 'Account Verification';
 		$data['Contact'] = $Contact;
-		$data['contact_email'] = $Contact['email'];
-		$data['contact_phone'] = $Contact['phone'];
+		$data['contact_email'] = $Contact['username'];
+		$data['contact_phone'] = $Contact_Base['phone'];
 		if (!empty($_SESSION['phone-verify-e164'])) {
 			$data['contact_phone'] = $_SESSION['phone-verify-e164'];
 		}
@@ -71,6 +74,11 @@ SQL;
 
 			$data['verify_phone_warn'] = $_SESSION['phone-verify-warn'];
 
+		}
+
+		// It's good, so send to INIT
+		if (empty($data['verify_email']) && empty($data['verify_phone'])) {
+			return $RES->withRedirect('/auth/init');
 		}
 
 		return $this->_container->view->render($RES, $file, $data);
@@ -117,7 +125,7 @@ SQL;
 	 */
 	function emailVerifyConfirm($RES, $ARG)
 	{
-		$dbc = $this->_container->DB;
+		$dbc = $this->_container->DBC_AUTH;
 
 		// Set Flag
 		$sql = 'UPDATE auth_contact SET flag = flag | :f1 WHERE id = :pk';
@@ -169,7 +177,7 @@ SQL;
 		$_POST['phone-verify-code'] = strtoupper($_POST['phone-verify-code']);
 		if ($_SESSION['phone-verify-code'] == $_POST['phone-verify-code']) {
 
-			$dbc = $this->_container->DB;
+			$dbc = $this->_container->DBC_AUTH;
 
 			// Is Good
 			$sql = 'UPDATE auth_contact SET flag = flag | :f1 WHERE id = :pk';
@@ -187,12 +195,13 @@ SQL;
 			$dbc->query($sql, $arg);
 
 			// Update Phone
+			$dbc_main = $this->_container->DBC_MAIN;
 			$sql = 'UPDATE contact SET phone = :p0 WHERE id = :pk';
 			$arg = [
 				':pk' => $ARG['contact']['id'],
 				':p0' => $_SESSION['phone-verify-e164'],
 			];
-			$dbc->query($sql, $arg);
+			$dbc_main->query($sql, $arg);
 
 			$data = $this->data;
 			$data['Page']['title'] = 'Phone Verification';

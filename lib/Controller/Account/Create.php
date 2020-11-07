@@ -49,7 +49,10 @@ class Create extends \App\Controller\Base
 			return $this->_create_account($RES);
 		}
 
-		_exit_html('Invalid Request [CAC#055]', 400);
+		$RES->withJSON([
+			'data' => null,
+			'meta' => [ 'Invalid Request [CAC#055]' ],
+		], 400);
 
 	}
 
@@ -82,17 +85,38 @@ class Create extends \App\Controller\Base
 		// var_dump($dir);
 
 		$dbc_auth = $this->_container->DBC_AUTH;
-		$dbc_main = $this->_container->DB;
+		$dbc_main = $this->_container->DBC_MAIN;
+
+		$dbc_auth->query('BEGIN');
+		$dbc_main->query('BEGIN');
 
 		// Contact
 		$sql = 'SELECT id, email FROM contact WHERE email = ?';
 		$arg = array($_POST['contact-email']);
-		$res = $dbc->fetchRow($sql, $arg);
+		$res = $dbc_main->fetchRow($sql, $arg);
 		if (!empty($res)) {
 			return $RES->withRedirect('/done?e=cac065');
 		}
 
-		if (!empty($_POST['company-id'])) {
+		// Company Check
+		$Company = [];
+		if (empty($_POST['company-id'])) {
+
+			$Company['id'] = _ulid();
+			$Company['cre'] = $_SESSION['account-create']['region'];
+			$Company['name'] = $_POST['license-name'];
+			$Company['stat'] = 100;
+			$Company['type'] = 'X';
+			$Company['hash'] = md5(json_encode($Company));
+
+			$dbc_main->insert('company', $Company);
+			$dbc_auth->insert('auth_company', [
+				'id' => $Company['id'],
+				'name' => $Company['name'],
+			]);
+
+		} else {
+
 			$chk = $dbc_main->fetchRow('SELECT id FROM company WHERE id = ?', [$_POST['company-id']]);
 			if (empty($chk['id'])) {
 				$_SESSION['account-create']['company-create'] = true;
@@ -108,20 +132,6 @@ class Create extends \App\Controller\Base
 			}
 		}
 
-		$company_id = $dbc_main->insert('company', [
-			'id' => _ulid(),
-			'cre' => $_SESSION['account-create']['region'],
-			'name' => $_POST['license-name'],
-			'stat' => 100,
-			'type' => 'X',
-			'hash' => '-',
-		]);
-
-		$dbc_auth->insert('auth_company', [
-			'id' => $company_id,
-			'code' => '-',
-		]);
-
 		// Contact Table
 		$contact_id = $dbc_main->insert('contact', [
 			'id' => _ulid(),
@@ -133,11 +143,15 @@ class Create extends \App\Controller\Base
 
 		$dbc_auth->insert('auth_contact', array(
 			'id' => $contact_id,
-			'ulid' => $contact_id,
-			'company_id' => $company_id,
-			'username' => $_POST['email'],
+			'username' => $_POST['contact-email'],
 			'password' => 'NONE:' . sha1(json_encode($_SERVER).json_encode($_POST)),
 		));
+
+		// Linkage
+		$dbc_auth->insert('auth_company_contact', [
+			'company_id' => $Company['id'],
+			'contact_id' => $contact_id,
+		]);
 
 		// Auth Hash Link
 		$acs = [];
@@ -146,8 +160,8 @@ class Create extends \App\Controller\Base
 			'action' => 'account-create',
 			'account' => [
 				'company' => [
-					'id' => $company_id,
-					'name' => $_POST['license-name'],
+					'id' => $Company['id'],
+					'name' => $Company['name'],
 				],
 				'license' => [
 					'id' => $_POST['license-id'],
@@ -166,6 +180,9 @@ class Create extends \App\Controller\Base
 
 		$dbc_auth->insert('auth_context_ticket', $acs);
 
+		$dbc_auth->query('COMMIT');
+		$dbc_main->query('COMMIT');
+
 		// Return/Redirect
 		$ret_args = [
 			'e' => 'cac111',
@@ -175,13 +192,14 @@ class Create extends \App\Controller\Base
 		// Test Mode
 		if ($_ENV['test']) {
 
-			$ret_args['a'] = $acs['id'];
-			$ret_args['r'] = sprintf('https://%s/auth/once', $_SERVER['SERVER_NAME']);
+			$ret_args['r'] = sprintf('/auth/once?%s', http_build_query([
+				'a' => $acs['id'],
+			]));
 
 		} else {
 
 			$arg = [];
-			$arg['to'] = $_POST['email'];
+			$arg['to'] = $_POST['contact-email'];
 			$arg['file'] = 'sso/account-create.tpl';
 			$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
 			$arg['data']['mail_subj'] = 'Account Confirmation';

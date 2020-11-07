@@ -7,7 +7,6 @@ namespace App\Controller\Auth;
 
 use Edoceo\Radix\Filter;
 use Edoceo\Radix\Session;
-use Edoceo\Radix\DB\SQL;
 
 use App\Contact;
 
@@ -17,7 +16,7 @@ class Open extends \App\Controller\Base
 	{
 		$file = 'page/auth/open.html';
 		$data = $this->data;
-		$data['Page'] = [ 'title' => 'Sign In' ];
+		$data['Page']['title'] = 'Sign In';
 
 		if (!empty($_GET['e'])) {
 			switch ($_GET['e']) {
@@ -78,7 +77,7 @@ class Open extends \App\Controller\Base
 		case 'sign in': // Sign In
 
 			// Find Contact
-			$dbc = $this->_container->DB;
+			$dbc = $this->_container->DBC_AUTH;
 			$sql = 'SELECT id, username, password FROM auth_contact WHERE username = :un';
 			$arg = [ ':un' => $username ];
 			$chk = $dbc->fetchRow($sql, $arg);
@@ -91,10 +90,13 @@ class Open extends \App\Controller\Base
 				return $RES->withRedirect('/auth/open?e=cao093');
 			}
 
+			// @todo Reset Whole Session Here
+			// $_SESSION['crypt-key'] =
 			$_SESSION['Contact'] = [
 				'id' => $chk['id'],
 				'username' => $chk['username'],
 			];
+			$_SESSION['Company'] = [];
 
 			// $acl = new ACL($_SESSION['Contact']['username']);
 			// $acl->setPolicyForUser('authn/init');

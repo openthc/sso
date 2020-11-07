@@ -15,8 +15,8 @@ class Password extends \OpenTHC\Controller\Base
 		$ARG = $this->parseArg();
 
 		$file = 'page/account/password.html';
-		$data = [];
-		$data['Page'] = [ 'title' => 'Set Password' ];
+		$data = $this->data;
+		$data['Page']['title'] = 'Set Password';
 		$data['username'] = $ARG['contact']['username'];
 
 		if (!empty($_GET['e'])) {
@@ -69,14 +69,14 @@ class Password extends \OpenTHC\Controller\Base
 				return $RES->withRedirect('/account/password?e=cap062');
 			}
 
-			$dbc = $this->_container->DB;
+			$dbc_auth = $this->_container->DBC_AUTH;
 
 			$arg = [];
 			$arg[':c0'] = $ARG['contact']['id'];
 			$arg[':pw'] = password_hash($_POST['p0'], PASSWORD_DEFAULT);
 
 			$sql = 'UPDATE auth_contact SET password = :pw WHERE id = :c0';
-			$dbc->query($sql, $arg);
+			$dbc_auth->query($sql, $arg);
 
 			$RES = $RES->withAttribute('Contact', [
 				'id' => $ARG['contact']['id'],
