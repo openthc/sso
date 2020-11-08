@@ -22,7 +22,9 @@
 	timeoutForLargeTests="60"
 	verbose="false"
 >
-<coverage/>
+
+	<coverage/>
+
 	<php>
 
 		<env name="debug-http" value="false"/>
