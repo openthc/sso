@@ -5,11 +5,11 @@
 
 namespace Test\Core;
 
-class Site_Test extends \Test\Base_Case
+class B_Site_Test extends \Test\Base_Case
 {
 	function test_auth_pass()
 	{
-		$cfg = \OpenTHC\Config::get('application.hostname');
+		$cfg = $_ENV['test-host'];
 		$this->assertIsString($cfg);
 		$this->assertRegExp('/\w+\.\w{2,256}\.\w{2,16}$/', $cfg);
 
@@ -21,7 +21,6 @@ class Site_Test extends \Test\Base_Case
 
 		$res = $ghc->get('/');
 		$this->assertValidResponse($res);
-
 
 		$res = $ghc->get('/auth/open');
 		$this->assertValidResponse($res);
