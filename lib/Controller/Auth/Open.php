@@ -18,6 +18,19 @@ class Open extends \App\Controller\Base
 		$data = $this->data;
 		$data['Page']['title'] = 'Sign In';
 
+		// Inputs
+		$data['auth_username'] = $REQ->getAttribute('auth_username');
+		if (empty($data['auth_username'])) {
+			$data['auth_username'] = $_SESSION['email'];
+		}
+		$data['auth_password'] = $REQ->getAttribute('auth_password');
+		$data['auth_hint'] = $REQ->getAttribute('auth_hint');
+
+		$data['auth_goto'] = $_GET['r'];
+		if (!empty($data['auth_goto'])) {
+			$data['auth_hint'] = '<p>You will sign in, and then authorize the application via <a href="https://oauth.net/2/" target="_blank">OAuth2</a></p>';
+		}
+
 		if (!empty($_GET['e'])) {
 			switch ($_GET['e']) {
 			case 'cao049':
@@ -36,13 +49,6 @@ class Open extends \App\Controller\Base
 				$data['Page']['flash'] = sprintf('<div class="alert alert-warning">Unexpected Error "%s"</div>', h($_GET['e']));
 				break;
 			}
-		}
-
-		$data['auth_username'] = $_SESSION['email'];
-
-		$data['auth_goto'] = $_GET['r'];
-		if (!empty($data['auth_goto'])) {
-			$data['auth_hint'] = '<p>You will sign in, and then authorize the application via <a href="https://oauth.net/2/" target="_blank">OAuth2</a></p>';
 		}
 
 		// Carry forward the Redirect Values
