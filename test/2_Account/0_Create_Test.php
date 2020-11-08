@@ -140,10 +140,11 @@ class Create_Test extends \Test\Base_Case
 		]]);
 		$this->assertValidResponse($res, 302);
 		$l = $res->getHeaderLine('location');
-		$this->assertEquals('/done?e=cao100', $l);
+		$this->assertEquals('/done?e=cao100&l=200&s=t', $l);
 
 		$res = $c->get($l);
 		$this->assertValidResponse($res);
+		echo "<<<<\n{$this->raw}\n####\n";
 		$this->assertStringContainsString('', $this->raw);
 		$this->assertGreaterThan(1024, strlen($this->raw));
 

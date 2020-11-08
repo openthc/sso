@@ -11,7 +11,7 @@ class B_Site_Test extends \Test\Base_Case
 	{
 		$cfg = $_ENV['test-host'];
 		$this->assertIsString($cfg);
-		$this->assertRegExp('/\w+\.\w{2,256}\.\w{2,16}$/', $cfg);
+		$this->assertMatchesRegularExpression('/\w+\.\w{2,256}\.\w{2,16}$/', $cfg);
 
 		$ghc = new \GuzzleHttp\Client([
 			'base_uri' => sprintf('https://%s', $cfg),

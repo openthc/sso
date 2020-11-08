@@ -27,12 +27,12 @@ echo '<h1>Tests Started</h1>' > "$output_main"
 #
 #
 ../vendor/bin/phpunit \
+	"$@" 2>&1 | tee "$output_path/output.txt"
 	#--log-junit "$output_path/output.xml" \
 	#--testdox-html "$output_path/testdox.html" \
 	#--testdox-text "$output_path/testdox.txt" \
 	#--testdox-xml "$output_path/testdox.xml" \
 	#--verbose \
-	"$@" 2>&1 | tee "$output_path/output.txt"
 
 # if [[ $ret != 0 ]]
 # then

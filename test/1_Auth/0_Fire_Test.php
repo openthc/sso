@@ -13,8 +13,8 @@ class Fire_Test extends \Test\Base_Case
 		$res = $c->get('/auth/open');
 		$res = $this->assertValidResponse($res);
 
-		$this->assertRegExp('/input.+id="username"/', $res);
-		$this->assertRegExp('/input.+id="password" name="password" type="password"/', $res);
+		$this->assertMatchesRegularExpression('/input.+id="username"/', $res);
+		$this->assertMatchesRegularExpression('/input.+id="password" name="password" type="password"/', $res);
 
 		$res = $c->post('/auth/open', [ 'form_params' => [
 			'a' => 'sign in',
@@ -34,8 +34,8 @@ class Fire_Test extends \Test\Base_Case
 		$res = $c->get('/auth/open');
 		$res = $this->assertValidResponse($res);
 
-		$this->assertRegExp('/input.+id="username"/', $res);
-		$this->assertRegExp('/input.+id="password" name="password" type="password"/', $res);
+		$this->assertMatchesRegularExpression('/input.+id="username"/', $res);
+		$this->assertMatchesRegularExpression('/input.+id="password" name="password" type="password"/', $res);
 
 		$res = $c->post('/auth/open', [ 'form_params' => [
 			'a' => 'sign in',
