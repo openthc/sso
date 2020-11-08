@@ -3,9 +3,9 @@
  * Quick Test of oAuth
  */
 
-namespace Test;
+namespace Test\oAuth2;
 
-class oAuth_Test extends \Test\Base_Case
+class A_oAuth_Test extends \Test\Base_Case
 {
 	function test_auth_pass()
 	{

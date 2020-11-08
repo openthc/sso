@@ -5,11 +5,11 @@
 
 namespace Test\Account;
 
-class Create_Test extends \Test\Base_Case
+class A_Create_Test extends \Test\Base_Case
 {
 	function test_account_create_pass()
 	{
-		$test_secret = \OpenTHC\Config::get('application_test.secret');
+		$test_secret = $_ENV['test-hash'];
 		$this->assertNotEmpty($test_secret);
 
 		$c = $this->_ua();
@@ -18,12 +18,12 @@ class Create_Test extends \Test\Base_Case
 
 		$html = $res;
 
-		$this->assertRegExp('/TEST MODE/', $html);
-		$this->assertRegExp('/Create Account/', $html);
-		$this->assertRegExp('/input.+id="license\-name"/', $html);
-		$this->assertRegExp('/input.+id="contact\-name"/', $html);
-		$this->assertRegExp('/input.+id="contact\-email"/', $html);
-		$this->assertRegExp('/input.+id="contact\-phone"/', $html);
+		$this->assertMatchesRegularExpression('/TEST MODE/', $html);
+		$this->assertMatchesRegularExpression('/Create Account/', $html);
+		$this->assertMatchesRegularExpression('/input.+id="license\-name"/', $html);
+		$this->assertMatchesRegularExpression('/input.+id="contact\-name"/', $html);
+		$this->assertMatchesRegularExpression('/input.+id="contact\-email"/', $html);
+		$this->assertMatchesRegularExpression('/input.+id="contact\-phone"/', $html);
 
 		$res = $c->post('/account/create', [ 'form_params' => [
 			'a' => 'contact-next',
@@ -31,13 +31,13 @@ class Create_Test extends \Test\Base_Case
 			'license-id' => '',
 			'company-id' => '',
 			'contact-name' => sprintf('Test Contact %06x', $this->_pid),
-			'email' => sprintf('test+%06x@openthc.com', $this->_pid),
-			'phone' => '1234567890',
+			'contact-email' => sprintf('test+%06x@openthc.com', $this->_pid),
+			'contact-phone' => '1234567890',
 		]]);
 		$this->assertValidResponse($res, 302);
 
 		$l = $res->getHeaderLine('location');
-		$this->assertRegExp('/^\/done\?e=cac111/', $l);
+		$this->assertMatchesRegularExpression('/^\/done\?e=cac111/', $l);
 
 		$res = $res->getBody()->getContents();
 
@@ -45,8 +45,8 @@ class Create_Test extends \Test\Base_Case
 		$this->assertValidResponse($res);
 
 		$html = $this->raw;
-		$this->assertRegExp('/Account Confirmation/', $html);
-		$this->assertRegExp('/Please check your email to confirm your account/', $html);
+		$this->assertMatchesRegularExpression('/Account Confirmation/', $html);
+		$this->assertMatchesRegularExpression('/Please check your email to confirm your account/', $html);
 
 	}
 
@@ -59,11 +59,11 @@ class Create_Test extends \Test\Base_Case
 		$res = $c->get('/account/create');
 		$res = $this->assertValidResponse($res);
 
-		$this->assertRegExp('/Create Account/', $res);
-		$this->assertRegExp('/input.+id="license\-name"/', $res);
-		$this->assertRegExp('/input.+id="contact\-name"/', $res);
-		$this->assertRegExp('/input.+id="contact\-email"/', $res);
-		$this->assertRegExp('/input.+id="contact\-phone"/', $res);
+		$this->assertMatchesRegularExpression('/Create Account/', $res);
+		$this->assertMatchesRegularExpression('/input.+id="license\-name"/', $res);
+		$this->assertMatchesRegularExpression('/input.+id="contact\-name"/', $res);
+		$this->assertMatchesRegularExpression('/input.+id="contact\-email"/', $res);
+		$this->assertMatchesRegularExpression('/input.+id="contact\-phone"/', $res);
 
 		$res = $c->post('/account/create', [ 'form_params' => [
 			'a' => 'contact-next',
@@ -71,8 +71,8 @@ class Create_Test extends \Test\Base_Case
 			'license-id' => '',
 			'company-id' => '',
 			'contact-name' => sprintf('Test Contact %06x', $this->_pid),
-			'email' => USER_A_USERNAME,
-			'phone' => '1234567890',
+			'contact-email' => USER_A_USERNAME,
+			'contact-phone' => '1234567890',
 		]]);
 		$this->assertValidResponse($res, 302);
 
@@ -92,11 +92,11 @@ class Create_Test extends \Test\Base_Case
 		$res = $c->get('/account/create');
 		$res = $this->assertValidResponse($res);
 
-		$this->assertRegExp('/Create Account/', $res);
-		$this->assertRegExp('/input.+id="license\-name"/', $res);
-		$this->assertRegExp('/input.+id="contact\-name"/', $res);
-		$this->assertRegExp('/input.+id="contact\-email"/', $res);
-		$this->assertRegExp('/input.+id="contact\-phone"/', $res);
+		$this->assertMatchesRegularExpression('/Create Account/', $res);
+		$this->assertMatchesRegularExpression('/input.+id="license\-name"/', $res);
+		$this->assertMatchesRegularExpression('/input.+id="contact\-name"/', $res);
+		$this->assertMatchesRegularExpression('/input.+id="contact\-email"/', $res);
+		$this->assertMatchesRegularExpression('/input.+id="contact\-phone"/', $res);
 
 		// Create1/POST
 		$res = $c->post('/account/create', [ 'form_params' => [
@@ -105,8 +105,8 @@ class Create_Test extends \Test\Base_Case
 			'license-id' => '',
 			'company-id' => '',
 			'contact-name' => sprintf('Test Contact %06x', $this->_pid),
-			'email' => 'invalid.email-typeA',
-			'phone' => '1234567890',
+			'contact-email' => 'invalid.email-typeA',
+			'contact-phone' => '1234567890',
 		]]);
 		$this->assertValidResponse($res, 302);
 		$l = $res->getHeaderLine('location');
