@@ -56,13 +56,17 @@ class Create extends \App\Controller\Base
 
 	}
 
+	/**
+	 * Create Account Process
+	 */
 	private function _create_account($RES)
 	{
-		$_POST['contact-email'] = strtolower(trim($_POST['contact-email']));
-		$_POST['contact-email'] = filter_var($_POST['contact-email'], FILTER_VALIDATE_EMAIL);
-		if (empty($_POST['contact-email'])) {
+		$e = strtolower(trim($_POST['contact-email']));
+		$e = filter_var($e, FILTER_VALIDATE_EMAIL);
+		if (empty($e)) {
 			return $RES->withRedirect('/account/create?e=cac035');
 		}
+		$_POST['contact-email'] = $e;
 
 		$_POST['contact-phone'] = _phone_e164($_POST['contact-phone']);
 

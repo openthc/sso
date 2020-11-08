@@ -5,13 +5,13 @@
 
 namespace App\Controller;
 
-class Done extends \OpenTHC\Controller\Base
+class Done extends \App\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{
 		$file = 'page/done.html';
 
-		$data = [];
+		$data = $this->data;
 		$data['Page'] = [];
 		$data['Page']['title'] = 'Done';
 

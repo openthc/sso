@@ -59,8 +59,8 @@ class Token extends \OpenTHC\Controller\Base
 			return $this->makeError($RES, 'invalid_client', 'Invalid Client [COT#068]', 401);
 		}
 
-		$Program = $this->_container->DB->fetchRow('SELECT id,name,code,hash FROM auth_program WHERE code = ?', array($_POST['client_id']));
-		if (empty($Program['id'])) {
+		$Service = $this->_container->DB->fetchRow('SELECT id, name, code, hash FROM auth_service WHERE code = ?', array($_POST['client_id']));
+		if (empty($Service['id'])) {
 			return $this->makeError($RES, 'invalid_client', 'Invalid Client [COT#073]', 401);
 		}
 
@@ -68,7 +68,7 @@ class Token extends \OpenTHC\Controller\Base
 			return $this->makeError($RES, 'invalid_client', 'Invalid Client Secret [COT#077]', 401);
 		}
 
-		if ($Program['hash'] != $_POST['client_secret']) {
+		if ($Service['hash'] != $_POST['client_secret']) {
 			return $this->makeError($RES, 'invalid_client', 'Invalid Client Secret [COT#081]', 401);
 		}
 
