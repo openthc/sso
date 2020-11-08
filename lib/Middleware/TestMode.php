@@ -22,15 +22,15 @@ class TestMode extends \OpenTHC\Middleware\Base
 		}
 
 		if (!empty($key_user)) {
-			$key_real = \OpenTHC\Config::get('application_test.secret');
+			$key_real = \OpenTHC\Config::get('openthc/test');
 			if ($key_user == $key_real) {
 				$set_test = true;
-				setcookie('test', $key_real, 0, '/', '', true, true);
 			}
 		}
 
 		if ($set_test) {
 			$_ENV['test'] = $set_test;
+			setcookie('test', $key_real, 0, '/', '', true, true);
 			$RES = $RES->withHeader('openthc-test-mode', '1');
 		}
 
