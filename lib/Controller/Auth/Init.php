@@ -69,7 +69,18 @@ class Init extends \OpenTHC\Controller\Base
 		}
 
 		// Company List
-		$sql = 'SELECT id, name, cre FROM auth_company WHERE id IN (SELECT company_id FROM auth_company_contact WHERE contact_id = :c0)';
+		$sql = <<<SQL
+SELECT auth_company.id
+, auth_company.name
+, auth_company.cre
+, auth_company_contact.stat
+, auth_company_contact.created_at
+FROM auth_company
+JOIN auth_company_contact ON auth_company.id = auth_company_contact.company_id
+WHERE auth_company_contact.contact_id = :c0
+ORDER BY auth_company_contact.stat, auth_company_contact.created_at ASC
+SQL;
+
 		$arg = [ ':c0' => $Contact['id'] ];
 		$chk = $dbc_auth->fetchAll($sql, $arg);
 
