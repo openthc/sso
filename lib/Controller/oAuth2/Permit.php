@@ -25,8 +25,8 @@ class Permit extends \OpenTHC\Controller\Base
 		$_ENV['fast-redirect'] = $cfg['fast-redirect'];
 
 		// Load & Validate The Client
-		$Auth_Program = $this->_container->DB->fetchRow('SELECT id,name,code,hash FROM auth_program WHERE code = ?', array($_GET['client_id']));
-		if (empty($Auth_Program['id'])) {
+		$Auth_Service = $this->_container->DBC_AUTH->fetchRow('SELECT id,name,code,hash FROM auth_service WHERE code = ?', array($_GET['client_id']));
+		if (empty($Auth_Service['id'])) {
 			_exit_json(array(
 				'error' => 'invalid_client',
 				'error_description' => 'COA#061: Invalid Client',
@@ -38,6 +38,7 @@ class Permit extends \OpenTHC\Controller\Base
 		$data = json_encode(array(
 			'client_id' => $_GET['client_id'],
 			'contact_id' => $_SESSION['Contact']['id'],
+			'company_id' => $_SESSION['Company']['id'],
 			'scope' => $_GET['scope'],
 		));
 
@@ -49,9 +50,9 @@ class Permit extends \OpenTHC\Controller\Base
 			$data,
 			strftime('%Y-%m-%d %H:%M:%S', $_SERVER['REQUEST_TIME'] + 300),
 		);
-		$this->_container->DB->query($sql, $arg);
+		$this->_container->DBC_AUTH->query($sql, $arg);
 
-		$this->_permit_and_save($Auth_Program);
+		$this->_permit_and_save($Auth_Service);
 
 		// Rebuild URL (it's checked before input to this page)
 		$ruri = parse_url($_GET['redirect_uri']);
@@ -75,7 +76,7 @@ class Permit extends \OpenTHC\Controller\Base
 
 		$data = [];
 		$data['Page'] = ['title' => 'Permit' ];
-		$data['Program'] = $Auth_Program;
+		$data['Program'] = $Auth_Service;
 		$data['return_url'] = $ret;
 
 		$file = 'page/oauth2/permit.html';
@@ -87,17 +88,17 @@ class Permit extends \OpenTHC\Controller\Base
 	/**
 	 * Save Permit Commit
 	 */
-	function _permit_and_save($Auth_Program)
+	function _permit_and_save($Auth_Service)
 	{
 		// Remember this application authorization
 		if (!empty($_GET['auth-commit'])) {
 			$sql = 'INSERT INTO auth_program_contact (auth_program_id, auth_contact_id) VALUES (:a, :u)';
 			$arg = array(
-				':a' => $Auth_Program['id'],
+				':a' => $Auth_Service['id'],
 				':u' => $_SESSION['Contact']['id'],
 				// 'expires_at'
 			);
-			$res = $this->_container->DB->query($sql, $arg);
+			$res = $this->_container->DBC_AUTH->query($sql, $arg);
 		}
 	}
 }

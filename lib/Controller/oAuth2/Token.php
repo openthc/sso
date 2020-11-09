@@ -29,7 +29,9 @@ class Token extends \OpenTHC\Controller\Base
 			'client_id' => $this->_auth_token['client_id'],
 			'grant_type' => $_POST['grant_type'],
 			'contact_id' => $this->_auth_token['contact_id'],
-			'scope' => $this->_auth_token['scope'],
+			'company_id' => $this->_auth_token['company_id'],
+			'context_list' => $this->_auth_token['scope'], // v1
+			'scope' => $this->_auth_token['scope'], // @deprecated v0
 		));
 
 		$hash = _random_hash();
@@ -59,7 +61,7 @@ class Token extends \OpenTHC\Controller\Base
 			return $this->makeError($RES, 'invalid_client', 'Invalid Client [COT#068]', 401);
 		}
 
-		$Service = $this->_container->DB->fetchRow('SELECT id, name, code, hash FROM auth_service WHERE code = ?', array($_POST['client_id']));
+		$Service = $this->_container->DBC_AUTH->fetchRow('SELECT id, name, code, hash FROM auth_service WHERE code = ?', array($_POST['client_id']));
 		if (empty($Service['id'])) {
 			return $this->makeError($RES, 'invalid_client', 'Invalid Client [COT#073]', 401);
 		}

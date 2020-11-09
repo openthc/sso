@@ -91,6 +91,7 @@ SQL;
 			break;
 			case 1:
 				$Company = $chk[0];
+				$_SESSION['Company'] = $Company;
 				return $this->_create_ticket_and_redirect($RES, $Contact, $Company);
 			break;
 			default:
@@ -100,6 +101,7 @@ SQL;
 					foreach ($chk as $company_rec) {
 						if ($company_rec['id'] === $_POST['company_id']) {
 							$Company = $company_rec;
+							$_SESSION['Company'] = $Company;
 							return $this->_create_ticket_and_redirect($RES, $Contact, $Company);
 							break;
 						}

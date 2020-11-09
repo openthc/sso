@@ -9,7 +9,8 @@ class Profile extends \OpenTHC\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{
-		$dbc = $this->_container->DB;
+		$dbc_auth = $this->_container->DBC_AUTH;
+		$dbc_main = $this->_container->DBC_MAIN;
 
 		$Profile = array(
 			'scope' => [],
@@ -27,7 +28,7 @@ class Profile extends \OpenTHC\Controller\Base
 		// Find Bearer Token
 		$sql = 'SELECT id, meta FROM auth_context_ticket WHERE id = ?';
 		$arg = array($auth);
-		$tok = $dbc->fetchRow($sql, $arg);
+		$tok = $dbc_auth->fetchRow($sql, $arg);
 		if (empty($tok)) {
 			return $RES->withJSON([
 				'meta' => ['detail' => 'Invalid Token [COP#030]' ]
@@ -37,10 +38,10 @@ class Profile extends \OpenTHC\Controller\Base
 		// Find Bearer Token
 		$tok['meta'] = json_decode($tok['meta'], true);
 
-		// Contact/Auth
-		$sql = 'SELECT * FROM auth_contact WHERE id = ?';
+		// Auth/Contact
+		$sql = 'SELECT id, username FROM auth_contact WHERE id = ?';
 		$arg = array($tok['meta']['contact_id']);
-		$Contact = $dbc->fetchRow($sql, $arg);
+		$Contact = $dbc_auth->fetchRow($sql, $arg);
 		if (empty($Contact['id'])) {
 			return $RES->withJSON([
 				'meta' => ['detail' => 'Invalid Token [COP#033]' ],
@@ -49,33 +50,40 @@ class Profile extends \OpenTHC\Controller\Base
 
 		$RES = $RES->withAttribute('Contact', $Contact);
 
-		$Profile['scope'] = explode(' ', $Contact['scope_permit']);
-
 		$Profile['Contact']['id'] = $Contact['id'];
-		$Profile['Contact']['fullname'] = $Contact['fullname'];
 		$Profile['Contact']['username'] = $Contact['username'];
 
-		// Contact
-		$sql = 'SELECT * FROM contact WHERE id = ?';
-		$arg = array($Contact['contact_id']);
-		$res = $dbc->fetchRow($sql, $arg);
-		if (!empty($res['email'])) {
-			$Profile['Contact']['email'] = true;
-		}
-		if (!empty($res['phone'])) {
-			$Profile['Contact']['phone'] = true;
-		}
-
-		// Company
-		$sql = 'SELECT id,guid,name,type FROM company WHERE id = ?';
-		$arg = array($Contact['company_id']);
-		$res = $dbc->fetchRow($sql, $arg);
+		// Auth/Company
+		$sql = 'SELECT id, name FROM auth_company WHERE id = ?';
+		$arg = [ $tok['meta']['company_id'] ];
+		$res = $dbc_auth->fetchRow($sql, $arg);
 		if (!empty($res['id'])) {
 			$Profile['Company']['id'] = $res['id'];
-			$Profile['Company']['ulid'] = $res['id']; // @deprecated
-			$Profile['Company']['guid'] = $res['guid'];
+			// $Profile['Company']['ulid'] = $res['id']; // @deprecated
+			// $Profile['Company']['guid'] = $res['guid'];
 			$Profile['Company']['name'] = $res['name'];
-			$Profile['Company']['type'] = $res['type'];
+			// $Profile['Company']['type'] = $res['type'];
+		}
+		$RES = $RES->withAttribute('Company', $Company);
+
+		// Scope
+		$Profile['scope'] = explode(' ', $tok['meta']['scope']);
+
+		// Main/Contact
+		$sql = 'SELECT * FROM contact WHERE id = ?';
+		$arg = array($Contact['id']);
+		$res = $dbc_main->fetchRow($sql, $arg);
+		if (!empty($res['id'])) {
+
+			$Profile['Contact']['fullname'] = $res['fullname'];
+
+			if (!empty($res['email'])) {
+				$Profile['Contact']['email'] = true;
+			}
+			if (!empty($res['phone'])) {
+				$Profile['Contact']['phone'] = true;
+			}
+
 		}
 
 		return $RES->withJSON($Profile);

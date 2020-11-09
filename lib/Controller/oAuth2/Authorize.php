@@ -11,7 +11,7 @@ class Authorize extends \OpenTHC\Controller\Base
 	{
 		$this->verifyRequest();
 
-		$dbc = $this->_container->DB;
+		$dbc = $this->_container->DBC_AUTH;
 
 		// Good Session?
 		$RES = $this->verifySession($RES);
@@ -20,8 +20,8 @@ class Authorize extends \OpenTHC\Controller\Base
 		}
 
 		// Validate Program
-		$Auth_Program = $dbc->fetchRow('SELECT id,name,code,hash,scope_list FROM auth_program WHERE code = ?', array($_GET['client_id']));
-		if (empty($Auth_Program['id'])) {
+		$Auth_Service = $dbc->fetchRow('SELECT id,name,code,hash,context_list FROM auth_service WHERE code = ?', array($_GET['client_id']));
+		if (empty($Auth_Service['id'])) {
 			_exit_json(array(
 				'error' => 'invalid_client',
 				'error_description' => 'Invalid Client [COA#051]',
@@ -31,15 +31,15 @@ class Authorize extends \OpenTHC\Controller\Base
 
 		$scope_want = $this->verifyScope();
 
-		$this->verifyScopeAccess($Auth_Program, $scope_want);
+		$this->verifyScopeAccess($Auth_Service, $scope_want);
 
 
 		// Permit Link
 		$link_crypt = _encrypt(json_encode($_GET), $_SESSION['crypt-key']);
 
 		// Did you already Authorize this Application?
-		$sql = 'SELECT count(auth_program_id) FROM auth_program_contact WHERE auth_program_id = ? AND auth_contact_id = ? AND expires_at > now()';
-		$arg = array($Auth_Program['id'], $_SESSION['Contact']['id']);
+		$sql = 'SELECT count(service_id) FROM auth_service_contact WHERE service_id = ? AND contact_id = ? AND expires_at > now()';
+		$arg = array($Auth_Service['id'], $_SESSION['Contact']['id']);
 		$chk = $dbc->fetchOne($sql, $arg);
 		if (!empty($chk)) {
 			// return $RES->withRedirect('/oauth2/permit?_=' . $link_crypt);
@@ -51,7 +51,7 @@ class Authorize extends \OpenTHC\Controller\Base
 
 		$data = [];
 		$data['Page'] = [ 'title' => 'Authorize' ];
-		$data['Program'] = $Auth_Program;
+		$data['Service'] = $Auth_Service;
 		$data['scope_list'] = $_GET['scope'];
 		$data['link_crypt'] = $link_crypt;
 		$data['link_crypt_save'] = $link_crypt_save;
@@ -111,7 +111,7 @@ class Authorize extends \OpenTHC\Controller\Base
 	 */
 	function verifyScope()
 	{
-		$res = $this->_container->DB->fetchAll('SELECT code FROM auth_context');
+		$res = $this->_container->DBC_AUTH->fetchAll('SELECT code FROM auth_context');
 		$scope_list_all = array_reduce($res, function($ret, $cur) {
 			$ret[] = $cur['code'];
 			return $ret;
@@ -142,13 +142,13 @@ class Authorize extends \OpenTHC\Controller\Base
 
 	}
 
-	function verifyScopeAccess($Program, $scope_ask)
+	function verifyScopeAccess($Service, $scope_ask)
 	{
-		$scope_may = explode(' ', $Program['scope_list']);
+		$scope_may = explode(' ', $Service['context_list']);
 
 		foreach ($scope_ask as $s) {
 			if (!in_array($s, $scope_may, true)) {
-				$html = sprintf('<h1>Access Denied to Scope &quot;%s&quot; [COA#151]</h1>', $s);
+				$html = sprintf('<h1>Access Denied to Context &quot;%s&quot; [COA#151]</h1>', $s);
 				$html.= sprintf('<p>See <a href="https://%s/doc#coa151">documentation</p>', $_SERVER['SERVER_NAME']);
 				$html.= '<p>Or <a href="/auth/shut">sign-out</a> and start over</p>';
 				__exit_html($html, 403);
