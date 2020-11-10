@@ -56,15 +56,13 @@ CREATE TABLE auth_contact (
 	password character varying(256)
 );
 
---
--- Name: auth_company_contact; Type: TABLE; Schema: public;
---
-
-
 
 CREATE TABLE auth_context (
 	id varchar(26) not null default ulid_create() primary key,
-	code varchar(256)
+	stat int,
+	flag int,
+	code varchar(256),
+	name varchar(256)
 );
 
 --
@@ -76,6 +74,21 @@ CREATE TABLE auth_context_ticket (
 	created_at timestamp with time zone not null default now(),
 	expires_at timestamp with time zone not null default now() + '60 minutes',
 	meta jsonb
+);
+
+
+CREATE TABLE auth_service (
+	id varchar(26) NOT NULL DEFAULT ulid_create() PRIMARY KEY,
+	company_id varchar(26) not null,
+	created_at timestamp with time zone DEFAULT now() NOT NULL,
+	updated_at timestamp with time zone DEFAULT now() NOT NULL,
+	deleted_at timestamp with time zone,
+	stat int NOT NULL DEFAULT 100,
+	flag int NOT NULL DEFAULT 0,
+	code varchar(256),
+	hash varchar(256),
+	name varchar(256),
+	context_list text
 );
 
 --
