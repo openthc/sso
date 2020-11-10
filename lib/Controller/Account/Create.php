@@ -224,7 +224,7 @@ class Create extends \App\Controller\Base
 
 		$RES = $RES->withAttribute('Contact', [
 			'id' => $contact_id,
-			'username' => $_POST['email'],
+			'username' => $_POST['contact-email'],
 			'company_name' => $_POST['license-name'],
 			'contact_phone' => $_POST['contact-phone'],
 		]);

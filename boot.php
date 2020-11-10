@@ -1,6 +1,6 @@
 <?php
 /**
- * OpenTHC Auth Bootstrap
+ * OpenTHC SSO Bootstrap
  */
 
 define('APP_ROOT', __DIR__);
