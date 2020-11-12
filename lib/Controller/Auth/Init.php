@@ -9,31 +9,53 @@ use Edoceo\Radix\Session;
 
 use App\Contact;
 
-class Init extends \OpenTHC\Controller\Base
+class Init extends \App\Controller\Base
 {
 	/**
 	 *
 	 */
 	function __invoke($REQ, $RES, $ARG)
 	{
-		$dbc_auth = $this->_container->DBC_AUTH;
-		$dbc_main = $this->_container->DBC_MAIN;
+		unset($_SESSION['Contact']);
+		unset($_SESSION['Company']);
+		unset($_SESSION['License']);
+		unset($_SESSION['Service']);
 
-		// Auth_Contact
+		// Check Input
+		if (!preg_match('/^([\w\-]{32,128})$/i', $_GET['_'], $m)) {
+			_exit_html('<h1>Invalid Request [<a href="https://openthc.com/err#cai026">CAI#026</a>]</h1>', 400);
+		}
+
+		$dbc_auth = $this->_container->DBC_AUTH;
+
+		// Load Auth Ticket
+		$act = $dbc_auth->fetchRow('SELECT id, meta FROM auth_context_ticket WHERE id = :t', [ ':t' => $_GET['_'] ]);
+		if (empty($act['id'])) {
+			_exit_html('<h1>Invalid Request [<a href="https://openthc.com/err#cai034">CAI#034</a>]</h1>', 400);
+		}
+		$act_prev = json_decode($act_prev, true);
+		if (empty($act_prev['contact']['id'])) {
+			_exit_html('<h1>Invalid Request [<a href="https://openthc.com/err#cai038">CAI#038</a>]</h1>', 400);
+		}
+		$Contact = $act_prev['contact'];
+
+		// Auth/Contact
 		$sql = 'SELECT id, username, password, flag FROM auth_contact WHERE id = :pk';
-		$arg = [ ':pk' => $_SESSION['Contact']['id'] ];
+		$arg = [ ':pk' => $Contact['id'] ];
 		$chk = $dbc_auth->fetchRow($sql, $arg);
 		if (empty($chk['id'])) {
-			_exit_html('Unexpected Session State<br>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support [CAI#023]', 400);
+			_exit_html('<h1>Unexpected Session State [<a href="https://openthc.com/err#cai047">CAI#047</a>]</h1><p>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support.</p>', 400);
 		}
 		$Contact = $chk;
 
-		// Contact
+		$dbc_main = $this->_container->DBC_MAIN;
+
+		// Main/Contact
 		$sql = 'SELECT id, name, phone, email FROM contact WHERE id = :pk';
-		$arg = [ ':pk' => $_SESSION['Contact']['id'] ];
+		$arg = [ ':pk' => $Contact['id'] ];
 		$chk = $dbc_main->fetchRow($sql, $arg);
 		if (empty($chk['id'])) {
-			_exit_html('Unexpected Session State<br>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support [CAI#033]', 400);
+			_exit_html('<h1>Unexpected Session State [<a href="https://openthc.com/err#cai058">CAI#058</a>]</h1><p>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support.</p>', 400);
 		}
 
 		$Contact = array_merge($Contact, $chk);
@@ -67,6 +89,9 @@ class Init extends \OpenTHC\Controller\Base
 			$arg = _encrypt($val, $_SESSION['crypt-key']);
 			return $RES->withRedirect('/account/verify?r=/auth/init&_=' . $arg);
 		}
+
+		// Contact is Good
+		$_SESSION['Contact'] = $Contact;
 
 		// Company List
 		$sql = <<<SQL
@@ -102,7 +127,7 @@ SQL;
 						if ($company_rec['id'] === $_POST['company_id']) {
 							$Company = $company_rec;
 							$_SESSION['Company'] = $Company;
-							return $this->_create_ticket_and_redirect($RES, $Contact, $Company);
+							return $this->_create_ticket_and_redirect($RES, $act_prev, $Contact, $Company);
 							break;
 						}
 					}
@@ -126,7 +151,7 @@ SQL;
 	/**
 	 * @return Response ready to be redirected
 	 */
-	function _create_ticket_and_redirect($RES, $Contact, $Company)
+	function _create_ticket_and_redirect($RES, $act_prev, $Contact, $Company)
 	{
 		// Create Auth Ticket
 		$hash = _random_hash();
@@ -137,16 +162,17 @@ SQL;
 				'username' => $Contact['username'],
 			],
 			'company' => $Company,
+			'service' => [],
 		]);
 
 		$this->_container->Redis->set($hash, $data, 240);
 
 		$ping = sprintf('https://%s/auth/once?_=%s', $_SERVER['SERVER_NAME'], $hash);
 
-		if (!empty($_SESSION['return-link'])) {
-			$ret = $_SESSION['return-link'];
-			unset($_SESSION['return-link']);
-		}
+		// if (!empty($_SESSION['return-link'])) {
+		// 	$ret = $_SESSION['return-link'];
+		// 	unset($_SESSION['return-link']);
+		// }
 
 		// No Return? Load Default
 		if (empty($ret)) {

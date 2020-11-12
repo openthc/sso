@@ -15,15 +15,24 @@ $app = new \OpenTHC\App($cfg);
 
 // App Container
 $con = $app->getContainer();
-$con['DB'] = function() {
-	$cfg = \OpenTHC\Config::get('database');
+$con['DBC_AUTH'] = function() {
+	// $url = getenv('OPENTHC_POSTGRES_URL'):
+	$cfg = \OpenTHC\Config::get('database/auth');
+	$dsn = sprintf('pgsql:host=%s;dbname=%s', $cfg['hostname'], $cfg['database']);
+	return new \Edoceo\Radix\DB\SQL($dsn, $cfg['username'], $cfg['password']);
+};
+$con['DBC_MAIN'] = function() {
+	// $url = getenv('OPENTHC_POSTGRES_URL'):
+	$cfg = \OpenTHC\Config::get('database/main');
 	$dsn = sprintf('pgsql:host=%s;dbname=%s', $cfg['hostname'], $cfg['database']);
 	return new \Edoceo\Radix\DB\SQL($dsn, $cfg['username'], $cfg['password']);
 };
 $con['Redis'] = function() {
-	$cfg = \OpenTHC\Config::get('redis');
+	$url = getenv('OPENTHC_REDIS_URL');
+	$cfg = parse_url($url);
 	$r = new \Redis();
-	$r->connect($cfg['hostname']);
+	$r->connect($cfg['host'], $cfg['port']);
+	$r->auth($cfg['pass']);
 	return $r;
 };
 
@@ -53,7 +62,8 @@ $con['errorHandler'] = function($c0) {
 		$RES = $RES->withJSON([
 			'error' => 'server_error',
 			'error_description' => $dump['note'],
-			'error_uri' => 'https://openthc.com/auth/doc#err051',
+			'error_uri' => 'https://openthc.com/err#err063',
+			'dump' => $dump,
 		]);
 
 		return $RES;
@@ -65,17 +75,17 @@ $con['errorHandler'] = function($c0) {
 // Authentication Routes
 $app->group('/auth', function() {
 
-	$this->get('/open', 'App\Controller\Auth\Open');
-	$this->post('/open', 'App\Controller\Auth\Open:post');
+	$this->get('/open', 'App\Controller\Auth\Open')->setName('auth/open');
+	$this->post('/open', 'App\Controller\Auth\Open:post')->setName('auth/open/post');
 
 	$this->get('/once', 'App\Controller\Auth\Once');
 	$this->post('/once', 'App\Controller\Auth\Once:post');
 
-	$this->get('/init', 'App\Controller\Auth\Init');
+	$this->map(['GET','POST'], '/init', 'App\Controller\Auth\Init');
 
 	// $this->get('/ping', 'App\Controller\Auth\Ping');
-	$this->get('/ping', function() {
-		_exit_text([
+	$this->get('/ping', function($REQ, $RES) {
+		return $RES->withJSON([
 			'_COOKIE' => $_COOKIE,
 			'_SESSION' => $_SESSION,
 		]);

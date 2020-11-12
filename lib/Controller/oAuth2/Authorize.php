@@ -9,6 +9,8 @@ class Authorize extends \OpenTHC\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{
+		unset($_SESSION['email']);
+
 		$this->verifyRequest();
 
 		$dbc = $this->_container->DBC_AUTH;
@@ -19,7 +21,7 @@ class Authorize extends \OpenTHC\Controller\Base
 			return $RES;
 		}
 
-		// Validate Program
+		// Validate Service
 		$Auth_Service = $dbc->fetchRow('SELECT id,name,code,hash,context_list FROM auth_service WHERE code = ?', array($_GET['client_id']));
 		if (empty($Auth_Service['id'])) {
 			_exit_json(array(
@@ -51,6 +53,7 @@ class Authorize extends \OpenTHC\Controller\Base
 
 		$data = [];
 		$data['Page'] = [ 'title' => 'Authorize' ];
+		$data['Contact'] = $_SESSION['Contact'];
 		$data['Service'] = $Auth_Service;
 		$data['scope_list'] = $_GET['scope'];
 		$data['link_crypt'] = $link_crypt;
@@ -165,11 +168,18 @@ class Authorize extends \OpenTHC\Controller\Base
 		// If no session then sign-in and come back here
 		if (empty($_SESSION['Contact']['id'])) {
 
-			$ret = sprintf('https://%s/auth/open?', $_SERVER['SERVER_NAME']);
-			$ret.= http_build_query([
-				'a' => 'oauth',
-				'r' => sprintf('https://%s/oauth2/authorize?%s', $_SERVER['SERVER_NAME'], http_build_query($_GET)),
+			$act = [];
+			$act['id'] = _random_hash();
+			$act['meta'] = json_encode([
+				'intent' => 'oauth-authorize',
+				'contact' => [],
+				'company' => [],
+				'service' => $_GET['client_id'],
+				'oauth-request' => $_GET,
 			]);
+			// INSERT
+			$this->_container->DBC_AUTH->insert('auth_context_ticket', $act);
+			$ret = sprintf('https://%s/auth/open?_=%s', $_SERVER['SERVER_NAME'], $act['id']);
 
 			return $RES->withRedirect($ret);
 

@@ -7,8 +7,18 @@
 
 	<h1 class="card-header">Application Authorization</h1>
 	<div class="card-body">
-		<p class="card-title">Authorize: <strong>{{ Service.name }}</strong>?</p>
-		<p>The application will be able to see data in scope: <code>{{ scope_list|join(',') }}</code>.</p>
+		<h2 style="margin:0;">Account:</h2>
+		<div class="form-group">
+			<div class="form-control"><code>{{ Contact.username }}</code></div>
+		</div>
+
+		<h2 style="margin:0;">Service:</h2>
+		<div class="form-group">
+			<div class="form-control"><code>{{ Service.name }}</code></div>
+		</div>
+
+		<p>The service will be able to see data in scope: <code>{{ scope_list|join(',') }}</code>.</p>
+
 	</div>
 	<div class="card-footer">
 		<div class="row">

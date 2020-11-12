@@ -26,10 +26,19 @@ class Open extends \App\Controller\Base
 		$data['auth_password'] = $REQ->getAttribute('auth_password');
 		$data['auth_hint'] = $REQ->getAttribute('auth_hint');
 
-		$data['auth_goto'] = $_GET['r'];
-		if (!empty($data['auth_goto'])) {
-			$data['auth_hint'] = '<p>You will sign in, and then authorize the application via <a href="https://oauth.net/2/" target="_blank">OAuth2</a></p>';
+		if (!empty($_GET['_'])) {
+			$dbc = $this->_container->DBC_AUTH;
+			$act = $dbc->fetchOne('SELECT meta FROM auth_context_ticket WHERE id = :t0', [ ':t0' => $_GET['_'] ]);
+			$act = json_decode($act, true);
+			if (!empty($act['service'])) {
+				$data['auth_hint'] = sprintf('<p>Sign in, and then authorize the service (<em>%s</em>) via <a href="https://oauth.net/2/" target="_blank">OAuth2</a></p>', $act['service']);
+			}
 		}
+
+		// $data['auth_goto'] = $_GET['r'];
+		// if (!empty($data['auth_goto'])) {
+		// 	$data['auth_hint'] = '<p>You will sign in, and then authorize the application via <a href="https://oauth.net/2/" target="_blank">OAuth2</a></p>';
+		// }
 
 		if (!empty($_GET['e'])) {
 			switch ($_GET['e']) {
@@ -49,12 +58,6 @@ class Open extends \App\Controller\Base
 				$data['Page']['flash'] = sprintf('<div class="alert alert-warning">Unexpected Error "%s"</div>', h($_GET['e']));
 				break;
 			}
-		}
-
-		// Carry forward the Redirect Values
-		// Can't this be handled by auth_goto?
-		if (!empty($_GET['r'])) {
-			$_SESSION['return-link'] = $_GET['r'];
 		}
 
 		return $this->_container->view->render($RES, $file, $data);
@@ -96,19 +99,37 @@ class Open extends \App\Controller\Base
 				return $RES->withRedirect('/auth/open?e=cao093');
 			}
 
-			// @todo Reset Whole Session Here
-			// $_SESSION['crypt-key'] =
-			$_SESSION['Contact'] = [
-				'id' => $chk['id'],
-				'username' => $chk['username'],
+			$act_data = [
+				'intent' => 'init',
+				'contact' => [
+					'id' => $chk['id'],
+					'username' => $chk['username'],
+				],
+				'company' => [],
+				'service' => [], // inidicate the service here
 			];
-			$_SESSION['Company'] = [];
 
-			// $acl = new ACL($_SESSION['Contact']['username']);
-			// $acl->setPolicyForUser('authn/init');
-			// $acl->save();
+			// If we have a Prevous Auth-Ticket
+			if (!empty($_GET['_'])) {
+				$dbc = $this->_container->DBC_AUTH;
+				$act_prev = $dbc->fetchOne('SELECT meta FROM auth_context_ticket WHERE id = :t0', [ ':t0' => $_GET['_'] ]);
+				$act_prev = json_decode($act_prev, true);
+				switch ($act_prev['intent']) {
+					case 'oauth-authorize':
+						$act_data['intent'] = $act_prev['intent'];
+						$act_data['serivce'] = $act_prev['service'];
+						$act_data['oauth-request'] = $act_prev['oauth-request'];
+				}
+			}
 
-			return $RES->withRedirect('/auth/init');
+
+			// Create Ticket & Redirect
+			$act = [];
+			$act['id'] = _random_hash();
+			$act['meta'] = json_encode($act_data);
+			$dbc->insert('auth_context_ticket', $act);
+
+			return $RES->withRedirect('/auth/init?_=' . $act['id']);
 
 			break;
 		}
