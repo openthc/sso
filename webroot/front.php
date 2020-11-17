@@ -27,15 +27,6 @@ $con['DBC_MAIN'] = function() {
 	$dsn = sprintf('pgsql:host=%s;dbname=%s', $cfg['hostname'], $cfg['database']);
 	return new \Edoceo\Radix\DB\SQL($dsn, $cfg['username'], $cfg['password']);
 };
-$con['Redis'] = function() {
-	$url = getenv('OPENTHC_REDIS_URL');
-	$cfg = parse_url($url);
-	$r = new \Redis();
-	$r->connect($cfg['host'], $cfg['port']);
-	$r->auth($cfg['pass']);
-	return $r;
-};
-
 // Custom Response Object
 $con['response'] = function() {
 	$RES = new App\Response(200);
