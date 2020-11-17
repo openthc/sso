@@ -33,32 +33,13 @@ class Init extends \App\Controller\Base
 		if (empty($act['id'])) {
 			_exit_html('<h1>Invalid Request [<a href="https://openthc.com/err#cai034">CAI#034</a>]</h1>', 400);
 		}
-		$act_prev = json_decode($act_prev, true);
-		if (empty($act_prev['contact']['id'])) {
+		$act_data = json_decode($act['meta'], true);
+		if (empty($act_data['contact']['id'])) {
 			_exit_html('<h1>Invalid Request [<a href="https://openthc.com/err#cai038">CAI#038</a>]</h1>', 400);
 		}
-		$Contact = $act_prev['contact'];
 
-		// Auth/Contact
-		$sql = 'SELECT id, username, password, flag FROM auth_contact WHERE id = :pk';
-		$arg = [ ':pk' => $Contact['id'] ];
-		$chk = $dbc_auth->fetchRow($sql, $arg);
-		if (empty($chk['id'])) {
-			_exit_html('<h1>Unexpected Session State [<a href="https://openthc.com/err#cai047">CAI#047</a>]</h1><p>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support.</p>', 400);
-		}
-		$Contact = $chk;
-
-		$dbc_main = $this->_container->DBC_MAIN;
-
-		// Main/Contact
-		$sql = 'SELECT id, name, phone, email FROM contact WHERE id = :pk';
-		$arg = [ ':pk' => $Contact['id'] ];
-		$chk = $dbc_main->fetchRow($sql, $arg);
-		if (empty($chk['id'])) {
-			_exit_html('<h1>Unexpected Session State [<a href="https://openthc.com/err#cai058">CAI#058</a>]</h1><p>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support.</p>', 400);
-		}
-
-		$Contact = array_merge($Contact, $chk);
+		$Contact = $act_data['contact'];
+		// $Contact = $this->_inflate_contact($Contact);
 
 		// Contact Globally Disabled?
 		if (0 != ($Contact['flag'] & Contact::FLAG_DISABLED)) {
@@ -90,44 +71,23 @@ class Init extends \App\Controller\Base
 			return $RES->withRedirect('/account/verify?r=/auth/init&_=' . $arg);
 		}
 
-		// Contact is Good
-		$_SESSION['Contact'] = $Contact;
-
-		// Company List
-		$sql = <<<SQL
-SELECT auth_company.id
-, auth_company.name
-, auth_company.cre
-, auth_company_contact.stat
-, auth_company_contact.created_at
-FROM auth_company
-JOIN auth_company_contact ON auth_company.id = auth_company_contact.company_id
-WHERE auth_company_contact.contact_id = :c0
-ORDER BY auth_company_contact.stat, auth_company_contact.created_at ASC
-SQL;
-
-		$arg = [ ':c0' => $Contact['id'] ];
-		$chk = $dbc_auth->fetchAll($sql, $arg);
-
 		// User with 0 Company Link
-		switch (count($chk)) {
+		switch (count($act_data['company_list'])) {
 			case 0:
 				_exit_html('Unexpected Session State<br>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support [CAI#051]', 400);
 			break;
 			case 1:
 				$Company = $chk[0];
-				$_SESSION['Company'] = $Company;
-				return $this->_create_ticket_and_redirect($RES, $Contact, $Company);
+				return $this->_create_ticket_and_redirect($RES, $act_data, $Contact, $Company);
 			break;
 			default:
 
 				// User with Many Company Links AND they picked one
 				if (!empty($_POST['company_id'])) {
-					foreach ($chk as $company_rec) {
-						if ($company_rec['id'] === $_POST['company_id']) {
-							$Company = $company_rec;
-							$_SESSION['Company'] = $Company;
-							return $this->_create_ticket_and_redirect($RES, $act_prev, $Contact, $Company);
+					foreach ($act_data['company_list'] as $c) {
+						if ($c['id'] === $_POST['company_id']) {
+							$Company = $c;
+							return $this->_create_ticket_and_redirect($RES, $act_data, $Contact, $Company);
 							break;
 						}
 					}
@@ -135,7 +95,7 @@ SQL;
 
 				$data = $this->data;
 				$data['Page']['title'] = 'Select Company';
-				$data['company_list'] = $chk;
+				$data['company_list'] = $act_data['company_list'];
 				$RES = $this->_container->view->render($RES, 'page/auth/init.html', $data);
 				return $RES->withStatus(300);
 
@@ -151,33 +111,42 @@ SQL;
 	/**
 	 * @return Response ready to be redirected
 	 */
-	function _create_ticket_and_redirect($RES, $act_prev, $Contact, $Company)
+	function _create_ticket_and_redirect($RES, $act_data, $Contact, $Company)
 	{
-		// Create Auth Ticket
-		$hash = _random_hash();
-		$data = json_encode([
-			'contact' => [
-				'id' => $Contact['id'],
-				'flag' => $Contact['flag'],
-				'username' => $Contact['username'],
-			],
-			'company' => $Company,
-			'service' => [],
-		]);
+		$_SESSION['Contact'] = $Contact;
+		$_SESSION['Company'] = $Company;
 
-		$this->_container->Redis->set($hash, $data, 240);
+		$act_data['company'] = $Company;
 
-		$ping = sprintf('https://%s/auth/once?_=%s', $_SERVER['SERVER_NAME'], $hash);
+		$act = [];
+		$act['id'] = _random_hash();
+		$act['meta'] = json_encode($act_data);
 
-		// if (!empty($_SESSION['return-link'])) {
-		// 	$ret = $_SESSION['return-link'];
-		// 	unset($_SESSION['return-link']);
-		// }
+		$dbc_auth = $this->_container->DBC_AUTH;
+		$dbc_auth->insert('auth_context_ticket', $act);
+
+		$ping = sprintf('https://%s/auth/once?_=%s', $_SERVER['SERVER_NAME'], $act['id']);
 
 		// No Return? Load Default
+		$ret = null;
+		switch ($act_data['intent']) {
+			case 'init':
+				// Default
+			break;
+			case 'oauth-authorize':
+				$ret = '/oauth2/authorize?' . http_build_query($act_data['oauth-request']);
+			break;
+		}
+
 		if (empty($ret)) {
-			$cfg = \OpenTHC\Config::get('openthc/app');
-			$ret = sprintf('https://%s/auth/back?ping={PING}', $cfg['hostname']);
+			$cfg = \OpenTHC\Config::get('openthc/app/hostname');
+			if (!empty($cfg)) {
+				$ret = sprintf('https://%s/auth/back?ping={PING}', $cfg);
+			}
+		}
+
+		if (empty($ret)) {
+			$ret = '/profile';
 		}
 
 		// Place Ping Back Token
@@ -185,5 +154,32 @@ SQL;
 
 		return $RES->withRedirect($ret);
 
+	}
+
+	/**
+	 * Inflate Contact from Auth & Main
+	 */
+	function _inflate_contact($Contact)
+	{
+		// Auth/Contact
+		// $sql = 'SELECT id, username, password, flag FROM auth_contact WHERE id = :pk';
+		// $arg = [ ':pk' => $act_data['contact']['id'] ];
+		// $chk = $dbc_auth->fetchRow($sql, $arg);
+		// if (empty($chk['id'])) {
+		// 	_exit_html('<h1>Unexpected Session State [<a href="https://openthc.com/err#cai047">CAI#047</a>]</h1><p>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support.</p>', 400);
+		// }
+		// $Contact = $chk;
+		// $dbc_main = $this->_container->DBC_MAIN;
+
+		// // Main/Contact
+		// $sql = 'SELECT id, name, phone, email FROM contact WHERE id = :pk';
+		// $arg = [ ':pk' => $Contact['id'] ];
+		// $chk = $dbc_main->fetchRow($sql, $arg);
+		// if (empty($chk['id'])) {
+		// 	_exit_html('<h1>Unexpected Session State [<a href="https://openthc.com/err#cai058">CAI#058</a>]</h1><p>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support.</p>', 400);
+		// }
+
+		// $Contact = array_merge($Contact, $chk);
+		return $Contact;
 	}
 }
