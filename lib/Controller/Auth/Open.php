@@ -87,7 +87,7 @@ class Open extends \App\Controller\Base
 
 			// Find Contact
 			$dbc = $this->_container->DBC_AUTH;
-			$sql = 'SELECT id, username, password FROM auth_contact WHERE username = :un';
+			$sql = 'SELECT id, flag, username, password FROM auth_contact WHERE username = :un';
 			$arg = [ ':un' => $username ];
 			$chk = $dbc->fetchRow($sql, $arg);
 
@@ -99,19 +99,22 @@ class Open extends \App\Controller\Base
 				return $RES->withRedirect('/auth/open?e=cao093');
 			}
 
+			// Next Authentication Token
 			$act_data = [
 				'intent' => 'init',
 				'contact' => [
 					'id' => $chk['id'],
+					'flag' => $chk['flag'],
+					'stat' => 200,
 					'username' => $chk['username'],
 				],
 				'company' => [],
+				'company_list' => [],
 				'service' => [], // inidicate the service here
 			];
 
 			// If we have a Prevous Auth-Ticket
 			if (!empty($_GET['_'])) {
-				$dbc = $this->_container->DBC_AUTH;
 				$act_prev = $dbc->fetchOne('SELECT meta FROM auth_context_ticket WHERE id = :t0', [ ':t0' => $_GET['_'] ]);
 				$act_prev = json_decode($act_prev, true);
 				switch ($act_prev['intent']) {
@@ -122,8 +125,10 @@ class Open extends \App\Controller\Base
 				}
 			}
 
+			// Company Lookup Stuff
+			$act_data = $this->_init_company($dbc, $act_data, $chk['id']);
 
-			// Create Ticket & Redirect
+			// Create Next Ticket & Redirect
 			$act = [];
 			$act['id'] = _random_hash();
 			$act['meta'] = json_encode($act_data);
@@ -138,6 +143,36 @@ class Open extends \App\Controller\Base
 		$data['Page']['title'] = 'Error';
 		$RES = $this->_container->view->render($RES, 'page/done.html', $data);
 		return $RES->withStatus(400);
+
+	}
+
+	/**
+	 * Initialize Company Data in $act_data & return
+	 */
+	function _init_company($dbc, $act_data, $contact_id)
+	{
+		// Company List
+		$sql = <<<SQL
+SELECT auth_company.id
+, auth_company.name
+, auth_company.cre
+, auth_company_contact.stat
+, auth_company_contact.created_at
+FROM auth_company
+JOIN auth_company_contact ON auth_company.id = auth_company_contact.company_id
+WHERE auth_company_contact.contact_id = :c0
+ORDER BY auth_company_contact.stat, auth_company_contact.created_at ASC
+SQL;
+
+		$arg = [ ':c0' => $contact_id ];
+		$chk = $dbc->fetchAll($sql, $arg);
+
+		$act_data['company_list'] = $chk;
+		if (count($chk) == 1) {
+			$act_data['company'] = $chk;
+		}
+
+		return $act_data;
 
 	}
 }

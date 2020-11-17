@@ -255,8 +255,7 @@ SQL;
 			$arg['file'] = 'sso/contact-email-verify.tpl';
 			$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
 			$arg['data']['mail_subj'] = 'Email Verification';
-			$arg['data']['auth_context_ticket'] = $acs['id']; // v1
-			$arg['data']['auth_context_token'] = $acs['id']; // v0
+			$arg['data']['auth_context_ticket'] = $acs['id'];
 
 			try {
 

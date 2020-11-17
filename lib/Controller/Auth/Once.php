@@ -15,31 +15,22 @@ class Once extends \App\Controller\Base
 		// Should be using a different controller?
 		if (!empty($_GET['_'])) {
 
-			$code = $_GET['_'];
-			if (!preg_match('/^([\w\-]{32,128})$/i', $code, $m)) {
+			if (!preg_match('/^([\w\-]{32,128})$/i', $_GET['_'], $m)) {
 				return $RES->withJSON([
 					'data' => null,
 					'meta' => [ 'detail' => 'Invalid Request [CAO#024]' ]
 				], 400);
 			}
 
-			$chk = $this->_container->Redis->get($code);
-			if (empty($chk)) {
-				return $RES->withJSON([
-					'data' => null,
-					'meta' => [ 'detail' => 'Invalid Request [CAO#032]' ]
-				], 400);
-			}
-
+			$dbc = $this->_container->DBC_AUTH;
+			$chk = $dbc->fetchOne('SELECT meta FROM auth_context_ticket WHERE id = :t', [ ':t' => $_GET['_']]);
 			$chk = json_decode($chk, true);
-			if (empty($chk)) {
-				return $RES->withJSON([
-					'data' => null,
-					'meta' => [ 'detail' => 'Invalid Request [CAO#038]' ]
-				], 500);
+			switch ($chk['intent']) {
+				case 'init':
+				case 'oauth-migrate':
+					// OK
+					return $RES->withJSON($chk);
 			}
-
-			return $RES->withJSON($chk);
 
 		}
 
@@ -71,21 +62,19 @@ class Once extends \App\Controller\Base
 			__exit_text('Invalid Request [CAO#024]', 400);
 		}
 
-		$auth = $_GET['a'];
-
 		$dbc_auth = $this->_container->DBC_AUTH;
 
-		$act = $dbc_auth->fetchRow('SELECT * FROM auth_context_ticket WHERE id = ?', $auth);
+		$act = $dbc_auth->fetchRow('SELECT * FROM auth_context_ticket WHERE id = :t0', [ ':t0' => $_GET['a'] ]);
 		if (empty($act)) {
 			return $RES->withRedirect('/done?e=cao066');
 		}
 		// if (strtotime($act['ts_expires']) < $_SERVER['REQUEST_TIME']) {
-			// $dbc->query('DELETE FROM auth_context_ticket WHERE id = ?', $act['id']);
-			// __exit_html('<h1>Invalid Token [CAO#028]</h2><p>The link you followed has expired</p>', 400);
+			// $dbc->query('DELETE FROM auth_context_ticket WHERE id = :t0', $act['id']);
+			// __exit_html('<h1>Invalid Ticket [CAO#028]</h2><p>The link you followed has expired</p>', 400);
 		// }
 		$chk = json_decode($act['meta'], true);
 		if (empty($chk)) {
-			$dbc_auth->query('DELETE FROM auth_context_ticket WHERE id = ?', $act['id']);
+			$dbc_auth->query('DELETE FROM auth_context_ticket WHERE id = :t0', [ ':t0' => $act['id'] ]);
 			return $RES->withRedirect('/done?e=cao077');
 		}
 		$act = $chk;
@@ -144,7 +133,7 @@ class Once extends \App\Controller\Base
 
 		// Update Contact
 		$email = $data['account']['contact']['email'];
-		$chk = $dbc->fetchOne('SELECT id FROM auth_contact WHERE username = ?', [ $email ]);
+		$chk = $dbc->fetchOne('SELECT id FROM auth_contact WHERE username = :u0', [ ':u0' => $email ]);
 		if (empty($chk)) {
 			__exit_text('Invalid [CAO#073]', 400);
 		}
@@ -192,17 +181,17 @@ class Once extends \App\Controller\Base
 		$_SESSION['email'] = $username;
 
 		$dbc_auth = $this->_container->DBC_AUTH;
-		$Contact = $dbc_auth->fetchRow('SELECT id, username FROM auth_contact WHERE username = ?', [ $username ]);
+		$Contact = $dbc_auth->fetchRow('SELECT id, username FROM auth_contact WHERE username = :u0', [ ':u0' => $username ]);
 		if (empty($Contact)) {
 			return $RES->withRedirect('/done?e=cao100&l=173');
 		}
-
 
 		// Generate Authentication Hash
 		$act = [];
 		$act['id'] = _random_hash();
 		$act['meta'] = json_encode(array(
 			'action' => 'password-reset',
+			'intent' => 'password-reset',
 			'contact' => $Contact,
 			'geoip' => geoip_record_by_name($_SERVER['REMOTE_ADDR']),
 		));
@@ -228,12 +217,10 @@ class Once extends \App\Controller\Base
 			$arg['file'] = 'sso/contact-password-reset.tpl';
 			$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
 			$arg['data']['mail_subj'] = 'Password Reset Request';
-			$arg['data']['auth_context_ticket'] = $act['id']; // v1
-			$arg['data']['auth_context_token'] = $act['id']; // v0
+			$arg['data']['auth_context_ticket'] = $act['id'];
 
 			// Use CIC to Send
 			try {
-				die("CIC");
 				$cic = new \OpenTHC\Service\OpenTHC('cic');
 				$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
 
