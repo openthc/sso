@@ -76,6 +76,8 @@ class Permit extends \OpenTHC\Controller\Base
 
 		$data = [];
 		$data['Page'] = ['title' => 'Permit' ];
+		$data['Contact'] = $_SESSION['Contact'];
+		$data['Company'] = $_SESSION['Company'];
 		$data['Service'] = $Auth_Service;
 		$data['return_url'] = $ret;
 

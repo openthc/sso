@@ -54,6 +54,7 @@ class Authorize extends \OpenTHC\Controller\Base
 		$data = [];
 		$data['Page'] = [ 'title' => 'Authorize' ];
 		$data['Contact'] = $_SESSION['Contact'];
+		$data['Company'] = $_SESSION['Company'];
 		$data['Service'] = $Auth_Service;
 		$data['scope_list'] = $_GET['scope'];
 		$data['link_crypt'] = $link_crypt;
