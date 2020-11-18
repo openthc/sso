@@ -15,11 +15,11 @@ class Verify extends \App\Controller\Base
 		$ARG = json_decode($ARG, true);
 
 		if (empty($ARG)) {
-			__exit_text('Invalid Request [CAV#018]', 400);
+			_exit_html_err('Invalid Request [CAV-018]', 400);
 		}
 
 		if (empty($ARG['contact']['id'])) {
-			__exit_text('Invalid Request [CAV#022]', 400);
+			_exit_html_err('Invalid Request [CAV-022]', 400);
 		}
 
 		// Load Contact
@@ -33,12 +33,11 @@ SQL;
 		];
 		$Contact = $this->_container->DBC_AUTH->fetchRow($sql, $arg);
 		if (empty($Contact['id'])) {
-			__exit_text('Invalid Request [CAV#037]', 400);
+			_exit_html_err('Invalid Request [CAV-037]', 400);
 		}
 		$Contact_Base = $this->_container->DBC_MAIN->fetchRow('SELECT id, email, phone FROM contact WHERE id = :c0', $arg);
 		if (empty($Contact_Base['id'])) {
-			var_dump($arg); exit;
-			__exit_text('Invalid Request [CAV#040]', 400);
+			_exit_html_err('Invalid Request [CAV-040]', 400);
 		}
 
 
@@ -91,11 +90,11 @@ SQL;
 		$ARG = json_decode($ARG, true);
 
 		if (empty($ARG)) {
-			__exit_text('Invalid Request [CAP#055]', 400);
+			_exit_html_err('Invalid Request [CAP-055]', 400);
 		}
 
 		if (empty($ARG['contact'])) {
-			__exit_text('Invalid Request [CAP#059]', 400);
+			_exit_html_err('Invalid Request [CAP-059]', 400);
 		}
 
 		switch ($_POST['a']) {
