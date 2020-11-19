@@ -164,9 +164,13 @@ class Authorize extends \OpenTHC\Controller\Base
 
 	}
 
+	/**
+	 * Verify Session or Request Redirect
+	 * @return Response maybe with status != 200
+	 */
 	function verifySession($RES)
 	{
-		// If no session then sign-in and come back here
+		// If no Contact, Request Sign-In
 		if (empty($_SESSION['Contact']['id'])) {
 
 			$act = [];
@@ -178,12 +182,31 @@ class Authorize extends \OpenTHC\Controller\Base
 				'service' => $_GET['client_id'],
 				'oauth-request' => $_GET,
 			]);
-			// INSERT
+
 			$this->_container->DBC_AUTH->insert('auth_context_ticket', $act);
 			$ret = sprintf('https://%s/auth/open?_=%s', $_SERVER['SERVER_NAME'], $act['id']);
 
 			return $RES->withRedirect($ret);
 
+		}
+
+		// If no Company, Re-Open and Select Company
+		if (empty($_SESSION['Company']['id'])) {
+
+			$act = [];
+			$act['id'] = _random_hash();
+			$act['meta'] = json_encode([
+				'intent' => 'oauth-authorize',
+				'contact' => $_SESSION['Contact'],
+				'company' => [],
+				'service' => $_GET['client_id'],
+				'oauth-request' => $_GET,
+			]);
+
+			$this->_container->DBC_AUTH->insert('auth_context_ticket', $act);
+			$ret = sprintf('https://%s/auth/open?_=%s', $_SERVER['SERVER_NAME'], $act['id']);
+
+			return $RES->withRedirect($ret);
 		}
 
 		return $RES;

@@ -23,7 +23,7 @@ class Init extends \App\Controller\Base
 
 		// Check Input
 		if (!preg_match('/^([\w\-]{32,128})$/i', $_GET['_'], $m)) {
-			_exit_html('<h1>Invalid Request [<a href="https://openthc.com/err#cai026">CAI#026</a>]</h1>', 400);
+			_exit_html_err('<h1>Invalid Request [CAI-026]</h1>', 400);
 		}
 
 		$dbc_auth = $this->_container->DBC_AUTH;
@@ -31,11 +31,11 @@ class Init extends \App\Controller\Base
 		// Load Auth Ticket
 		$act = $dbc_auth->fetchRow('SELECT id, meta FROM auth_context_ticket WHERE id = :t', [ ':t' => $_GET['_'] ]);
 		if (empty($act['id'])) {
-			_exit_html('<h1>Invalid Request [<a href="https://openthc.com/err#cai034">CAI#034</a>]</h1>', 400);
+			_exit_html_err('<h1>Invalid Request [CAI-034]</a></h1>', 400);
 		}
 		$act_data = json_decode($act['meta'], true);
 		if (empty($act_data['contact']['id'])) {
-			_exit_html('<h1>Invalid Request [<a href="https://openthc.com/err#cai038">CAI#038</a>]</h1>', 400);
+			_exit_html_err('<h1>Invalid Request [CAI-038]</h1>', 400);
 		}
 
 		$Contact = $act_data['contact'];
@@ -43,7 +43,7 @@ class Init extends \App\Controller\Base
 
 		// Contact Globally Disabled?
 		if (0 != ($Contact['flag'] & Contact::FLAG_DISABLED)) {
-			_exit_text('Invalid Account [CAI#038]', 403);
+			_exit_html_err('Invalid Account [CAI-038]', 403);
 		}
 		switch ($Contact['stat']) {
 			case 100:
@@ -52,7 +52,7 @@ class Init extends \App\Controller\Base
 				// OK
 			break;
 			case 410:
-				_exit_text('Invalid Account [CAI#049]', 403);
+				_exit_html_err('Invalid Account [CAI-049]', 403);
 			break;
 		}
 
@@ -74,10 +74,10 @@ class Init extends \App\Controller\Base
 		// User with 0 Company Link
 		switch (count($act_data['company_list'])) {
 			case 0:
-				_exit_html('Unexpected Session State<br>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support [CAI#051]', 400);
+				_exit_html_err('<h1>Unexpected Session State [CAI-051]</h1><p>You may want to <a href="/auth/shut">close your session</a> and try again.</p><p>If the issue continues, contact support</p>', 400);
 			break;
 			case 1:
-				$Company = $chk[0];
+				$Company = $act_data['company_list'][0];
 				return $this->_create_ticket_and_redirect($RES, $act_data, $Contact, $Company);
 			break;
 			default:
@@ -103,7 +103,7 @@ class Init extends \App\Controller\Base
 
 		return $RES->withJSON([
 			'data' => null,
-			'meta' => [ 'detail' => 'Unexpected Server Error [CAI#108] '],
+			'meta' => [ 'detail' => 'Unexpected Server Error [CAI-108] '],
 		], 500);
 
 	}
@@ -166,7 +166,7 @@ class Init extends \App\Controller\Base
 		// $arg = [ ':pk' => $act_data['contact']['id'] ];
 		// $chk = $dbc_auth->fetchRow($sql, $arg);
 		// if (empty($chk['id'])) {
-		// 	_exit_html('<h1>Unexpected Session State [<a href="https://openthc.com/err#cai047">CAI#047</a>]</h1><p>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support.</p>', 400);
+		// 	_exit_html_err('<h1>Unexpected Session State [CAI-047]</h1><p>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support.</p>', 400);
 		// }
 		// $Contact = $chk;
 		// $dbc_main = $this->_container->DBC_MAIN;
@@ -176,7 +176,7 @@ class Init extends \App\Controller\Base
 		// $arg = [ ':pk' => $Contact['id'] ];
 		// $chk = $dbc_main->fetchRow($sql, $arg);
 		// if (empty($chk['id'])) {
-		// 	_exit_html('<h1>Unexpected Session State [<a href="https://openthc.com/err#cai058">CAI#058</a>]</h1><p>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support.</p>', 400);
+		// 	_exit_html_err('<h1>Unexpected Session State [CAI-058]</h1><p>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support.</p>', 400);
 		// }
 
 		// $Contact = array_merge($Contact, $chk);
