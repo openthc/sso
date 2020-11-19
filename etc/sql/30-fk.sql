@@ -25,3 +25,28 @@ ALTER TABLE ONLY auth_company_contact
 
 ALTER TABLE ONLY auth_company_contact
     ADD CONSTRAINT auth_company_contact_contact_id_fkey FOREIGN KEY (contact_id) REFERENCES auth_contact(id);
+
+--
+-- Service
+--
+ALTER TABLE ONLY auth_service_contact
+    ADD CONSTRAINT auth_service_contact_service_id_fkey FOREIGN KEY (service_id) REFERENCES auth_service(id);
+
+ALTER TABLE ONLY auth_service_contact
+    ADD CONSTRAINT auth_service_contact_contact_id_fkey FOREIGN KEY (contact_id) REFERENCES auth_contact(id);
+
+--
+-- ACL Stuff
+--
+
+ALTER TABLE ONLY acl_service_object_action
+    ADD CONSTRAINT acl_service_object_action_service_id_fkey FOREIGN KEY (service_id) REFERENCES auth_service(id);
+
+ALTER TABLE ONLY acl_company_contact_service_object_action
+    ADD CONSTRAINT acl_company_contact_service_object_action_company_id FOREIGN KEY (company_id) REFERENCES auth_company(id);
+
+ALTER TABLE ONLY acl_company_contact_service_object_action
+    ADD CONSTRAINT acl_company_contact_service_object_action_contact_id FOREIGN KEY (contact_id) REFERENCES auth_contact(id);
+
+ALTER TABLE ONLY acl_company_contact_service_object_action
+    ADD CONSTRAINT acl_company_contact_service_object_action_service_id FOREIGN KEY (service_id) REFERENCES auth_service(id);

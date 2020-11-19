@@ -144,3 +144,21 @@ CREATE TABLE log_event (
 -- 	email text,
 -- 	phone text
 -- );
+
+CREATE TABLE acl_service_object_action (
+	id character varying(26) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
+	service_id character varying(26) not null,
+	obj character varying(256) not null,
+	act character varying(256) not null
+);
+
+
+CREATE TABLE acl_company_contact_service_object_action (
+	id character varying(26) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
+	company_id character varying(26) not null,
+	contact_id character varying(26) not null,
+	service_id character varying(26) not null,
+	obj character varying(256),
+	act character varying(256),
+	eft character varying(8)
+);
