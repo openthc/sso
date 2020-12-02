@@ -94,7 +94,7 @@ class Permit extends \OpenTHC\Controller\Base
 	{
 		// Remember this application authorization
 		if (!empty($_GET['auth-commit'])) {
-			$sql = 'INSERT INTO auth_program_contact (auth_program_id, auth_contact_id) VALUES (:a, :u)';
+			$sql = 'INSERT INTO auth_service_contact (service_id, contact_id) VALUES (:a, :u)';
 			$arg = array(
 				':a' => $Auth_Service['id'],
 				':u' => $_SESSION['Contact']['id'],
