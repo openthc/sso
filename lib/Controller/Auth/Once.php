@@ -18,7 +18,7 @@ class Once extends \App\Controller\Base
 			if (!preg_match('/^([\w\-]{32,128})$/i', $_GET['_'], $m)) {
 				return $RES->withJSON([
 					'data' => null,
-					'meta' => [ 'detail' => 'Invalid Request [CAO#024]' ]
+					'meta' => [ 'detail' => 'Invalid Request [CAO-022]' ]
 				], 400);
 			}
 
@@ -35,7 +35,7 @@ class Once extends \App\Controller\Base
 		}
 
 		if (empty($_GET['a'])) {
-			__exit_text('Invalid Request [CAO#020]', 400);
+			__exit_text('Invalid Request [CAO-047]', 400);
 		}
 
 
@@ -59,7 +59,7 @@ class Once extends \App\Controller\Base
 		}
 
 		if (!preg_match('/^([\w\-]{32,128})$/i', $_GET['a'], $m)) {
-			__exit_text('Invalid Request [CAO#024]', 400);
+			__exit_text('Invalid Request [CAO-071]', 400);
 		}
 
 		$dbc_auth = $this->_container->DBC_AUTH;
@@ -98,7 +98,7 @@ class Once extends \App\Controller\Base
 		case 'password-reset':
 
 			$val = [
-				'source' => 'email',
+				'source' => 'email', // @deprecated use the parameter 'next'
 				'contact' => $act['contact'],
 			];
 			$val = json_encode($val);
@@ -122,6 +122,9 @@ class Once extends \App\Controller\Base
 		case 'password-reset-request':
 			return $this->sendPasswordReset($RES);
 		}
+
+		return $RES->withStatus(400);
+
 	}
 
 	/**
@@ -135,7 +138,7 @@ class Once extends \App\Controller\Base
 		$email = $data['account']['contact']['email'];
 		$chk = $dbc->fetchOne('SELECT id FROM auth_contact WHERE username = :u0', [ ':u0' => $email ]);
 		if (empty($chk)) {
-			__exit_text('Invalid [CAO#073]', 400);
+			__exit_text('Invalid [CAO-073]', 400);
 		}
 
 		$sql = 'UPDATE auth_contact SET flag = flag | :f1 WHERE id = :pk';
@@ -221,6 +224,7 @@ class Once extends \App\Controller\Base
 
 			// Use CIC to Send
 			try {
+
 				$cic = new \OpenTHC\Service\OpenTHC('cic');
 				$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
 
