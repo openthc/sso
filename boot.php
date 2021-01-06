@@ -23,14 +23,16 @@ function _exit_html_err($err, $code=500)
 	}
 
 	// Add a Link to the Error Code
-	if (preg_match('/\[(\w{3}.\w{3})\]/', $err['body'], $m)) {
-		$code = $m[1];
-		$code = str_replace('#', '-', $code);
+	if (preg_match('/\[(\w{3}(#|\-)\w{3})\]/', $err['body'], $m)) {
 
-		$out = $m[0];
-		$rep = sprintf('[<a href="https://openthc.com/err#%s" target="_blank">%s</a>]', $code, $code);
-		// var_dump($m); exit;
-		$err['body'] = str_replace($out, $rep, $err['body']);
+		$rem = $m[0];
+
+		$tag = $m[1];
+		$tag = str_replace('#', '-', $tag); // remove after all tags are updated
+
+		$rep = sprintf('[<a href="https://openthc.com/err#%s" target="_blank">%s</a>]', $tag, $tag);
+
+		$err['body'] = str_replace($rem, $rep, $err['body']);
 	}
 
 	$html = <<<HTML
