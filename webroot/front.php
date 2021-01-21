@@ -6,15 +6,56 @@
 // We may start with an error code from the PHP interpreter
 $e0 = error_get_last();
 
+// Early Error Handler
+$ef = function($ex, $em=null, $ef=null, $el=null, $ec=null) {
+
+	while (ob_get_level() > 0) { ob_end_clean(); }
+
+	header('HTTP/1.1 500 Internal Error', true, 500);
+	header('content-type: text/plain');
+
+	$msg = [];
+	if (is_object($ex)) {
+		$msg[] = 'Internal Error [SWF-019]';
+		$msg[] = $ex->__toString();
+	} else {
+		$msg[] = 'Internal Error [SWF-022]';
+		$msg[] = sprintf('Message: %s [%d]', $em, $ex);
+		if (!empty($ef)) {
+			$ef = substr($ef, strlen($ef) / 2); // don't show full path
+			$msg[] = sprintf('File: ...%s:%d', $ef, $el);
+		}
+	}
+
+	error_log(implode('; ', $msg));
+
+	echo implode("\n", $msg);
+	echo "\n";
+
+	debug_print_backtrace();
+
+	exit(1);
+
+};
+
+// Early Error Exception Handlers
+set_error_handler($ef, (E_ALL & ~ E_NOTICE));
+set_exception_handler($ef);
+
+// Load Bootstrapper
 require_once('../boot.php');
 
 $cfg = [];
 // $cfg['debug'] = true;
 $app = new \OpenTHC\App($cfg);
 
-
 // App Container
 $con = $app->getContainer();
+// Use our Error Handler
+unset($con['errorHandler']);
+unset($con['phpErrorHandler']);
+
+// Database Connections
 $con['DBC_AUTH'] = function() {
 	// $url = getenv('OPENTHC_POSTGRES_URL'):
 	$cfg = \OpenTHC\Config::get('database/auth');
@@ -27,39 +68,12 @@ $con['DBC_MAIN'] = function() {
 	$dsn = sprintf('pgsql:host=%s;dbname=%s', $cfg['hostname'], $cfg['database']);
 	return new \Edoceo\Radix\DB\SQL($dsn, $cfg['username'], $cfg['password']);
 };
+
 // Custom Response Object
 $con['response'] = function() {
 	$RES = new App\Response(200);
 	$RES = $RES->withHeader('content-type', 'text/html; charset=utf-8');
 	return $RES;
-};
-
-// Error Handler
-$con['errorHandler'] = function($c0) {
-
-	return function($REQ, $RES, $ERR) use ($c0) {
-
-		$dump = [];
-		$dump['note'] = $ERR->getMessage();
-		$dump['code'] = $ERR->getCode();
-		$dump['file'] = $ERR->getFile();
-		$dump['line'] = $ERR->getLine();
-		$dump['stack'] = $ERR->getTrace();
-
-		$file = sprintf('/tmp/err%s.json', $_SERVER['UNIQUE_ID']);
-		file_put_contents($file, json_encode($dump));
-
-		$RES = new App\Response(500);
-		$RES = $RES->withJSON([
-			'error' => 'server_error',
-			'error_description' => $dump['note'],
-			'error_uri' => 'https://openthc.com/err#err063',
-			'dump' => $dump,
-		]);
-
-		return $RES;
-
-	};
 };
 
 
@@ -103,6 +117,8 @@ $app->group('/oauth2', function() {
 
 // Account
 $app->group('/account', function() {
+
+	$this->get('', 'App\Controller\Account\Profile');
 
 	$this->get('/create', 'App\Controller\Account\Create');
 	$this->post('/create', 'App\Controller\Account\Create:post')->setName('account/create');
