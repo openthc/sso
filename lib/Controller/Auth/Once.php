@@ -23,13 +23,25 @@ class Once extends \App\Controller\Base
 			}
 
 			$dbc = $this->_container->DBC_AUTH;
-			$chk = $dbc->fetchOne('SELECT meta FROM auth_context_ticket WHERE id = :t', [ ':t' => $_GET['_']]);
-			$chk = json_decode($chk, true);
-			switch ($chk['intent']) {
+			$act = $dbc->fetchOne('SELECT meta FROM auth_context_ticket WHERE id = :t', [ ':t' => $_GET['_']]);
+			$act = json_decode($act, true);
+			$act['intent'] = $act['intent'] ?: $act['action'];
+			switch ($act['intent']) {
+				case 'email-verify':
+					$arg = [
+						'action' => 'email-verify-save',
+						'contact' => $act['contact'],
+					];
+					$arg = json_encode($arg);
+					$arg = _encrypt($arg, $_SESSION['crypt-key']);
+
+					return $RES->withRedirect('/account/verify?_=' . $arg);
+
+				break;
 				case 'init':
 				case 'oauth-migrate':
 					// OK
-					return $RES->withJSON($chk);
+					return $RES->withJSON($act);
 			}
 
 		}

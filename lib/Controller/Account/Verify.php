@@ -11,6 +11,8 @@ class Verify extends \App\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{
+		$_SESSION['verify-redirect'] = $_GET['r'];
+
 		$ARG = _decrypt($_GET['_'], $_SESSION['crypt-key']);
 		$ARG = json_decode($ARG, true);
 
@@ -77,7 +79,21 @@ SQL;
 
 		// It's good, so send to INIT
 		if (empty($data['verify_email']) && empty($data['verify_phone'])) {
-			return $RES->withRedirect('/auth/init');
+
+			unset($_SESSION['phone-verify-code']);
+			unset($_SESSION['phone-verify-e164']);
+			unset($_SESSION['phone-verify-warn']);
+
+			$r = '/profile';
+			if (empty($_SESSION['verify-redirect'])) {
+				$r = $_SESSION['verify-redirect'];
+				unset($_SESSION['verify-redirect']);
+			}
+			if (empty($r)) {
+				$r = '/auth/open';
+			}
+
+			return $RES->withRedirect($r);
 		}
 
 		return $this->_container->view->render($RES, $file, $data);
@@ -202,10 +218,12 @@ SQL;
 			];
 			$dbc_main->query($sql, $arg);
 
+			$link = $_SESSON['verify-redirect'] ?: '/auth/open';
+
 			$data = $this->data;
 			$data['Page']['title'] = 'Phone Verification';
 			$data['info'] = 'Phone Number has been validated';
-			$data['foot'] = '<div class="r"><a class="btn btn-outline-primary" href="/auth/init">Continue <i class="icon icon-arrow-right"></i></a></div>';
+			$data['foot'] = sprintf('<div class="r"><a class="btn btn-outline-primary" href="%s">Continue <i class="icon icon-arrow-right"></i></a></div>', $link);
 
 			// Set Contact Model on Response
 			$RES = $RES->withAttribute('Contact', [
@@ -213,6 +231,10 @@ SQL;
 				'username' => $ARG['contact']['username'],
 				'flag' => Contact::FLAG_PHONE_GOOD,
 			]);
+
+			unset($_SESSION['phone-verify-code']);
+			unset($_SESSION['phone-verify-e164']);
+			unset($_SESSION['phone-verify-warn']);
 
 			return $this->_container->view->render($RES, 'page/done.html', $data);
 
@@ -225,12 +247,12 @@ SQL;
 	 */
 	function emailVerifySend($RES, $ARG)
 	{
-		$dbc = $this->_container->DB;
+		$dbc = $this->_container->DBC_AUTH;
 
 		$acs = [];
 		$acs['id'] = _random_hash();
 		$acs['meta'] = json_encode([
-			'action' => 'email-verify',
+			'intent' => 'email-verify',
 			'contact' => $ARG['contact'],
 		]);
 		$dbc->insert('auth_context_ticket', $acs);

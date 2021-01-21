@@ -43,7 +43,7 @@ class Init extends \App\Controller\Base
 
 		// Contact Globally Disabled?
 		if (0 != ($Contact['flag'] & Contact::FLAG_DISABLED)) {
-			_exit_html_err('Invalid Account [CAI-038]', 403);
+			_exit_html_err('Invalid Account [CAI-046]', 403);
 		}
 		switch ($Contact['stat']) {
 			case 100:
@@ -57,18 +57,15 @@ class Init extends \App\Controller\Base
 		}
 
 		// Need to Verify
-		if (0 == ($Contact['flag'] & Contact::FLAG_EMAIL_GOOD)) {
+		$f1 = (Contact::FLAG_EMAIL_GOOD | Contact::FLAG_PHONE_GOOD);
+		if (($Contact['flag'] & $f1) != $f1) {
 			$val = [ 'contact' => $Contact ];
 			$val = json_encode($val);
 			$arg = _encrypt($val, $_SESSION['crypt-key']);
-			return $RES->withRedirect('/account/verify?r=/auth/init&_=' . $arg);
-		}
-
-		if (0 == ($Contact['flag'] & Contact::FLAG_PHONE_GOOD)) {
-			$val = [ 'contact' => $Contact ];
-			$val = json_encode($val);
-			$arg = _encrypt($val, $_SESSION['crypt-key']);
-			return $RES->withRedirect('/account/verify?r=/auth/init&_=' . $arg);
+			return $RES->withRedirect('/account/verify?' . http_build_query([
+				'r' => sprintf('/auth/init?_=%s', $_GET['_']),
+				'_' => $arg
+			]));
 		}
 
 		// User with 0 Company Link

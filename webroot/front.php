@@ -17,10 +17,11 @@ $ef = function($ex, $em=null, $ef=null, $el=null, $ec=null) {
 	$msg = [];
 	if (is_object($ex)) {
 		$msg[] = 'Internal Error [SWF-019]';
-		$msg[] = $ex->__toString();
+		$msg[] = $ex->getMessage();
+		// $msg[] = $ex->__toString();
 	} else {
 		$msg[] = 'Internal Error [SWF-022]';
-		$msg[] = sprintf('Message: %s [%d]', $em, $ex);
+		$msg[] = sprintf('Error: #%d:%s', $ex, $em);
 		if (!empty($ef)) {
 			$ef = substr($ef, strlen($ef) / 2); // don't show full path
 			$msg[] = sprintf('File: ...%s:%d', $ef, $el);
@@ -32,7 +33,7 @@ $ef = function($ex, $em=null, $ef=null, $el=null, $ec=null) {
 	echo implode("\n", $msg);
 	echo "\n";
 
-	debug_print_backtrace();
+	// debug_print_backtrace();
 
 	exit(1);
 
