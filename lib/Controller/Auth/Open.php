@@ -14,6 +14,25 @@ class Open extends \App\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{
+		// Well known actions
+		// /.well-known/change-password redirect here
+		switch ($_GET['a']) {
+		case 'password-reset':
+
+			$data['Page'] = [ 'title' => 'Password Reset '];
+			$data['email'] = $_SESSION['email'];
+
+			$cfg = \OpenTHC\Config::get('google');
+			$data['Google']['recaptcha_public'] = $cfg['recaptcha-public'];
+
+			$file = 'page/auth/once-password-reset.html';
+
+			return $this->_container->view->render($RES, $file, $data);
+
+			break;
+		}
+
+		// Normal Page Open
 		$file = 'page/auth/open.html';
 		$data = $this->data;
 		$data['Page']['title'] = 'Sign In';
