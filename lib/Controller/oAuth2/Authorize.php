@@ -26,7 +26,7 @@ class Authorize extends \OpenTHC\Controller\Base
 		if (empty($Auth_Service['id'])) {
 			_exit_json(array(
 				'error' => 'invalid_client',
-				'error_description' => 'Invalid Client [COA#051]',
+				'error_description' => 'Invalid Client [COA-051]',
 				'error_uri' => sprintf('https://%s/auth/doc', $_SERVER['SERVER_NAME']),
 			), 401);
 		}
@@ -79,31 +79,31 @@ class Authorize extends \OpenTHC\Controller\Base
 		foreach ($key_list as $k) {
 			$_GET[$k] = trim($_GET[$k]);
 			if (empty($_GET[$k])) {
-				__exit_text("Missing Parameter '$k' [COA#025]", 400);
+				__exit_text("Missing Parameter '$k' [COA-025]", 400);
 			}
 		}
 
 		// Validate Response Type
 		if ('code' != $_GET['response_type']) {
-			__exit_text('Invalid Response Type [COA#031]', 400);
+			__exit_text('Invalid Response Type [COA-031]', 400);
 		}
 
 		// Validate Redirect URI
 		$ruri = parse_url($_GET['redirect_uri']);
 		if (empty($ruri['scheme'])) {
-			__exit_text('Missing Redirect Scheme [COA#037]', 400);
+			__exit_text('Missing Redirect Scheme [COA-037]', 400);
 		}
 		if ('https' != $ruri['scheme']) {
-			__exit_text('Invalid Redirect Scheme [COA#040]', 400);
+			__exit_text('Invalid Redirect Scheme [COA-040]', 400);
 		}
 
 		if (empty($ruri['host'])) {
-			__exit_text('Missing Redirect Host [COA#043]', 400);
+			__exit_text('Missing Redirect Host [COA-043]', 400);
 		}
 		// @todo Filter Invalid Host Names
 
 		if (empty($ruri['path'])) {
-			__exit_text('Missing Redirect Path [COA#046]', 400);
+			__exit_text('Missing Redirect Path [COA-046]', 400);
 		}
 
 	}
@@ -136,7 +136,7 @@ class Authorize extends \OpenTHC\Controller\Base
 
 		foreach ($scope_list_ask as $s) {
 			if (!in_array($s, $scope_list_all)) {
-				__exit_text("Unknown Scope '$s' [COA#088]", 400);
+				__exit_text("Unknown Scope '$s' [COA-088]", 400);
 			}
 		}
 
@@ -152,7 +152,7 @@ class Authorize extends \OpenTHC\Controller\Base
 
 		foreach ($scope_ask as $s) {
 			if (!in_array($s, $scope_may, true)) {
-				$html = sprintf('<h1>Access Denied to Context &quot;%s&quot; [COA#151]</h1>', $s);
+				$html = sprintf('<h1>Access Denied to Context &quot;%s&quot; [COA-151]</h1>', $s);
 				$html.= sprintf('<p>See <a href="https://%s/doc#coa151">documentation</p>', $_SERVER['SERVER_NAME']);
 				$html.= '<p>Or <a href="/auth/shut">sign-out</a> and start over</p>';
 				__exit_html($html, 403);
