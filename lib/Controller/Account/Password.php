@@ -104,11 +104,11 @@ class Password extends \OpenTHC\Controller\Base
 		$ARG = json_decode($ARG, true);
 
 		if (empty($ARG)) {
-			__exit_text('Invalid Request [CAP#107]', 400);
+			__exit_html('<h1>Invalid Request [CAP-107]</h1><p>You can <a href="/auth/shut">clear your session</a> and try again</p>', 400);
 		}
 
 		if (empty($ARG['contact']['id'])) {
-			__exit_text('Invalid Request [CAP#111]', 400);
+			__exit_html('<h1>Invalid Request [CAP-111]</h1><p>You can <a href="/auth/shut">clear your session</a> and try again</p>', 400);
 		}
 
 		return $ARG;
