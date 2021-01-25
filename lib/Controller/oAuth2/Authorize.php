@@ -44,7 +44,7 @@ class Authorize extends \OpenTHC\Controller\Base
 		$arg = array($Auth_Service['id'], $_SESSION['Contact']['id']);
 		$chk = $dbc->fetchOne($sql, $arg);
 		if (!empty($chk)) {
-			// return $RES->withRedirect('/oauth2/permit?_=' . $link_crypt);
+			return $RES->withRedirect('/oauth2/permit?a=fast&_=' . $link_crypt);
 		}
 
 		// Permit & Remember
