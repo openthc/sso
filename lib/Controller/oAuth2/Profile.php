@@ -16,18 +16,26 @@ class Profile extends \OpenTHC\Controller\Base
 			'scope' => [],
 			'Contact' => [],
 			'Company' => [],
+			'License' => [],
 		);
 
-		$auth = preg_match('/^Bearer ([\w\-]+)$/', $_SERVER['HTTP_AUTHORIZATION'], $m) ? $m[1] : null;
+		// Method 1
+		$auth = $_GET['access_token'];
+
+		// Method 2
+		if (empty($auth)) {
+			$auth = preg_match('/^Bearer ([\w\-]+)$/', $_SERVER['HTTP_AUTHORIZATION'], $m) ? $m[1] : null;
+		}
+
 		if (empty($auth)) {
 			return $RES->withJSON([
-				'meta' => [ 'detail' => 'Invalid Request [COP#022]' ]
+				'meta' => [ 'detail' => 'Invalid Request [COP-022]' ]
 			], 403);
 		}
 
 		// Find Bearer Token
-		$sql = 'SELECT id, meta FROM auth_context_ticket WHERE id = ?';
-		$arg = array($auth);
+		$sql = 'SELECT id, meta FROM auth_context_ticket WHERE id = :t';
+		$arg = [ ':t' => $auth ];
 		$tok = $dbc_auth->fetchRow($sql, $arg);
 		if (empty($tok)) {
 			return $RES->withJSON([
@@ -39,8 +47,8 @@ class Profile extends \OpenTHC\Controller\Base
 		$tok['meta'] = json_decode($tok['meta'], true);
 
 		// Auth/Contact
-		$sql = 'SELECT id, username FROM auth_contact WHERE id = ?';
-		$arg = array($tok['meta']['contact_id']);
+		$sql = 'SELECT id, username FROM auth_contact WHERE id = :c0';
+		$arg = [ ':c0' => $tok['meta']['contact_id'] ];
 		$Contact = $dbc_auth->fetchRow($sql, $arg);
 		if (empty($Contact['id'])) {
 			return $RES->withJSON([

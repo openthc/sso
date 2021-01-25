@@ -88,6 +88,13 @@ class Open extends \App\Controller\Base
 	 */
 	function post($REQ, $RES, $ARG)
 	{
+		// Clear Session
+		unset($_SESSION['Contact']);
+		unset($_SESSION['Company']);
+		unset($_SESSION['License']);
+		unset($_SESSION['Service']);
+
+		// Process Inputs
 		$username = strtolower(trim($_POST['username']));
 		$username = \Edoceo\Radix\Filter::email($username);
 		if (empty($username)) {
