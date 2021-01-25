@@ -3,48 +3,14 @@
  * OpenTHC SSO Front Controller
  */
 
-// We may start with an error code from the PHP interpreter
 $e0 = error_get_last();
-
-// Early Error Handler
-$ef = function($ex, $em=null, $ef=null, $el=null, $ec=null) {
-
-	while (ob_get_level() > 0) { ob_end_clean(); }
-
-	header('HTTP/1.1 500 Internal Error', true, 500);
-	header('content-type: text/plain');
-
-	$msg = [];
-	if (is_object($ex)) {
-		$msg[] = 'Internal Error [SWF-019]';
-		$msg[] = $ex->getMessage();
-		// $msg[] = $ex->__toString();
-	} else {
-		$msg[] = 'Internal Error [SWF-022]';
-		$msg[] = sprintf('Error: #%d:%s', $ex, $em);
-		if (!empty($ef)) {
-			$ef = substr($ef, strlen($ef) / 2); // don't show full path
-			$msg[] = sprintf('File: ...%s:%d', $ef, $el);
-		}
-	}
-
-	error_log(implode('; ', $msg));
-
-	echo implode("\n", $msg);
-	echo "\n";
-
-	// debug_print_backtrace();
-
-	exit(1);
-
-};
-
-// Early Error Exception Handlers
-set_error_handler($ef, (E_ALL & ~ E_NOTICE));
-set_exception_handler($ef);
 
 // Load Bootstrapper
 require_once('../boot.php');
+
+_error_handler_init([
+	'hint' => '<h2>You can <a href="javascript:history.go(-1);">go back</a> and try again, or <a href="/auth/open">sign-in again</a>.</h2>'
+]);
 
 $cfg = [];
 // $cfg['debug'] = true;

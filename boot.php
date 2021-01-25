@@ -6,7 +6,7 @@
 define('APP_ROOT', __DIR__);
 define('APP_BUILD', '420.21.007');
 
-error_reporting(E_ALL & ~ E_NOTICE);
+error_reporting(E_ALL & ~E_NOTICE);
 
 openlog('openthc-sso', LOG_ODELAY|LOG_PID, LOG_LOCAL0);
 
@@ -42,7 +42,6 @@ function _exit_html_err($err, $code=500)
 <meta charset="utf-8">
 <meta name="viewport" content="initial-scale=1, user-scalable=yes">
 <meta name="theme-color" content="#111111">
-<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdn.openthc.com/bootstrap/4.4.1/bootstrap.css" integrity="sha256-L/W5Wfqfa0sdBNIKN9cG6QA5F2qx4qICmU2VgLruv9Y=" crossorigin="anonymous">
 <title>OpenTHC :: {$err['head']}</title>
 <style>
@@ -97,8 +96,8 @@ footer a {
 			{$err['foot']}
 		</div>
 		<div>
-			<a class="btn btn-outline-primary" href="javascript:history.back();"><i class="fas fa-arrow-left"></i> Go Back</a>
-			<a class="btn btn-outline-secondary" href="/"><i class="fas fa-home"></i> Start Over</a>
+			<a class="btn btn-outline-primary" href="javascript:history.back();">Go Back</a>
+			<a class="btn btn-outline-secondary" href="/">Start Over</a>
 		</div>
 	</div>
 

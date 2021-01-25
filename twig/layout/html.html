@@ -4,13 +4,25 @@
 <meta charset="utf-8">
 <meta name="viewport" content="initial-scale=1, user-scalable=yes">
 <meta name="application-name" content="OpenTHC">
-<!-- <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous"> -->
 <link rel="stylesheet" href="https://cdn.openthc.com/jqueryui/1.12.1/jqueryui.css" integrity="sha256-rByPlHULObEjJ6XQxW/flG2r+22R5dKiAoef+aXWfik=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdn.openthc.com/bootstrap/4.4.1/bootstrap.css" integrity="sha256-L/W5Wfqfa0sdBNIKN9cG6QA5F2qx4qICmU2VgLruv9Y=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdn.openthc.com/css/www/0.0.1/www.css">
-<!-- <link rel="stylesheet" href="https://cdn.openthc.dev/css/sso/0.0.1/sso.css"> -->
-<link rel="stylesheet" href="/font/font.css">
 <style>
+footer {
+	background: #343a40;
+	color: #ffffffaa;
+	border: 1px solid #343a40;
+	margin: 5vh 0 0 0;
+	padding: 0.25rem;
+}
+footer a {
+	color: #ffffffaa;
+}
+
+.auth-wrap {
+	margin: 10vh auto 0 auto;
+	max-width: 690px;
+}
+
 #alert-test-mode {
 	bottom: 5vh;
 	position: fixed;
@@ -22,17 +34,6 @@
 	border-radius: 0;
 	margin: 0;
 	text-align: center;
-}
-footer.foot-wrap {
-	background: #343a40;
-	border: 1px solid #343a40;
-	margin: 0;
-}
-div.foot {
-	margin: 2em;
-}
-div.foot a {
-	color: #ffffffaa;
 }
 </style>
 <title>{{ Page.title ?: "SSO" }}</title>
@@ -62,12 +63,10 @@ kW46bNYGGhoOUlMxPAj8LvA9sSLNes3BiiyrVpbbzN0Ao/BOl9oKhIxBpODhNVbcBJcCoNIZPAOuBHOA
 {% endblock %}
 </div>
 
-<footer class="foot-wrap">
-<div class="foot">
+<footer>
 	<a href="https://openthc.com/">openthc.com</a> |
 	<a href="https://openthc.com/about/tos">Terms of Service</a> |
-	<a href="https://openthc.com/about/privacy">Privacy</a> |
-</div>
+	<a href="https://openthc.com/about/privacy">Privacy</a>
 </footer>
 
 {% if Site.test %}
