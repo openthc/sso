@@ -148,7 +148,7 @@ class Once extends \App\Controller\Base
 		$username = \Edoceo\Radix\Filter::email($username);
 		if (empty($username)) {
 			// Render Fail?
-			return $RES->withRedirect('/auth/once?a=password-reset&e=cao075');
+			return $RES->withRedirect('/auth/open?a=password-reset&e=cao075');
 		}
 
 		$_SESSION['email'] = $username;

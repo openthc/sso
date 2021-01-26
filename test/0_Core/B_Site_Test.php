@@ -25,7 +25,7 @@ class B_Site_Test extends \Test\Base_Case
 		$res = $ghc->get('/auth/open');
 		$this->assertValidResponse($res);
 
-		$res = $ghc->get('/auth/once?a=password-reset');
+		$res = $ghc->get('/auth/open?a=password-reset');
 		$this->assertValidResponse($res);
 
 		$res = $ghc->get('/account/create');

@@ -125,16 +125,16 @@ class A_Create_Test extends \Test\Base_Case
 		// GET
 		$res = $c->get('/auth/open');
 		$res = $this->assertValidResponse($res);
-		$this->assertStringContainsString('/auth/once?a=password-reset', $res);
+		$this->assertStringContainsString('/auth/open?a=password-reset', $res);
 
 		// GET
-		$res = $c->get('/auth/once?a=password-reset');
+		$res = $c->get('/auth/open?a=password-reset');
 		$this->assertValidResponse($res);
 		$this->assertStringContainsString('<input autofocus class="form-control" inputmode="email" name="username" placeholder="email" type="email" value="">', $this->raw);
 		$this->assertStringContainsString('<button class="btn btn-success" name="a" type="submit" value="password-reset-request">Request Password Reset</button>', $this->raw);
 
 		// POST
-		$res = $c->post('/auth/once?a=password-reset', [ 'form_params' => [
+		$res = $c->post('/auth/open?a=password-reset', [ 'form_params' => [
 			'a' => 'password-reset-request',
 			'username' => getenv('OPENTHC_TEST_CONTACT_USERNAME'),
 		]]);
