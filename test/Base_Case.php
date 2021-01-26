@@ -22,7 +22,7 @@ class Base_Case extends \PHPUnit\Framework\TestCase
 	protected function _ua()
 	{
 		$c = new \GuzzleHttp\Client(array(
-			'base_uri' => sprintf('https://%s', $_ENV['test-host']),
+			'base_uri' => sprintf('https://%s', getenv('OPENTHC_TEST_HOST')),
 			'allow_redirects' => false,
 			'debug' => $_ENV['debug-http'],
 			'request.options' => array(

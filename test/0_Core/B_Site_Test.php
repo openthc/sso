@@ -9,7 +9,7 @@ class B_Site_Test extends \Test\Base_Case
 {
 	function test_auth_pass()
 	{
-		$cfg = $_ENV['test-host'];
+		$cfg = getenv('OPENTHC_TEST_HOST');
 		$this->assertIsString($cfg);
 		$this->assertMatchesRegularExpression('/\w+\.\w{2,256}\.\w{2,16}$/', $cfg);
 

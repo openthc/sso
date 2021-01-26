@@ -25,6 +25,18 @@ class A_Config_Test extends \Test\Base_Case
 			$this->assertNotEmpty($chk, sprintf('Key: "%s" is empty', $key));
 		}
 
+		$env_list = [
+			'OPENTHC_TEST_HOST',
+			'OPENTHC_TEST_HASH',
+			'OPENTHC_TEST_CONTACT_USERNAME',
+			'OPENTHC_TEST_CONTACT_PASSWORD'
+		];
+
+		foreach ($env_list as $x) {
+			$v = getenv($x);
+			$this->assertNotEmpty($x, sprintf('Environment "%s" missing', $x));
+		}
+
 	}
 
 }

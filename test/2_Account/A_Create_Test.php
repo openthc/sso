@@ -9,7 +9,7 @@ class A_Create_Test extends \Test\Base_Case
 {
 	function test_account_create_pass()
 	{
-		$test_secret = $_ENV['test-hash'];
+		$test_secret = getenv('OPENTHC_TEST_HASH');
 		$this->assertNotEmpty($test_secret);
 
 		$c = $this->_ua();
@@ -31,7 +31,7 @@ class A_Create_Test extends \Test\Base_Case
 			'license-id' => '',
 			'company-id' => '',
 			'contact-name' => sprintf('Test Contact %06x', $this->_pid),
-			'contact-email' => sprintf('test+%06x@openthc.com', $this->_pid),
+			'contact-email' => getenv('OPENTHC_TEST_CONTACT_USERNAME'),
 			'contact-phone' => '1234567890',
 		]]);
 		$this->assertValidResponse($res, 302);
@@ -71,7 +71,7 @@ class A_Create_Test extends \Test\Base_Case
 			'license-id' => '',
 			'company-id' => '',
 			'contact-name' => sprintf('Test Contact %06x', $this->_pid),
-			'contact-email' => USER_A_USERNAME,
+			'contact-email' => getenv('OPENTHC_TEST_CONTACT_USERNAME'),
 			'contact-phone' => '1234567890',
 		]]);
 		$this->assertValidResponse($res, 302);
@@ -136,7 +136,7 @@ class A_Create_Test extends \Test\Base_Case
 		// POST
 		$res = $c->post('/auth/once?a=password-reset', [ 'form_params' => [
 			'a' => 'password-reset-request',
-			'username' => USER_A_USERNAME,
+			'username' => getenv('OPENTHC_TEST_CONTACT_USERNAME'),
 		]]);
 		$this->assertValidResponse($res, 302);
 		$l = $res->getHeaderLine('location');

@@ -6,13 +6,14 @@
 namespace Test;
 
 use Facebook\WebDriver\WebDriverBy;
+use Facebook\WebDriver\WebDriverSelect;
 
 class UI_Auth_Test extends \Test\UI_Test_Case
 {
 	public function testBasic()
 	{
 		// The Prime Site does a Meta-Refresh
-		self::$driver->get(TEST_SITE);
+		self::$driver->get(sprintf('https://%s/', getenv('OPENTHC_TEST_HOST')));
 		$src = self::$driver->getPageSource();
 		$this->assertRegExp('/<meta http-equiv="refresh".+auth\/open/', $src);
 		sleep(3); // Wait for refresh
@@ -25,15 +26,15 @@ class UI_Auth_Test extends \Test\UI_Test_Case
 	/**
 	 *
 	 */
-	public function testSignIn()
+	public function xtestSignIn()
 	{
-		self::$driver->get(TEST_SITE . '/auth/open');
+		self::$driver->get(sprintf('https://%s/auth/open', getenv('OPENTHC_TEST_HOST')));
 
-		$element = self::$driver->findElement(WebDriverBy::name("username"));
-		$element->sendKeys(USER_A_USERNAME);
+		$element = self::$driver->findElement(WebDriverBy::id('username'));
+		$element->sendKeys(getenv('OPENTHC_TEST_CONTACT_USERNAME'));
 
-		$element = self::$driver->findElement(WebDriverBy::name("password"));
-		$element->sendKeys(USER_A_PASSWORD);
+		$element = self::$driver->findElement(WebDriverBy::id('password'));
+		$element->sendKeys(getenv('OPENTHC_TEST_CONTACT_PASSWORD'));
 
 		$btn = self::$driver->findElement(WebDriverBy::id('btn-auth-open'));
 		$btn->click();
@@ -43,15 +44,15 @@ class UI_Auth_Test extends \Test\UI_Test_Case
 
 	}
 
-	public function testSignInFailure()
+	public function xtestSignInFailure()
 	{
-		self::$driver->get(TEST_SITE . '/auth/open');
+		self::$driver->get(sprintf('https://%s/auth/open', getenv('OPENTHC_TEST_HOST')));
 
-		$element = self::$driver->findElement(WebDriverBy::name("username"));
-		$element->sendKeys(USER_A_USERNAME);
+		$element = self::$driver->findElement(WebDriverBy::id("username"));
+		$element->sendKeys(getenv('OPENTHC_TEST_CONTACT_USERNAME'));
 
-		$element = self::$driver->findElement(WebDriverBy::name("password"));
-		$element->sendKeys(USER_A_PASSWORD_FAIL);
+		$element = self::$driver->findElement(WebDriverBy::id("password"));
+		$element->sendKeys(sprintf('invalid-password-%08x', rand(10000, 99999)));
 
 		$btn = self::$driver->findElement(WebDriverBy::id('btn-auth-open'));
 		$btn->click();
@@ -65,13 +66,13 @@ class UI_Auth_Test extends \Test\UI_Test_Case
 
 	}
 
-	public function testSignUp()
+	public function xtestSignUp()
 	{
-		self::$driver->get(TEST_SITE . '/account/create');
+		self::$driver->get(sprintf('https://%s/account/create', getenv('OPENTHC_TEST_HOST'))
 
-		$element = self::$driver->findElement(WebDriverBy::id('account-region'));
-		// Select Value: xxx/xx
-		// $element->click();
+		$node = self::$driver->findElement(WebDriverBy::id('account-region'));
+		$node = new WebDriverSelect($node);
+		$node->selectByValue('xxx/xx');
 
 		$btn = self::$driver->findElement(WebDriverBy::id('btn-region-next'));
 		$btn->click();
@@ -121,7 +122,7 @@ class UI_Auth_Test extends \Test\UI_Test_Case
 
 	public function xtestPasswordReset()
 	{
-		self::$driver->get(TEST_SITE);
+		self::$driver->get(sprintf('https://%s/', getenv('OPENTHC_TEST_HOST')));
 		sleep(3);
 		$this->assertStringContainsString('Sign In', self::$driver->getPageSource());
 
@@ -131,7 +132,7 @@ class UI_Auth_Test extends \Test\UI_Test_Case
 		$this->assertStringContainsString('Email', self::$driver->getPageSource());
 
 		$element = self::$driver->findElement(WebDriverBy::name("name"));
-		$element->sendKeys(USER_A_USERNAME);
+		$element->sendKeys(getenv('OPENTHC_TEST_CONTACT_USERNAME'));
 
 		$element = self::$driver->findElement(WebDriverBy::linkText("Request Password Reset"));
 		$element->click();

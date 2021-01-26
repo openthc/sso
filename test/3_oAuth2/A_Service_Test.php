@@ -1,6 +1,6 @@
 <?php
 /**
- * Quick Test of oAuth
+ * Quick Test of oAuth via CIC
  */
 
 namespace Test\oAuth2;
@@ -11,8 +11,9 @@ class A_oAuth_Test extends \Test\Base_Case
 	{
 		$sso_ua = $this->_ua();
 
+		// $cic = new \OpenTHC\Service('cic');
 		$cic_ua = new \GuzzleHttp\Client(array(
-			'base_uri' => 'https://cic.openthc.dev',
+			'base_uri' => 'https://cic.openthc.dev/',
 			'allow_redirects' => false,
 			'debug' => $_ENV['debug-http'],
 			'request.options' => array(
@@ -42,8 +43,8 @@ class A_oAuth_Test extends \Test\Base_Case
 		// Post the Open Page
 		$res = $sso_ua->post($l, [ 'form_params' => [
 			'a' => 'sign in',
-			'username' => USER_A_USERNAME,
-			'password' => USER_A_PASSWORD,
+			'username' => getenv('OPENTHC_TEST_CONTACT_USERNAME'),
+			'password' => getenv('OPENTHC_TEST_CONTACT_PASSWORD'),
 		]]);
 		$this->assertValidResponse($res, 302);
 		$l = $res->getHeaderLine('location');

@@ -1,9 +1,9 @@
-#!/bin/bash
+#!/bin/bash -x
 #
 # OpenTHC Test Runner
 #
 
-#set -o errexit
+set -o errexit
 set -o nounset
 # set -o pipefail
 
@@ -13,35 +13,25 @@ dt=$(date)
 
 cd "$d"
 
-output_path="../webroot/test-output"
-if [ ! -d "$output_path" ]
-then
-	mkdir "$output_path"
-fi
+output_base="../webroot/test-output"
+output_main="$output_base/index.html"
+mkdir -p "$output_base"
 
-output_main="$output_path/index.html"
 
-echo '<h1>Tests Started</h1>' > "$output_main"
+#
+# Lint
+echo '<h1>Linting</h1>' > "$output_main"
+find ../bin/ ../lib/  -type f -name '*.php' -exec php -l {} \; | grep -v 'No syntax' || true
 
 
 #
 #
 ../vendor/bin/phpunit \
-	"$@" 2>&1 | tee "$output_path/output.txt"
-	#--log-junit "$output_path/output.xml" \
-	#--testdox-html "$output_path/testdox.html" \
-	#--testdox-text "$output_path/testdox.txt" \
-	#--testdox-xml "$output_path/testdox.xml" \
-	#--verbose \
-
-# if [[ $ret != 0 ]]
-# then
-# 	echo "PHPUnit Failed"
-# 	exit 1;
-# fi
-note=$(tail -n1 "$output_path/output.txt")
+	--verbose \
+	"$@" 2>&1 | tee "$output_base/output.txt"
 
 echo '<h1>Tests Completed</h1>' > "$output_main"
+
 
 #
 # Get Transform
@@ -49,12 +39,15 @@ echo '<h1>Transforming...</h1>' > "$output_main"
 curl -qs https://openthc.com/pub/phpunit/report.xsl > report.xsl
 xsltproc \
 	--nomkdir \
-	--output "$output_path/output.html" \
+	--output "$output_base/output.html" \
 	report.xsl \
-	"$output_path/output.xml"
+	"$output_base/output.xml"
+
 
 #
 # Final Ouptut
+note=$(tail -n1 "$output_base/output.txt")
+
 cat <<HTML > "$output_main"
 <html>
 <head>

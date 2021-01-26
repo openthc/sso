@@ -18,8 +18,8 @@ class Fire_Test extends \Test\Base_Case
 
 		$res = $c->post('/auth/open', [ 'form_params' => [
 			'a' => 'sign in',
-			'username' => USER_A_USERNAME,
-			'password' => USER_A_PASSWORD,
+			'username' => getenv('OPENTHC_TEST_CONTACT_USERNAME'),
+			'password' => getenv('OPENTHC_TEST_CONTACT_PASSWORD'),
 		]]);
 		$this->assertValidResponse($res, 302);
 
@@ -39,8 +39,8 @@ class Fire_Test extends \Test\Base_Case
 
 		$res = $c->post('/auth/open', [ 'form_params' => [
 			'a' => 'sign in',
-			'username' => USER_A_USERNAME,
-			'password' => USER_A_PASSWORD_FAIL,
+			'username' => getenv('OPENTHC_TEST_CONTACT_USERNAME'),
+			'password' => sprintf('invalid-password-%08x', rand(10000, 99999)),
 		]]);
 		$this->assertValidResponse($res, 302);
 
