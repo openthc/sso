@@ -28,7 +28,7 @@ find ../bin/ ../lib/  -type f -name '*.php' -exec php -l {} \; | grep -v 'No syn
 #
 ../vendor/bin/phpunit \
 	--verbose \
-	"$@" 2>&1 | tee "$output_base/output.txt"
+	"$@" 2>&1 | tee "$output_base/output.txt" || true
 
 echo '<h1>Tests Completed</h1>' > "$output_main"
 
