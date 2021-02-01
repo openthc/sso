@@ -67,10 +67,7 @@ class Profile extends \OpenTHC\Controller\Base
 		$res = $dbc_auth->fetchRow($sql, $arg);
 		if (!empty($res['id'])) {
 			$Profile['Company']['id'] = $res['id'];
-			// $Profile['Company']['ulid'] = $res['id']; // @deprecated
-			// $Profile['Company']['guid'] = $res['guid'];
 			$Profile['Company']['name'] = $res['name'];
-			// $Profile['Company']['type'] = $res['type'];
 		}
 		$RES = $RES->withAttribute('Company', $Company);
 
