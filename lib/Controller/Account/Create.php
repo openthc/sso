@@ -137,52 +137,47 @@ class Create extends \App\Controller\Base
 		}
 
 		// Contact Table
-		$contact_id = $dbc_main->insert('contact', [
+		$Contact = [
 			'id' => _ulid(),
 			'name' => $_POST['contact-name'],
 			'email' => $_POST['contact-email'],
 			'phone' => $_POST['contact-phone'],
 			'hash' => '-',
-		]);
-
+		];
+		$dbc_main->insert('contact', $Contact);
 		$dbc_auth->insert('auth_contact', array(
-			'id' => $contact_id,
-			'username' => $_POST['contact-email'],
+			'id' => $Contact['id'],
+			'username' => $Contact['email'],
 			'password' => 'NONE:' . sha1(json_encode($_SERVER).json_encode($_POST)),
 		));
 
 		// Linkage
 		$dbc_auth->insert('auth_company_contact', [
 			'company_id' => $Company['id'],
-			'contact_id' => $contact_id,
+			'contact_id' => $Contact['id'],
 		]);
 
 		// Auth Hash Link
-		$acs = [];
-		$acs['id'] = _random_hash();
-		$acs['meta'] = json_encode(array(
-			'action' => 'account-create',
-			'account' => [
-				'company' => [
-					'id' => $Company['id'],
-					'name' => $Company['name'],
-				],
-				'license' => [
-					'id' => $_POST['license-id'],
-					'name' => $_POST['license-name'],
-				],
-				'contact' => [
-					'id' => $contact_id,
-					'name' => $_POST['contact-name'],
-					'email' => $_POST['contact-email'],
-					'phone' => $_POST['contact-phone'],
-				]
-			],
+		$act = new \App\Auth_Context_Ticket($dbc_auth);
+		$act->create(array(
+			'intent' => 'account-create',
 			'origin' => $_SESSION['account-create']['origin'],
+			'company' => [
+				'id' => $Company['id'],
+				'name' => $Company['name'],
+			],
+			'license' => [
+				'id' => $_POST['license-id'],
+				'name' => $_POST['license-name'],
+			],
+			'contact' => [
+				'id' => $Contact['id'],
+				'name' => $Contact['name'],
+				'email' => $Contact['email'],
+				'phone' => $Contact['phone'],
+			],
 			'geoip' => geoip_record_by_name($_SERVER['REMOTE_ADDR']),
 		));
-
-		$dbc_auth->insert('auth_context_ticket', $acs);
 
 		$dbc_auth->query('COMMIT');
 		$dbc_main->query('COMMIT');
@@ -197,22 +192,32 @@ class Create extends \App\Controller\Base
 		if ($_ENV['test']) {
 
 			$ret_args['r'] = sprintf('/auth/once?%s', http_build_query([
-				'a' => $acs['id'],
+				'_' => $act['id'],
 			]));
 
 		} else {
 
 			$arg = [];
-			$arg['to'] = $_POST['contact-email'];
+			$arg['address_target'] = $Contact['email'];
 			$arg['file'] = 'sso/account-create.tpl';
 			$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
-			$arg['data']['mail_subj'] = 'Account Confirmation';
-			$arg['data']['auth_context_ticket'] = $acs['id'];
+			$arg['data']['mail_subject'] = 'Account Confirmation';
+			$arg['data']['auth_context_ticket'] = $act['id'];
 
 			try {
 
 				$cic = new \OpenTHC\Service\OpenTHC('cic');
 				$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
+				switch ($res['code']) {
+					case 200:
+					case 201:
+						// Cool
+						break;
+					default:
+						$ret_args['e'] = 'cac217';
+						$ret_args['s'] = 'e';
+						break;
+				}
 
 			} catch (\Exception $e) {
 				// Ignore
@@ -223,10 +228,10 @@ class Create extends \App\Controller\Base
 		}
 
 		$RES = $RES->withAttribute('Contact', [
-			'id' => $contact_id,
-			'username' => $_POST['contact-email'],
+			'id' => $Contact['id'],
+			'username' => $Contact['email'],
 			'company_name' => $_POST['license-name'],
-			'contact_phone' => $_POST['contact-phone'],
+			'contact_phone' => $Contact['phone'],
 		]);
 
 		return $RES->withRedirect($ret_path . '?' . http_build_query($ret_args));

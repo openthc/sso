@@ -11,18 +11,7 @@ class Verify extends \App\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{
-		$_SESSION['verify-redirect'] = $_GET['r'];
-
-		$ARG = _decrypt($_GET['_'], $_SESSION['crypt-key']);
-		$ARG = json_decode($ARG, true);
-
-		if (empty($ARG)) {
-			_exit_html_err('Invalid Request [CAV-018]', 400);
-		}
-
-		if (empty($ARG['contact']['id'])) {
-			_exit_html_err('Invalid Request [CAV-022]', 400);
-		}
+		$act = $this->loadTicket();
 
 		// Load Contact
 		$sql = <<<SQL
@@ -31,7 +20,7 @@ FROM auth_contact
 WHERE auth_contact.id = :c0
 SQL;
 		$arg = [
-			':c0' => $ARG['contact']['id']
+			':c0' => $act['contact']['id']
 		];
 		$Contact = $this->_container->DBC_AUTH->fetchRow($sql, $arg);
 		if (empty($Contact['id'])) {
@@ -42,14 +31,18 @@ SQL;
 			_exit_html_err('Invalid Request [CAV-040]', 400);
 		}
 
-
-		switch ($ARG['action']) {
+		switch ($act['intent']) {
 		case 'email-verify-save':
-			return $this->emailVerifyConfirm($RES, $ARG);
+			return $this->emailVerifyConfirm($RES, $act);
+		case 'account-create':
+		case 'account-create-verify':
+			// OK
+			break;
+		default:
+			_exit_html_err('Invalid Request [CAV-042]', 400);
 		}
 
-		$file = 'page/account/verify.html';
-
+		// Output Data
 		$data = $this->data;
 		$data['Page']['title'] = 'Account Verification';
 		$data['Contact'] = $Contact;
@@ -59,14 +52,25 @@ SQL;
 			$data['contact_phone'] = $_SESSION['phone-verify-e164'];
 		}
 
-		if (0 == ($Contact['flag'] & Contact::FLAG_EMAIL_GOOD)) {
-			$data['verify_email'] = true;
+		$data['verify_email'] = (0 == ($Contact['flag'] & Contact::FLAG_EMAIL_GOOD));
+		$data['verify_phone'] = (0 == ($Contact['flag'] & Contact::FLAG_PHONE_GOOD));
+
+		// It's good, so send to INIT
+		if (empty($data['verify_email']) && empty($data['verify_phone'])) {
+
+			unset($_SESSION['phone-verify-code']);
+			unset($_SESSION['phone-verify-e164']);
+			unset($_SESSION['phone-verify-warn']);
+
+			$act['intent'] = 'auth-init';
+			$act_next = new \App\Auth_Context_Ticket($this->_container->DBC_AUTH);
+			$act_next->create($act);
+
+			return $RES->withRedirect(sprintf('/auth/init?_=%s', $act_next['id']));
+
 		}
 
-		if (0 == ($Contact['flag'] & Contact::FLAG_PHONE_GOOD)) {
-			$data['verify_phone'] = true;
-		}
-
+		// What Should We Verify?
 		if ($data['verify_phone']) {
 
 			if (!empty($_SESSION['phone-verify-code'])) {
@@ -77,54 +81,32 @@ SQL;
 
 		}
 
-		// It's good, so send to INIT
-		if (empty($data['verify_email']) && empty($data['verify_phone'])) {
+		$data['verify_phone_try'] = $_SESSION['phone-verify-try'];
 
-			unset($_SESSION['phone-verify-code']);
-			unset($_SESSION['phone-verify-e164']);
-			unset($_SESSION['phone-verify-warn']);
-
-			$r = '/profile';
-			if (empty($_SESSION['verify-redirect'])) {
-				$r = $_SESSION['verify-redirect'];
-				unset($_SESSION['verify-redirect']);
-			}
-			if (empty($r)) {
-				$r = '/auth/open';
-			}
-
-			return $RES->withRedirect($r);
-		}
-
+		$file = 'page/account/verify.html';
 		return $this->_container->view->render($RES, $file, $data);
 
 	}
 
+	/**
+	 * POST Handler
+	 */
 	function post($REQ, $RES, $ARG)
 	{
-		$ARG = _decrypt($_GET['_'], $_SESSION['crypt-key']);
-		$ARG = json_decode($ARG, true);
-
-		if (empty($ARG)) {
-			_exit_html_err('Invalid Request [CAP-055]', 400);
-		}
-
-		if (empty($ARG['contact'])) {
-			_exit_html_err('Invalid Request [CAP-059]', 400);
-		}
+		$act = $this->loadTicket();
 
 		switch ($_POST['a']) {
 		case 'email-verify-send':
 
-			return $this->emailVerifySend($RES, $ARG);
+			return $this->emailVerifySend($RES, $act);
 
 		case 'phone-verify-send':
 
-			return $this->phoneVerifySend($RES, $ARG);
+			return $this->phoneVerifySend($RES, $act);
 
 		case 'phone-verify-save':
 
-			return $this->phoneVerifySave($RES, $ARG);
+			return $this->phoneVerifySave($RES, $act);
 
 		}
 
@@ -174,10 +156,11 @@ SQL;
 			'flag' => Contact::FLAG_EMAIL_GOOD,
 		]);
 
+		// @deprecated use ACT, is this even the right spot for it?
 		// Landed here from Password Reset?
 		// No prompt, just show verifications
 		if ('password-reset' == $ARG['source']) {
-			unset($ARG['action']);
+			unset($ARG['intent']);
 			unset($ARG['source']);
 			$x = _encrypt(json_encode($ARG), $_SESSION['crypt-key']);
 			return $RES->withRedirect('/account/verify?_=' . $x);
@@ -187,58 +170,64 @@ SQL;
 
 	}
 
+	/**
+	 * Save Phone Verification
+	 */
 	function phoneVerifySave($RES, $ARG)
 	{
 		$_POST['phone-verify-code'] = strtoupper($_POST['phone-verify-code']);
-		if ($_SESSION['phone-verify-code'] == $_POST['phone-verify-code']) {
-
-			$dbc = $this->_container->DBC_AUTH;
-
-			// Is Good
-			$sql = 'UPDATE auth_contact SET flag = flag | :f1 WHERE id = :pk';
-			$arg = [
-				':pk' => $ARG['contact']['id'],
-				':f1' => Contact::FLAG_PHONE_GOOD,
-			];
-			$dbc->query($sql, $arg);
-
-			$sql = 'UPDATE auth_contact SET flag = flag & ~:f0::int WHERE id = :pk';
-			$arg = [
-				':pk' => $ARG['contact']['id'],
-				':f0' => Contact::FLAG_PHONE_WANT,
-			];
-			$dbc->query($sql, $arg);
-
-			// Update Phone
-			$dbc_main = $this->_container->DBC_MAIN;
-			$sql = 'UPDATE contact SET phone = :p0 WHERE id = :pk';
-			$arg = [
-				':pk' => $ARG['contact']['id'],
-				':p0' => $_SESSION['phone-verify-e164'],
-			];
-			$dbc_main->query($sql, $arg);
-
-			$link = $_SESSON['verify-redirect'] ?: '/auth/open';
-
-			$data = $this->data;
-			$data['Page']['title'] = 'Phone Verification';
-			$data['info'] = 'Phone Number has been validated';
-			$data['foot'] = sprintf('<div class="r"><a class="btn btn-outline-primary" href="%s">Continue <i class="icon icon-arrow-right"></i></a></div>', $link);
-
-			// Set Contact Model on Response
-			$RES = $RES->withAttribute('Contact', [
-				'id' => $ARG['contact']['id'],
-				'username' => $ARG['contact']['username'],
-				'flag' => Contact::FLAG_PHONE_GOOD,
-			]);
+		if ($_SESSION['phone-verify-code'] != $_POST['phone-verify-code']) {
 
 			unset($_SESSION['phone-verify-code']);
-			unset($_SESSION['phone-verify-e164']);
 			unset($_SESSION['phone-verify-warn']);
 
-			return $this->_container->view->render($RES, 'page/done.html', $data);
+			return $RES->withRedirect('/account/verify?' . http_build_query([
+				'_' => $_GET['_'],
+				'e' => 'cav205'
+			]));
 
 		}
+
+		$dbc_auth = $this->_container->DBC_AUTH;
+
+		// Set Flag on Auth Contact
+		$sql = 'UPDATE auth_contact SET flag = flag | :f1 WHERE id = :pk';
+		$arg = [
+			':pk' => $ARG['contact']['id'],
+			':f1' => Contact::FLAG_PHONE_GOOD,
+		];
+		$dbc_auth->query($sql, $arg);
+
+		// Clear Flag on Auth Contact
+		$sql = 'UPDATE auth_contact SET flag = flag & ~:f0::int WHERE id = :pk';
+		$arg = [
+			':pk' => $ARG['contact']['id'],
+			':f0' => Contact::FLAG_PHONE_WANT,
+		];
+		$dbc_auth->query($sql, $arg);
+
+		// Update Status
+		$dbc_auth->query('UPDATE auth_contact SET stat = 200 WHERE id = :pk AND stat = 100 AND flag & :f1 != 0', [
+			':pk' => $ARG['contact']['id'],
+			':f1' => Contact::FLAG_EMAIL_GOOD | Contact::FLAG_PHONE_GOOD
+		]);
+
+		// Update Phone on Base Contact
+		$dbc_main = $this->_container->DBC_MAIN;
+		$sql = 'UPDATE contact SET phone = :p0, stat = 200, flag = :f1 WHERE id = :pk';
+		$arg = [
+			':pk' => $ARG['contact']['id'],
+			':p0' => $_SESSION['phone-verify-e164'],
+			':f1' => Contact::FLAG_EMAIL_GOOD | Contact::FLAG_PHONE_GOOD
+		];
+		$dbc_main->query($sql, $arg);
+
+		unset($_SESSION['phone-verify-try']);
+		unset($_SESSION['phone-verify-code']);
+		unset($_SESSION['phone-verify-e164']);
+		unset($_SESSION['phone-verify-warn']);
+
+		return $RES->withRedirect(sprintf('/account/verify?_=%s', $_GET['_']));
 
 	}
 
@@ -305,11 +294,13 @@ SQL;
 	{
 		unset($_SESSION['phone-verify-warn']);
 
+		$_SESSION['phone-verify-try'] = intval($_SESSION['phone-verify-try']) + 1;
 		$_SESSION['phone-verify-code'] = substr(str_shuffle('ADEFHJKMNPRTWXY34679'), 0, 6);
 		$_SESSION['phone-verify-e164'] = _phone_e164($_POST['contact-phone']);
 
-		$ret_path = $_SERVER['HTTP_REFERER'];
-		$ret_path = strtok($ret_path, '?');
+		$ret_path = '/account/verify';
+		// $ret_path = $_SERVER['HTTP_REFERER'];
+		// $ret_path = strtok($ret_path, '?');
 		$ret_args = [
 			'_' => $_GET['_'],
 		];
@@ -329,15 +320,18 @@ SQL;
 
 				$cic = new \OpenTHC\Service\OpenTHC('cic');
 				$res = $cic->post('/api/v2018/phone/send', [ 'form_params' => $arg ]);
-				if (200 == $res['code']) {
-					$ret_args['e'] = 'cav294';
-					$ret_args['s'] = 't'; // Send=True
-				} else {
-					$ret_args['e'] = 'cav297';
-					$ret_args['s'] = 'f'; // Send=False
-					$_SESSION['phone-verify-code'] = null;
-					$_SESSION['phone-verify-e164'] = null;
-					$_SESSION['phone-verify-warn'] = 'Double check this number and try again';
+				switch ($res['code']) {
+					case 200:
+						$ret_args['e'] = 'cav294';
+						$ret_args['s'] = 't'; // Send=True
+						break;
+					case 500:
+						$ret_args['e'] = 'cav297';
+						$ret_args['s'] = 'f'; // Send=False
+						$_SESSION['phone-verify-code'] = null;
+						$_SESSION['phone-verify-e164'] = null;
+						$_SESSION['phone-verify-warn'] = 'Double check this number and try again';
+						break;
 				}
 
 			} catch (Exception $e) {
@@ -349,5 +343,39 @@ SQL;
 
 		return $RES->withRedirect($ret_path . '?' . http_build_query($ret_args));
 
+	}
+
+	/**
+	 * Load our Ticket
+	 */
+	function loadTicket()
+	{
+		$act = new \App\AUth_Context_Ticket($this->_container->DBC_AUTH);
+		$act->loadBy('id', $_GET['_']);
+		if (empty($act['id'])) {
+			_exit_html_err('Invalid Request [CAV-356]', 400);
+		}
+
+		$act = json_decode($act['meta'], true);
+		if (empty($act)) {
+			_exit_html_err('Invalid Request [CAV-360]', 400);
+		}
+
+		if (empty($act['contact']['id'])) {
+			_exit_html_err('Invalid Request [CAV-365]', 400);
+		}
+
+		switch ($act['intent']) {
+			case 'account-create': // @deprecated
+			case 'account-create-verify':
+			case 'account-confirm-verify': // @todo Already @deprecated
+				$act['intent'] = 'account-create-verify';
+				// OK
+			break;
+			default:
+			_exit_html_err('Invalid Request [CAV-374]', 400);
+		}
+
+		return $act;
 	}
 }

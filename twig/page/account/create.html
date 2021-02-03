@@ -14,7 +14,7 @@
 		<div class="input-group">
 			<input autocomplete="off" autofocus class="form-control" id="license-name" name="license-name" placeholder="- Company, Inc. -" required>
 			<div class="input-group-append">
-				<div class="input-group-text"><i class="icon icon-circle-o"></i></div>
+				<div class="input-group-text">&otimes;</div>
 			</div>
 		</div>
 		<div>Should be your registered company name or your government issued business license ID</div>
@@ -60,7 +60,7 @@ $(function() {
 				$('#company-id').val('');
 				$('#license-id').val('');
 				var icon = $('#license-name').closest('.input-group').find('.input-group-text');
-				icon.html('<i class="icon icon-circle-o"></i>');
+				icon.html('&otimes;');
 				icon.removeClass('text-success');
 			} else {
 				$('#company-id').val(ui.item.company.id);

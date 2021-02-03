@@ -37,14 +37,20 @@ class Init extends \App\Controller\Base
 		if (empty($act_data['contact']['id'])) {
 			_exit_html_err('<h1>Invalid Request [CAI-038]</h1>', 400);
 		}
+		// Check Intent
+		switch ($act_data['intent']) {
+			case 'auth-init':
+				// OK
+				break;
+			default:
+				_exit_html_err('<h1>Invalid Request [CAI-046]</h1>', 400);
+				break;
+		}
 
 		$Contact = $act_data['contact'];
 		// $Contact = $this->_inflate_contact($Contact);
 
 		// Contact Globally Disabled?
-		if (0 != ($Contact['flag'] & Contact::FLAG_DISABLED)) {
-			_exit_html_err('Invalid Account [CAI-046]', 403);
-		}
 		switch ($Contact['stat']) {
 			case 100:
 			break;
@@ -56,16 +62,40 @@ class Init extends \App\Controller\Base
 			break;
 		}
 
+		// Contact has Disabled Flags?
+		if (0 != ($Contact['flag'] & Contact::FLAG_DISABLED)) {
+			_exit_html_err('Invalid Account [CAI-046]', 403);
+		}
+
 		// Need to Verify
+		$verify_need = false;
+		$f0 = (Contact::FLAG_EMAIL_WANT | Contact::FLAG_PHONE_WANT);
 		$f1 = (Contact::FLAG_EMAIL_GOOD | Contact::FLAG_PHONE_GOOD);
-		if (($Contact['flag'] & $f1) != $f1) {
-			$val = [ 'contact' => $Contact ];
-			$val = json_encode($val);
-			$arg = _encrypt($val, $_SESSION['crypt-key']);
-			return $RES->withRedirect('/account/verify?' . http_build_query([
-				'r' => sprintf('/auth/init?_=%s', $_GET['_']),
-				'_' => $arg
-			]));
+
+		// Stat Good, Flags Off, Flags On
+		if ((200 == $Contact['stat'])
+			&& (0 == ($Contact['flag'] & $f0))
+			&& ($f1 == ($Contact['flag'] & $f1))) {
+
+			$verify_need = false;
+
+		}
+
+		if ($verify_need) {
+			// @todo Modify or Create New ACT
+			// $val = [ 'contact' => $Contact ];
+			// $val = json_encode($val);
+			// $arg = _encrypt($val, $_SESSION['crypt-key']);
+			return $RES->withRedirect(sprintf('/account/verify?_=%s', $_GET['_']));
+			// /verify?' . http_build_query([
+			// 	'r' => sprintf('/auth/init?_=%s', $_GET['_']),
+			// 	'_' => $arg
+			// ]));
+		}
+
+		if (empty($act_data['company_list']) && !empty($act_data['company'])) {
+			$act_data['company_list'] = [];
+			$act_data['company_list'][] = $act_data['company'];
 		}
 
 		// User with 0 Company Link
@@ -135,15 +165,17 @@ class Init extends \App\Controller\Base
 			break;
 		}
 
-		if (empty($ret)) {
-			$cfg = \OpenTHC\Config::get('openthc/app/hostname');
-			if (!empty($cfg)) {
-				$ret = sprintf('https://%s/auth/back?ping={PING}', $cfg);
-			}
-		}
+		// $act_data may have $ORIGIN here
+
+		// if (empty($ret)) {
+		// 	$cfg = \OpenTHC\Config::get('openthc/app/hostname');
+		// 	if (!empty($cfg)) {
+		// 		$ret = sprintf('https://%s/auth/back?ping={PING}', $cfg);
+		// 	}
+		// }
 
 		if (empty($ret)) {
-			$ret = '/profile';
+			$ret = '/account';
 		}
 
 		// Place Ping Back Token

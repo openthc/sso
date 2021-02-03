@@ -14,13 +14,37 @@ class Open extends \App\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{
+		$data = $this->data;
+		$data['Page']['title'] = 'Sign In';
+
+		// Add Errors
+		if (!empty($_GET['e'])) {
+			switch ($_GET['e']) {
+			case 'cao049':
+				$data['Page']['flash'] = '<div class="alert alert-danger">Invalid email, please use a proper email address</div>';
+				break;
+			case 'cao069':
+				$data['Page']['flash'] = '<div class="alert alert-danger">Invalid Password, must be at least 8 characters</div>';
+				break;
+			case 'cao093':
+				$data['Page']['flash'] = '<div class="alert alert-danger">Invalid Username or Password</div>';
+				break;
+			case 'cap080':
+				$data['Page']['flash'] = '<div class="alert alert-info">Your Password has been updated, please sign-in to continue</div>';
+				break;
+			default:
+				$data['Page']['flash'] = sprintf('<div class="alert alert-warning">Unexpected Error "%s"</div>', h($_GET['e']));
+				break;
+			}
+		}
+
 		// Well known actions
 		// /.well-known/change-password redirect here
 		switch ($_GET['a']) {
 		case 'password-reset':
 
-			$data['Page'] = [ 'title' => 'Password Reset '];
-			$data['email'] = $_SESSION['email'];
+			$data['Page']['title'] = 'Password Reset';
+			$data['auth_username'] = $_SESSION['email'];
 
 			$cfg = \OpenTHC\Config::get('google');
 			$data['Google']['recaptcha_public'] = $cfg['recaptcha-public'];
@@ -31,11 +55,6 @@ class Open extends \App\Controller\Base
 
 			break;
 		}
-
-		// Normal Page Open
-		$file = 'page/auth/open.html';
-		$data = $this->data;
-		$data['Page']['title'] = 'Sign In';
 
 		// Inputs
 		$data['auth_username'] = $REQ->getAttribute('auth_username');
@@ -58,26 +77,7 @@ class Open extends \App\Controller\Base
 		// if (!empty($data['auth_goto'])) {
 		// 	$data['auth_hint'] = '<p>You will sign in, and then authorize the application via <a href="https://oauth.net/2/" target="_blank">OAuth2</a></p>';
 		// }
-
-		if (!empty($_GET['e'])) {
-			switch ($_GET['e']) {
-			case 'cao049':
-				$data['Page']['flash'] = '<div class="alert alert-danger">Invalid email, please use a proper email address</div>';
-				break;
-			case 'cao069':
-				$data['Page']['flash'] = '<div class="alert alert-danger">Invalid Password, must be at least 8 characters</div>';
-				break;
-			case 'cao093':
-				$data['Page']['flash'] = '<div class="alert alert-danger">Invalid Username or Password</div>';
-				break;
-			case 'cap080':
-				$data['Page']['flash'] = '<div class="alert alert-info">Your Password has been updated, please sign-in to continue</div>';
-				break;
-			default:
-				$data['Page']['flash'] = sprintf('<div class="alert alert-warning">Unexpected Error "%s"</div>', h($_GET['e']));
-				break;
-			}
-		}
+		$file = 'page/auth/open.html';
 
 		return $this->_container->view->render($RES, $file, $data);
 
@@ -94,22 +94,25 @@ class Open extends \App\Controller\Base
 		unset($_SESSION['License']);
 		unset($_SESSION['Service']);
 
-		// Process Inputs
-		$username = strtolower(trim($_POST['username']));
-		$username = \Edoceo\Radix\Filter::email($username);
-		if (empty($username)) {
-			return $RES->withRedirect('/auth/open?e=cao049');
-		}
-
-		$_SESSION['email'] = $username;
-
-		$password = trim($_POST['password']);
-		if (empty($password) || (strlen($password) < 8) || (strlen($password) > 60)) {
-			return $RES->withRedirect('/auth/open?e=cao069');
-		}
-
 		switch (strtolower($_POST['a'])) {
+		case 'password-reset-request':
+			return $this->sendPasswordReset($RES);
+			break;
 		case 'sign in': // Sign In
+
+			// Process Inputs
+			$username = strtolower(trim($_POST['username']));
+			$username = \Edoceo\Radix\Filter::email($username);
+			if (empty($username)) {
+				return $RES->withRedirect('/auth/open?e=cao049');
+			}
+
+			$_SESSION['email'] = $username;
+
+			$password = trim($_POST['password']);
+			if (empty($password) || (strlen($password) < 8) || (strlen($password) > 60)) {
+				return $RES->withRedirect('/auth/open?e=cao069');
+			}
 
 			// Find Contact
 			$dbc = $this->_container->DBC_AUTH;
@@ -171,6 +174,79 @@ class Open extends \App\Controller\Base
 		return $RES->withStatus(400);
 
 	}
+
+	/**
+	 * Do the Password Reset Thing
+	 */
+	private function sendPasswordReset($RES)
+	{
+		// _check_recaptcha();
+
+		$username = strtolower(trim($_POST['username']));
+		$username = \Edoceo\Radix\Filter::email($username);
+		if (empty($username)) {
+			return $RES->withRedirect('/auth/open?a=password-reset&e=cao049');
+		}
+
+		$_SESSION['email'] = $username;
+
+		$dbc_auth = $this->_container->DBC_AUTH;
+		$Contact = $dbc_auth->fetchRow('SELECT id, username FROM auth_contact WHERE username = :u0', [ ':u0' => $username ]);
+		if (empty($Contact)) {
+			return $RES->withRedirect('/done?e=cao100&l=173');
+		}
+
+		// Generate Authentication Hash
+		$act = [];
+		$act['id'] = _random_hash();
+		$act['meta'] = json_encode(array(
+			'intent' => 'password-reset',
+			'contact' => $Contact,
+			'geoip' => geoip_record_by_name($_SERVER['REMOTE_ADDR']),
+		));
+		$dbc_auth->insert('auth_context_ticket', $act);
+
+		$ret_args = [
+			'e' => 'cao100',
+			'l' => '200',
+		];
+		$ret_path = '/done';
+
+		if ($_ENV['test']) {
+
+			// Pass Information Back
+			// Test Runner has to parse the Location URL
+			$ret_args['r'] = sprintf('https://%s/auth/once', $_SERVER['SERVER_NAME']);
+			$ret_args['a'] = $act['id'];
+
+		} else {
+
+			$arg = [];
+			$arg['address_target'] = $Contact['username'];
+			$arg['file'] = 'sso/contact-password-reset.tpl';
+			$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
+			$arg['data']['mail_subj'] = 'Password Reset Request';
+			$arg['data']['auth_context_ticket'] = $act['id'];
+
+			// Use CIC to Send
+			try {
+
+				$cic = new \OpenTHC\Service\OpenTHC('cic');
+				$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
+
+				$ret_args['s'] = 't';
+
+			} catch (\Exception $e) {
+				// Ignore
+				$ret_args['s'] = 'f';
+			}
+
+		}
+
+		return $RES->withRedirect($ret_path . '?' . http_build_query($ret_args));
+
+	}
+
 
 	/**
 	 * Initialize Company Data in $act_data & return

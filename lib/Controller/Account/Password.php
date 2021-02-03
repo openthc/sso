@@ -17,7 +17,7 @@ class Password extends \OpenTHC\Controller\Base
 		$file = 'page/account/password.html';
 		$data = $this->data;
 		$data['Page']['title'] = 'Set Password';
-		$data['username'] = $ARG['contact']['username'];
+		$data['auth_username'] = $ARG['contact']['username'];
 
 		if (!empty($_GET['e'])) {
 			switch ($_GET['e']) {
@@ -84,9 +84,10 @@ class Password extends \OpenTHC\Controller\Base
 				'password' => $arg[':pw'],
 			]);
 
+			// @deprecated use ACT
 			// Password reset from email link, routes to verify
 			if ('email' == $ARG['source']) {
-				$ARG['action'] = 'email-verify-save';
+				$ARG['intent'] = 'email-verify-save';
 				$ARG['source'] = 'password-reset';
 				$x = _encrypt(json_encode($ARG), $_SESSION['crypt-key']);
 				return $RES->withRedirect('/account/verify?_=' . $x);
@@ -100,6 +101,9 @@ class Password extends \OpenTHC\Controller\Base
 
 	private function parseArg()
 	{
+		$act = new \App\AUth_Context_Ticket($this->_container->DBC_AUTH);
+		$act->loadBy('id', $_GET['_']);
+
 		$ARG = _decrypt($_GET['_'], $_SESSION['crypt-key']);
 		$ARG = json_decode($ARG, true);
 

@@ -34,7 +34,6 @@ class Once extends \App\Controller\Base
 			return $RES->withRedirect('/done?e=cao077');
 		}
 
-		$act['intent'] = $act['intent'] ?: $act['action'];
 		switch ($act['intent']) {
 			case 'account-create':
 				return $this->accountCreate($RES, $act);
@@ -84,130 +83,51 @@ class Once extends \App\Controller\Base
 	}
 
 	/**
-	 * POST Handler
-	 */
-	function post($REQ, $RES, $ARG)
-	{
-		switch ($_POST['a']) {
-		case 'password-reset-request':
-			return $this->sendPasswordReset($RES);
-		}
-
-		return $RES->withStatus(400);
-
-	}
-
-	/**
-	 *
+	 * Account Create Confirm
 	 */
 	private function accountCreate($RES, $data)
 	{
-		$dbc = $this->_container->DBC_AUTH;
+		$dbc_auth = $this->_container->DBC_AUTH;
+		$dbc_main = $this->_container->DBC_MAIN;
 
 		// Update Contact
-		$email = $data['account']['contact']['email'];
-		$chk = $dbc->fetchOne('SELECT id FROM auth_contact WHERE username = :u0', [ ':u0' => $email ]);
+		$email = $data['contact']['email'];
+		$chk = $dbc_auth->fetchOne('SELECT id FROM auth_contact WHERE username = :u0', [ ':u0' => $email ]);
 		if (empty($chk)) {
 			__exit_text('Invalid [CAO-073]', 400);
 		}
 
+		// Log It
+		$dbc_auth->insert('log_event', [
+			'company_id' => $data['company']['id'],
+			'contact_id' => $data['contact']['id'],
+			'code' => 'Contact/Account/Create',
+			'meta' => json_encode($data),
+		]);
+
+		// Update Auth Contact
 		$sql = 'UPDATE auth_contact SET flag = flag | :f1 WHERE id = :pk';
 		$arg = [
-			':pk' => $chk,
+			':pk' => $data['contact']['id'],
 			':f1' => \App\Contact::FLAG_EMAIL_GOOD | \App\Contact::FLAG_PHONE_WANT,
 		];
-		$dbc->query($sql, $arg);
+		$dbc_auth->query($sql, $arg);
 
-		$_SESSION['email'] = $data['account']['contact']['email'];
-
-		$val = [
-			'contact' => [
-				'id' => $data['account']['contact']['id'],
-				'username' => $data['account']['contact']['email'],
-			]
-		];
-		$val = json_encode($val);
-
+		// Update Base Contact
+		$sql = 'UPDATE contact SET flag = flag | :f1 WHERE id = :pk';
 		$arg = [
-			'e' => 'cao073',
-			'_' => _encrypt($val, $_SESSION['crypt-key']),
+			':pk' => $data['contact']['id'],
+			':f1' => \App\Contact::FLAG_EMAIL_GOOD | \App\Contact::FLAG_PHONE_WANT,
 		];
+		$dbc_main->query($sql, $arg);
 
-		return $RES->withRedirect('/done?' . http_build_query($arg));
+		// Next Step
+		$data['intent'] = 'account-confirm-verify';
+		$act = new \App\Auth_Context_Ticket($dbc_auth);
+		$act->create($data);
+
+		return $RES->withRedirect(sprintf('/account/verify?_=%s', $act['id']));
 
 	}
 
-	/**
-	 * Do the Password Reset Thing
-	 */
-	private function sendPasswordReset($RES)
-	{
-		// _check_recaptcha();
-
-		$username = strtolower(trim($_POST['username']));
-		$username = \Edoceo\Radix\Filter::email($username);
-		if (empty($username)) {
-			// Render Fail?
-			return $RES->withRedirect('/auth/open?a=password-reset&e=cao075');
-		}
-
-		$_SESSION['email'] = $username;
-
-		$dbc_auth = $this->_container->DBC_AUTH;
-		$Contact = $dbc_auth->fetchRow('SELECT id, username FROM auth_contact WHERE username = :u0', [ ':u0' => $username ]);
-		if (empty($Contact)) {
-			return $RES->withRedirect('/done?e=cao100&l=173');
-		}
-
-		// Generate Authentication Hash
-		$act = [];
-		$act['id'] = _random_hash();
-		$act['meta'] = json_encode(array(
-			'action' => 'password-reset',
-			'intent' => 'password-reset',
-			'contact' => $Contact,
-			'geoip' => geoip_record_by_name($_SERVER['REMOTE_ADDR']),
-		));
-		$dbc_auth->insert('auth_context_ticket', $act);
-
-		$ret_args = [
-			'e' => 'cao100',
-			'l' => '200',
-		];
-		$ret_path = '/done';
-
-		if ($_ENV['test']) {
-
-			// Pass Information Back
-			// Test Runner has to parse the Location URL
-			$ret_args['r'] = sprintf('https://%s/auth/once', $_SERVER['SERVER_NAME']);
-			$ret_args['a'] = $act['id'];
-
-		} else {
-
-			$arg = [];
-			$arg['to'] = $Contact['username'];
-			$arg['file'] = 'sso/contact-password-reset.tpl';
-			$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
-			$arg['data']['mail_subj'] = 'Password Reset Request';
-			$arg['data']['auth_context_ticket'] = $act['id'];
-
-			// Use CIC to Send
-			try {
-
-				$cic = new \OpenTHC\Service\OpenTHC('cic');
-				$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
-
-				$ret_args['s'] = 't';
-
-			} catch (\Exception $e) {
-				// Ignore
-				$ret_args['s'] = 'f';
-			}
-
-		}
-
-		return $RES->withRedirect($ret_path . '?' . http_build_query($ret_args));
-
-	}
 }
