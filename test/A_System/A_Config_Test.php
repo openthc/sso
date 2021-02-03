@@ -3,7 +3,7 @@
  * Base Class for API Testing
  */
 
-namespace Test\Core;
+namespace Test\A_System;
 
 class A_Config_Test extends \Test\Base_Case
 {

@@ -3,7 +3,7 @@
  * Quick Test of oAuth via CIC
  */
 
-namespace Test\oAuth2;
+namespace Test\G_oAuth2;
 
 class A_oAuth_Test extends \Test\Base_Case
 {
@@ -11,9 +11,9 @@ class A_oAuth_Test extends \Test\Base_Case
 	{
 		$sso_ua = $this->_ua();
 
-		// $cic = new \OpenTHC\Service('cic');
+		$cfg = \OpenTHC\Config::get('openthc/cic/hostname');
 		$cic_ua = new \GuzzleHttp\Client(array(
-			'base_uri' => 'https://cic.openthc.dev/',
+			'base_uri' => sprintf('https://%s/', $cfg),
 			'allow_redirects' => false,
 			'debug' => $_ENV['debug-http'],
 			'request.options' => array(
@@ -28,13 +28,15 @@ class A_oAuth_Test extends \Test\Base_Case
 		$res = $cic_ua->get('/auth/open');
 		$this->assertValidResponse($res, 302);
 		$l = $res->getHeaderLine('location');
-		$this->assertRegExp('/https:\/\/sso.openthc.+authorize.+scope.+state.+client_id/', $l);
+		$this->assertMatchesRegularExpression('/https:\/\/sso.openthc.+authorize.+scope.+state.+client_id/', $l);
+
 
 		// Get the oAuth Authorize Page
 		$res = $sso_ua->get($l);
 		$this->assertValidResponse($res, 302);
 		$l = $res->getHeaderLine('location');
-		$this->assertRegExp('/https:\/\/sso.openthc.+auth\/open.+a=oauth&r=.+/', $l);
+		$this->assertMatchesRegularExpression('/https:\/\/sso.openthc.+auth\/open\?_=[\w\-]+/', $l);
+
 
 		// Get the Open Page
 		$res = $sso_ua->get($l);
@@ -47,28 +49,31 @@ class A_oAuth_Test extends \Test\Base_Case
 			'password' => getenv('OPENTHC_TEST_CONTACT_PASSWORD'),
 		]]);
 		$this->assertValidResponse($res, 302);
-		$l = $res->getHeaderLine('location');
-		$this->assertEquals('/auth/init', $l);
+		$url = $res->getHeaderLine('location');
+		var_dump($url);
+		$this->assertMatchesRegularExpression('/^\/auth\/init\?_=.+/', $url);
 
 		// GET /auth/init
-		$res = $sso_ua->get($l);
+		$res = $sso_ua->get($url);
 		$this->assertValidResponse($res, 302);
-		$l = $res->getHeaderLine('location');
-		// var_dump($l);
+		$url = $res->getHeaderLine('location');
+		var_dump($url);
 
 		// GET /oauth2/authorize
-		$res = $sso_ua->get($l);
+		$res = $sso_ua->get($url);
 		$this->assertValidResponse($res);
+		file_put_contents(APP_ROOT . '/test_auth_pass.html', $this->raw);
 
-		// print_r($this->raw);
+		// Should be the Verify Page?
+		// NO!  That should have been done in a previous test
+		$this->assertMatchesRegularExpression('/Authorize/', $this->raw);
 
 		$permit_link = preg_match('/href="(\/oauth2\/permit\?_=[\w\-]+)"/', $this->raw, $m) ? $m[1] : null;
 		$this->assertNotEmpty($permit_link);
-		// var_dump($permit_link);
+		// // var_dump($permit_link);
 
 		$reject_link = preg_match('/href="(\/oauth2\/reject\?_=[\w\-]+)"/', $this->raw, $m) ? $m[1] : null;
 		$this->assertNotEmpty($reject_link);
-
 
 		$res = $sso_ua->get($permit_link);
 		$this->assertValidResponse($res);
@@ -86,11 +91,6 @@ class A_oAuth_Test extends \Test\Base_Case
 		$this->assertEquals('/home', $l);
 		$res = $cic_ua->get($l);
 		$this->assertValidResponse($res);
-
-	}
-
-	function test_auth_fail()
-	{
 
 	}
 

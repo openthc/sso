@@ -3,11 +3,11 @@
  * Base Class for API Testing
  */
 
-namespace Test\Core;
+namespace Test\A_System;
 
 class B_Site_Test extends \Test\Base_Case
 {
-	function test_auth_pass()
+	function test_page_all()
 	{
 		$cfg = getenv('OPENTHC_TEST_HOST');
 		$this->assertIsString($cfg);
@@ -36,6 +36,16 @@ class B_Site_Test extends \Test\Base_Case
 
 		$res = $ghc->get('/done');
 		$this->assertValidResponse($res);
+
+	}
+
+	function test_site_test_mode()
+	{
+		$sso = $this->_ua();
+		$res = $sso->get(sprintf('/auth/open?_t=%s', getenv('OPENTHC_TEST_HASH')));
+		$res = $this->assertValidResponse($res);
+
+		$this->assertMatchesRegularExpression('/TEST MODE/', $res);
 
 	}
 

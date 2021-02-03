@@ -61,16 +61,8 @@ class Base_Case extends \PHPUnit\Framework\TestCase
 		$type_actual = strtok($type_actual, ';');
 		$this->assertEquals($type_expect, $type_actual);
 
-		// $ret = \json_decode($this->raw, true);
-
-		// $this->assertIsArray($ret);
-		// // $this->assertArrayHasKey('data', $ret);
-		// // $this->assertArrayHasKey('meta', $ret);
-
-		// $this->assertArrayNotHasKey('status', $ret);
-		// $this->assertArrayNotHasKey('result', $ret);
-
 		return $this->raw;
+
 	}
 
 }
