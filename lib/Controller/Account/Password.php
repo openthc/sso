@@ -84,14 +84,7 @@ class Password extends \OpenTHC\Controller\Base
 				'password' => $arg[':pw'],
 			]);
 
-			// @deprecated use ACT
-			// Password reset from email link, routes to verify
-			if ('email' == $ARG['source']) {
-				$ARG['intent'] = 'email-verify-save';
-				$ARG['source'] = 'password-reset';
-				$x = _encrypt(json_encode($ARG), $_SESSION['crypt-key']);
-				return $RES->withRedirect('/account/verify?_=' . $x);
-			}
+			$_SESSION['email'] = $ARG['contact']['username'];
 
 			return $RES->withRedirect('/auth/open?e=cap080');
 
@@ -101,18 +94,24 @@ class Password extends \OpenTHC\Controller\Base
 
 	private function parseArg()
 	{
-		$act = new \App\AUth_Context_Ticket($this->_container->DBC_AUTH);
-		$act->loadBy('id', $_GET['_']);
+		$ARG = [];
 
-		$ARG = _decrypt($_GET['_'], $_SESSION['crypt-key']);
-		$ARG = json_decode($ARG, true);
+		if (!empty($_GET['_'])) {
 
-		if (empty($ARG)) {
-			__exit_html('<h1>Invalid Request [CAP-107]</h1><p>You can <a href="/auth/shut">clear your session</a> and try again</p>', 400);
+			$act = new \App\AUth_Context_Ticket($this->_container->DBC_AUTH);
+			$act->loadBy('id', $_GET['_']);
+			if (!empty($act['id'])) {
+				$ARG = json_decode($act['meta'], true);
+			}
 		}
 
-		if (empty($ARG['contact']['id'])) {
-			__exit_html('<h1>Invalid Request [CAP-111]</h1><p>You can <a href="/auth/shut">clear your session</a> and try again</p>', 400);
+		switch ($ARG['intent']) {
+		case 'account-create-verify':
+		case 'password-reset':
+			// OK
+		break;
+		default:
+			__exit_text('Invalid Request [CAP-110]', 400);
 		}
 
 		return $ARG;

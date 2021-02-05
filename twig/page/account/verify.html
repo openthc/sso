@@ -47,7 +47,7 @@
 			</div>
 			<input {{ verify_phone_code ?? "autofocus" }} class="form-control" id="contact-phone" inputmode="tel" name="contact-phone" value="{{ contact_phone }}">
 			<div class="input-group-append">
-				<button class="btn btn-outline-primary" name="a" type="submit" value="phone-verify-send">Resend <i class="icon icon-arrow-right"></i></button>
+				<button class="btn btn-secondary" name="a" type="submit" value="phone-verify-send">Resend <i class="icon icon-arrow-right"></i></button>
 			</div>
 			{% else %}
 				<div class="input-group-prepend">
@@ -72,9 +72,13 @@
 		<div class="input-group">
 			<input autofocus class="form-control" id="phone-verify-code" name="phone-verify-code" value="">
 			<div class="input-group-append">
-				<button class="btn btn-outline-primary" name="a" type="submit" value="phone-verify-save">Verify</button>
+				<button class="btn btn-primary" name="a" type="submit" value="phone-verify-save">Verify</button>
+				{% if verify_phone_tick > 1 %}
+					<button class="btn btn-warning" name="a" type="submit" value="phone-verify-skip">Skip</button>
+				{% endif %}
 			</div>
 		</div>
+		<p>You may need to wait a few minutes for the message to arrive. You can resend if needed.</p>
 	</div>
 	</form>
 	{% endif %}

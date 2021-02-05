@@ -39,7 +39,8 @@ class Init extends \App\Controller\Base
 		}
 		// Check Intent
 		switch ($act_data['intent']) {
-			case 'auth-init':
+			case 'account-open':
+			case 'oauth-authorize':
 				// OK
 				break;
 			default:
@@ -64,7 +65,7 @@ class Init extends \App\Controller\Base
 
 		// Contact has Disabled Flags?
 		if (0 != ($Contact['flag'] & Contact::FLAG_DISABLED)) {
-			_exit_html_err('Invalid Account [CAI-046]', 403);
+			_exit_html_err('Invalid Account [CAI-068]', 403);
 		}
 
 		// Need to Verify
@@ -91,11 +92,6 @@ class Init extends \App\Controller\Base
 			// 	'r' => sprintf('/auth/init?_=%s', $_GET['_']),
 			// 	'_' => $arg
 			// ]));
-		}
-
-		if (empty($act_data['company_list']) && !empty($act_data['company'])) {
-			$act_data['company_list'] = [];
-			$act_data['company_list'][] = $act_data['company'];
 		}
 
 		// User with 0 Company Link
@@ -155,9 +151,9 @@ class Init extends \App\Controller\Base
 		$ping = sprintf('https://%s/auth/once?_=%s', $_SERVER['SERVER_NAME'], $act['id']);
 
 		// No Return? Load Default
-		$ret = null;
+		$ret = '/account';
 		switch ($act_data['intent']) {
-			case 'init':
+			case 'account-open':
 				// Default
 			break;
 			case 'oauth-authorize':
@@ -166,6 +162,11 @@ class Init extends \App\Controller\Base
 		}
 
 		// $act_data may have $ORIGIN here
+		if (!empty($act_data['origin'])) {
+			// Lookup Origin in Database before building this link?
+			// So it's only going against known services
+			$ret = sprintf('https://%s/auth/connect?ping={PING}', $act_data['origin']);
+		}
 
 		// if (empty($ret)) {
 		// 	$cfg = \OpenTHC\Config::get('openthc/app/hostname');
@@ -173,10 +174,6 @@ class Init extends \App\Controller\Base
 		// 		$ret = sprintf('https://%s/auth/back?ping={PING}', $cfg);
 		// 	}
 		// }
-
-		if (empty($ret)) {
-			$ret = '/account';
-		}
 
 		// Place Ping Back Token
 		$ret = str_replace('{PING}', $ping, $ret);

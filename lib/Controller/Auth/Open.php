@@ -94,11 +94,14 @@ class Open extends \App\Controller\Base
 		unset($_SESSION['License']);
 		unset($_SESSION['Service']);
 
-		switch (strtolower($_POST['a'])) {
+		unset($_SESSION['account-create']);
+		unset($_SESSION['verify']);
+
+		switch ($_POST['a']) {
 		case 'password-reset-request':
 			return $this->sendPasswordReset($RES);
 			break;
-		case 'sign in': // Sign In
+		case 'account-open': // Sign In
 
 			// Process Inputs
 			$username = strtolower(trim($_POST['username']));
@@ -130,7 +133,8 @@ class Open extends \App\Controller\Base
 
 			// Next Authentication Token
 			$act_data = [
-				'intent' => 'init',
+				'intent' => 'account-open',
+				'origin' => $_GET['origin'],
 				'contact' => [
 					'id' => $chk['id'],
 					'flag' => $chk['flag'],
@@ -188,13 +192,13 @@ class Open extends \App\Controller\Base
 			return $RES->withRedirect('/auth/open?a=password-reset&e=cao049');
 		}
 
-		$_SESSION['email'] = $username;
-
 		$dbc_auth = $this->_container->DBC_AUTH;
 		$Contact = $dbc_auth->fetchRow('SELECT id, username FROM auth_contact WHERE username = :u0', [ ':u0' => $username ]);
 		if (empty($Contact)) {
 			return $RES->withRedirect('/done?e=cao100&l=173');
 		}
+
+		$_SESSION['email'] = $username;
 
 		// Generate Authentication Hash
 		$act = [];
@@ -214,8 +218,8 @@ class Open extends \App\Controller\Base
 
 		if ($_ENV['test']) {
 
+			// @todo make this like the otherone
 			// Pass Information Back
-			// Test Runner has to parse the Location URL
 			$ret_args['r'] = sprintf('https://%s/auth/once', $_SERVER['SERVER_NAME']);
 			$ret_args['a'] = $act['id'];
 
@@ -225,7 +229,7 @@ class Open extends \App\Controller\Base
 			$arg['address_target'] = $Contact['username'];
 			$arg['file'] = 'sso/contact-password-reset.tpl';
 			$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
-			$arg['data']['mail_subj'] = 'Password Reset Request';
+			$arg['data']['mail_subject'] = 'Password Reset Request';
 			$arg['data']['auth_context_ticket'] = $act['id'];
 
 			// Use CIC to Send
@@ -271,7 +275,7 @@ SQL;
 
 		$act_data['company_list'] = $chk;
 		if (count($chk) == 1) {
-			$act_data['company'] = $chk;
+			$act_data['company'] = $chk[0];
 		}
 
 		return $act_data;

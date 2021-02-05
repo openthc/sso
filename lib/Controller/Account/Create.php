@@ -104,37 +104,40 @@ class Create extends \App\Controller\Base
 
 		// Company Check
 		$Company = [];
-		if (empty($_POST['company-id'])) {
+		$dir = new \OpenTHC\Service\OpenTHC('dir');
+		// $chk = $dir->get('/api/company?q=' . rawurlencode($_POST['company-name']));
+		$chk = [ 'code' => 404 ]; // Always make a new one for now
+		switch ($chk['code']) {
+			case 200:
+				$_SESSION['company_list'] = $chk['data'];
+				return $RES->withRedirect('/account/create/company');
+			break;
+			case 300:
+				var_dump($chk);
+				exit;
+			case 404:
+				// For Sure New
+				$Company['id'] = _ulid();
+				$Company['cre'] = $_SESSION['account-create']['region'];
+				$Company['name'] = $_POST['company-name'];
+				$Company['type'] = 'X';
+				$Company['hash'] = md5(json_encode($Company));
 
-			$Company['id'] = _ulid();
-			$Company['cre'] = $_SESSION['account-create']['region'];
-			$Company['name'] = $_POST['license-name'];
-			$Company['stat'] = 100;
-			$Company['type'] = 'X';
-			$Company['hash'] = md5(json_encode($Company));
+				$dbc_main->insert('company', $Company); // @todo Make call to DIR->create();
 
-			$dbc_main->insert('company', $Company);
-			$dbc_auth->insert('auth_company', [
-				'id' => $Company['id'],
-				'name' => $Company['name'],
-			]);
-
-		} else {
-
-			$chk = $dbc_main->fetchRow('SELECT id FROM company WHERE id = ?', [$_POST['company-id']]);
-			if (empty($chk['id'])) {
-				$_SESSION['account-create']['company-create'] = true;
-				// return $RES->withRedirect('/done?e=cac093');
-			}
+				$dbc_auth->insert('auth_company', [
+					'id' => $Company['id'],
+					'name' => $Company['name'],
+				]);
 		}
 
-		if (!empty($_POST['license-id'])) {
-			$chk = $dbc_main->fetchRow('SELECT id FROM license WHERE id = ?', [$_POST['license-id']]);
-			if (empty($chk['id'])) {
-				$_SESSION['account-create']['license-create'] = true;
-				// return $RES->withRedirect('/done?e=cac093');
-			}
-		}
+		// if (!empty($_POST['license-id'])) {
+		// 	$chk = $dbc_main->fetchRow('SELECT id FROM license WHERE id = ?', [$_POST['license-id']]);
+		// 	if (empty($chk['id'])) {
+		// 		$_SESSION['account-create']['license-create'] = true;
+		// 		// return $RES->withRedirect('/done?e=cac093');
+		// 	}
+		// }
 
 		// Contact Table
 		$Contact = [
@@ -165,10 +168,6 @@ class Create extends \App\Controller\Base
 			'company' => [
 				'id' => $Company['id'],
 				'name' => $Company['name'],
-			],
-			'license' => [
-				'id' => $_POST['license-id'],
-				'name' => $_POST['license-name'],
 			],
 			'contact' => [
 				'id' => $Contact['id'],
@@ -230,8 +229,9 @@ class Create extends \App\Controller\Base
 		$RES = $RES->withAttribute('Contact', [
 			'id' => $Contact['id'],
 			'username' => $Contact['email'],
-			'company_name' => $_POST['license-name'],
-			'contact_phone' => $Contact['phone'],
+			'phone' => $Contact['phone'],
+			'email' => $Contact['email'],
+			'company' => $Company,
 		]);
 
 		return $RES->withRedirect($ret_path . '?' . http_build_query($ret_args));

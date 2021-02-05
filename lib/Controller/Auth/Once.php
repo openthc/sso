@@ -39,33 +39,14 @@ class Once extends \App\Controller\Base
 				return $this->accountCreate($RES, $act);
 				break;
 			case 'email-verify':
-
-				$arg = [
-					'action' => 'email-verify-save',
-					'contact' => $act['contact'],
-				];
-				$arg = json_encode($arg);
-				$arg = _encrypt($arg, $_SESSION['crypt-key']);
-
-				return $RES->withRedirect('/account/verify?_=' . $arg);
-
+				return $RES->withRedirect(sprintf('/account/verify?_=%s', $_GET['_']));
 				break;
-
 			case 'password-reset':
-
-				$val = [
-					'contact' => $act['contact'],
-				];
-				$val = json_encode($val);
-				$x = _encrypt($val, $_SESSION['crypt-key']);
-
-				return $RES->withRedirect('/account/password?_=' . $x);
-
+				return $RES->withRedirect('/account/password?_=' . $_GET['_']);
 				break;
-
-			case 'init':
+			case 'init': // @deprecated
+				throw new \Exception('@deprecated');
 			case 'oauth-migrate':
-				// OK
 				return $RES->withJSON($act);
 		}
 
@@ -77,6 +58,7 @@ class Once extends \App\Controller\Base
 		// }
 
 		$data['Page']['title'] = 'Error';
+		$data['body'] = '<div class="alert alert-danger">Invalid Request [CAO-061]</div>';
 		$RES = $this->_container->view->render($RES, 'page/done.html', $data);
 		return $RES->withStatus(400);
 
@@ -90,12 +72,12 @@ class Once extends \App\Controller\Base
 		$dbc_auth = $this->_container->DBC_AUTH;
 		$dbc_main = $this->_container->DBC_MAIN;
 
-		// Update Contact
-		$email = $data['contact']['email'];
-		$chk = $dbc_auth->fetchOne('SELECT id FROM auth_contact WHERE username = :u0', [ ':u0' => $email ]);
+		// Update Contact, Promote Email to Username
+		$chk = $dbc_auth->fetchOne('SELECT id FROM auth_contact WHERE username = :u0', [ ':u0' => $data['contact']['email'] ]);
 		if (empty($chk)) {
-			__exit_text('Invalid [CAO-073]', 400);
+			__exit_text('Invalid Account [CAO-079]', 400);
 		}
+		$data['contact']['username'] = $data['contact']['email'];
 
 		// Log It
 		$dbc_auth->insert('log_event', [
@@ -104,6 +86,9 @@ class Once extends \App\Controller\Base
 			'code' => 'Contact/Account/Create',
 			'meta' => json_encode($data),
 		]);
+
+		$dbc_auth->query('BEGIN');
+		$dbc_main->query('BEGIN');
 
 		// Update Auth Contact
 		$sql = 'UPDATE auth_contact SET flag = flag | :f1 WHERE id = :pk';
@@ -122,10 +107,14 @@ class Once extends \App\Controller\Base
 		$dbc_main->query($sql, $arg);
 
 		// Next Step
-		$data['intent'] = 'account-confirm-verify';
+		$data['intent'] = 'account-create-verify';
 		$act = new \App\Auth_Context_Ticket($dbc_auth);
 		$act->create($data);
 
+		$dbc_auth->query('COMMIT');
+		$dbc_main->query('COMMIT');
+
+		// @todo Enable a Done/Next Page Here
 		return $RES->withRedirect(sprintf('/account/verify?_=%s', $act['id']));
 
 	}

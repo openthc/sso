@@ -30,8 +30,6 @@ class A_Create_Test extends \Test\Base_Case
 		$res = $c->post('/account/create', [ 'form_params' => [
 			'a' => 'contact-next',
 			'license-name' => sprintf('Test License %06x', $this->_pid),
-			'license-id' => '',
-			'company-id' => '',
 			'contact-name' => sprintf('Test Contact %06x', $this->_pid),
 			'contact-email' => getenv('OPENTHC_TEST_CONTACT_USERNAME'),
 			'contact-phone' => '1234567890',
@@ -182,8 +180,6 @@ class A_Create_Test extends \Test\Base_Case
 		$res = $c->post('/account/create', [ 'form_params' => [
 			'a' => 'contact-next',
 			'license-name' => sprintf('Test License %06x', $this->_pid),
-			'license-id' => '',
-			'company-id' => '',
 			'contact-name' => sprintf('Test Contact %06x', $this->_pid),
 			'contact-email' => getenv('OPENTHC_TEST_CONTACT_USERNAME'),
 			'contact-phone' => '1234567890',
@@ -216,8 +212,6 @@ class A_Create_Test extends \Test\Base_Case
 		$res = $c->post('/account/create', [ 'form_params' => [
 			'a' => 'contact-next',
 			'license-name' => sprintf('Test License %06x', $this->_pid),
-			'license-id' => '',
-			'company-id' => '',
 			'contact-name' => sprintf('Test Contact %06x', $this->_pid),
 			'contact-email' => 'invalid.email-typeA',
 			'contact-phone' => '1234567890',

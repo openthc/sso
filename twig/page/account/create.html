@@ -11,12 +11,7 @@
 
 	<div class="form-group">
 		<label>Company Name / License ID</label>
-		<div class="input-group">
-			<input autocomplete="off" autofocus class="form-control" id="license-name" name="license-name" placeholder="- Company, Inc. -" required>
-			<div class="input-group-append">
-				<div class="input-group-text">&otimes;</div>
-			</div>
-		</div>
+		<input autocomplete="off" autofocus class="form-control" id="company-name" name="company-name" placeholder="- Company, Inc. -" required>
 		<div>Should be your registered company name or your government issued business license ID</div>
 	</div>
 
@@ -27,18 +22,16 @@
 
 	<div class="form-group">
 		<label>Email</label>
-		<input autocomplete="off" class="form-control" id="contact-email" inputmode="email" name="contact-email" placeholder="email" required type="email" value="">
+		<input autocomplete="off" class="form-control" id="contact-email" inputmode="email" name="contact-email" placeholder="eg: you@example.com" required type="email" value="">
 	</div>
 
 	<div class="form-group">
 		<label>Phone</label>
-		<input autocomplete="off" class="form-control" id="contact-phone" inputmode="tel" name="contact-phone" required type="phone">
+		<input autocomplete="off" class="form-control" id="contact-phone" inputmode="tel" name="contact-phone" placeholder="eg: +1 202 555 1212" required type="phone">
 	</div>
 	</div>
 
 	<div class="card-footer r">
-		<input id="company-id" name="company-id" type="hidden" value="">
-		<input id="license-id" name="license-id" type="hidden" value="">
 		<button class="btn btn-outline-primary" id="btn-account-create" name="a" type="submit" value="contact-next">Create Account <i class="icon icon-arrow-right"></i></button>
 	</div>
 
@@ -47,49 +40,4 @@
 </div>
 </form>
 
-{% endblock %}
-
-{% block foot_script %}
-{{ parent() }}
-<script>
-$(function() {
-	$('#license-name').autocomplete({
-		source: 'https://{{ OpenTHC.dir.hostname }}/api/autocomplete/license',
-		change: function(e, ui) {
-			if (!ui.item) {
-				$('#company-id').val('');
-				$('#license-id').val('');
-				var icon = $('#license-name').closest('.input-group').find('.input-group-text');
-				icon.html('&otimes;');
-				icon.removeClass('text-success');
-			} else {
-				$('#company-id').val(ui.item.company.id);
-				$('#license-id').val(ui.item.license.id);
-				var icon = $('#license-name').closest('.input-group').find('.input-group-text');
-				icon.html('&starf;');
-				icon.addClass('text-success');
-			}
-		},
-		response: function(e, ui) {
-			if (0 == ui.content.length) {
-				var $icon = $('#license-name').closest('.input-group').find('.input-group-text');
-				$icon.addClass('text-danger');
-			}
-		},
-		search: function(e, ui) {
-			$('#company-id').val('');
-			$('#license-id').val('');
-			var icon = $('#license-name').closest('.input-group').find('.input-group-text');
-			icon.html('<i class="icon icon-circle-o"></i>');
-			icon.removeClass('text-success');
-		},
-		select: function(e, ui) {
-			if (ui.item.id) {
-				$('#license-name').val(ui.item.name);
-				return false;
-			}
-		}
-	});
-});
-</script>
 {% endblock %}
