@@ -12,6 +12,9 @@ openlog('openthc-sso', LOG_ODELAY|LOG_PID, LOG_LOCAL0);
 
 require_once(APP_ROOT . '/vendor/autoload.php');
 
+/**
+ * Quick Exit Error Handler
+ */
 function _exit_html_err($err, $code=500)
 {
 	if (is_string($err)) {
@@ -117,4 +120,5 @@ footer a {
 HTML;
 
 	__exit_html($html, $code);
+
 }
