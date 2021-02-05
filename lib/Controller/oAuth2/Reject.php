@@ -5,7 +5,7 @@
 
 namespace App\Controller\oAuth2;
 
-class Reject extends \OpenTHC\Controller\Base
+class Reject extends \App\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{

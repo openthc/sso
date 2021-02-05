@@ -5,7 +5,7 @@
 
 namespace App\Controller\Account;
 
-class Password extends \OpenTHC\Controller\Base
+class Password extends \App\Controller\Base
 {
 	/**
 	 *

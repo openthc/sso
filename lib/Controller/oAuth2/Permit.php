@@ -5,7 +5,7 @@
 
 namespace App\Controller\oAuth2;
 
-class Permit extends \OpenTHC\Controller\Base
+class Permit extends \App\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{

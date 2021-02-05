@@ -5,7 +5,7 @@
 
 namespace App\Controller\oAuth2;
 
-class Token extends \OpenTHC\Controller\Base
+class Token extends \App\Controller\Base
 {
 	private $_cfg;
 	private $_auth_token;
