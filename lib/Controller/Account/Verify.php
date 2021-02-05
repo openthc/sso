@@ -382,7 +382,7 @@ SQL;
 	 */
 	function loadTicket()
 	{
-		$act = new \App\AUth_Context_Ticket($this->_container->DBC_AUTH);
+		$act = new \App\Auth_Context_Ticket($this->_container->DBC_AUTH);
 		$act->loadBy('id', $_GET['_']);
 		if (empty($act['id'])) {
 			_exit_html_err('Invalid Request [CAV-356]', 400);

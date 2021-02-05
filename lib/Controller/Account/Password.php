@@ -98,7 +98,7 @@ class Password extends \OpenTHC\Controller\Base
 
 		if (!empty($_GET['_'])) {
 
-			$act = new \App\AUth_Context_Ticket($this->_container->DBC_AUTH);
+			$act = new \App\Auth_Context_Ticket($this->_container->DBC_AUTH);
 			$act->loadBy('id', $_GET['_']);
 			if (!empty($act['id'])) {
 				$ARG = json_decode($act['meta'], true);
