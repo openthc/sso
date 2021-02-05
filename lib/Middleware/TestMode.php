@@ -13,11 +13,11 @@ class TestMode extends \OpenTHC\Middleware\Base
 		$key_real = null;
 		$set_test = false;
 
-		if (!empty($_COOKIE['test'])) {
+		if (!empty($_SERVER['HTTP_OPENTHC_TEST_MODE'])) {
+			$key_user = $_SERVER['HTTP_OPENTHC_TEST_MODE'];
+		} elseif (!empty($_COOKIE['test'])) {
 			$key_user = $_COOKIE['test'];
-		}
-
-		if (!empty($_GET['_t'])) {
+		} elseif (!empty($_GET['_t'])) {
 			$key_user = $_GET['_t'];
 		}
 
