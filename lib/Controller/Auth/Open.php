@@ -134,16 +134,16 @@ class Open extends \App\Controller\Base
 			// Next Authentication Token
 			$act_data = [
 				'intent' => 'account-open',
-				'origin' => $_GET['origin'],
 				'contact' => [
 					'id' => $chk['id'],
 					'flag' => $chk['flag'],
 					'stat' => 200,
 					'username' => $chk['username'],
 				],
-				'company' => [],
+				'company' => null,
 				'company_list' => [],
-				'service' => [], // inidicate the service here
+				'service' => $_GET['service'],
+				'service_list' => [],
 			];
 
 			// If we have a Prevous Auth-Ticket

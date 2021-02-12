@@ -161,19 +161,24 @@ class Init extends \App\Controller\Base
 			break;
 		}
 
-		// $act_data may have $ORIGIN here
-		if (!empty($act_data['origin'])) {
-			// Lookup Origin in Database before building this link?
-			// So it's only going against known services
-			$ret = sprintf('https://%s/auth/connect?ping={PING}', $act_data['origin']);
+		// Requested Service ? DEFAULT
+		if (empty($act_data['service'])) {
+			$cfg = \OpenTHC\Config::get('openthc/app/hostname');
+			if (!empty($cfg)) {
+				// Set Default Service?
+				$act_data['service'] = $cfg;
+			}
 		}
 
-		// if (empty($ret)) {
-		// 	$cfg = \OpenTHC\Config::get('openthc/app/hostname');
-		// 	if (!empty($cfg)) {
-		// 		$ret = sprintf('https://%s/auth/back?ping={PING}', $cfg);
-		// 	}
-		// }
+		if (!empty($act_data['service'])) {
+			// Lookup Service in Database before building this link?
+			// So it's only going against known services
+			$ret = sprintf('https://%s/auth/back?ping={PING}', $act_data['service']);
+		}
+
+		//if (empty($ret)) {
+		//	$ret = sprintf('https://%s/auth/back?ping={PING}', $cfg);
+		//}
 
 		// Place Ping Back Token
 		$ret = str_replace('{PING}', $ping, $ret);

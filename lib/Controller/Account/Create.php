@@ -21,8 +21,8 @@ class Create extends \App\Controller\Base
 			$_SESSION['account-create'] = [];
 		}
 
-		if (!empty($_GET['origin'])) {
-			$_SESSION['account-create']['origin'] = $_GET['origin'];
+		if (!empty($_GET['service'])) {
+			$_SESSION['account-create']['service'] = $_GET['service'];
 		}
 
 		switch ($_GET['e']) {
@@ -164,7 +164,7 @@ class Create extends \App\Controller\Base
 		$act = new \App\Auth_Context_Ticket($dbc_auth);
 		$act->create(array(
 			'intent' => 'account-create',
-			'origin' => $_SESSION['account-create']['origin'],
+			'service' => $_SESSION['account-create']['service'],
 			'company' => [
 				'id' => $Company['id'],
 				'name' => $Company['name'],
