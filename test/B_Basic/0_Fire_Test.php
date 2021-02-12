@@ -17,7 +17,7 @@ class Fire_Test extends \Test\Base_Case
 		$this->assertMatchesRegularExpression('/input.+id="password" name="password" type="password"/', $res);
 
 		$res = $c->post('/auth/open', [ 'form_params' => [
-			'a' => 'sign in',
+			'a' => 'account-open',
 			'username' => 'invalid-email@invalid-domain',
 			'password' => 'invalid-password',
 		]]);

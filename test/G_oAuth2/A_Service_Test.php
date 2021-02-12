@@ -7,7 +7,35 @@ namespace Test\G_oAuth2;
 
 class A_oAuth_Test extends \Test\Base_Case
 {
-	function test_auth_pass()
+	function test_auth_pass_app()
+	{
+		$sso_ua = $this->_ua();
+
+		$cfg = \OpenTHC\Config::get('openthc/app/hostname');
+		$this->assertNotEmpty($cfg);
+
+		$app_ua = new \GuzzleHttp\Client(array(
+			'base_uri' => sprintf('https://%s/', $cfg),
+			'allow_redirects' => false,
+			'debug' => $_ENV['debug-http'],
+			'request.options' => array(
+				'exceptions' => false,
+			),
+			'http_errors' => false,
+			'cookies' => true,
+		));
+
+		// Get a Service Page
+		$res = $app_ua->get('/auth/open?a=oauth');
+		$this->assertValidResponse($res, 200);
+		// $url = $res->getHeaderLine('location');
+		// var_dump($url);
+		// $this->assertNotEmpty($url);
+		// $this->assertMatchesRegularExpression('/https:\/\/sso.openthc.+authorize.+scope.+state.+client_id/', $l);
+
+	}
+
+	function test_auth_pass_cic()
 	{
 		$sso_ua = $this->_ua();
 
@@ -44,7 +72,7 @@ class A_oAuth_Test extends \Test\Base_Case
 
 		// Post the Open Page
 		$res = $sso_ua->post($l, [ 'form_params' => [
-			'a' => 'sign in',
+			'a' => 'account-open',
 			'username' => getenv('OPENTHC_TEST_CONTACT_USERNAME'),
 			'password' => getenv('OPENTHC_TEST_CONTACT_PASSWORD'),
 		]]);
@@ -66,7 +94,7 @@ class A_oAuth_Test extends \Test\Base_Case
 
 		// Should be the Verify Page?
 		// NO!  That should have been done in a previous test
-		$this->assertMatchesRegularExpression('/Authorize/', $this->raw);
+		$this->assertStringContainsString('Application Authorization', $this->raw);
 
 		$permit_link = preg_match('/href="(\/oauth2\/permit\?_=[\w\-]+)"/', $this->raw, $m) ? $m[1] : null;
 		$this->assertNotEmpty($permit_link);
@@ -83,14 +111,18 @@ class A_oAuth_Test extends \Test\Base_Case
 		$link_continue = html_entity_decode($link_continue, ENT_COMPAT | ENT_HTML5, 'utf-8');
 		// var_dump($link_continue);
 		$this->assertNotEmpty($link_continue);
-		$this->assertRegExp('/https:.+\/auth\/back\?code=.+state=.+/', $link_continue);
+		$this->assertMatchesRegularExpression('/https:.+\/auth\/back\?code=.+state=.+/', $link_continue);
 
 		$res = $cic_ua->get($link_continue);
 		$this->assertValidResponse($res, 302);
-		$l = $res->getHeaderLine('location');
-		$this->assertEquals('/home', $l);
-		$res = $cic_ua->get($l);
-		$this->assertValidResponse($res);
+		$url = $res->getHeaderLine('location');
+		var_dump($url);
+		$this->assertEquals('/dashboard', $url);
+
+		// Should Get Authenticated but then Rejected by CIC because of permissions
+		$res = $cic_ua->get($url);
+		$html = $this->assertValidResponse($res, 403);
+		$this->assertStringContainsString('Access Denied [CLA-087]', $html);
 
 	}
 

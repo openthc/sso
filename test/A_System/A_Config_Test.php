@@ -34,7 +34,7 @@ class A_Config_Test extends \Test\Base_Case
 
 		foreach ($env_list as $x) {
 			$v = getenv($x);
-			$this->assertNotEmpty($x, sprintf('Environment "%s" missing', $x));
+			$this->assertNotEmpty($v, sprintf('Environment "%s" missing', $x));
 		}
 
 	}

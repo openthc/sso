@@ -30,6 +30,9 @@ class Base_Case extends \PHPUnit\Framework\TestCase
 			),
 			'http_errors' => false,
 			'cookies' => true,
+			'headers' => [
+				'openthc-test-mode' => getenv('OPENTHC_TEST_HASH')
+			]
 		));
 
 		// $test_secret = \OpenTHC\Config::get('application_test.secret');
