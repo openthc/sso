@@ -44,8 +44,7 @@ class Once extends \App\Controller\Base
 			case 'password-reset':
 				return $RES->withRedirect('/account/password?_=' . $_GET['_']);
 				break;
-			case 'init': // @deprecated
-				throw new \Exception('@deprecated');
+			case 'account-open':
 			case 'oauth-migrate':
 				return $RES->withJSON($act);
 		}
