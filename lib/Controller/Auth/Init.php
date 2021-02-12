@@ -16,10 +16,14 @@ class Init extends \App\Controller\Base
 	 */
 	function __invoke($REQ, $RES, $ARG)
 	{
+		// Clear Session
 		unset($_SESSION['Contact']);
 		unset($_SESSION['Company']);
 		unset($_SESSION['License']);
 		unset($_SESSION['Service']);
+
+		unset($_SESSION['account-create']);
+		unset($_SESSION['verify']);
 
 		// Check Input
 		if (!preg_match('/^([\w\-]{32,128})$/i', $_GET['_'], $m)) {
