@@ -19,13 +19,13 @@
 		"ext-sockets": "*",
 		"edoceo/lowline_php": "dev-master",
 		"edoceo/radix": "dev-master",
-		"league/oauth2-client": "2.5.0",
+		"league/oauth2-client": "2.6.0",
 		"openthc/common": "dev-master"
 	},
 	"require-dev": {
 		"behat/behat": "3.7.0",
-		"php-webdriver/webdriver": "1.8.3",
-		"phpstan/phpstan": "0.12.54",
-		"phpunit/phpunit": "9.4.2"
+		"php-webdriver/webdriver": "1.9.0",
+		"phpstan/phpstan": "0.12.76",
+		"phpunit/phpunit": "9.5.2"
 	}
 }
