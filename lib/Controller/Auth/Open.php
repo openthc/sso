@@ -16,7 +16,6 @@ class Open extends \App\Controller\Base
 	{
 		$data = $this->data;
 		$data['Page']['title'] = 'Sign In';
-		$data['service'] = $_GET['service'];
 
 		// Add Errors
 		if (!empty($_GET['e'])) {
@@ -70,15 +69,10 @@ class Open extends \App\Controller\Base
 			$act = $dbc->fetchOne('SELECT meta FROM auth_context_ticket WHERE id = :t0', [ ':t0' => $_GET['_'] ]);
 			$act = json_decode($act, true);
 			if (!empty($act['service'])) {
-				$data['service'] = $act['service'];
 				$data['auth_hint'] = sprintf('<p>Sign in, and then authorize the service (<em>%s</em>) via <a href="https://oauth.net/2/" target="_blank">OAuth2</a></p>', $act['service']);
 			}
 		}
 
-		// $data['auth_goto'] = $_GET['r'];
-		// if (!empty($data['auth_goto'])) {
-		// 	$data['auth_hint'] = '<p>You will sign in, and then authorize the application via <a href="https://oauth.net/2/" target="_blank">OAuth2</a></p>';
-		// }
 		$file = 'page/auth/open.html';
 
 		return $this->_container->view->render($RES, $file, $data);
@@ -216,9 +210,8 @@ class Open extends \App\Controller\Base
 
 		if ($_ENV['test']) {
 
-			// @todo make this like the otherone
 			// Pass Information Back
-			$ret_args['r'] = sprintf('https://%s/auth/once', $_SERVER['SERVER_NAME']);
+			$ret_args['r'] = '/auth/once';
 			$ret_args['a'] = $act['id'];
 
 		} else {

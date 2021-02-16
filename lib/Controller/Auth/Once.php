@@ -53,7 +53,7 @@ class Once extends \App\Controller\Base
 
 		// if (strtotime($act['ts_expires']) < $_SERVER['REQUEST_TIME']) {
 			// $dbc->query('DELETE FROM auth_context_ticket WHERE id = :t0', $act['id']);
-			// __exit_html('<h1>Invalid Ticket [CAO#028]</h2><p>The link you followed has expired</p>', 400);
+			// __exit_html('<h1>Invalid Ticket [CAO-028]</h2><p>The link you followed has expired</p>', 400);
 		// }
 
 		$data['Page']['title'] = 'Error';

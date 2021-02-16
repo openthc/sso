@@ -58,32 +58,32 @@ class Token extends \App\Controller\Base
 	function verifyRequest($REQ, $RES)
 	{
 		if (empty($_POST['client_id'])) {
-			return $this->makeError($RES, 'invalid_client', 'Invalid Client [COT#068]', 401);
+			return $this->makeError($RES, 'invalid_client', 'Invalid Client [COT-068]', 401);
 		}
 
 		$Service = $this->_container->DBC_AUTH->fetchRow('SELECT id, name, code, hash FROM auth_service WHERE code = ?', array($_POST['client_id']));
 		if (empty($Service['id'])) {
-			return $this->makeError($RES, 'invalid_client', 'Invalid Client [COT#073]', 401);
+			return $this->makeError($RES, 'invalid_client', 'Invalid Client [COT-073]', 401);
 		}
 
 		if (empty($_POST['client_secret'])) {
-			return $this->makeError($RES, 'invalid_client', 'Invalid Client Secret [COT#077]', 401);
+			return $this->makeError($RES, 'invalid_client', 'Invalid Client Secret [COT-077]', 401);
 		}
 
 		if ($Service['hash'] != $_POST['client_secret']) {
-			return $this->makeError($RES, 'invalid_client', 'Invalid Client Secret [COT#081]', 401);
+			return $this->makeError($RES, 'invalid_client', 'Invalid Client Secret [COT-081]', 401);
 		}
 
 		if (empty($_POST['grant_type'])) {
-			return $this->makeError($RES, 'invalid_grant', 'Invalid Grant Type [COT#085]', 400);
+			return $this->makeError($RES, 'invalid_grant', 'Invalid Grant Type [COT-085]', 400);
 		}
 
 		if ('authorization_code' != $_POST['grant_type']) {
-			return $this->makeError($RES, 'unsupported_grant_type', 'Invalid Grant Type [COT#089]', 400);
+			return $this->makeError($RES, 'unsupported_grant_type', 'Invalid Grant Type [COT-089]', 400);
 		}
 
 		if (empty($_POST['code'])) {
-			return $this->makeError($RES, 'invalid_request','Invalid Code [COT#093]', 400);
+			return $this->makeError($RES, 'invalid_request','Invalid Code [COT-093]', 400);
 		}
 
 		return $RES;
@@ -106,20 +106,20 @@ class Token extends \App\Controller\Base
 		$dbc_auth->query($sql, $arg);
 
 		if (empty($res)) {
-			return $this->makeError($RES, 'access_denied', 'Invalid Code [COT#113]', 401);
+			return $this->makeError($RES, 'access_denied', 'Invalid Code [COT-113]', 401);
 		}
 		$tok = json_decode($res['meta'], true);
 
 		if (empty($tok['contact_id'])) {
-			return $this->makeError($RES, 'access_denied', 'Invalid Token Data [COT#118]', 401);
+			return $this->makeError($RES, 'access_denied', 'Invalid Token Data [COT-118]', 401);
 		}
 
 		if ($tok['client_id'] != $_POST['client_id']) {
-			return $this->makeError('access_denied', 'Invalid Token Data [COT#122]', 401);
+			return $this->makeError('access_denied', 'Invalid Token Data [COT-122]', 401);
 		}
 
 		if (empty($tok['scope'])) {
-			return $this->makeError($RES, 'invalid_request', 'Invalid Scope [COT#126]', 400);
+			return $this->makeError($RES, 'invalid_request', 'Invalid Scope [COT-126]', 400);
 		}
 
 		$this->_auth_token = $tok;

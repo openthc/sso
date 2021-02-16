@@ -51,7 +51,7 @@ class Create extends \App\Controller\Base
 
 		$RES->withJSON([
 			'data' => null,
-			'meta' => [ 'Invalid Request [CAC#055]' ],
+			'meta' => [ 'Invalid Request [CAC-055]' ],
 		], 400);
 
 	}

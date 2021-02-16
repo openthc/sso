@@ -10,13 +10,13 @@ class Permit extends \App\Controller\Base
 	function __invoke($REQ, $RES, $ARG)
 	{
 		if (empty($_GET['_'])) {
-			__exit_text('Invalid Input [COP#013]', 400);
+			__exit_text('Invalid Input [COP-013]', 400);
 		}
 
 		$x = _decrypt($_GET['_'], $_SESSION['crypt-key']);
 		$x = json_decode($x, true);
 		if (empty($x)) {
-			__exit_text('Invalid Input [COP#019]', 400);
+			__exit_text('Invalid Input [COP-019]', 400);
 		}
 
 		$_GET = $x;
@@ -29,7 +29,7 @@ class Permit extends \App\Controller\Base
 		if (empty($Auth_Service['id'])) {
 			_exit_json(array(
 				'error' => 'invalid_client',
-				'error_description' => 'COA#061: Invalid Client',
+				'error_description' => 'Invalid Client [COA-061]',
 				'error_uri' => 'https://openthc.com/auth/doc',
 			), 401);
 		}

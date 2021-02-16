@@ -29,6 +29,7 @@ class Profile extends \App\Controller\Base
 
 		if (empty($auth)) {
 			return $RES->withJSON([
+				'data' => null,
 				'meta' => [ 'detail' => 'Invalid Request [COP-022]' ]
 			], 403);
 		}
@@ -39,7 +40,8 @@ class Profile extends \App\Controller\Base
 		$tok = $dbc_auth->fetchRow($sql, $arg);
 		if (empty($tok)) {
 			return $RES->withJSON([
-				'meta' => ['detail' => 'Invalid Token [COP#030]' ]
+				'data' => null,
+				'meta' => ['detail' => 'Invalid Token [COP-030]' ]
 			], 400);
 		}
 
@@ -52,7 +54,8 @@ class Profile extends \App\Controller\Base
 		$Contact = $dbc_auth->fetchRow($sql, $arg);
 		if (empty($Contact['id'])) {
 			return $RES->withJSON([
-				'meta' => ['detail' => 'Invalid Token [COP#033]' ],
+				'data' => null,
+				'meta' => ['detail' => 'Invalid Token [COP-033]' ],
 			], 400);
 		}
 

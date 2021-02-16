@@ -24,11 +24,11 @@ SQL;
 		];
 		$Contact = $this->_container->DBC_AUTH->fetchRow($sql, $arg);
 		if (empty($Contact['id'])) {
-			_exit_html_err('Invalid Request [CAV-037]', 400);
+			_err_exit_html('Invalid Request [CAV-037]', 400);
 		}
 		$Contact_Base = $this->_container->DBC_MAIN->fetchRow('SELECT id, email, phone FROM contact WHERE id = :c0', $arg);
 		if (empty($Contact_Base['id'])) {
-			_exit_html_err('Invalid Request [CAV-040]', 400);
+			_err_exit_html('Invalid Request [CAV-040]', 400);
 		}
 
 		switch ($act['intent']) {
@@ -39,7 +39,7 @@ SQL;
 			// OK
 			break;
 		default:
-			_exit_html_err('Invalid Request [CAV-042]', 400);
+			_err_exit_html('Invalid Request [CAV-042]', 400);
 		}
 
 		// Output Data
@@ -284,7 +284,7 @@ SQL;
 		// Test Mode
 		if ($_ENV['test']) {
 
-			$ret_args['r'] = "https://{$_SERVER['SERVER_NAME']}/auth/once";
+			$ret_args['r'] = '/auth/once';
 			$reg_args['a'] = $acs['id'];
 
 		} else {
@@ -385,16 +385,16 @@ SQL;
 		$act = new \App\Auth_Context_Ticket($this->_container->DBC_AUTH);
 		$act->loadBy('id', $_GET['_']);
 		if (empty($act['id'])) {
-			_exit_html_err('Invalid Request [CAV-356]', 400);
+			_err_exit_html('Invalid Request [CAV-356]', 400);
 		}
 
 		$act = json_decode($act['meta'], true);
 		if (empty($act)) {
-			_exit_html_err('Invalid Request [CAV-360]', 400);
+			_err_exit_html('Invalid Request [CAV-360]', 400);
 		}
 
 		if (empty($act['contact']['id'])) {
-			_exit_html_err('Invalid Request [CAV-365]', 400);
+			_err_exit_html('Invalid Request [CAV-365]', 400);
 		}
 
 		switch ($act['intent']) {
@@ -402,7 +402,7 @@ SQL;
 				// OK
 			break;
 			default:
-				_exit_html_err('Invalid Request [CAV-374]', 400);
+				_err_exit_html('Invalid Request [CAV-374]', 400);
 		}
 
 		// Init Verification Data

@@ -48,7 +48,7 @@ class Done extends \App\Controller\Base
 				case 'cav255':
 				case 'cac190':
 					$data['Page']['title'] = 'Email Verification';
-					$data['body'] = '<div class="alert alert-danger">Email Verification Send Failure [CAV#255]</div><p>Please contact support</p>';
+					$data['body'] = '<div class="alert alert-danger">Email Verification Send Failure [CAV-255]</div><p>Please contact support</p>';
 				break;
 			}
 		}
