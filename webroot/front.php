@@ -24,14 +24,12 @@ unset($con['phpErrorHandler']);
 
 // Database Connections
 $con['DBC_AUTH'] = function() {
-	// $url = getenv('OPENTHC_POSTGRES_URL'):
-	$cfg = \OpenTHC\Config::get('database/auth');
+	$cfg = \OpenTHC\Config::get('database_auth');
 	$dsn = sprintf('pgsql:host=%s;dbname=%s', $cfg['hostname'], $cfg['database']);
 	return new \Edoceo\Radix\DB\SQL($dsn, $cfg['username'], $cfg['password']);
 };
 $con['DBC_MAIN'] = function() {
-	// $url = getenv('OPENTHC_POSTGRES_URL'):
-	$cfg = \OpenTHC\Config::get('database/main');
+	$cfg = \OpenTHC\Config::get('database_main');
 	$dsn = sprintf('pgsql:host=%s;dbname=%s', $cfg['hostname'], $cfg['database']);
 	return new \Edoceo\Radix\DB\SQL($dsn, $cfg['username'], $cfg['password']);
 };
@@ -90,6 +88,9 @@ $app->group('/account', function() {
 	$this->get('/create', 'App\Controller\Account\Create');
 	$this->post('/create', 'App\Controller\Account\Create:post')->setName('account/create');
 
+	$this->get('/create/company', 'App\Controller\Account\Company');
+	$this->post('/create/company', 'App\Controller\Account\Company:post');
+
 	$this->get('/password', 'App\Controller\Account\Password');
 	$this->post('/password', 'App\Controller\Account\Password:post')->setName('account/password/update');
 
@@ -105,7 +106,7 @@ $app->get('/done', 'App\Controller\Done')
 
 
 // Enable Test Options
-// $app->add('App\Middleware\TestMode');
+$app->add('App\Middleware\TestMode');
 
 
 // Custom Middleware?

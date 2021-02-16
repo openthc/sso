@@ -167,7 +167,7 @@ class Init extends \App\Controller\Base
 
 		// Requested Service ? DEFAULT
 		if (empty($act_data['service'])) {
-			$cfg = \OpenTHC\Config::get('openthc/app/hostname');
+			$cfg = \OpenTHC\Config::get('openthc_app/hostname');
 			if (!empty($cfg)) {
 				// Set Default Service?
 				$act_data['service'] = $cfg;

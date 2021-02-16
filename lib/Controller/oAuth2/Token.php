@@ -12,7 +12,7 @@ class Token extends \App\Controller\Base
 
 	function __invoke($REQ, $RES, $ARG)
 	{
-		$this->_cfg = \OpenTHC\Config::get('openthc/sso');
+		$this->_cfg = \OpenTHC\Config::get('openthc_sso');
 
 		$RES = $this->verifyRequest($REQ, $RES);
 		if (200 != $RES->getStatusCode()) {
