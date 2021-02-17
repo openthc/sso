@@ -233,6 +233,7 @@ class Open extends \App\Controller\Base
 
 			} catch (\Exception $e) {
 				// Ignore
+				$ret_args['e'] = 'cao236';
 				$ret_args['s'] = 'f';
 			}
 

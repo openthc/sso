@@ -9,8 +9,6 @@ class Authorize extends \App\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{
-		unset($_SESSION['email']);
-
 		$this->verifyRequest();
 
 		$dbc = $this->_container->DBC_AUTH;

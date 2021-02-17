@@ -118,9 +118,9 @@ class Create extends \App\Controller\Base
 			case 404:
 				// For Sure New
 				$Company['id'] = _ulid();
-				$Company['cre'] = $_SESSION['account-create']['region'];
+				// $Company['cre'] = $_SESSION['account-create']['region'];
 				$Company['name'] = $_POST['company-name'];
-				$Company['type'] = 'X';
+				$Company['type'] = '-system-';
 				$Company['hash'] = md5(json_encode($Company));
 
 				$dbc_main->insert('company', $Company); // @todo Make call to DIR->create();
