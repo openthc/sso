@@ -4,8 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="initial-scale=1, user-scalable=yes">
 <meta name="application-name" content="OpenTHC">
-<link rel="stylesheet" href="https://cdn.openthc.com/bootstrap/4.4.1/bootstrap.css" integrity="sha256-L/W5Wfqfa0sdBNIKN9cG6QA5F2qx4qICmU2VgLruv9Y=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.openthc.com/bootstrap/4.6.0/bootstrap.css" integrity="sha256-T/zFmO5s/0aSwc6ics2KLxlfbewyRz6UNw1s3Ppf5gE=" crossorigin="anonymous">
 <style>
+body {
+	display: flex;
+	flex-direction: column;
+	height: 100vh;
+	width: 100%;
+}
+main {
+	flex: 1 1 100%;
+}
 footer {
 	background: #343a40;
 	border: 1px solid #343a40;
@@ -68,10 +77,10 @@ kW46bNYGGhoOUlMxPAj8LvA9sSLNes3BiiyrVpbbzN0Ao/BOl9oKhIxBpODhNVbcBJcCoNIZPAOuBHOA
 	</div>
 {% endif %}
 
-<div style="min-height: 90vh;">
+<main>
 {% block body %}
 {% endblock %}
-</div>
+</main>
 
 <footer>
 	<div><a href="https://openthc.com/">openthc.com</a></div>
@@ -88,7 +97,7 @@ kW46bNYGGhoOUlMxPAj8LvA9sSLNes3BiiyrVpbbzN0Ao/BOl9oKhIxBpODhNVbcBJcCoNIZPAOuBHOA
 {% block foot_script %}
 <script src="https://cdn.openthc.com/jquery/3.4.1/jquery.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <script src="https://cdn.openthc.com/jqueryui/1.12.1/jqueryui.js" integrity="sha256-KM512VNnjElC30ehFwehXjx1YCHPiQkOPmqnrWtpccM=" crossorigin="anonymous"></script>
-<script src="https://cdn.openthc.com/bootstrap/4.4.1/bootstrap.js" integrity="sha256-OUFW7hFO0/r5aEGTQOz9F/aXQOt+TwqI1Z4fbVvww04=" crossorigin="anonymous"></script>
+<script src="https://cdn.openthc.com/bootstrap/4.6.0/bootstrap.js" integrity="sha256-sCElQ8xaSgoxwbWp0eiXMmGZIRa0z94+ffzzO06BqXs=" crossorigin="anonymous"></script>
 {% endblock %}
 
 </body>
