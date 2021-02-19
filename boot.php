@@ -4,7 +4,7 @@
  */
 
 define('APP_ROOT', __DIR__);
-define('APP_BUILD', '420.21.007');
+define('APP_BUILD', '421.07.050');
 
 error_reporting(E_ALL & ~E_NOTICE);
 
@@ -15,4 +15,4 @@ require_once(APP_ROOT . '/lib/err.php');
 
 _error_handler_init();
 
-\OpenTHC\Config::init(__DIR__);
+\OpenTHC\Config::init(APP_ROOT);

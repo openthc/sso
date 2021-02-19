@@ -19,6 +19,7 @@
 		"ext-sockets": "*",
 		"edoceo/lowline_php": "dev-master",
 		"edoceo/radix": "dev-master",
+		"geoip2/geoip2": "2.11.0",
 		"league/oauth2-client": "2.6.0",
 		"openthc/common": "dev-master"
 	},
