@@ -21,7 +21,7 @@ class Response extends \Slim\Http\Response
 		return $obj1;
 	}
 
-	function withJSON($data, $code=null, $flag=null)
+	function withJSON($data, $code=200, $flag=null)
 	{
 		if (empty($flag)) {
 			$flag = JSON_NUMERIC_CHECK | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE;
