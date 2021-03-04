@@ -86,7 +86,10 @@ class Password extends \App\Controller\Base
 
 			$_SESSION['email'] = $ARG['contact']['username'];
 
-			return $RES->withRedirect('/auth/open?e=cap080');
+			return $RES->withRedirect('/auth/open?' . http_build_query([
+				'e' => 'cap080',
+				'service' => $ARG['service'],
+			]));
 
 			break;
 		}
