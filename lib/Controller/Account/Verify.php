@@ -290,7 +290,7 @@ SQL;
 		} else {
 
 			$arg = [];
-			$arg['to'] = $ARG['contact']['email'];
+			$arg['address_target'] = $ARG['contact']['email'];
 			$arg['file'] = 'sso/contact-email-verify.tpl';
 			$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
 			$arg['data']['mail_subject'] = 'Email Verification';

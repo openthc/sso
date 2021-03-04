@@ -24,16 +24,22 @@ class Once extends \App\Controller\Base
 		}
 
 		$dbc_auth = $this->_container->DBC_AUTH;
-		$tmp = $dbc_auth->fetchOne('SELECT meta FROM auth_context_ticket WHERE id = :t', [ ':t' => $_GET['_']]);
-		if (empty($tmp)) {
+		$chk = $dbc_auth->fetchRow('SELECT expires_at, meta FROM auth_context_ticket WHERE id = :t', [ ':t' => $_GET['_']]);
+		if (empty($chk['meta'])) {
+			$dbc_auth->query('DELETE FROM auth_context_ticket WHERE id = :t0', [ ':t0' => $_GET['_'] ]);
 			return $RES->withRedirect('/done?e=cao066');
 		}
-		$act = json_decode($tmp, true);
+		$act = json_decode($chk['meta'], true);
 		if (empty($act)) {
 			$dbc_auth->query('DELETE FROM auth_context_ticket WHERE id = :t0', [ ':t0' => $_GET['_'] ]);
 			return $RES->withRedirect('/done?e=cao077');
 		}
+		// if (strtotime($act['expires_at']) < $_SERVER['REQUEST_TIME']) {
+		// 	$dbc->query('DELETE FROM auth_context_ticket WHERE id = :t0', $act['id']);
+		// 	__exit_html('<h1>Invalid Ticket [CAO-028]</h2><p>The link you followed has expired</p>', 400);
+		// }
 
+		// Intention Router
 		switch ($act['intent']) {
 			case 'account-create':
 				return $this->accountCreate($RES, $act);
@@ -51,14 +57,10 @@ class Once extends \App\Controller\Base
 
 		$data = $this->data;
 
-		// if (strtotime($act['ts_expires']) < $_SERVER['REQUEST_TIME']) {
-			// $dbc->query('DELETE FROM auth_context_ticket WHERE id = :t0', $act['id']);
-			// __exit_html('<h1>Invalid Ticket [CAO-028]</h2><p>The link you followed has expired</p>', 400);
-		// }
-
 		$data['Page']['title'] = 'Error';
 		$data['body'] = '<div class="alert alert-danger">Invalid Request [CAO-061]</div>';
 		$RES = $this->_container->view->render($RES, 'page/done.html', $data);
+
 		return $RES->withStatus(400);
 
 	}

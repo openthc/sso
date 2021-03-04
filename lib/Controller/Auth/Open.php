@@ -129,6 +129,11 @@ class Open extends \App\Controller\Base
 				],
 				'company' => null,
 				'company_list' => [],
+				'feature' => [
+					'javascript' => $_POST['js-enabled'],
+					'date-input' => $_POST['date-enabled'],
+					'time-input' => $_POST['time-enabled']
+				],
 				'service' => $_GET['service'],
 				'service_list' => [],
 			];
@@ -140,7 +145,7 @@ class Open extends \App\Controller\Base
 				switch ($act_prev['intent']) {
 					case 'oauth-authorize':
 						$act_data['intent'] = $act_prev['intent'];
-						$act_data['serivce'] = $act_prev['service'];
+						$act_data['service'] = $act_prev['service'];
 						$act_data['oauth-request'] = $act_prev['oauth-request'];
 				}
 			}
