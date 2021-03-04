@@ -58,7 +58,6 @@ class Init extends \App\Controller\Base
 		// Contact Globally Disabled?
 		switch ($Contact['stat']) {
 			case 100:
-			break;
 			case 200:
 				// OK
 			break;
@@ -152,40 +151,34 @@ class Init extends \App\Controller\Base
 		$dbc_auth = $this->_container->DBC_AUTH;
 		$dbc_auth->insert('auth_context_ticket', $act);
 
-		$ping = sprintf('https://%s/auth/once?_=%s', $_SERVER['SERVER_NAME'], $act['id']);
-
 		// No Return? Load Default
 		$ret = '/account';
 		switch ($act_data['intent']) {
 			case 'account-open':
-				// Default
+
+				// Requested Service ? DEFAULT
+				if (empty($act_data['service'])) {
+					$cfg = \OpenTHC\Config::get('openthc_app/hostname');
+					if (!empty($cfg)) {
+						$act_data['service'] = $cfg;
+					}
+				}
+
+				if (!empty($act_data['service'])) {
+					// @todo Lookup Service in Database before building this link?
+					// So it's only going against known services
+					$ret = sprintf('https://%s/auth/back?ping={PING}', $act_data['service']);
+				}
+
+				// Place Ping Back Token
+				$ping = sprintf('https://%s/auth/once?_=%s', $_SERVER['SERVER_NAME'], $act['id']);
+				$ret = str_replace('{PING}', $ping, $ret);
+
 			break;
 			case 'oauth-authorize':
 				$ret = '/oauth2/authorize?' . http_build_query($act_data['oauth-request']);
 			break;
 		}
-
-		// Requested Service ? DEFAULT
-		// if (empty($act_data['service'])) {
-		// 	$cfg = \OpenTHC\Config::get('openthc_app/hostname');
-		// 	if (!empty($cfg)) {
-		// 		// Set Default Service?
-		// 		$act_data['service'] = $cfg;
-		// 	}
-		// }
-
-		if (!empty($act_data['service'])) {
-			// @todo Lookup Service in Database before building this link?
-			// So it's only going against known services
-			$ret = sprintf('https://%s/auth/back?ping={PING}', $act_data['service']);
-		}
-
-		//if (empty($ret)) {
-		//	$ret = sprintf('https://%s/auth/back?ping={PING}', $cfg);
-		//}
-
-		// Place Ping Back Token
-		$ret = str_replace('{PING}', $ping, $ret);
 
 		return $RES->withRedirect($ret);
 

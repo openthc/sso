@@ -94,14 +94,20 @@ class Open extends \App\Controller\Base
 			$username = strtolower(trim($_POST['username']));
 			$username = \Edoceo\Radix\Filter::email($username);
 			if (empty($username)) {
-				return $RES->withRedirect('/auth/open?e=cao049');
+				return $RES->withRedirect('/auth/open?' . http_build_query([
+					'_' => $_GET['_'],
+					'e' => 'cao049'
+				]));
 			}
 
 			$_SESSION['email'] = $username;
 
 			$password = trim($_POST['password']);
 			if (empty($password) || (strlen($password) < 8) || (strlen($password) > 60)) {
-				return $RES->withRedirect('/auth/open?e=cao069');
+				return $RES->withRedirect('/auth/open?' . http_build_query([
+					'_' => $_GET['_'],
+					'e' => 'cao069'
+				]));
 			}
 
 			// Find Contact
@@ -111,11 +117,17 @@ class Open extends \App\Controller\Base
 			$chk = $dbc->fetchRow($sql, $arg);
 
 			if (empty($chk['id'])) {
-				return $RES->withRedirect('/auth/open?e=cao093');
+				return $RES->withRedirect('/auth/open?' . http_build_query([
+					'_' => $_GET['_'],
+					'e' => 'cao093'
+				]));
 			}
 
 			if (!password_verify($password, $chk['password'])) {
-				return $RES->withRedirect('/auth/open?e=cao093');
+				return $RES->withRedirect('/auth/open?' . http_build_query([
+					'_' => $_GET['_'],
+					'e' => 'cao093'
+				]));
 			}
 
 			// Next Authentication Token
