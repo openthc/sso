@@ -49,7 +49,7 @@ class Profile extends \App\Controller\Base
 		$tok['meta'] = json_decode($tok['meta'], true);
 
 		// Auth/Contact
-		$sql = 'SELECT id, username FROM auth_contact WHERE id = :c0';
+		$sql = 'SELECT id, stat, flag, username FROM auth_contact WHERE id = :c0';
 		$arg = [ ':c0' => $tok['meta']['contact_id'] ];
 		$Contact = $dbc_auth->fetchRow($sql, $arg);
 		if (empty($Contact['id'])) {
@@ -63,13 +63,17 @@ class Profile extends \App\Controller\Base
 
 		$Profile['Contact']['id'] = $Contact['id'];
 		$Profile['Contact']['username'] = $Contact['username'];
+		$Profile['Contact']['stat'] = $Contact['stat'];
+		$Profile['Contact']['flag'] = $Contact['flag'];
 
 		// Auth/Company
-		$sql = 'SELECT id, name FROM auth_company WHERE id = ?';
+		$sql = 'SELECT id, stat, flag, name FROM auth_company WHERE id = ?';
 		$arg = [ $tok['meta']['company_id'] ];
 		$res = $dbc_auth->fetchRow($sql, $arg);
 		if (!empty($res['id'])) {
 			$Profile['Company']['id'] = $res['id'];
+			$Profile['Company']['stat'] = $res['stat'];
+			$Profile['Company']['flag'] = $res['flag'];
 			$Profile['Company']['name'] = $res['name'];
 		}
 		$RES = $RES->withAttribute('Company', $Company);
