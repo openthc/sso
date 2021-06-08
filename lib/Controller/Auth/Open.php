@@ -276,6 +276,7 @@ SELECT auth_company.id
 FROM auth_company
 JOIN auth_company_contact ON auth_company.id = auth_company_contact.company_id
 WHERE auth_company_contact.contact_id = :c0
+  AND auth_company_contact.stat = 200
 ORDER BY auth_company_contact.stat, auth_company_contact.created_at ASC
 SQL;
 
