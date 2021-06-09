@@ -24,12 +24,12 @@ unset($con['phpErrorHandler']);
 
 // Database Connections
 $con['DBC_AUTH'] = function() {
-	$cfg = \OpenTHC\Config::get('database_auth');
+	$cfg = \OpenTHC\Config::get('database/auth');
 	$dsn = sprintf('pgsql:host=%s;dbname=%s', $cfg['hostname'], $cfg['database']);
 	return new \Edoceo\Radix\DB\SQL($dsn, $cfg['username'], $cfg['password']);
 };
 $con['DBC_MAIN'] = function() {
-	$cfg = \OpenTHC\Config::get('database_main');
+	$cfg = \OpenTHC\Config::get('database/main');
 	$dsn = sprintf('pgsql:host=%s;dbname=%s', $cfg['hostname'], $cfg['database']);
 	return new \Edoceo\Radix\DB\SQL($dsn, $cfg['username'], $cfg['password']);
 };
@@ -49,7 +49,6 @@ $app->group('/auth', function() {
 	$this->post('/open', 'App\Controller\Auth\Open:post')->setName('auth/open/post');
 
 	$this->get('/once', 'App\Controller\Auth\Once');
-	$this->post('/once', 'App\Controller\Auth\Once:post');
 
 	$this->map(['GET','POST'], '/init', 'App\Controller\Auth\Init');
 

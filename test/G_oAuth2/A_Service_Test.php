@@ -11,7 +11,7 @@ class A_oAuth_Test extends \Test\Base_Case
 	{
 		$sso_ua = $this->_ua();
 
-		$cfg = \OpenTHC\Config::get('openthc_app/hostname');
+		$cfg = \OpenTHC\Config::get('openthc/app/hostname');
 		$this->assertNotEmpty($cfg);
 
 		$app_ua = new \GuzzleHttp\Client(array(
@@ -39,7 +39,7 @@ class A_oAuth_Test extends \Test\Base_Case
 	{
 		$sso_ua = $this->_ua();
 
-		$cfg = \OpenTHC\Config::get('openthc_cic/hostname');
+		$cfg = \OpenTHC\Config::get('openthc/cic/hostname');
 		$cic_ua = new \GuzzleHttp\Client(array(
 			'base_uri' => sprintf('https://%s/', $cfg),
 			'allow_redirects' => false,

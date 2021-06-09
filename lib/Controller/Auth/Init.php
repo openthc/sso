@@ -1,6 +1,6 @@
 <?php
 /**
- * Initialize an Authenticated Session
+ * Initialise an Authenticated Session
  */
 
 namespace App\Controller\Auth;
@@ -60,10 +60,10 @@ class Init extends \App\Controller\Base
 			case 100:
 			case 200:
 				// OK
-			break;
+				break;
 			case 410:
 				_err_exit_html('Invalid Account [CAI-049]', 403);
-			break;
+				break;
 		}
 
 		// Contact has Disabled Flags?
@@ -101,11 +101,11 @@ class Init extends \App\Controller\Base
 		switch (count($act_data['company_list'])) {
 			case 0:
 				_err_exit_html('<h1>Unexpected Session State [CAI-051]</h1><p>You may want to <a href="/auth/shut">close your session</a> and try again.</p><p>If the issue continues, contact support</p>', 400);
-			break;
+				break;
 			case 1:
 				$Company = $act_data['company_list'][0];
 				return $this->_create_ticket_and_redirect($RES, $act_data, $Contact, $Company);
-			break;
+				break;
 			default:
 
 				// User with Many Company Links AND they picked one
@@ -158,7 +158,7 @@ class Init extends \App\Controller\Base
 
 				// Requested Service ? DEFAULT
 				if (empty($act_data['service'])) {
-					$cfg = \OpenTHC\Config::get('openthc_app/hostname');
+					$cfg = \OpenTHC\Config::get('openthc/app/hostname');
 					if (!empty($cfg)) {
 						$act_data['service'] = $cfg;
 					}
@@ -174,10 +174,10 @@ class Init extends \App\Controller\Base
 				$ping = sprintf('https://%s/auth/once?_=%s', $_SERVER['SERVER_NAME'], $act['id']);
 				$ret = str_replace('{PING}', $ping, $ret);
 
-			break;
+				break;
 			case 'oauth-authorize':
 				$ret = '/oauth2/authorize?' . http_build_query($act_data['oauth-request']);
-			break;
+				break;
 		}
 
 		return $RES->withRedirect($ret);
