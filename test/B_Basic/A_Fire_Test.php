@@ -5,8 +5,11 @@
 
 namespace Test\B_Basic;
 
-class Fire_Test extends \Test\Base_Case
+class A_Fire_Test extends \Test\Base_Case
 {
+	/**
+	 *
+	 */
 	function test_auth_open()
 	{
 		$c = $this->_ua();
@@ -32,6 +35,9 @@ class Fire_Test extends \Test\Base_Case
 		$this->assertMatchesRegularExpression('/Invalid email, please use a proper email address/', $this->raw);
 	}
 
+	/**
+	 *
+	 */
 	function test_auth_open_reset()
 	{
 		$c = $this->_ua();
@@ -57,6 +63,9 @@ class Fire_Test extends \Test\Base_Case
 
 	}
 
+	/**
+	 *
+	 */
 	function test_auth_once()
 	{
 		$c = $this->_ua();
@@ -64,6 +73,9 @@ class Fire_Test extends \Test\Base_Case
 		$res = $this->assertValidResponse($res, 400, 'text/plain');
 	}
 
+	/**
+	 *
+	 */
 	function test_auth_ping()
 	{
 		$c = $this->_ua();
@@ -71,6 +83,9 @@ class Fire_Test extends \Test\Base_Case
 		$res = $this->assertValidResponse($res, 200, 'application/json');
 	}
 
+	/**
+	 *
+	 */
 	function test_auth_init()
 	{
 		$c = $this->_ua();

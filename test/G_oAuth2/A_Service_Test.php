@@ -5,8 +5,11 @@
 
 namespace Test\G_oAuth2;
 
-class A_oAuth_Test extends \Test\Base_Case
+class A_Service_Test extends \Test\Base_Case
 {
+	/**
+	 *
+	 */
 	function test_auth_pass_app()
 	{
 		$sso_ua = $this->_ua();
@@ -35,6 +38,9 @@ class A_oAuth_Test extends \Test\Base_Case
 
 	}
 
+	/**
+	 *
+	 */
 	function test_auth_pass_cic()
 	{
 		$sso_ua = $this->_ua();
@@ -90,7 +96,7 @@ class A_oAuth_Test extends \Test\Base_Case
 		// GET /oauth2/authorize
 		$res = $sso_ua->get($url);
 		$this->assertValidResponse($res);
-		file_put_contents(APP_ROOT . '/test_auth_pass.html', $this->raw);
+		// file_put_contents(APP_ROOT . '/test_auth_pass.html', $this->raw);
 
 		// Should be the Verify Page?
 		// NO!  That should have been done in a previous test
@@ -107,17 +113,26 @@ class A_oAuth_Test extends \Test\Base_Case
 		$this->assertValidResponse($res);
 		// print_r($this->raw);
 
-		$link_continue = preg_match('/href="(https.+)">Continue/', $this->raw, $m) ? $m[1] : null;
+		$link_continue = preg_match('/href="(https[^"]+)">Continue/', $this->raw, $m) ? $m[1] : null;
 		$link_continue = html_entity_decode($link_continue, ENT_COMPAT | ENT_HTML5, 'utf-8');
 		// var_dump($link_continue);
 		$this->assertNotEmpty($link_continue);
 		$this->assertMatchesRegularExpression('/https:.+\/auth\/back\?code=.+state=.+/', $link_continue);
 
+		// CIC /auth/back
 		$res = $cic_ua->get($link_continue);
 		$this->assertValidResponse($res, 302);
 		$url = $res->getHeaderLine('location');
 		var_dump($url);
-		$this->assertEquals('/dashboard', $url);
+
+		// CIC /auth/init
+		$res = $cic_ua->get($link_continue);
+		$this->assertValidResponse($res, 302);
+		$url = $res->getHeaderLine('location');
+		var_dump($url);
+
+		// CIC Dashboard!
+		// $this->assertEquals('/dashboard', $url);
 
 		// Should Get Authenticated but then Rejected by CIC because of permissions
 		$res = $cic_ua->get($url);

@@ -9,6 +9,9 @@ class Base_Case extends \PHPUnit\Framework\TestCase
 {
 	protected $_pid = null;
 
+	/**
+	 *
+	 */
 	function __construct($name = null, array $data = [], $dataName = '')
 	{
 		parent::__construct($name, $data, $dataName);
@@ -42,7 +45,9 @@ class Base_Case extends \PHPUnit\Framework\TestCase
 
 	}
 
-
+	/**
+	 *
+	 */
 	function assertValidResponse($res, $code=200, $type_expect='text/html', $dump=null)
 	{
 		$this->raw = $res->getBody()->getContents();

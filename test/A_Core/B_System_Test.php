@@ -2,9 +2,9 @@
 /**
  */
 
-namespace Test\A_System;
+namespace Test\A_Core;
 
-class A_System_Test extends \Test\Base_Case
+class B_System_Test extends \Test\Base_Case
 {
 	function test_system()
 	{

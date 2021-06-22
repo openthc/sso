@@ -3,9 +3,9 @@
  * Base Class for API Testing
  */
 
-namespace Test\A_System;
+namespace Test\A_Core;
 
-class B_Site_Test extends \Test\Base_Case
+class C_Site_Test extends \Test\Base_Case
 {
 	function test_page_all()
 	{
