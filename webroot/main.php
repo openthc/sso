@@ -108,8 +108,11 @@ $app->group('/verify', function() {
 	$this->get('/email', 'App\Controller\Verify\Email');
 	$this->post('/email', 'App\Controller\Verify\Email:post');
 
-	$this->get('/region', 'App\Controller\Verify\Region');
-	$this->post('/region', 'App\Controller\Verify\Region:post');
+	$this->get('/location', 'App\Controller\Verify\Location');
+	$this->post('/location', 'App\Controller\Verify\Location:post');
+
+	$this->get('/timezone', 'App\Controller\Verify\Timezone');
+	$this->post('/timezone', 'App\Controller\Verify\Timezone:post');
 
 	$this->get('/phone', 'App\Controller\Verify\Phone');
 	$this->post('/phone', 'App\Controller\Verify\Phone:post');
@@ -120,7 +123,7 @@ $app->group('/verify', function() {
 	$this->get('/license', 'App\Controller\Verify\License');
 	$this->post('/license', 'App\Controller\Verify\License:post');
 
-});
+})->add('OpenTHC\Middleware\Session');
 
 
 // the Done/Stop Page

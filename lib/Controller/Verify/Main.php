@@ -6,20 +6,22 @@
 
 namespace App\Controller\Verify;
 
-class Main extends \App\Controller\Base
+class Main extends \App\Controller\Verify\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{
-		$dbc_auth = $this->_container->DBC_AUTH;
-		$chk = $dbc_auth->fetchRow('SELECT expires_at, meta FROM auth_context_ticket WHERE id = :t', [ ':t' => $_GET['_']]);
-		if (empty($chk['meta'])) {
-			$dbc_auth->query('DELETE FROM auth_context_ticket WHERE id = :t0', [ ':t0' => $_GET['_'] ]);
-			return $RES->withRedirect('/done?' . http_build_query([
-				'_' => $_GET['_'],
-				'e' => 'cao066'
-			]));
+		if (empty($_SESSION['verify'])) {
+			$_SESSION['verify'] = [
+				'iso3166-1',
+				'iso3166-2',
+				'tz',
+				'phone',
+				'company',
+				'license',
+			];
 		}
-		$act = json_decode($chk['meta'], true);
+
+		$act = $this->loadTicket();
 
 		switch ($act['intent']) {
 			case 'account-verify':
@@ -41,7 +43,7 @@ class Main extends \App\Controller\Base
 	{
 		$dbc_auth = $this->_container->DBC_AUTH;
 
-		$CT0 = $dbc_auth->fetchRow('SELECT id, flag, stat FROM auth_contact WHERE id = :ct0', [
+		$CT0 = $dbc_auth->fetchRow('SELECT id, flag, stat, iso3166, tz FROM auth_contact WHERE id = :ct0', [
 			':ct0' => $act['contact']['id']
 		]);
 
@@ -51,12 +53,13 @@ class Main extends \App\Controller\Base
 		}
 
 		if (empty($CT0['iso3166'])) {
-			return $RES->withRedirect(sprintf('/verify/region?_=%s', $_GET['_']));
+			unset($_SESSION['iso3166_1']);
+			unset($_SESSION['iso3166_2']);
+			return $RES->withRedirect(sprintf('/verify/location?_=%s', $_GET['_']));
 		}
 
 		if (empty($CT0['tz'])) {
-			__exit_text('Verify Timezone');
-			return $RES->withRedirect(sprintf('/verify/region?_=%s#tz', $_GET['_']));
+			return $RES->withRedirect(sprintf('/verify/timezone?_=%s#tz', $_GET['_']));
 		}
 
 		if (0 == ($CT0['flag'] & \App\Contact::FLAG_PHONE_GOOD)) {

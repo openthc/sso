@@ -12,4 +12,14 @@ class B_System_Test extends \Test\Base_Case
 		$this->assertEmpty($x);
 
 	}
+
+	function test_iso()
+	{
+		$f = '/usr/share/iso-codes/json/iso_3166-1.json';
+		$this->assertTrue(is_file($f));
+
+		$f = '/usr/share/iso-codes/json/iso_3166-2.json';
+		$this->assertTrue(is_file($f));
+
+	}
 }
