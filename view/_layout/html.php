@@ -68,16 +68,18 @@ kW46bNYGGhoOUlMxPAj8LvA9sSLNes3BiiyrVpbbzN0Ao/BOl9oKhIxBpODhNVbcBJcCoNIZPAOuBHOA
 
 </nav>
 
-
-{% if Page.flash %}
+<?php
+if (!empty($data['Page']['flash'])) {
+?>
 	<div class="container mt-4">
-	{{ Page.flash|raw }}
+		<?= $data['Page']['flash'] ?>
 	</div>
-{% endif %}
+<?php
+}
+?>
 
 <main>
-{% block body %}
-{% endblock %}
+<?= $this->body ?>
 </main>
 
 <footer>
@@ -86,17 +88,18 @@ kW46bNYGGhoOUlMxPAj8LvA9sSLNes3BiiyrVpbbzN0Ao/BOl9oKhIxBpODhNVbcBJcCoNIZPAOuBHOA
 	<div><a href="https://openthc.com/about/privacy">Privacy</a></div>
 </footer>
 
-{% if Site.test %}
+<?php
+if (!empty($data['Site']['test'])) {
+?>
 	<div id="alert-test-mode">
 		<div class="alert alert-danger">TEST MODE</div>
 	</div>
-{% endif %}
+<?php
+}
+?>
 
-{% block foot_script %}
 <script src="https://cdn.openthc.com/jquery/3.4.1/jquery.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-<script src="https://cdn.openthc.com/jqueryui/1.12.1/jqueryui.js" integrity="sha256-KM512VNnjElC30ehFwehXjx1YCHPiQkOPmqnrWtpccM=" crossorigin="anonymous"></script>
 <script src="https://cdn.openthc.com/bootstrap/4.6.0/bootstrap.js" integrity="sha256-sCElQ8xaSgoxwbWp0eiXMmGZIRa0z94+ffzzO06BqXs=" crossorigin="anonymous"></script>
-{% endblock %}
-
+<?= $this->foot_script ?>
 </body>
 </html>
