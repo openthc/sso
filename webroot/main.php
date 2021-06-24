@@ -8,9 +8,9 @@ $e0 = error_get_last();
 // Load Bootstrapper
 require_once('../boot.php');
 
-_error_handler_init([
-	'hint' => '<h2>You can <a href="javascript:history.go(-1);">go back</a> and try again, or <a href="/auth/open">sign-in again</a>.</h2>'
-]);
+// _error_handler_init([
+// 	'hint' => '<h2>You can <a href="javascript:history.go(-1);">go back</a> and try again, or <a href="/auth/open">sign-in again</a>.</h2>'
+// ]);
 
 $cfg = [];
 // $cfg['debug'] = true;
@@ -83,6 +83,7 @@ $app->group('/oauth2', function() {
 $app->group('/account', function() {
 
 	$this->get('', 'App\Controller\Account\Profile');
+	$this->post('', 'App\Controller\Account\Profile:post');
 
 	$this->get('/create', 'App\Controller\Account\Create');
 	$this->post('/create', 'App\Controller\Account\Create:post')->setName('account/create');
@@ -93,10 +94,33 @@ $app->group('/account', function() {
 	$this->get('/password', 'App\Controller\Account\Password');
 	$this->post('/password', 'App\Controller\Account\Password:post')->setName('account/password/update');
 
-	$this->get('/verify', 'App\Controller\Account\Verify')->setName('account/verify');
-	$this->post('/verify', 'App\Controller\Account\Verify:post')->setName('account/verify/update');
-
 })->add('OpenTHC\Middleware\Session');
+
+
+// Verification Steps
+$app->group('/verify', function() {
+
+	$this->get('', 'App\Controller\Verify\Main');
+
+	// @deprecated
+	// $this->post('', 'App\Controller\Account\Verify:post'); // ->setName('account/verify/update');
+
+	$this->get('/email', 'App\Controller\Verify\Email');
+	$this->post('/email', 'App\Controller\Verify\Email:post');
+
+	$this->get('/region', 'App\Controller\Verify\Region');
+	$this->post('/region', 'App\Controller\Verify\Region:post');
+
+	$this->get('/phone', 'App\Controller\Verify\Phone');
+	$this->post('/phone', 'App\Controller\Verify\Phone:post');
+
+	$this->get('/company', 'App\Controller\Verify\Company');
+	$this->post('/company', 'App\Controller\Verify\Company:post');
+
+	$this->get('/license', 'App\Controller\Verify\License');
+	$this->post('/license', 'App\Controller\Verify\License:post');
+
+});
 
 
 // the Done/Stop Page
