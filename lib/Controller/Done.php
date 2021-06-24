@@ -53,7 +53,7 @@ class Done extends \App\Controller\Base
 			}
 		}
 
-		return $this->_container->view->render($RES, $file, $data);
+		return $RES->write( $this->render('done.php', $data) );
 
 	}
 }

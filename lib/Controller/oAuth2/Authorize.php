@@ -58,9 +58,7 @@ class Authorize extends \App\Controller\Base
 		$data['link_crypt'] = $link_crypt;
 		$data['link_crypt_save'] = $link_crypt_save;
 
-		$file = 'page/oauth2/authorize.html';
-
-		return $this->_container->view->render($RES, $file, $data);
+		return $RES->write( $this->render('oauth2/authorize.php', $data) );
 
 	}
 

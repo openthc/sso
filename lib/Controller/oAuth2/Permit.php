@@ -81,9 +81,7 @@ class Permit extends \App\Controller\Base
 		$data['Service'] = $Auth_Service;
 		$data['return_url'] = $ret;
 
-		$file = 'page/oauth2/permit.html';
-
-		return $this->_container->view->render($RES, $file, $data);
+		return $RES->write( $this->render('oauth2/permit.php', $data) );
 
 	}
 

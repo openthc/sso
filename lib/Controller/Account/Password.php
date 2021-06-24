@@ -1,6 +1,7 @@
 <?php
 /**
  * Set a Password
+ * @todo move to auth/once/password or something?
  */
 
 namespace App\Controller\Account;
@@ -14,7 +15,6 @@ class Password extends \App\Controller\Base
 	{
 		$ARG = $this->parseArg();
 
-		$file = 'page/account/password.html';
 		$data = $this->data;
 		$data['Page']['title'] = 'Set Password';
 		$data['auth_username'] = $ARG['contact']['username'];
@@ -36,7 +36,7 @@ class Password extends \App\Controller\Base
 			}
 		}
 
-		return $this->_container->view->render($RES, $file, $data);
+		return $RES->write( $this->render('account/password.php', $data) );
 
 	}
 

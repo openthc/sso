@@ -142,7 +142,8 @@ SQL;
 		$data = $this->data;
 		$data['Page']['title'] = 'Error';
 		$data['body'] = '<div class="alert alert-danger">Invalid Request [CAV-143]</div>';
-		$RES = $this->_container->view->render($RES, 'page/done.html', $data);
+
+		$RES = $RES->write( $this->render('done.php', $data) );
 		return $RES->withStatus(400);
 
 	}

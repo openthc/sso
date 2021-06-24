@@ -19,16 +19,12 @@ class Shut extends \OpenTHC\Controller\Auth\Shut
 			return $RES->withRedirect($_GET['r']);
 		}
 
-		$file = 'page/done.html';
-
 		$data = [];
 		$data['Page'] = [ 'title' => 'Session Closed' ];
 		$data['body'] = '<p>Your session has been closed</p><p>';
 		$data['foot'] = '<a class="btn btn-outline-secondary" href="/auth/open">Sign In Again</a>';
 
-		$RES = $this->_container->view->render($RES, $file, $data);
-
-		return $RES;
+		return $RES->write( $this->render('done.php', $data) );
 
 	}
 }

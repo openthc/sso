@@ -49,9 +49,7 @@ class Open extends \App\Controller\Base
 			$cfg = \OpenTHC\Config::get('google');
 			$data['Google']['recaptcha_public'] = $cfg['recaptcha-public'];
 
-			$file = 'page/auth/once-password-reset.html';
-
-			return $this->_container->view->render($RES, $file, $data);
+			return $RES->write( $this->render('auth/once-password-reset.php', $data) );
 
 			break;
 		}
@@ -73,9 +71,9 @@ class Open extends \App\Controller\Base
 			}
 		}
 
-		$file = 'page/auth/open.html';
+		$RES = $RES->write( $this->render('auth/open.php', $data) );
 
-		return $this->_container->view->render($RES, $file, $data);
+		return $RES;
 
 	}
 

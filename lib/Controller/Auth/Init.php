@@ -122,7 +122,8 @@ class Init extends \App\Controller\Base
 				$data = $this->data;
 				$data['Page']['title'] = 'Select Company';
 				$data['company_list'] = $act_data['company_list'];
-				$RES = $this->_container->view->render($RES, 'page/auth/init.html', $data);
+
+				$RES = $RES->write( $this->render('auth/init.php', $data) );
 				return $RES->withStatus(300);
 
 		}

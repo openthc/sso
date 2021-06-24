@@ -34,7 +34,7 @@ class Create extends \App\Controller\Base
 		$cfg = \OpenTHC\Config::get('google');
 		$data['Google']['recaptcha_public'] = $cfg['recaptcha-public'];
 
-		return $this->_container->view->render($RES, $file, $data);
+		return $RES->write( $this->render($file, $data) );
 	}
 
 	function post($REQ, $RES, $ARG)
@@ -42,9 +42,6 @@ class Create extends \App\Controller\Base
 		// _check_recaptcha();
 
 		switch ($_POST['a']) {
-		case 'region-next':
-			$_SESSION['account-create']['region'] = $_POST['region'];
-			return $RES->withRedirect('/account/create');
 		case 'contact-next':
 			return $this->_create_account($RES);
 		}
@@ -68,26 +65,6 @@ class Create extends \App\Controller\Base
 		}
 		$_POST['contact-email'] = $e;
 
-		$_POST['contact-phone'] = _phone_e164($_POST['contact-phone']);
-
-		// Lookup Company
-		// $dir = new \App\Service\OpenTHC('dir');
-		// $chk = $dir->get('company?q=' . $_POST['company-name']);
-		// switch ($chk['code']) {
-		// case '404':
-		// 	$_SESSION['company-create'] = true;
-		// 	break;
-		// }
-		// var_dump($chk);
-
-		// $chk = $dir->get('contact?q=' . $_POST['contact-email']);
-		// switch ($chk['code']) {
-		// case '404':
-		// 	$_SESSION['contact-create'] = true;
-		// 	break;
-		// }
-		// var_dump($dir);
-
 		$dbc_auth = $this->_container->DBC_AUTH;
 		$dbc_main = $this->_container->DBC_MAIN;
 
@@ -102,49 +79,11 @@ class Create extends \App\Controller\Base
 			return $RES->withRedirect('/done?e=cac065');
 		}
 
-		// Company Check
-		$Company = [];
-		$dir = new \OpenTHC\Service\OpenTHC('dir');
-		// $chk = $dir->get('/api/company?q=' . rawurlencode($_POST['company-name']));
-		$chk = [ 'code' => 404 ]; // Always make a new one for now
-		switch ($chk['code']) {
-			case 200:
-				$_SESSION['company_list'] = $chk['data'];
-				return $RES->withRedirect('/account/create/company');
-			break;
-			case 300:
-				var_dump($chk);
-				exit;
-			case 404:
-				// For Sure New
-				$Company['id'] = _ulid();
-				// $Company['cre'] = $_SESSION['account-create']['region'];
-				$Company['name'] = $_POST['company-name'];
-				$Company['type'] = '-system-';
-				$Company['hash'] = md5(json_encode($Company));
-
-				$dbc_main->insert('company', $Company); // @todo Make call to DIR->create();
-
-				$dbc_auth->insert('auth_company', [
-					'id' => $Company['id'],
-					'name' => $Company['name'],
-				]);
-		}
-
-		// if (!empty($_POST['license-id'])) {
-		// 	$chk = $dbc_main->fetchRow('SELECT id FROM license WHERE id = ?', [$_POST['license-id']]);
-		// 	if (empty($chk['id'])) {
-		// 		$_SESSION['account-create']['license-create'] = true;
-		// 		// return $RES->withRedirect('/done?e=cac093');
-		// 	}
-		// }
-
 		// Contact Table
 		$Contact = [
 			'id' => _ulid(),
 			'name' => $_POST['contact-name'],
 			'email' => $_POST['contact-email'],
-			'phone' => $_POST['contact-phone'],
 			'hash' => '-',
 		];
 		$dbc_main->insert('contact', $Contact);
@@ -154,28 +93,17 @@ class Create extends \App\Controller\Base
 			'password' => 'NONE:' . sha1(json_encode($_SERVER).json_encode($_POST)),
 		));
 
-		// Linkage
-		$dbc_auth->insert('auth_company_contact', [
-			'company_id' => $Company['id'],
-			'contact_id' => $Contact['id'],
-		]);
-
 		// Auth Hash Link
 		$act = new \App\Auth_Context_Ticket($dbc_auth);
 		$act->create(array(
 			'intent' => 'account-create',
 			'service' => $_SESSION['account-create']['service'],
-			'company' => [
-				'id' => $Company['id'],
-				'name' => $Company['name'],
-			],
 			'contact' => [
 				'id' => $Contact['id'],
 				'name' => $Contact['name'],
 				'email' => $Contact['email'],
-				'phone' => $Contact['phone'],
 			],
-			'geoip' => geoip_record_by_name($_SERVER['REMOTE_ADDR']),
+			'ip' => $_SERVER['REMOTE_ADDR'],
 		));
 
 		$dbc_auth->query('COMMIT');
@@ -229,9 +157,7 @@ class Create extends \App\Controller\Base
 		$RES = $RES->withAttribute('Contact', [
 			'id' => $Contact['id'],
 			'username' => $Contact['email'],
-			'phone' => $Contact['phone'],
 			'email' => $Contact['email'],
-			'company' => $Company,
 		]);
 
 		return $RES->withRedirect($ret_path . '?' . http_build_query($ret_args));
