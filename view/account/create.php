@@ -1,12 +1,9 @@
-{% extends "layout/html.html" %}
-
-{% block body %}
 
 <form autocomplete="off" method="post">
 <div class="auth-wrap">
 
 	<div class="card">
-	<h1 class="card-header">{{ Page.title }}</h1>
+	<h1 class="card-header"><?= $data['Page']['title'] ?></h1>
 	<div class="card-body">
 
 	<!--
@@ -43,5 +40,3 @@
 
 </div>
 </form>
-
-{% endblock %}

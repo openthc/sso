@@ -1,15 +1,12 @@
-{% extends "layout/html.html" %}
-
-{% block body %}
 
 <form method="post">
 <div class="auth-wrap">
 
 	<div class="card">
-	<h1 class="card-header">{{ Page.title }}</h1>
+	<h1 class="card-header"><?= $data['Page']['title'] ?></h1>
 	<div class="card-body">
 
-	{{ auth_hint|raw }}
+	<?= $data['auth_hint'] ?>
 
 	<noscript>
 		<div class="alert alert-danger">This web application <strong>requires</strong> JavaScript to be enabled.</div>
@@ -17,12 +14,12 @@
 
 	<div class="form-group">
 		<label>Email</label>
-		<input autofocus class="form-control" id="username" inputmode="email" name="username" placeholder="- user@example.com -" type="email" value="{{ auth_username }}">
+		<input autofocus class="form-control" id="username" inputmode="email" name="username" placeholder="- user@example.com -" type="email" value="<?= h($data['auth_username']) ?>">
 	</div>
 
 	<div class="form-group">
 		<label>Password</label>
-		<input class="form-control" id="password" name="password" type="password" value="{{ auth_password }}">
+		<input class="form-control" id="password" name="password" type="password" value="<?= h($data['auth_password']) ?>">
 	</div>
 
 	</div>
@@ -49,14 +46,10 @@
 </div>
 </form>
 
-{% endblock %}
 
-{% block foot_script %}
-{{ parent() }}
 <script src="https://cdn.openthc.com/modernizr/2.8.3/modernizr.js" integrity="sha256-0rguYS0qgS6L4qVzANq4kjxPLtvnp5nn2nB5G1lWRv4=" crossorigin="anonymous"></script>
 <script>
 document.querySelector('#js-enabled').value = 1;
 document.querySelector('#date-input-enabled').value = (Modernizr.inputtypes.date + 0);
 document.querySelector('#time-input-enabled').value = (Modernizr.inputtypes.time + 0);
 </script>
-{% endblock %}

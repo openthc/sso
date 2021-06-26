@@ -1,34 +1,32 @@
-{% extends "layout/html.html" %}
-
-{% block body %}
 
 <div class="auth-wrap">
 
 	<div class="card">
-	<h1 class="card-header">{{ Page.title }}</h1>
+	<h1 class="card-header"><?= $data['Page']['title'] ?></h1>
 	<div class="card-body">
 
-		{% if fail %}
-			<div class="alert alert-danger">{{ fail }}</div>
-		{% endif %}
+		<?php
+		if ($data['fail']) {
+			printf('<div class="alert alert-danger">%s</div>', h($data['fail']));
+		}
 
-		{% if warn %}
-			<div class="alert alert-waring">{{ warn }}</div>
-		{% endif %}
+		if ($data['warn']) {
+			printf('<div class="alert alert-waring">%s</div>', h($data['warn']));
+		}
 
-		{% if info %}
-			<div class="alert alert-info">{{ info }}</div>
-		{% endif %}
+		if ($data['info']) {
+			printf('<div class="alert alert-info">%s</div>', h($data['info']));
+		}
 
-		{{ body|raw }}
+		echo $data['body']
+
+		?>
 
 	</div>
-	{% if foot %}
-		<div class="card-footer">
-			{{ foot|raw }}
-		</div>
-	{% endif %}
+	<?php
+	if ($data['foot']) {
+		printf('<div class="card-footer">%s</div>', $data['foot']);
+	}
+	?>
 	</div>
 </div>
-
-{% endblock %}

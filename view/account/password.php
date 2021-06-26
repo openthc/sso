@@ -1,6 +1,3 @@
-{% extends "layout/html.html" %}
-
-{% block body %}
 
 <form autocomplete="new-password" method="post">
 <div class="auth-wrap">
@@ -10,7 +7,7 @@
 
 	<div class="form-group">
 		<label>Email:</label>
-		<input class="form-control" id="username" inputmode="email" name="username" placeholder="- user@example.com -" readonly value="{{ auth_username }}">
+		<input class="form-control" id="username" inputmode="email" name="username" placeholder="- user@example.com -" readonly value="<?= h($data['auth_username'])) ?>">
 	</div>
 
 	<div class="form-group">
@@ -40,10 +37,7 @@
 
 </form>
 
-{% endblock %}
 
-{% block foot_script %}
-{{ parent() }}
 <script>
 function password_checker(e) {
 
@@ -134,4 +128,3 @@ $(function() {
 	$('#password1').on('blur change keyup', password_matcher);
 });
 </script>
-{% endblock %}

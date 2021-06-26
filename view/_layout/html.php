@@ -53,7 +53,7 @@ footer a {
 	text-align: center;
 }
 </style>
-<title>{{ Page.title ?: "SSO" }}</title>
+<title><?= $data['Page']['title'] ?: 'SSO' ?></title>
 </head>
 <body>
 
