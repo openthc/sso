@@ -9,7 +9,6 @@ class Create extends \App\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{
-		$file = 'page/account/create.html';
 		$data = $this->data;
 		$data['Page'] = [ 'title' => 'Create Account' ];
 
@@ -34,7 +33,7 @@ class Create extends \App\Controller\Base
 		$cfg = \OpenTHC\Config::get('google');
 		$data['Google']['recaptcha_public'] = $cfg['recaptcha-public'];
 
-		return $RES->write( $this->render($file, $data) );
+		return $RES->write( $this->render('account/create.php', $data) );
 	}
 
 	function post($REQ, $RES, $ARG)

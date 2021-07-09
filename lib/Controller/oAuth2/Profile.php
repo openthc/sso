@@ -81,21 +81,26 @@ class Profile extends \App\Controller\Base
 		// Scope
 		$Profile['scope'] = explode(' ', $tok['meta']['scope']);
 
-		// Main/Contact
-		$sql = 'SELECT * FROM contact WHERE id = ?';
-		$arg = array($Contact['id']);
-		$res = $dbc_main->fetchRow($sql, $arg);
-		if (!empty($res['id'])) {
+		// Main/Contact Details
+		$Profile['Contact']['fullname'] = ''; // @todo 'cname'
+		$Profile['Contact']['email'] = '';
+		$Profile['Contact']['phone'] = '';
+		if (in_array('contact', $Profile['scope']) || in_array('profile', $Profile['scope'])) {
+			$sql = 'SELECT * FROM contact WHERE id = ?';
+			$arg = array($Contact['id']);
+			$res = $dbc_main->fetchRow($sql, $arg);
+			if (!empty($res['id'])) {
 
-			$Profile['Contact']['fullname'] = $res['fullname'];
+				$Profile['Contact']['fullname'] = $res['fullname'];
 
-			if (!empty($res['email'])) {
-				$Profile['Contact']['email'] = true;
+				if (!empty($res['email'])) {
+					$Profile['Contact']['email'] = $res['email'];
+				}
+				if (!empty($res['phone'])) {
+					$Profile['Contact']['phone'] = $res['phone'];
+				}
+
 			}
-			if (!empty($res['phone'])) {
-				$Profile['Contact']['phone'] = true;
-			}
-
 		}
 
 		return $RES->withJSON($Profile);

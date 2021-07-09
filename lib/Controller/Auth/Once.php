@@ -37,6 +37,7 @@ class Once extends \App\Controller\Base
 			$dbc_auth->query('DELETE FROM auth_context_ticket WHERE id = :t0', [ ':t0' => $_GET['_'] ]);
 			return $RES->withRedirect('/done?e=cao077');
 		}
+
 		// if (strtotime($act['expires_at']) < $_SERVER['REQUEST_TIME']) {
 		// 	$dbc->query('DELETE FROM auth_context_ticket WHERE id = :t0', $act['id']);
 		// 	__exit_html('<h1>Invalid Ticket [CAO-028]</h2><p>The link you followed has expired</p>', 400);
@@ -48,7 +49,7 @@ class Once extends \App\Controller\Base
 				return $this->accountCreate($RES, $act);
 				break;
 			case 'email-verify':
-				return $RES->withRedirect(sprintf('/account/verify?_=%s', $_GET['_']));
+				return $RES->withRedirect(sprintf('/verify/email?_=%s', $_GET['_']));
 				break;
 			case 'password-reset':
 				return $RES->withRedirect('/account/password?_=' . $_GET['_']);
@@ -62,9 +63,11 @@ class Once extends \App\Controller\Base
 
 		$data['Page']['title'] = 'Error';
 		$data['body'] = '<div class="alert alert-danger">Invalid Request [CAO-061]</div>';
-		$RES = $this->_container->view->render($RES, 'page/done.html', $data);
 
-		return $RES->withStatus(400);
+		$RES = $RES->write( $this->render('done.php', $data) );
+		$RES = $RES->withStatus(400);
+
+		return $RES;
 
 	}
 
@@ -85,7 +88,6 @@ class Once extends \App\Controller\Base
 
 		// Log It
 		$dbc_auth->insert('log_event', [
-			'company_id' => $data['company']['id'],
 			'contact_id' => $data['contact']['id'],
 			'code' => 'Contact/Account/Create',
 			'meta' => json_encode($data),
@@ -110,16 +112,15 @@ class Once extends \App\Controller\Base
 		];
 		$dbc_main->query($sql, $arg);
 
-		// Next Step
-		$data['intent'] = 'account-create-verify';
-		$act = new \App\Auth_Context_Ticket($dbc_auth);
-		$act->create($data);
-
 		$dbc_auth->query('COMMIT');
 		$dbc_main->query('COMMIT');
 
-		// @todo Enable a Done/Next Page Here
-		return $RES->withRedirect(sprintf('/account/verify?_=%s', $act['id']));
+		// Next Step
+		$data['intent'] = 'account-verify';
+		$act = new \App\Auth_Context_Ticket($dbc_auth);
+		$act->create($data);
+
+		return $RES->withRedirect(sprintf('/verify?_=%s', $act['id']));
 
 	}
 
