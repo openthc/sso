@@ -102,9 +102,6 @@ $app->group('/verify', function() {
 
 	$this->get('', 'App\Controller\Verify\Main');
 
-	// @deprecated
-	// $this->post('', 'App\Controller\Account\Verify:post'); // ->setName('account/verify/update');
-
 	$this->get('/email', 'App\Controller\Verify\Email');
 	$this->post('/email', 'App\Controller\Verify\Email:post');
 

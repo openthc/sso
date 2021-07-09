@@ -24,6 +24,7 @@ class Main extends \App\Controller\Verify\Base
 		$act = $this->loadTicket();
 
 		switch ($act['intent']) {
+			case 'account-open':
 			case 'account-verify':
 				return $this->guessNextStep($RES, $act);
 				break;
@@ -43,14 +44,19 @@ class Main extends \App\Controller\Verify\Base
 	{
 		$dbc_auth = $this->_container->DBC_AUTH;
 
-		$CT0 = $dbc_auth->fetchRow('SELECT id, flag, stat, iso3166, tz FROM auth_contact WHERE id = :ct0', [
+		$CT0 = $dbc_auth->fetchRow('SELECT id, password, flag, stat, iso3166, tz FROM auth_contact WHERE id = :ct0', [
 			':ct0' => $act['contact']['id']
 		]);
 
 		if (0 == ($CT0['flag'] & \App\Contact::FLAG_EMAIL_GOOD)) {
-			__exit_text('Verify Email');
 			return $RES->withRedirect(sprintf('/verify/email?_=%s', $_GET['_']));
 		}
+
+		// if (empty($CT0['password']) || ('NONE' == substr($CT0['password'], 0, 4))) {
+		// 	// Needs Password Reset
+		// 	__exit_text('Password Reset Here, Redirect to ./password', 501);
+		// 	return $RES->withRedirect(sprintf('/account/password?_=%s', $_GET['_']));
+		// }
 
 		if (empty($CT0['iso3166'])) {
 			unset($_SESSION['iso3166_1']);
@@ -63,7 +69,6 @@ class Main extends \App\Controller\Verify\Base
 		}
 
 		if (0 == ($CT0['flag'] & \App\Contact::FLAG_PHONE_GOOD)) {
-			__exit_text('Verify Phone');
 			return $RES->withRedirect(sprintf('/verify/phone?_=%s', $_GET['_']));
 		}
 

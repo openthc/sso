@@ -7,7 +7,7 @@
 
 	<div class="form-group">
 		<label>Email:</label>
-		<input class="form-control" id="username" inputmode="email" name="username" placeholder="- user@example.com -" readonly value="<?= h($data['auth_username'])) ?>">
+		<input class="form-control" id="username" inputmode="email" name="username" placeholder="- user@example.com -" readonly value="<?= h($data['auth_username']) ?>">
 	</div>
 
 	<div class="form-group">

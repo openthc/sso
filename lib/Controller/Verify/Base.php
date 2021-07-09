@@ -25,6 +25,26 @@ class Base extends \App\Controller\Base
 			__exit_text('Invalid Request [CVB-024]', 400);
 		}
 
+		// Load Contact (from ticket, no DB?)
+		$sql = <<<SQL
+SELECT auth_contact.id, auth_contact.flag, auth_contact.username
+FROM auth_contact
+WHERE auth_contact.id = :c0
+SQL;
+		$arg = [
+			':c0' => $act['contact']['id']
+		];
+
+		// $Contact = $this->_container->DBC_AUTH->fetchRow($sql, $arg);
+		// if (empty($Contact['id'])) {
+		// 	_err_exit_html('Invalid Request [CAV-037]', 400);
+		// }
+		// $Contact_Base = $this->_container->DBC_MAIN->fetchRow('SELECT id, email, phone FROM contact WHERE id = :c0', $arg);
+		// if (empty($Contact_Base['id'])) {
+		// 	_err_exit_html('Invalid Request [CAV-040]', 400);
+		// }
+
+
 		return $act;
 
 	}
