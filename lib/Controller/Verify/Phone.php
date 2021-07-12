@@ -121,25 +121,19 @@ class Phone extends \App\Controller\Verify\Base
 		];
 		$dbc_auth->query($sql, $arg);
 
-		// Update Status
-		$dbc_auth->query('UPDATE auth_contact SET stat = 200 WHERE id = :pk AND stat = 100 AND flag & :f1 != 0', [
-			':pk' => $ARG['contact']['id'],
-			':f1' => Contact::FLAG_EMAIL_GOOD | Contact::FLAG_PHONE_GOOD
-		]);
-
 		// Update Phone on Base Contact
 		$dbc_main = $this->_container->DBC_MAIN;
 		$sql = 'UPDATE contact SET phone = :p0, stat = 200, flag = :f1 WHERE id = :pk';
 		$arg = [
 			':pk' => $ARG['contact']['id'],
 			':p0' => $_SESSION['verify']['phone']['e164'],
-			':f1' => Contact::FLAG_EMAIL_GOOD | Contact::FLAG_PHONE_GOOD
+			':f1' => Contact::FLAG_PHONE_GOOD
 		];
 		$dbc_main->query($sql, $arg);
 
 		unset($_SESSION['verify']['phone']);
 
-		return $RES->withRedirect(sprintf('/account/verify?_=%s', $_GET['_']));
+		return $RES->withRedirect(sprintf('/verify?_=%s', $_GET['_']));
 
 	}
 

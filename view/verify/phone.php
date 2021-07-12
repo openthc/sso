@@ -52,7 +52,7 @@
 		echo ' <button class="btn btn-primary" name="a" type="submit" value="phone-verify-send">Send Confirmation <i class="icon icon-arrow-right"></i></button>';
 	} else {
 		echo ' <button class="btn btn-outline-secondary" name="a" type="submit" value="phone-verify-send">Resend <i class="icon icon-arrow-right"></i></button>';
-		echo ' <button class="btn btn-primary" name="a" type="submit" value="verify-phone-save">Confirm <i class="icon icon-arrow-right"></i></button>';
+		echo ' <button class="btn btn-primary" name="a" type="submit" value="phone-verify-save">Confirm <i class="icon icon-arrow-right"></i></button>';
 		if ($data['verify_phone_tick'] > 2) {
 			echo ' <button class="btn btn-outline-warning" name="a" type="submit" value="phone-verify-skip">Skip</button>';
 		}

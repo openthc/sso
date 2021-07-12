@@ -27,7 +27,7 @@ class Base extends \App\Controller\Base
 
 		// Load Contact (from ticket, no DB?)
 		$sql = <<<SQL
-SELECT auth_contact.id, auth_contact.flag, auth_contact.username
+SELECT auth_contact.id, auth_contact.stat, auth_contact.flag, auth_contact.username
 FROM auth_contact
 WHERE auth_contact.id = :c0
 SQL;
@@ -35,15 +35,21 @@ SQL;
 			':c0' => $act['contact']['id']
 		];
 
-		// $Contact = $this->_container->DBC_AUTH->fetchRow($sql, $arg);
-		// if (empty($Contact['id'])) {
-		// 	_err_exit_html('Invalid Request [CAV-037]', 400);
-		// }
-		// $Contact_Base = $this->_container->DBC_MAIN->fetchRow('SELECT id, email, phone FROM contact WHERE id = :c0', $arg);
-		// if (empty($Contact_Base['id'])) {
-		// 	_err_exit_html('Invalid Request [CAV-040]', 400);
-		// }
+		// Inflate this onto the ACT
+		$CT0 = $dbc_auth->fetchRow($sql, $arg);
+		if (empty($CT0['id'])) {
+			_err_exit_html('Invalid Request [CAV-037]', 400);
+		}
 
+		$CT1 = $this->_container->DBC_MAIN->fetchRow('SELECT id, email, phone FROM contact WHERE id = :c0', $arg);
+		if (empty($CT1['id'])) {
+			_err_exit_html('Invalid Request [CAV-040]', 400);
+		}
+
+		$act['contact']['flag'] = $CT0['flag'];
+		$act['contact']['stat'] = $CT0['stat'];
+		$act['contact']['email'] = $CT0['username'];
+		$act['contact']['phone'] = $CT1['phone'];
 
 		return $act;
 

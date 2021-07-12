@@ -8,6 +8,9 @@ namespace App\Controller\Verify;
 
 class Main extends \App\Controller\Verify\Base
 {
+	/**
+	 *
+	 */
 	function __invoke($REQ, $RES, $ARG)
 	{
 		if (empty($_SESSION['verify'])) {
@@ -28,9 +31,6 @@ class Main extends \App\Controller\Verify\Base
 			case 'account-verify':
 				return $this->guessNextStep($RES, $act);
 				break;
-			case 'contact-email-verify':
-			case 'contact-phone-verify':
-			// case 'contact-'
 		}
 
 		__exit_text('Invalid Request [CVM-032]', 400);
@@ -65,7 +65,7 @@ class Main extends \App\Controller\Verify\Base
 		}
 
 		if (empty($CT0['tz'])) {
-			return $RES->withRedirect(sprintf('/verify/timezone?_=%s#tz', $_GET['_']));
+			return $RES->withRedirect(sprintf('/verify/timezone?_=%s', $_GET['_']));
 		}
 
 		if (0 == ($CT0['flag'] & \App\Contact::FLAG_PHONE_GOOD)) {
@@ -77,7 +77,6 @@ class Main extends \App\Controller\Verify\Base
 			':ct0' => $act['contact']['id'],
 		]);
 		if (empty($chk)) {
-			__exit_text('Verify Company or Skip');
 			return $RES->withRedirect(sprintf('/verify/company?_=%s', $_GET['_']));
 		}
 
@@ -89,11 +88,13 @@ class Main extends \App\Controller\Verify\Base
 		// 	__exit_text('Verify Company');
 		// }
 
-		__exit_text([
-			'data' => $act,
-			'meta' => [
-				'detail' => 'Seems Fully Verified to Me'
-			]
-		]);
+		// Update Status
+		// $dbc_auth->query('UPDATE auth_contact SET stat = 200 WHERE id = :pk AND stat = 100 AND flag & :f1 != 0', [
+		// 	':pk' => $ARG['contact']['id'],
+		// 	':f1' => Contact::FLAG_EMAIL_GOOD | Contact::FLAG_PHONE_GOOD
+		// ]);
+
+		return $RES->withRedirect(sprintf('/auth/init?_=%s', $_GET['_']));
+
 	}
 }
