@@ -33,12 +33,21 @@ class Create extends \App\Controller\Base
 		$cfg = \OpenTHC\Config::get('google');
 		$data['Google']['recaptcha_public'] = $cfg['recaptcha-public'];
 
+		$data['CSRF'] = \App\CSRF::getToken();
+
 		return $RES->write( $this->render('account/create.php', $data) );
 	}
 
+	/**
+	 *
+	 */
 	function post($REQ, $RES, $ARG)
 	{
 		// _check_recaptcha();
+		$chk = \App\CSRF::verify($_POST['CSRF']);
+		if (empty($chk)) {
+			return $RES->withRedirect('/account/create?e=cac049');
+		}
 
 		switch ($_POST['a']) {
 		case 'contact-next':
