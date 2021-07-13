@@ -22,7 +22,7 @@ class TestMode extends \OpenTHC\Middleware\Base
 		}
 
 		if (!empty($key_user)) {
-			$key_real = \OpenTHC\Config::get('openthc/test');
+			$key_real = \OpenTHC\Config::get('app/test');
 			if ($key_user == $key_real) {
 				$set_test = true;
 			}

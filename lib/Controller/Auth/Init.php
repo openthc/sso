@@ -17,13 +17,10 @@ class Init extends \App\Controller\Base
 	function __invoke($REQ, $RES, $ARG)
 	{
 		// Clear Session
-		unset($_SESSION['Contact']);
-		unset($_SESSION['Company']);
-		unset($_SESSION['License']);
-		unset($_SESSION['Service']);
-
-		unset($_SESSION['account-create']);
-		unset($_SESSION['verify']);
+		$key_list = array_keys($_SESSION);
+		foreach ($key_list as $key) {
+			unset($_SESSION[$key]);
+		}
 
 		// Check Input
 		if (!preg_match('/^([\w\-]{32,128})$/i', $_GET['_'], $m)) {
@@ -52,65 +49,73 @@ class Init extends \App\Controller\Base
 				break;
 		}
 
-		$Contact = $act_data['contact'];
-		// $Contact = $this->_inflate_contact($Contact);
-
-		// Contact Globally Disabled?
-		switch ($Contact['stat']) {
-			case 100:
-			case 200:
-				// OK
-				break;
-			case 410:
-				_err_exit_html('Invalid Account [CAI-049]', 403);
-				break;
-		}
+		$Contact = $this->contact_inflate($act_data['contact']);
 
 		// Contact has Disabled Flags?
 		if (0 != ($Contact['flag'] & Contact::FLAG_DISABLED)) {
 			_err_exit_html('Invalid Account [CAI-068]', 403);
 		}
 
-		// Need to Verify
-		$verify_need = false;
-		$f0 = (Contact::FLAG_EMAIL_WANT | Contact::FLAG_PHONE_WANT);
-		$f1 = (Contact::FLAG_EMAIL_GOOD | Contact::FLAG_PHONE_GOOD);
-
-		// Stat Good, Flags Off, Flags On
-		if ((200 == $Contact['stat'])
-			&& (0 == ($Contact['flag'] & $f0))
-			&& ($f1 == ($Contact['flag'] & $f1))) {
-
-			$verify_need = false;
-
+		// Contact Globally Disabled?
+		switch ($Contact['stat']) {
+			case Contact::STAT_INIT:
+				return $RES->withRedirect(sprintf('/verify?_=%s', $_GET['_']));
+				break;
+			case Contact::STAT_LIVE:
+				// OK
+				return $this->account_init($RES, $act_data, $Contact);
+				break;
+			case 410:
+				_err_exit_html('Invalid Account [CAI-049]', 403);
+				break;
 		}
 
-		if ($verify_need) {
-			// @todo Modify or Create New ACT
-			// $val = [ 'contact' => $Contact ];
-			// $val = json_encode($val);
-			// $arg = _encrypt($val, $_SESSION['crypt-key']);
-			return $RES->withRedirect(sprintf('/account/verify?_=%s', $_GET['_']));
-			// /verify?' . http_build_query([
-			// 	'r' => sprintf('/auth/init?_=%s', $_GET['_']),
-			// 	'_' => $arg
-			// ]));
-		}
+		_err_exit_html('Invalid Request [CAI-066]', 400);
 
-		// User with 0 Company Link
-		switch (count($act_data['company_list'])) {
+	}
+
+	/**
+	 *
+	 */
+	protected function account_init($RES, $act_data, $Contact)
+	{
+		$dbc_auth = $this->_container->DBC_AUTH;
+
+		/**
+		 * Initialize Company Data in $act_data & return
+		 */
+		// Company List
+		$sql = <<<SQL
+SELECT auth_company.id
+, auth_company.name
+, auth_company.cre
+, auth_company_contact.stat
+, auth_company_contact.created_at
+FROM auth_company
+JOIN auth_company_contact ON auth_company.id = auth_company_contact.company_id
+WHERE auth_company_contact.contact_id = :c0
+  AND auth_company_contact.stat IN (100, 200)
+ORDER BY auth_company_contact.stat, auth_company_contact.created_at ASC
+SQL;
+
+		$arg = [ ':c0' => $Contact['id'] ];
+		$company_list = $dbc_auth->fetchAll($sql, $arg);
+
+		// Company/Contact Link
+		switch (count($company_list)) {
 			case 0:
+				// return $RES->withRedirect(sprintf('/verify?_=%s', $_GET['_']));
 				_err_exit_html('<h1>Unexpected Session State [CAI-051]</h1><p>You may want to <a href="/auth/shut">close your session</a> and try again.</p><p>If the issue continues, contact support</p>', 400);
 				break;
 			case 1:
-				$Company = $act_data['company_list'][0];
+				$Company = $company_list[0];
 				return $this->_create_ticket_and_redirect($RES, $act_data, $Contact, $Company);
 				break;
 			default:
 
 				// User with Many Company Links AND they picked one
 				if (!empty($_POST['company_id'])) {
-					foreach ($act_data['company_list'] as $c) {
+					foreach ($company_list as $c) {
 						if ($c['id'] === $_POST['company_id']) {
 							$Company = $c;
 							return $this->_create_ticket_and_redirect($RES, $act_data, $Contact, $Company);
@@ -121,7 +126,7 @@ class Init extends \App\Controller\Base
 
 				$data = $this->data;
 				$data['Page']['title'] = 'Select Company';
-				$data['company_list'] = $act_data['company_list'];
+				$data['company_list'] = $company_list;
 
 				$RES = $RES->write( $this->render('auth/init.php', $data) );
 				return $RES->withStatus(300);
@@ -138,11 +143,12 @@ class Init extends \App\Controller\Base
 	/**
 	 * @return Response ready to be redirected
 	 */
-	function _create_ticket_and_redirect($RES, $act_data, $Contact, $Company)
+	protected function _create_ticket_and_redirect($RES, $act_data, $Contact, $Company)
 	{
 		$_SESSION['Contact'] = $Contact;
 		$_SESSION['Company'] = $Company;
 
+		// $act_data['intent'] = 'account-init';
 		$act_data['company'] = $Company;
 
 		$act = [];
@@ -176,9 +182,12 @@ class Init extends \App\Controller\Base
 				$ret = str_replace('{PING}', $ping, $ret);
 
 				break;
+
 			case 'oauth-authorize':
 				$ret = '/oauth2/authorize?' . http_build_query($act_data['oauth-request']);
 				break;
+			default:
+				__exit_text('Invalid Request [CAI-188]', 400);
 		}
 
 		return $RES->withRedirect($ret);
@@ -188,27 +197,26 @@ class Init extends \App\Controller\Base
 	/**
 	 * Inflate Contact from Auth & Main
 	 */
-	function _inflate_contact($Contact)
+	protected function contact_inflate($Contact)
 	{
 		// Auth/Contact
-		// $sql = 'SELECT id, username, password, flag FROM auth_contact WHERE id = :pk';
-		// $arg = [ ':pk' => $act_data['contact']['id'] ];
-		// $chk = $dbc_auth->fetchRow($sql, $arg);
-		// if (empty($chk['id'])) {
-		// 	_err_exit_html('<h1>Unexpected Session State [CAI-047]</h1><p>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support.</p>', 400);
-		// }
-		// $Contact = $chk;
-		// $dbc_main = $this->_container->DBC_MAIN;
+		$sql = 'SELECT id, username, password, stat, flag, iso3166, tz FROM auth_contact WHERE id = :pk';
+		$arg = [ ':pk' => $Contact['id'] ];
+		$CT0 = $this->_container->DBC_AUTH->fetchRow($sql, $arg);
+		if (empty($CT0['id'])) {
+			_err_exit_html('<h1>Unexpected Session State [CAI-047]</h1><p>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support.</p>', 400);
+		}
 
-		// // Main/Contact
-		// $sql = 'SELECT id, name, phone, email FROM contact WHERE id = :pk';
-		// $arg = [ ':pk' => $Contact['id'] ];
-		// $chk = $dbc_main->fetchRow($sql, $arg);
-		// if (empty($chk['id'])) {
-		// 	_err_exit_html('<h1>Unexpected Session State [CAI-058]</h1><p>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support.</p>', 400);
-		// }
+		// Base/Contact
+		$sql = 'SELECT id, name AS fullname, phone, email FROM contact WHERE id = :pk';
+		$arg = [ ':pk' => $Contact['id'] ];
+		$CT1 = $this->_container->DBC_MAIN->fetchRow($sql, $arg);
+		if (empty($CT1['id'])) {
+			_err_exit_html('<h1>Unexpected Session State [CAI-058]</h1><p>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support.</p>', 400);
+		}
 
-		// $Contact = array_merge($Contact, $chk);
+		$Contact = array_merge($CT0, $CT1);
+
 		return $Contact;
 	}
 }

@@ -21,7 +21,7 @@
 
 	<div class="form-group">
 		<label>Email</label>
-		<input autocomplete="off" class="form-control" id="contact-email" inputmode="email" name="contact-email" placeholder="eg: you@example.com" required type="email" value="">
+		<input autocomplete="off" class="form-control" id="contact-email" inputmode="email" name="contact-email" placeholder="eg: user@example.com" required type="email" value="<?= h($_SESSION['email']) ?>">
 	</div>
 
 	<!--

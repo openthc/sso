@@ -15,7 +15,6 @@ class Base extends \OpenTHC\Controller\Base
 
 		$data = [];
 		$data['Site'] = [];
-		$data['Site']['test'] = $_ENV['test'];
 		$data['Page'] = [];
 		$data['Page']['title'] = 'OpenTHC';
 

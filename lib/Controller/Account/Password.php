@@ -16,7 +16,7 @@ class Password extends \App\Controller\Base
 		$ARG = $this->parseArg();
 
 		$data = $this->data;
-		$data['Page']['title'] = 'Set Password';
+		$data['Page']['title'] = 'Account :: Password Update';
 		$data['auth_username'] = $ARG['contact']['username'];
 
 		if (!empty($_GET['e'])) {
@@ -95,24 +95,25 @@ class Password extends \App\Controller\Base
 		}
 	}
 
+	/**
+	 */
 	private function parseArg()
 	{
 		$ARG = [];
 
 		if (!empty($_GET['_'])) {
 
-			$act = new \App\Auth_Context_Ticket($this->_container->DBC_AUTH);
-			$act->loadBy('id', $_GET['_']);
+			$act = new \App\Auth_Context_Ticket($this->_container->DBC_AUTH, $_GET['_']);
 			if (!empty($act['id'])) {
 				$ARG = json_decode($act['meta'], true);
 			}
 		}
 
 		switch ($ARG['intent']) {
-		case 'account-create-verify':
 		case 'password-reset':
+		case 'password-update':
 			// OK
-		break;
+			break;
 		default:
 			__exit_text('Invalid Request [CAP-110]', 400);
 		}

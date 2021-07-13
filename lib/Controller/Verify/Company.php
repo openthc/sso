@@ -32,6 +32,11 @@ class Company extends \App\Controller\Verify\Base
 			case 'company-save':
 
 				// Double Check with a SoundEx lookup?
+				$dir = new \OpenTHC\Service\OpenTHC('dir');
+				$chk = $dir->get('/api/copmany?q=%s' . rawurlencode($_POST['company-name']));
+				var_dump($chk);
+
+				exit;
 				// And a Reg-Ex Lookup?
 
 				break;

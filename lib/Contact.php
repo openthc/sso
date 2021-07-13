@@ -23,5 +23,9 @@ class Contact
 	const FLAG_DEAD     = 0x08000000;
 	// const FLAG_DELETED  = 0x08000000; // @deprecated
 
+	const STAT_INIT = 100;
+	const STAT_LIVE = 200;
+	const STAT_GONE = 410;
+
 	private function __construct($dbc) { /* no */ }
 }

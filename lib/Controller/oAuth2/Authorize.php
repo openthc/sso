@@ -7,6 +7,9 @@ namespace App\Controller\oAuth2;
 
 class Authorize extends \App\Controller\Base
 {
+	/**
+	 *
+	 */
 	function __invoke($REQ, $RES, $ARG)
 	{
 		$this->verifyRequest();
@@ -54,7 +57,7 @@ class Authorize extends \App\Controller\Base
 		$data['Contact'] = $_SESSION['Contact'];
 		$data['Company'] = $_SESSION['Company'];
 		$data['Service'] = $Auth_Service;
-		$data['scope_list'] = $_GET['scope'];
+		$data['scope_list'] = explode(' ', $_GET['scope']);
 		$data['link_crypt'] = $link_crypt;
 		$data['link_crypt_save'] = $link_crypt_save;
 
@@ -62,6 +65,9 @@ class Authorize extends \App\Controller\Base
 
 	}
 
+	/**
+	 *
+	 */
 	function verifyRequest()
 	{
 		// Validate Inputs
@@ -142,6 +148,9 @@ class Authorize extends \App\Controller\Base
 
 	}
 
+	/**
+	 *
+	 */
 	function verifyScopeAccess($Service, $scope_ask)
 	{
 		$scope_may = explode(' ', $Service['context_list']);

@@ -89,7 +89,7 @@ if (!empty($data['Page']['flash'])) {
 </footer>
 
 <?php
-if (!empty($data['Site']['test'])) {
+if (!empty($_ENV['test'])) {
 ?>
 	<div id="alert-test-mode">
 		<div class="alert alert-danger">TEST MODE</div>

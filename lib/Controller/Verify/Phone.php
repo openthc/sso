@@ -96,7 +96,7 @@ class Phone extends \App\Controller\Verify\Base
 			unset($_SESSION['verify']['phone']['code']);
 			unset($_SESSION['verify']['phone']['warn']);
 
-			return $RES->withRedirect('/account/verify?' . http_build_query([
+			return $RES->withRedirect('/verify/phone?' . http_build_query([
 				'_' => $_GET['_'],
 				'e' => 'cav205'
 			]));
