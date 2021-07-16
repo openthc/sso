@@ -10,13 +10,6 @@
 		}
 	},
 	"require": {
-		"php": ">=7.3.0",
-		"ext-curl": "*",
-		"ext-date": "*",
-		"ext-json": "*",
-		"ext-PDO": "*",
-		"ext-session": "*",
-		"ext-sockets": "*",
 		"edoceo/lowline_php": "dev-master",
 		"edoceo/radix": "dev-master",
 		"geoip2/geoip2": "2.11.0",
@@ -24,9 +17,9 @@
 		"openthc/common": "dev-master"
 	},
 	"require-dev": {
-		"behat/behat": "3.7.0",
-		"php-webdriver/webdriver": "1.9.0",
-		"phpstan/phpstan": "0.12.76",
-		"phpunit/phpunit": "9.5.2"
+		"behat/behat": "3.8.1",
+		"php-webdriver/webdriver": "1.11.1",
+		"phpstan/phpstan": "0.12.92",
+		"phpunit/phpunit": "9.5.6"
 	}
 }
