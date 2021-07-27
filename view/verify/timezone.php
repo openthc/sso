@@ -25,7 +25,7 @@
 					id="btn-timezone-pick"
 					title="Detect Timezone from Browser"
 					type="button">
-					<i class="icon icon-magic-wand"></i>
+					<i class="icon icon-magic-wand"></i> Detect
 				</button>
 			</div>
 		</div>

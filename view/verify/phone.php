@@ -24,6 +24,7 @@
 			name="contact-phone"
 			placeholder="- your phone number -"
 			required
+			tabindex="1"
 			type="tel"
 			value="<?= h($data['contact_phone']) ?>">
 		<p>Please include your country code</p>
@@ -35,7 +36,7 @@
 		<div class="form-group">
 			<label>Verification Code:</label>
 			<div class="input-group">
-				<input autofocus class="form-control" id="phone-verify-code" name="phone-verify-code" value="">
+				<input autofocus class="form-control" id="phone-verify-code" name="phone-verify-code" tabindex="1" value="">
 			</div>
 			<p>You may need to wait a few minutes for the message to arrive. You can resend if needed.</p>
 		</div>
@@ -49,12 +50,12 @@
 <div class="card-footer r">
 	<?php
 	if (empty($data['verify_phone_code'])) {
-		echo ' <button class="btn btn-primary" name="a" type="submit" value="phone-verify-send">Send Confirmation <i class="icon icon-arrow-right"></i></button>';
+		echo ' <button class="btn btn-primary" name="a" tabindex="1" type="submit" value="phone-verify-send">Send Confirmation <i class="icon icon-arrow-right"></i></button>';
 	} else {
-		echo ' <button class="btn btn-outline-secondary" name="a" type="submit" value="phone-verify-send">Resend <i class="icon icon-arrow-right"></i></button>';
-		echo ' <button class="btn btn-primary" name="a" type="submit" value="phone-verify-save">Confirm <i class="icon icon-arrow-right"></i></button>';
+		echo ' <button class="btn btn-outline-secondary" name="a" tabindex="2" type="submit" value="phone-verify-send">Resend <i class="icon icon-arrow-right"></i></button>';
+		echo ' <button class="btn btn-primary" name="a" tabindex="1" type="submit" value="phone-verify-save">Confirm <i class="icon icon-arrow-right"></i></button>';
 		if ($data['verify_phone_tick'] > 2) {
-			echo ' <button class="btn btn-outline-warning" name="a" type="submit" value="phone-verify-skip">Skip</button>';
+			echo ' <button class="btn btn-outline-warning" name="a" tabindex="2" type="submit" value="phone-verify-skip">Skip</button>';
 		}
 	}
 	?>
