@@ -86,97 +86,97 @@ class Open extends \App\Controller\Base
 		case 'password-reset-request':
 			return $this->sendPasswordReset($RES);
 			break;
-		case 'account-open': // Sign In
-
-			// Process Inputs
-			$username = strtolower(trim($_POST['username']));
-			$username = \Edoceo\Radix\Filter::email($username);
-			if (empty($username)) {
-				return $RES->withRedirect('/auth/open?' . http_build_query([
-					'_' => $_GET['_'],
-					'e' => 'CAO-049'
-				]));
-			}
-
-			$_SESSION['email'] = $username;
-
-			$password = trim($_POST['password']);
-			if (empty($password) || (strlen($password) < 8) || (strlen($password) > 60)) {
-				return $RES->withRedirect('/auth/open?' . http_build_query([
-					'_' => $_GET['_'],
-					'e' => 'CAO-069'
-				]));
-			}
-
-			// Find Contact
-			$dbc = $this->_container->DBC_AUTH;
-			$sql = 'SELECT id, flag, username, password FROM auth_contact WHERE username = :un';
-			$arg = [ ':un' => $username ];
-			$chk = $dbc->fetchRow($sql, $arg);
-
-			if (empty($chk['id'])) {
-				return $RES->withRedirect('/auth/open?' . http_build_query([
-					'_' => $_GET['_'],
-					'e' => 'CAO-093'
-				]));
-			}
-
-			if (!password_verify($password, $chk['password'])) {
-				return $RES->withRedirect('/auth/open?' . http_build_query([
-					'_' => $_GET['_'],
-					'e' => 'CAO-093'
-				]));
-			}
-
-			// Next Authentication Token
-			$act_data = [
-				'intent' => 'account-open',
-				'contact' => [
-					'id' => $chk['id'],
-					'flag' => $chk['flag'],
-					'stat' => 200,
-					'username' => $chk['username'],
-				],
-				'company' => null,
-				'company_list' => [],
-				'feature' => [
-					'javascript' => $_POST['js-enabled'],
-					'date-input' => $_POST['date-enabled'],
-					'time-input' => $_POST['time-enabled']
-				],
-				'service' => $_GET['service'],
-				'service_list' => [],
-			];
-
-			// If we have a Prevous Auth-Ticket
-			if (!empty($_GET['_'])) {
-				$act_prev = $dbc->fetchOne('SELECT meta FROM auth_context_ticket WHERE id = :t0', [ ':t0' => $_GET['_'] ]);
-				$act_prev = json_decode($act_prev, true);
-				switch ($act_prev['intent']) {
-					case 'oauth-authorize':
-						$act_data['intent'] = $act_prev['intent'];
-						$act_data['service'] = $act_prev['service'];
-						$act_data['oauth-request'] = $act_prev['oauth-request'];
-				}
-			}
-
-			// Create Next Ticket & Redirect
-			$act = [];
-			$act['id'] = _random_hash();
-			$act['meta'] = json_encode($act_data);
-			$dbc->insert('auth_context_ticket', $act);
-
-			return $RES->withRedirect('/auth/init?_=' . $act['id']);
-
+		case 'account-open':
+			return $this->openAccount($RES);
 			break;
 		}
 
 		$data = $this->data;
 		$data['Page']['title'] = 'Error';
+		$data['fail'] = 'Invalid Request [CAO-095]';
 		$html = $this->render('done.php', $data);
 		$RES = $RES->write($html);
 		return $RES->withStatus(400);
 
+	}
+
+	/**
+	 *
+	 */
+	function openAccount($RES)
+	{
+		$username = strtolower(trim($_POST['username']));
+		$username = \Edoceo\Radix\Filter::email($username);
+		if (empty($username)) {
+			return $RES->withRedirect('/auth/open?' . http_build_query([
+				'_' => $_GET['_'],
+				'e' => 'CAO-049'
+			]));
+		}
+
+		$password = trim($_POST['password']);
+		if (empty($password) || (strlen($password) < 8) || (strlen($password) > 60)) {
+			return $RES->withRedirect('/auth/open?' . http_build_query([
+				'_' => $_GET['_'],
+				'e' => 'CAO-069'
+			]));
+		}
+
+		// Find Contact
+		$dbc = $this->_container->DBC_AUTH;
+		$sql = 'SELECT id, flag, username, password FROM auth_contact WHERE username = :un';
+		$arg = [ ':un' => $username ];
+		$chk = $dbc->fetchRow($sql, $arg);
+
+		if (empty($chk['id'])) {
+			return $RES->withRedirect('/auth/open?' . http_build_query([
+				'_' => $_GET['_'],
+				'e' => 'CAO-093'
+			]));
+		}
+
+		if (!password_verify($password, $chk['password'])) {
+			return $RES->withRedirect('/auth/open?' . http_build_query([
+				'_' => $_GET['_'],
+				'e' => 'CAO-093'
+			]));
+		}
+
+		// Create Next Ticket & Redirect
+		$act_data = [
+			'intent' => 'account-open',
+			'contact' => [
+				'id' => $chk['id'],
+				'flag' => $chk['flag'],
+				'stat' => 200,
+				'username' => $chk['username'],
+			],
+			'feature' => [
+				'javascript' => $_POST['js-enabled'],
+				'date-input' => $_POST['date-enabled'],
+				'time-input' => $_POST['time-enabled']
+			],
+			'service' => $_GET['service'],
+		];
+
+		// If we have a Prevous Auth-Ticket
+		if (!empty($_GET['_'])) {
+			$act_prev = $dbc->fetchOne('SELECT meta FROM auth_context_ticket WHERE id = :t0', [ ':t0' => $_GET['_'] ]);
+			$act_prev = json_decode($act_prev, true);
+			switch ($act_prev['intent']) {
+				case 'oauth-authorize':
+					$act_data['intent'] = $act_prev['intent'];
+					$act_data['service'] = $act_prev['service'];
+					$act_data['oauth-request'] = $act_prev['oauth-request'];
+			}
+		}
+
+		$act = [];
+		$act['id'] = _random_hash();
+		$act['meta'] = json_encode($act_data);
+		$dbc->insert('auth_context_ticket', $act);
+
+		return $RES->withRedirect('/auth/init?_=' . $act['id']);
 	}
 
 	/**
@@ -206,7 +206,6 @@ class Open extends \App\Controller\Base
 		$act['meta'] = json_encode(array(
 			'intent' => 'password-reset',
 			'contact' => $Contact,
-			'geoip' => geoip_record_by_name($_SERVER['REMOTE_ADDR']),
 		));
 		$dbc_auth->insert('auth_context_ticket', $act);
 
