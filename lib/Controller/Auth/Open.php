@@ -160,9 +160,6 @@ class Open extends \App\Controller\Base
 				}
 			}
 
-			// Company Lookup Stuff
-			$act_data = $this->_init_company($dbc, $act_data, $chk['id']);
-
 			// Create Next Ticket & Redirect
 			$act = [];
 			$act['id'] = _random_hash();
@@ -176,13 +173,9 @@ class Open extends \App\Controller\Base
 
 		$data = $this->data;
 		$data['Page']['title'] = 'Error';
-		$RES = $this->_container->view->render($RES, 'page/done.html', $data);
+		$html = $this->render('done.php', $data);
+		$RES = $RES->write($html);
 		return $RES->withStatus(400);
-
-	}
-
-	function loadTicket()
-	{
 
 	}
 
@@ -258,35 +251,4 @@ class Open extends \App\Controller\Base
 
 	}
 
-
-	/**
-	 * Initialize Company Data in $act_data & return
-	 */
-	function _init_company($dbc, $act_data, $contact_id)
-	{
-		// Company List
-		$sql = <<<SQL
-SELECT auth_company.id
-, auth_company.name
-, auth_company.cre
-, auth_company_contact.stat
-, auth_company_contact.created_at
-FROM auth_company
-JOIN auth_company_contact ON auth_company.id = auth_company_contact.company_id
-WHERE auth_company_contact.contact_id = :c0
-  AND auth_company_contact.stat = 200
-ORDER BY auth_company_contact.stat, auth_company_contact.created_at ASC
-SQL;
-
-		$arg = [ ':c0' => $contact_id ];
-		$chk = $dbc->fetchAll($sql, $arg);
-
-		$act_data['company_list'] = $chk;
-		if (count($chk) == 1) {
-			$act_data['company'] = $chk[0];
-		}
-
-		return $act_data;
-
-	}
 }
