@@ -29,13 +29,13 @@ class Once extends \App\Controller\Base
 			$dbc_auth->query('DELETE FROM auth_context_ticket WHERE id = :t0', [ ':t0' => $_GET['_'] ]);
 			return $RES->withRedirect('/done?' . http_build_query([
 				'_' => $_GET['_'],
-				'e' => 'cao066'
+				'e' => 'CAO-066'
 			]));
 		}
 		$act = json_decode($chk['meta'], true);
 		if (empty($act)) {
 			$dbc_auth->query('DELETE FROM auth_context_ticket WHERE id = :t0', [ ':t0' => $_GET['_'] ]);
-			return $RES->withRedirect('/done?e=cao077');
+			return $RES->withRedirect('/done?e=CAO-077');
 		}
 
 		// if (strtotime($act['expires_at']) < $_SERVER['REQUEST_TIME']) {

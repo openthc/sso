@@ -128,7 +128,7 @@ class Email extends \App\Controller\Verify\Base
 		// Return/Redirect
 		$ret_path = '/done';
 		$ret_args = [
-			'e' => 'cav228'
+			'e' => 'CAV-228'
 		];
 
 		// Test Mode
@@ -156,7 +156,7 @@ class Email extends \App\Controller\Verify\Base
 				}
 
 			} catch (Exception $e) {
-				$ret_args['e'] = 'cav255';
+				$ret_args['e'] = 'CAV-255';
 				$ret_args['s'] = 'f';
 			}
 

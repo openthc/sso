@@ -158,7 +158,7 @@ class Authorize extends \App\Controller\Base
 		foreach ($scope_ask as $s) {
 			if (!in_array($s, $scope_may, true)) {
 				$html = sprintf('<h1>Access Denied to Context &quot;%s&quot; [COA-151]</h1>', $s);
-				$html.= sprintf('<p>See <a href="https://%s/doc#coa151">documentation</p>', $_SERVER['SERVER_NAME']);
+				$html.= sprintf('<p>See <a href="https://%s/doc#COA-151">documentation</p>', $_SERVER['SERVER_NAME']);
 				$html.= '<p>Or <a href="/auth/shut">sign-out</a> and start over</p>';
 				__exit_html($html, 403);
 			}

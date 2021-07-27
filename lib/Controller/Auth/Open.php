@@ -20,16 +20,16 @@ class Open extends \App\Controller\Base
 		// Add Errors
 		if (!empty($_GET['e'])) {
 			switch ($_GET['e']) {
-			case 'cao049':
+			case 'CAO-049':
 				$data['Page']['flash'] = '<div class="alert alert-danger">Invalid email, please use a proper email address</div>';
 				break;
-			case 'cao069':
+			case 'CAO-069':
 				$data['Page']['flash'] = '<div class="alert alert-danger">Invalid Password, must be at least 8 characters</div>';
 				break;
-			case 'cao093':
+			case 'CAO-093':
 				$data['Page']['flash'] = '<div class="alert alert-danger">Invalid Username or Password</div>';
 				break;
-			case 'cap080':
+			case 'CAP-080':
 				$data['Page']['flash'] = '<div class="alert alert-info">Your Password has been updated, please sign-in to continue</div>';
 				break;
 			default:
@@ -94,7 +94,7 @@ class Open extends \App\Controller\Base
 			if (empty($username)) {
 				return $RES->withRedirect('/auth/open?' . http_build_query([
 					'_' => $_GET['_'],
-					'e' => 'cao049'
+					'e' => 'CAO-049'
 				]));
 			}
 
@@ -104,7 +104,7 @@ class Open extends \App\Controller\Base
 			if (empty($password) || (strlen($password) < 8) || (strlen($password) > 60)) {
 				return $RES->withRedirect('/auth/open?' . http_build_query([
 					'_' => $_GET['_'],
-					'e' => 'cao069'
+					'e' => 'CAO-069'
 				]));
 			}
 
@@ -117,14 +117,14 @@ class Open extends \App\Controller\Base
 			if (empty($chk['id'])) {
 				return $RES->withRedirect('/auth/open?' . http_build_query([
 					'_' => $_GET['_'],
-					'e' => 'cao093'
+					'e' => 'CAO-093'
 				]));
 			}
 
 			if (!password_verify($password, $chk['password'])) {
 				return $RES->withRedirect('/auth/open?' . http_build_query([
 					'_' => $_GET['_'],
-					'e' => 'cao093'
+					'e' => 'CAO-093'
 				]));
 			}
 
@@ -189,13 +189,13 @@ class Open extends \App\Controller\Base
 		$username = strtolower(trim($_POST['username']));
 		$username = \Edoceo\Radix\Filter::email($username);
 		if (empty($username)) {
-			return $RES->withRedirect('/auth/open?a=password-reset&e=cao049');
+			return $RES->withRedirect('/auth/open?a=password-reset&e=CAO-049');
 		}
 
 		$dbc_auth = $this->_container->DBC_AUTH;
 		$Contact = $dbc_auth->fetchRow('SELECT id, username FROM auth_contact WHERE username = :u0', [ ':u0' => $username ]);
 		if (empty($Contact)) {
-			return $RES->withRedirect('/done?e=cao100&l=173');
+			return $RES->withRedirect('/done?e=CAO-100&l=173');
 		}
 
 		$_SESSION['email'] = $username;
@@ -211,7 +211,7 @@ class Open extends \App\Controller\Base
 		$dbc_auth->insert('auth_context_ticket', $act);
 
 		$ret_args = [
-			'e' => 'cao100',
+			'e' => 'CAO-100',
 			'l' => '200',
 		];
 		$ret_path = '/done';
@@ -241,7 +241,7 @@ class Open extends \App\Controller\Base
 
 			} catch (\Exception $e) {
 				// Ignore
-				$ret_args['e'] = 'cao236';
+				$ret_args['e'] = 'CAO-236';
 				$ret_args['s'] = 'f';
 			}
 

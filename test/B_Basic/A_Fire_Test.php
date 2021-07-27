@@ -26,7 +26,7 @@ class A_Fire_Test extends \Test\Base_Case
 		]]);
 		$this->assertValidResponse($res, 302);
 		$url = $res->getHeaderLine('location');
-		$this->assertEquals('/auth/open?e=cao049', $url);
+		$this->assertEquals('/auth/open?e=CAO-049', $url);
 
 		$res = $c->get($url);
 		$this->assertValidResponse($res);
@@ -53,7 +53,7 @@ class A_Fire_Test extends \Test\Base_Case
 		$this->assertValidResponse($res, 302);
 
 		$url = $res->getHeaderLine('location');
-		$this->assertEquals('/auth/open?a=password-reset&e=cao049', $url);
+		$this->assertEquals('/auth/open?a=password-reset&e=CAO-049', $url);
 
 		// Fetch Link
 		$res = $c->get($url);

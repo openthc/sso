@@ -21,16 +21,16 @@ class Password extends \App\Controller\Base
 
 		if (!empty($_GET['e'])) {
 			switch ($_GET['e']) {
-			case 'cap047':
+			case 'CAP-047':
 				$data['Page']['flash'] = 'Invalid password';
 				break;
-			case 'cap052':
+			case 'CAP-052':
 				$data['Page']['flash'] = 'Invalid password';
 				break;
-			case 'cap057':
+			case 'CAP-057':
 				$data['Page']['flash'] = 'Invalid password';
 				break;
-			case 'cap062':
+			case 'CAP-062':
 				$data['Page']['flash'] = 'Passwords do not match';
 				break;
 			}
@@ -54,19 +54,31 @@ class Password extends \App\Controller\Base
 			$p = $_POST['p0'];
 
 			if (empty($p) || empty($_POST['p1'])) {
-				return $RES->withRedirect('/account/password?e=cap047');
+				return $RES->withRedirect('/account/password?' . http_build_query([
+					'_' => $_GET['_'],
+					'e' => 'CAP-047',
+				]));
 			}
 
 			if (strlen($p) < 8) {
-				return $RES->withRedirect('/account/password?e=cap052');
+				return $RES->withRedirect('/account/password?' . http_build_query([
+					'_' => $_GET['_'],
+					'e' => 'CAP-052',
+				]));
 			}
 
 			if (preg_match_all('/\w|\d/', $p) < 8) {
-				return $RES->withRedirect('/account/password?e=cap057');
+				return $RES->withRedirect('/account/password?' . http_build_query([
+					'_' => $_GET['_'],
+					'e' => 'CAP-057',
+				]));
 			}
 
 			if ($p != $_POST['p1']) {
-				return $RES->withRedirect('/account/password?e=cap062');
+				return $RES->withRedirect('/account/password?' . http_build_query([
+					'_' => $_GET['_'],
+					'e' => 'CAP-062',
+				]));
 			}
 
 			$dbc_auth = $this->_container->DBC_AUTH;
@@ -87,7 +99,7 @@ class Password extends \App\Controller\Base
 			$_SESSION['email'] = $ARG['contact']['username'];
 
 			return $RES->withRedirect('/auth/open?' . http_build_query([
-				'e' => 'cap080',
+				'e' => 'CAP-080',
 				'service' => $ARG['service'],
 			]));
 

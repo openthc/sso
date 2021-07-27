@@ -16,7 +16,7 @@ class Base extends \App\Controller\Base
 			$dbc_auth->query('DELETE FROM auth_context_ticket WHERE id = :t0', [ ':t0' => $_GET['_'] ]);
 			return $RES->withRedirect('/done?' . http_build_query([
 				'_' => $_GET['_'],
-				'e' => 'cao066'
+				'e' => 'CAO-066'
 			]));
 		}
 		$act = json_decode($chk['meta'], true);

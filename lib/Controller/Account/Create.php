@@ -25,7 +25,7 @@ class Create extends \App\Controller\Base
 		}
 
 		switch ($_GET['e']) {
-		case 'cac035':
+		case 'CAC-035':
 			// Invalid Email Address
 			break;
 		}
@@ -46,7 +46,7 @@ class Create extends \App\Controller\Base
 		// _check_recaptcha();
 		$chk = \App\CSRF::verify($_POST['CSRF']);
 		if (empty($chk)) {
-			return $RES->withRedirect('/account/create?e=cac049');
+			return $RES->withRedirect('/account/create?e=CAC-049');
 		}
 
 		switch ($_POST['a']) {
@@ -69,7 +69,7 @@ class Create extends \App\Controller\Base
 		$e = strtolower(trim($_POST['contact-email']));
 		$e = filter_var($e, FILTER_VALIDATE_EMAIL);
 		if (empty($e)) {
-			return $RES->withRedirect('/account/create?e=cac035');
+			return $RES->withRedirect('/account/create?e=CAC-035');
 		}
 		$_POST['contact-email'] = $e;
 
@@ -84,7 +84,7 @@ class Create extends \App\Controller\Base
 		$arg = array($_POST['contact-email']);
 		$res = $dbc_main->fetchRow($sql, $arg);
 		if (!empty($res)) {
-			return $RES->withRedirect('/done?e=cac065');
+			return $RES->withRedirect('/done?e=CAC-065');
 		}
 
 		// Contact Table
@@ -119,7 +119,7 @@ class Create extends \App\Controller\Base
 
 		// Return/Redirect
 		$ret_args = [
-			'e' => 'cac111',
+			'e' => 'CAC-111',
 		];
 		$ret_path = '/done';
 
@@ -149,14 +149,14 @@ class Create extends \App\Controller\Base
 						// Cool
 						break;
 					default:
-						$ret_args['e'] = 'cac217';
+						$ret_args['e'] = 'CAC-217';
 						$ret_args['s'] = 'e';
 						break;
 				}
 
 			} catch (\Exception $e) {
 				// Ignore
-				$ret_args['e'] = 'cac190';
+				$ret_args['e'] = 'CAC-190';
 				$ret_args['s'] = 'e';
 			}
 

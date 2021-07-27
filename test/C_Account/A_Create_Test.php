@@ -40,8 +40,8 @@ class A_Create_Test extends \Test\Base_Case
 		$this->assertValidResponse($res, 302);
 
 		$done_link = $res->getHeaderLine('location');
-		$this->assertMatchesRegularExpression('/^\/done\?e=cac111/', $done_link);
-		$this->assertMatchesRegularExpression('/^\/done\?e=cac111.+r=/', $done_link); // Has Test Link
+		$this->assertMatchesRegularExpression('/^\/done\?e=CAC\-111/', $done_link);
+		$this->assertMatchesRegularExpression('/^\/done\?e=CAC\-111.+r=/', $done_link); // Has Test Link
 
 		// Get Done Page
 		syslog(LOG_DEBUG, "GET-047 \$done_link = $done_link");
@@ -63,7 +63,7 @@ class A_Create_Test extends \Test\Base_Case
 		$res = $c->get($auth_link);
 		$this->assertValidResponse($res, 302);
 		$link3 = $res->getHeaderLine('location');
-		// $this->assertMatchesRegularExpression('/^\/done\?e=cao073/', $link3);
+		// $this->assertMatchesRegularExpression('/^\/done\?e=CAO\-073/', $link3);
 
 		return $link3;
 
@@ -88,7 +88,7 @@ class A_Create_Test extends \Test\Base_Case
 		// ]]);
 		// $this->assertValidResponse($res, 302);
 		// $url = $res->getHeaderLine('location');
-		// $this->assertEquals('/auth/open?e=cap080', $url);
+		// $this->assertEquals('/auth/open?e=CAP-080', $url);
 
 		// syslog(LOG_DEBUG, "GET-098 \$url = $url");
 		// $res = $c->get($url);
@@ -271,7 +271,7 @@ class A_Create_Test extends \Test\Base_Case
 		$this->assertValidResponse($res, 302);
 
 		$l = $res->getHeaderLine('location');
-		$this->assertEquals('/done?e=cac065', $l);
+		$this->assertEquals('/done?e=CAC-065', $l);
 
 		$res = $c->get($l);
 		$this->assertValidResponse($res);
@@ -302,7 +302,7 @@ class A_Create_Test extends \Test\Base_Case
 		]]);
 		$this->assertValidResponse($res, 302);
 		$l = $res->getHeaderLine('location');
-		$this->assertEquals('/account/create?e=cac035', $l);
+		$this->assertEquals('/account/create?e=CAC-035', $l);
 
 		$res = $c->get($l);
 		$this->assertValidResponse($res);
@@ -331,8 +331,8 @@ class A_Create_Test extends \Test\Base_Case
 		]]);
 		$this->assertValidResponse($res, 302);
 		$url = $res->getHeaderLine('location');
-		// $this->assertEquals('/done?e=cao100&l=200&s=t', $url); // LIVE
-		$this->assertMatchesRegularExpression('/^\/done\?e=cao100&l=200&r=.+/', $url);
+		// $this->assertEquals('/done?e=CAO-100&l=200&s=t', $url); // LIVE
+		$this->assertMatchesRegularExpression('/^\/done\?e=CAO\-100&l=200&r=.+/', $url);
 
 		$res = $c->get($url);
 		$this->assertValidResponse($res);

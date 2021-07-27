@@ -98,7 +98,7 @@ class Phone extends \App\Controller\Verify\Base
 
 			return $RES->withRedirect('/verify/phone?' . http_build_query([
 				'_' => $_GET['_'],
-				'e' => 'cav205'
+				'e' => 'CAV-205'
 			]));
 
 		}
@@ -172,12 +172,12 @@ class Phone extends \App\Controller\Verify\Base
 				$res = $cic->post('/api/v2018/phone/send', [ 'form_params' => $arg ]);
 				switch ($res['code']) {
 					case 200:
-						$ret_args['e'] = 'cav294';
+						$ret_args['e'] = 'CAV-294';
 						$ret_args['s'] = 't'; // Send=True
 						break;
 					case 500:
 					default:
-						$ret_args['e'] = 'cav297';
+						$ret_args['e'] = 'CAV-297';
 						$ret_args['s'] = 'f'; // Send=False
 						unset($_SESSION['verify']['phone']['code']);
 						unset($_SESSION['verify']['phone']['e164']);
@@ -186,7 +186,7 @@ class Phone extends \App\Controller\Verify\Base
 				}
 
 			} catch (Exception $e) {
-				$ret_args['e'] = 'cav304';
+				$ret_args['e'] = 'CAV-304';
 				$reg_args['s'] = 'e'; // Exception Notice
 			}
 

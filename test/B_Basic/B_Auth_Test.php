@@ -43,7 +43,7 @@ class B_Auth_Test extends \Test\UI_Test_Case
 		$btn->click();
 
 		$url = self::$driver->getCurrentUrl();
-		$this->assertStringContainsString('/auth/open?e=cao093', $url);
+		$this->assertStringContainsString('/auth/open?e=CAO-093', $url);
 
 	}
 
