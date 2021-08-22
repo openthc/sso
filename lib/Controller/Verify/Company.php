@@ -45,6 +45,7 @@ class Company extends \App\Controller\Verify\Base
 
 				$CY0 = [
 					'id' => _ulid(),
+					// 'hash' => '-',
 					'name' => $act['contact']['username'],
 					'stat' => 200, // $act['contact']['stat'],
 					'flag' => 3, // $act['contact']['flag'],
@@ -55,7 +56,8 @@ class Company extends \App\Controller\Verify\Base
 				$dbc_auth = $this->_container->DBC_AUTH;
 				$dbc_main = $this->_container->DBC_MAIN;
 
-				// $dbc_auth->insert('auth_company', $CY0);
+				$dbc_auth->insert('auth_company', $CY0);
+
 				$CY0['hash'] = '-';
 				$dbc_main->insert('company', $CY0);
 

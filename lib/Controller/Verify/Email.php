@@ -106,7 +106,8 @@ class Email extends \App\Controller\Verify\Base
 		// 	return $RES->withRedirect('/account/verify?_=' . $x);
 		// }
 
-		// return $this->_container->view->render($RES, 'page/done.html', $data);
+		// $html = $this->render('done.php', $data);
+		// return $RES->write($html);
 
 	}
 
