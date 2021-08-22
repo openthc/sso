@@ -3,7 +3,6 @@
 # OpenTHC Test Runner
 #
 
-set -o errexit
 set -o nounset
 
 f=$(readlink -f "$0")
@@ -28,7 +27,7 @@ then
 		../test/
 	)
 	find "${search_list[@]}" -type f -name '*.php' -exec php -l {} \; \
-		| grep -v 'No syntax' || true \
+		| grep -v 'No syntax' \
 		>"$output_base/phplint.txt" 2>&1
 	[ -s "$output_base/phplint.txt" ] || echo "Linting OK" >"$output_base/phplint.txt"
 fi
@@ -39,7 +38,7 @@ fi
 if [ ! -f "$output_base/phpstan.html" ]
 then
 	echo '<h1>PHPStan...</h1>' > "$output_main"
-	../vendor/bin/phpstan analyze --error-format=junit --no-progress > "$output_base/phpstan.xml" || true
+	../vendor/bin/phpstan analyze --error-format=junit --no-progress > "$output_base/phpstan.xml"
 	[ -f "phpstan.xsl" ] || wget -q 'https://openthc.com/pub/phpstan.xsl'
 	xsltproc \
 		--nomkdir \
