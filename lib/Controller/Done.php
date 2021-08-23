@@ -46,7 +46,12 @@ class Done extends \App\Controller\Base
 				case 'CAO-100':
 					$data['Page']['title'] = 'Check Your Inbox';
 					$data['body'] = '<p>If the email address submitted was valid and has an account then an email should arrive shortly with password reset instructions.</p><p>Check your mailbox (or SPAM folder) for this message and follow the steps indicated.</p><hr><p>Contact <em><a href="mailto:help@openthc.com">help@openthc.com</a></em> if you need additional assistance</p>';
-				break;
+					break;
+				case 'CAO-144':
+					$data['Page']['title'] = 'Account Pending';
+					$data['info'] = 'This account is currently: Pending';
+					$data['body'] = '<p>This account must have the setup process completed and the final confirmation before you can sign in.</p>';
+					break;
 				case 'CAV-228':
 					$data['Page']['title'] = 'Email Verification';
 					$data['body'] = '<div class="alert alert-success">Check Your Inbox!</div><p>Your your inbox for a message from us, there is a link we want you to click.</p>';

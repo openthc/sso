@@ -105,6 +105,8 @@ class Open extends \App\Controller\Base
 	 */
 	function openAccount($RES)
 	{
+		$_SESSION = [];
+
 		$username = strtolower(trim($_POST['username']));
 		$username = \Edoceo\Radix\Filter::email($username);
 		if (empty($username)) {
@@ -113,6 +115,7 @@ class Open extends \App\Controller\Base
 				'e' => 'CAO-049'
 			]));
 		}
+		$_SESSION['email'] = $username;
 
 		$password = trim($_POST['password']);
 		if (empty($password) || (strlen($password) < 8) || (strlen($password) > 60)) {
@@ -124,7 +127,7 @@ class Open extends \App\Controller\Base
 
 		// Find Contact
 		$dbc = $this->_container->DBC_AUTH;
-		$sql = 'SELECT id, flag, username, password FROM auth_contact WHERE username = :un';
+		$sql = 'SELECT id, flag, stat, username, password FROM auth_contact WHERE username = :un';
 		$arg = [ ':un' => $username ];
 		$chk = $dbc->fetchRow($sql, $arg);
 
@@ -136,6 +139,13 @@ class Open extends \App\Controller\Base
 		}
 
 		if (!password_verify($password, $chk['password'])) {
+
+			if (100 == $chk['stat']) {
+				return $RES->withRedirect('/done?' . http_build_query([
+					'e' => 'CAO-144'
+				]));
+			}
+
 			return $RES->withRedirect('/auth/open?' . http_build_query([
 				'_' => $_GET['_'],
 				'e' => 'CAO-093'
