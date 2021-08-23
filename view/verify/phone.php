@@ -36,7 +36,9 @@
 		<div class="form-group">
 			<label>Verification Code:</label>
 			<div class="input-group">
-				<input autofocus class="form-control" id="phone-verify-code" name="phone-verify-code" tabindex="1" value="">
+				<input autofocus class="form-control" id="phone-verify-code" name="phone-verify-code"
+					style="letter-spacing: 0.5em; text-align: center; text-transform: uppercase;"
+					tabindex="1" value="">
 			</div>
 			<p>You may need to wait a few minutes for the message to arrive. You can resend if needed.</p>
 		</div>
