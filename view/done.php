@@ -11,7 +11,7 @@
 		}
 
 		if ($data['warn']) {
-			printf('<div class="alert alert-waring">%s</div>', h($data['warn']));
+			printf('<div class="alert alert-warning">%s</div>', h($data['warn']));
 		}
 
 		if ($data['info']) {
