@@ -72,4 +72,70 @@ class B_Auth_Test extends \Test\UI_Test_Case
 
 	}
 
+	/**
+	 * Test auth open when contact stat=100
+	 */
+	public function test_auth_open_verify()
+	{
+		self::$driver->get(sprintf('https://%s/auth/open', getenv('OPENTHC_TEST_HOST')));
+
+		$element = self::$driver->findElement(WebDriverBy::id('username'));
+		$element->sendKeys(getenv('OPENTHC_TEST_CONTACT_USERNAME'));
+
+		$element = self::$driver->findElement(WebDriverBy::id('password'));
+		$element->sendKeys(getenv('OPENTHC_TEST_CONTACT_PASSWORD'));
+
+		$btn = self::$driver->findElement(WebDriverBy::id('btn-auth-open'));
+		$btn->click();
+
+		$url = self::$driver->getCurrentUrl();
+		$this->assertStringContainsString('/verify?_=', $url);
+		// $this->assertStringContainsString('Invalid Username or Password', self::$driver->getPageSource());
+
+	}
+
+	/**
+	 * Test auth open when contact stat=200
+	 */
+	public function test_auth_open_live()
+	{
+		self::$driver->get(sprintf('https://%s/auth/open', getenv('OPENTHC_TEST_HOST')));
+
+		$element = self::$driver->findElement(WebDriverBy::id('username'));
+		$element->sendKeys(getenv('OPENTHC_TEST_CONTACT_USERNAME'));
+
+		$element = self::$driver->findElement(WebDriverBy::id('password'));
+		$element->sendKeys(getenv('OPENTHC_TEST_CONTACT_PASSWORD'));
+
+		$btn = self::$driver->findElement(WebDriverBy::id('btn-auth-open'));
+		$btn->click();
+
+		$url = self::$driver->getCurrentUrl();
+		// count(auth_company_contact.contact_id = auth_contact.id) > 1
+		// $this->assertStringContainsString('/auth/init?_=', $url);
+
+		// count(auth_company_contact.contact_id = auth_contact.id) == 1
+		$this->assertStringContainsString('/account?_=', $url);
+	}
+
+	/**
+	 * Test auth open when contact stat=410
+	 */
+	public function test_auth_open_gone()
+	{
+		self::$driver->get(sprintf('https://%s/auth/open', getenv('OPENTHC_TEST_HOST')));
+
+		$element = self::$driver->findElement(WebDriverBy::id('username'));
+		$element->sendKeys(getenv('OPENTHC_TEST_CONTACT_USERNAME'));
+
+		$element = self::$driver->findElement(WebDriverBy::id('password'));
+		$element->sendKeys(getenv('OPENTHC_TEST_CONTACT_PASSWORD'));
+
+		$btn = self::$driver->findElement(WebDriverBy::id('btn-auth-open'));
+		$btn->click();
+
+		$url = self::$driver->getCurrentUrl();
+		$this->assertStringContainsString('/auth/init?_=', $url);
+		$this->assertStringContainsString('Invalid Account', self::$driver->getPageSource());
+	}
 }
