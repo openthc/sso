@@ -16,15 +16,31 @@ class Init extends \App\Controller\Base
 	 */
 	function __invoke($REQ, $RES, $ARG)
 	{
-		// Clear Session
-		$key_list = array_keys($_SESSION);
-		foreach ($key_list as $key) {
-			unset($_SESSION[$key]);
-		}
-
 		// Check Input
 		if (!preg_match('/^([\w\-]{32,128})$/i', $_GET['_'], $m)) {
 			_err_exit_html('<h1>Invalid Request [CAI-026]</h1>', 400);
+		}
+
+		// Clear Session
+		$_SESSION = [];
+
+		// Load Location
+		if (empty($_SESSION['geoip'])) {
+			$cfg = \OpenTHC\Config::get('maxmind');
+			if (!empty($cfg['account'])) {
+				$api = new \GeoIp2\WebService\Client($cfg['account'], $cfg['license-key']);
+				$geo = $api->city($_SERVER['REMOTE_ADDR']);
+				$raw = $geo->raw;
+				$_SESSION['iso3166_1'] = [
+					'id' => $raw['country']['iso_code'],
+					'name' => $raw['country']['names']['en'],
+				];
+				$_SESSION['iso3166_2'] = [
+					'id' => sprintf('%s-%s', $raw['country']['iso_code'], $raw['subdivisions'][0]['iso_code']),
+					'name' => $raw['subdivisions'][0]['names']['en']
+				];
+				$_SESSION['tz'] = $raw['location']['time_zone'];
+			}
 		}
 
 		$dbc_auth = $this->_container->DBC_AUTH;
