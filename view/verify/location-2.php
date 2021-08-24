@@ -8,17 +8,16 @@
 
 		<div class="form-group">
 			<label>Country:</label>
-			<input class="form-control" disabled type="text" value="<?= h($_SESSION['iso3166_1']['official_name']) ?>">
+			<input class="form-control" disabled type="text" value="<?= h($_SESSION['iso3166_1_pick']['name']) ?>">
 		</div>
 
 		<div class="form-group">
 			<label>Region:</label>
 			<select class="form-control" id="contact-iso3166-2" name="contact-iso3166-2">
 			<?php
-			$pick = sprintf('%s-%s', $_SESSION['iso3166_1']['alpha_2'], $data['iso3166_2_pick']['code']);
 			foreach ($data['iso3166_2_list'] as $i => $x) {
-				$sel = ($x['code'] == $pick ? ' selected' : '');
-				printf('<option%s value="%s">%s</option>', $sel, $x['code'], $x['name']);
+				$sel = ($x['id'] == $data['iso3166_2_pick']['id'] ? ' selected' : '');
+				printf('<option%s value="%s">%s</option>', $sel, $x['id'], $x['name']);
 			}
 			?>
 			</select>

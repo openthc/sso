@@ -8,11 +8,11 @@
 
 		<div class="form-group">
 			<label>Country:</label>
-			<select class="form-control" name="contact-country">
+			<select class="form-control" name="contact-iso3166-1">
 			<?php
 			foreach ($data['iso3166_1_list'] as $i => $x) {
-				$sel = ($x['alpha_2'] == $data['iso3166_1_pick']['alpha_2'] ? ' selected' : '');
-				printf('<option%s value="%s">%s</option>', $sel, $x['alpha_2'], $x['official_name']);
+				$sel = ($x['id'] == $data['iso3166_1_pick']['id'] ? ' selected' : '');
+				printf('<option%s value="%s">%s</option>', $sel, $x['id'], $x['name']);
 			}
 			?>
 			</select>

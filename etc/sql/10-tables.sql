@@ -102,6 +102,21 @@ CREATE TABLE auth_service_contact (
 	expires_at timestamp with time zone default (now() + '365 days'::interval) not null
 );
 
+
+--
+-- Name: iso3166; Type: TABLE; Schema: public;
+--
+
+CREATE TABLE iso3166 (
+	id varchar(32) not null primary key,
+	code2 varchar(2),
+	code3 varchar(3),
+	type text,
+	name text,
+	meta jsonb
+);
+
+
 --
 -- Name: log_delta; Type: TABLE; Schema: public;
 --

@@ -69,9 +69,10 @@ class Main extends \App\Controller\Verify\Base
 
 		// Verify Location
 		if (empty($CT0['iso3166'])) {
-			unset($_SESSION['iso3166_1']);
-			unset($_SESSION['iso3166_2']);
 			return $RES->withRedirect(sprintf('/verify/location?_=%s', $_GET['_']));
+		// } else {
+			// Load It Up?
+			// $_SESSION['iso3166'] = $CT0['iso3166'];
 		}
 
 		if (empty($CT0['tz'])) {
