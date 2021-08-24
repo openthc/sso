@@ -3,7 +3,7 @@
  * UI Authentication Tests
  */
 
-namespace Test\B_Base;
+namespace Test\B_Basic;
 
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverSelect;
@@ -29,7 +29,7 @@ class B_Auth_Test extends \Test\UI_Test_Case
 	/**
 	 *
 	 */
-	public function test_auth_open()
+	public function test_auth_open_fail()
 	{
 		self::$driver->get(sprintf('https://%s/auth/open', getenv('OPENTHC_TEST_HOST')));
 
@@ -44,26 +44,26 @@ class B_Auth_Test extends \Test\UI_Test_Case
 
 		$url = self::$driver->getCurrentUrl();
 		$this->assertStringContainsString('/auth/open?e=CAO-093', $url);
+		$this->assertStringContainsString('Invalid Username or Password', self::$driver->getPageSource());
 
 	}
 
 	/**
 	 *
 	 */
-	public function test_auth_open_init()
+	public function test_auth_create_account()
 	{
-		self::$driver->get(sprintf('https://%s/auth/open', getenv('OPENTHC_TEST_HOST')));
+		self::$driver->get(sprintf('https://%s/account/create', getenv('OPENTHC_TEST_HOST')));
 
-		$element = self::$driver->findElement(WebDriverBy::id("username"));
-		$element->sendKeys(getenv('OPENTHC_TEST_CONTACT_USERNAME'));
+		// Should Already Be Populated in Session
+		$element = self::$driver->findElement(WebDriverBy::id('username'));
+		$element->value(getenv('OPENTHC_TEST_CONTACT_USERNAME'));
 
-		$element = self::$driver->findElement(WebDriverBy::id("password"));
-		$element->sendKeys(sprintf('invalid-password-%08x', rand(10000, 99999)));
+		$element = self::$driver->findElement(WebDriverBy::id('password'));
+		$element->value(sprintf('invalid-password-%08x', rand(10000, 99999)));
 
 		$btn = self::$driver->findElement(WebDriverBy::id('btn-auth-open'));
 		$btn->click();
-
-		// sleep(5);
 
 		$url = self::$driver->getCurrentUrl();
 		var_dump($url); //

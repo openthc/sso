@@ -33,7 +33,7 @@
 
 </div>
 <div class="card-footer r">
-	<button class="btn btn-primary" name="a" type="submit" value="timezone-save-next">
+	<button class="btn btn-primary" id="btn-timezone-save" name="a" type="submit" value="timezone-save-next">
 		Next
 		<i class="icon icon-arrow-right"></i>
 	</button>

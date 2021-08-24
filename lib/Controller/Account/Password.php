@@ -96,8 +96,6 @@ class Password extends \App\Controller\Base
 				'password' => $arg[':pw'],
 			]);
 
-			$_SESSION['email'] = $ARG['contact']['username'];
-
 			return $RES->withRedirect('/auth/open?' . http_build_query([
 				'e' => 'CAP-080',
 				'service' => $ARG['service'],
@@ -122,6 +120,7 @@ class Password extends \App\Controller\Base
 		}
 
 		switch ($ARG['intent']) {
+		case 'account-verify':
 		case 'password-reset':
 		case 'password-update':
 			// OK

@@ -97,7 +97,7 @@ class Once extends \App\Controller\Base
 		$dbc_main->query('BEGIN');
 
 		// Update Auth Contact
-		$sql = 'UPDATE auth_contact SET flag = flag | :f1 WHERE id = :pk';
+		$sql = 'UPDATE auth_contact SET password = NULL, flag = flag | :f1 WHERE id = :pk';
 		$arg = [
 			':pk' => $data['contact']['id'],
 			':f1' => \App\Contact::FLAG_EMAIL_GOOD | \App\Contact::FLAG_PHONE_WANT,

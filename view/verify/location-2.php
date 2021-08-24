@@ -13,7 +13,7 @@
 
 		<div class="form-group">
 			<label>Region:</label>
-			<select class="form-control" name="contact-iso3166-2">
+			<select class="form-control" id="contact-iso3166-2" name="contact-iso3166-2">
 			<?php
 			$pick = sprintf('%s-%s', $_SESSION['iso3166_1']['alpha_2'], $data['iso3166_2_pick']['code']);
 			foreach ($data['iso3166_2_list'] as $i => $x) {
@@ -26,7 +26,7 @@
 
 	</div>
 	<div class="card-footer r">
-		<button class="btn btn-primary" name="a" type="submit" value="iso3166-2-save-next">
+		<button class="btn btn-primary" id="btn-location-save" name="a" type="submit" value="iso3166-2-save-next">
 			Next
 			<i class="icon icon-arrow-right"></i>
 		</button>

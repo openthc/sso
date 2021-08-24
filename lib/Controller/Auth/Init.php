@@ -164,12 +164,12 @@ SQL;
 			case 'account-open':
 
 				// Requested Service ? DEFAULT
-				if (empty($act_data['service'])) {
-					$cfg = \OpenTHC\Config::get('openthc/app/hostname');
-					if (!empty($cfg)) {
-						$act_data['service'] = $cfg;
-					}
-				}
+				// if (empty($act_data['service'])) {
+				// 	$cfg = \OpenTHC\Config::get('openthc/app/hostname');
+				// 	if (!empty($cfg)) {
+				// 		$act_data['service'] = $cfg;
+				// 	}
+				// }
 
 				if (!empty($act_data['service'])) {
 					// @todo Lookup Service in Database before building this link?

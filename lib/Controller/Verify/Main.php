@@ -17,6 +17,7 @@ class Main extends \App\Controller\Verify\Base
 	{
 		if (empty($_SESSION['verify'])) {
 			$_SESSION['verify'] = [
+				'password',
 				'iso3166-1',
 				'iso3166-2',
 				'tz',
@@ -31,6 +32,7 @@ class Main extends \App\Controller\Verify\Base
 		switch ($act['intent']) {
 			case 'account-open':
 			case 'account-verify':
+			case 'oauth-authorize':
 				return $this->guessNextStep($RES, $act);
 				break;
 		}
@@ -50,23 +52,22 @@ class Main extends \App\Controller\Verify\Base
 			':ct0' => $act_data['contact']['id']
 		]);
 
-		// Need Email
+		// Verify Email
 		if (0 == ($CT0['flag'] & Contact::FLAG_EMAIL_GOOD)) {
 			return $RES->withRedirect(sprintf('/verify/email?_=%s', $_GET['_']));
 		}
-
 		// Want to Re-Verify?
 		if (0 != ($CT0['flag'] & Contact::FLAG_EMAIL_WANT)) {
 			// Can I update the Token Easily?
 			return $RES->withRedirect(sprintf('/verify/email?_=%s', $_GET['_']));
 		}
 
-		// if (empty($CT0['password']) || ('NONE' == substr($CT0['password'], 0, 4))) {
-		// 	// Needs Password Reset
-		// 	__exit_text('Password Reset Here, Redirect to ./password', 501);
-		// 	return $RES->withRedirect(sprintf('/account/password?_=%s', $_GET['_']));
-		// }
+		// Verify Password
+		if (empty($CT0['password'])) {
+			return $RES->withRedirect(sprintf('/verify/password?_=%s', $_GET['_']));
+		}
 
+		// Verify Location
 		if (empty($CT0['iso3166'])) {
 			unset($_SESSION['iso3166_1']);
 			unset($_SESSION['iso3166_2']);

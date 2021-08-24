@@ -18,23 +18,24 @@ class UI_Test_Case extends \Test\Base_Case
 
 	public static function setUpBeforeClass() : void
 	{
-		$config_file = sprintf('%s/etc/browserstack.conf.json', APP_ROOT);
-		$config = json_decode(file_get_contents($config_file), true);
+		$url = getenv('OPENTHC_TEST_WEBDRIVER_URL');
 
-		$task_id = getenv('TASK_ID') ? getenv('TASK_ID') : 0;
+		$caps['capabilities'] = [];
+		$caps['capabilities']['project'] = 'SSO';
+		$caps['capabilities']['build'] = '420.21.235';
+		$caps['capabilities']['name'] = sprintf('PHPUnit Test Case: %s', strftime('%Y-%m-%d %H:%M:%S'));
 
-		$url = sprintf('https://%s:%s@%s/wd/hub', $config['user'], $config['key'], $config['server']);
-		$caps = $config['environments'][$task_id];
+		// $caps['build'] = APP_BUILD;
+		$caps['capabilities']['os'] = 'Windows';
+		// $caps['capabilities']['os_version'] = 'latest';
+		$wb_list = [ 'Chrome', 'Edge', 'Firefox' ];
+		$caps['capabilities']['browser'] = $wb_list[ array_rand($wb_list) ];
+		// $caps['capabilities']['browser_version'] = 'latest';
 
-		foreach ($config["capabilities"] as $key => $value) {
-			if(!array_key_exists($key, $caps))
-				$caps[$key] = $value;
-		}
-
-		$caps['build'] = APP_BUILD;
-		$caps['name'] = sprintf('PHPUnit Test Case: %s', strftime('%Y-%m-%d %H:%M:%S'));
+		$caps['capabilities']['resolution'] = '1280x1024';
 
 		self::$driver = RemoteWebDriver::create($url, $caps);
+
 	}
 
 	public static function tearDownAfterClass() : void

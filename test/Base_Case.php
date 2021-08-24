@@ -24,19 +24,24 @@ class Base_Case extends \PHPUnit\Framework\TestCase
 	 */
 	protected function _ua()
 	{
-		$c = new \GuzzleHttp\Client(array(
-			'base_uri' => sprintf('https://%s', getenv('OPENTHC_TEST_HOST')),
-			'allow_redirects' => false,
-			'debug' => $_ENV['debug-http'],
-			'request.options' => array(
-				'exceptions' => false,
-			),
-			'http_errors' => false,
-			'cookies' => true,
-			'headers' => [
-				'openthc-test-mode' => getenv('OPENTHC_TEST_HASH')
-			]
-		));
+		static $c;
+
+		if (empty($c)) {
+
+			$c = new \GuzzleHttp\Client(array(
+				'base_uri' => sprintf('https://%s', getenv('OPENTHC_TEST_HOST')),
+				'allow_redirects' => false,
+				'debug' => $_ENV['debug-http'],
+				'request.options' => array(
+					'exceptions' => false,
+				),
+				'http_errors' => false,
+				'cookies' => true,
+				'headers' => [
+					'openthc-test-mode' => getenv('OPENTHC_TEST_HASH')
+				]
+			));
+		}
 
 		// $test_secret = \OpenTHC\Config::get('application_test.secret');
 		// $this->assertNotEmpty($test_secret);

@@ -20,7 +20,7 @@
 
 	</div>
 	<div class="card-footer r">
-		<button class="btn btn-primary" name="a" type="submit" value="iso3166-1-save-next">
+		<button class="btn btn-primary" id="btn-location-save" name="a" type="submit" value="iso3166-1-save-next">
 			Next
 			<i class="icon icon-arrow-right"></i>
 		</button>

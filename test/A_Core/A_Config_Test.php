@@ -16,6 +16,7 @@ class A_Config_Test extends \Test\Base_Case
 			'OPENTHC_TEST_CONTACT_PASSWORD',
 			'OPENTHC_TEST_CONTACT_EMAIL',
 			'OPENTHC_TEST_CONTACT_PHONE',
+			'OPENTHC_TEST_WEBDRIVER_URL',
 		];
 
 		foreach ($env_list as $x) {
