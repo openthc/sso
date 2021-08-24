@@ -3,7 +3,21 @@
 The SSO service provides an oAuth2 enabled single sign-on point for all of the OpenTHC services.
 Account Creation and Authentication methods are managed through this service.
 
-Corporate or Government implementers would extend this SSO to integrate with their own environment through Middlware or custom Controllers.
+Business or Government implementers deploy and extend this SSO to integrate with their own environment through Middlware or custom Controllers.
+
+
+## Installation
+
+1. Clone this Repo onto your system `git clone ... /opt/openthc/sso`
+1. Copy the example configurations in `./etc` to configure Apache and the Service.
+1. Configure the SSL then visit your site https://sso.openthc.example.com/
+
+
+### Database
+
+SSO expects to connect to a database following the OpenTHC data models as described in the API.
+An example schema is provided in `etc/sql/` and could/should be executed directly in a new environment.
+
 
 
 ## Configuration
@@ -14,10 +28,6 @@ Corporate or Government implementers would extend this SSO to integrate with the
 * U2F / FIDO
 
 
-### Database
-
-SSO expects to connect to a database following the OpenTHC data models as described in the API.
-An example schema is provided in `etc/sql/` and could/should be executed directly in a new environment.
 
 
 ### Communications

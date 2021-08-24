@@ -5,7 +5,6 @@
 --break
 --color
 --heading
---smart-case
 --sort-files
 
 --ignore-dir=.cache/
