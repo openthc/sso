@@ -105,6 +105,9 @@ $app->group('/verify', function() {
 	$this->get('/email', 'App\Controller\Verify\Email');
 	$this->post('/email', 'App\Controller\Verify\Email:post');
 
+	$this->get('/password', 'App\Controller\Verify\Password');
+	$this->post('/password', 'App\Controller\Verify\Password:post');
+
 	$this->get('/location', 'App\Controller\Verify\Location');
 	$this->post('/location', 'App\Controller\Verify\Location:post');
 

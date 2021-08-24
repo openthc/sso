@@ -27,6 +27,11 @@ class Create extends \App\Controller\Base
 		switch ($_GET['e']) {
 		case 'CAC-035':
 			// Invalid Email Address
+			$data['Page']['flash'] = '<div class="alert alert-warning">Invalid Email Address</div>';
+			break;
+		case 'CAC-049':
+			// Invalid Email Address
+			$data['Page']['flash'] = '<div class="alert alert-warning">Invalid Request</div>';
 			break;
 		}
 

@@ -10,8 +10,7 @@
 
 		<div class="card" style="height: 100%;">
 			<div class="card-body">
-				<h2>{<?= h($Company['name']) ?></h2>
-				<!-- Put some Details? -->
+				<h2><?= h($Company['name']) ?></h2>
 			</div>
 			<div class="card-footer">
 				<button class="btn btn-outline-secondary" type="submit" name="company_id" value="<?= $Company['id'] ?>">Open Company Account</button>
