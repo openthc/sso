@@ -9,8 +9,6 @@ class Profile extends \App\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{
-		$file = 'page/account/profile.html';
-
 		$data = $this->data;
 		$data['Page'] = [ 'title' => 'Account' ];
 		if (empty($_SESSION['Contact']['id'])) {
@@ -20,8 +18,7 @@ class Profile extends \App\Controller\Base
 		$dbc_auth = $this->_container->DBC_AUTH;
 		$dbc_main = $this->_container->DBC_MAIN;
 
-		// $dbc_auth->query('BEGIN');
-		// $dbc_main->query('BEGIN');
+
 		$C0 = $dbc_auth->fetchRow('SELECT * FROM auth_contact WHERE id = :ct0', [ ':ct0' => $_SESSION['Contact']['id'] ]);
 		if (empty($C0['id'])) {
 			__exit_text('Invalid Session [CAP-027]', 403);
@@ -41,7 +38,7 @@ class Profile extends \App\Controller\Base
 		$data['company_list'] = $res;
 
 		$svc_list = \OpenTHC\Config::get('openthc');
-		// var_dump($svc_list); exit;
+		// var_dump($svc_list);
 
 		// $data['service_list'] = [];
 
@@ -80,7 +77,7 @@ class Profile extends \App\Controller\Base
 		// 	'link' => 'https://cic.openthc.dev/auth/open?a=oauth',
 		// ];
 
-		return $RES->write( $this->render($file, $data) );
+		return $RES->write( $this->render('account/profile.php', $data) );
 
 	}
 
