@@ -48,11 +48,14 @@ function _time_zone_pick()
 {
 	var btn = document.querySelector('#btn-timezone-pick');
 	btn.addEventListener('click', function(e) {
-		var txt = document.querySelector('#contact-timezone');
 		var tz0 = Intl.DateTimeFormat().resolvedOptions().timeZone;
-		txt.value = tz0;
+		var opt = document.createElement('option');
+		opt.value = tz0;
+		opt.innerText = tz0;
+		var sel = document.querySelector('#contact-timezone');
+		sel.append(opt);
+		sel.value = tz0;
 	});
-
 }
 _time_zone_pick();
 </script>
