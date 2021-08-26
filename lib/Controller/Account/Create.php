@@ -16,14 +16,6 @@ class Create extends \App\Controller\Base
 			$_SESSION['return-path'] = $_GET['r'];
 		}
 
-		if (empty($_SESSION['account-create'])) {
-			$_SESSION['account-create'] = [];
-		}
-
-		if (!empty($_GET['service'])) {
-			$_SESSION['account-create']['service'] = $_GET['service'];
-		}
-
 		switch ($_GET['e']) {
 		case 'CAC-035':
 			// Invalid Email Address
@@ -110,7 +102,7 @@ class Create extends \App\Controller\Base
 		$act = new \App\Auth_Context_Ticket($dbc_auth);
 		$act->create(array(
 			'intent' => 'account-create',
-			'service' => $_SESSION['account-create']['service'],
+			'service' => $_GET['service'],
 			'contact' => [
 				'id' => $Contact['id'],
 				'name' => $Contact['name'],
