@@ -31,7 +31,7 @@
 			</div>
 			<div class="col-md-6 r">
 				<a class="btn btn-outline-secondary" href="/auth/open?a=password-reset">Forgot Password</a>
-				<a class="btn btn-outline-secondary" href="/account/create">Create an Account</a>
+				<a class="btn btn-outline-secondary" href="/account/create?service=<?= $data['service'] ?>">Create an Account</a>
 			</div>
 		</div>
 	</div>
