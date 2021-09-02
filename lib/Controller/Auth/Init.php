@@ -25,20 +25,28 @@ class Init extends \App\Controller\Base
 		$_SESSION = [];
 
 		// Load Location
+		// Would like to put this behind a cache
 		if (empty($_SESSION['geoip'])) {
+
 			$cfg = \OpenTHC\Config::get('maxmind');
 			if (!empty($cfg['account'])) {
+
 				$api = new \GeoIp2\WebService\Client($cfg['account'], $cfg['license-key']);
 				$geo = $api->city($_SERVER['REMOTE_ADDR']);
 				$raw = $geo->raw;
+
+				$_SESSION['geoip'] = true;
+
 				$_SESSION['iso3166_1'] = [
 					'id' => $raw['country']['iso_code'],
 					'name' => $raw['country']['names']['en'],
 				];
+
 				$_SESSION['iso3166_2'] = [
 					'id' => sprintf('%s-%s', $raw['country']['iso_code'], $raw['subdivisions'][0]['iso_code']),
 					'name' => $raw['subdivisions'][0]['names']['en']
 				];
+
 				$_SESSION['tz'] = $raw['location']['time_zone'];
 			}
 		}
@@ -56,6 +64,7 @@ class Init extends \App\Controller\Base
 		}
 		// Check Intent
 		switch ($act_data['intent']) {
+			case 'account-create':
 			case 'account-open':
 			case 'oauth-authorize':
 				// OK
@@ -177,6 +186,7 @@ SQL;
 		// No Return? Load Default
 		$ret = '/account';
 		switch ($act_data['intent']) {
+			case 'account-create':
 			case 'account-open':
 
 				// Requested Service ? DEFAULT

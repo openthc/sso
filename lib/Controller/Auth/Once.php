@@ -115,12 +115,8 @@ class Once extends \App\Controller\Base
 		$dbc_auth->query('COMMIT');
 		$dbc_main->query('COMMIT');
 
-		// Next Step
-		$data['intent'] = 'account-verify';
-		$act = new \App\Auth_Context_Ticket($dbc_auth);
-		$act->create($data);
-
-		return $RES->withRedirect(sprintf('/verify?_=%s', $act['id']));
+		// Init with this same token
+		return $RES->withRedirect(sprintf('/auth/init?_=%s', $_GET['_']));
 
 	}
 

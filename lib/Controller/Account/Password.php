@@ -120,7 +120,7 @@ class Password extends \App\Controller\Base
 		}
 
 		switch ($ARG['intent']) {
-		case 'account-verify':
+		case 'account-create':
 		case 'password-reset':
 		case 'password-update':
 			// OK

@@ -30,8 +30,8 @@ class Main extends \App\Controller\Verify\Base
 		$act = $this->loadTicket();
 
 		switch ($act['intent']) {
+			case 'account-create':
 			case 'account-open':
-			case 'account-verify':
 			case 'oauth-authorize':
 				return $this->guessNextStep($RES, $act);
 				break;
@@ -105,12 +105,14 @@ class Main extends \App\Controller\Verify\Base
 			':s1' => Contact::STAT_LIVE
 		]);
 
-		// pass to /auth/init
-		$act_data['intent'] = 'account-open';
-		$act1 = new \App\Auth_Context_Ticket($dbc_auth);
-		$act1->create($act_data);
+		$dbc_auth->insert('log_event', [
+			'contact_id' => $data['contact']['id'],
+			'code' => 'Contact/Account/Live',
+			'meta' => json_encode($_SESSION),
+		]);
 
-		return $RES->withRedirect(sprintf('/auth/init?_=%s', $act1['id']));
+		// pass back to /auth/init with same token
+		return $RES->withRedirect(sprintf('/auth/init?_=%s', $_GET['_']));
 
 	}
 }

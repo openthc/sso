@@ -23,7 +23,7 @@ class Timezone extends \App\Controller\Verify\Base
 			$data['time_zone_list'] = \DateTimeZone::listIdentifiers(\DateTimeZone::PER_COUNTRY, $_SESSION['iso3166']['code2']);
 		}
 
-		$data['time_zone_pick'] = $_SESSION['geoip']['location']['time_zone'];
+		$data['time_zone_pick'] = $_SESSION['tz'];
 
 		return $RES->write( $this->render('verify/timezone.php', $data) );
 
