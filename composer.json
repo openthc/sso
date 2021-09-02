@@ -7,7 +7,10 @@
 			"App\\": "./lib",
 			"Custom\\": "./Custom",
 			"Test\\": "./test"
-		}
+		},
+		"exclude-from-classmap": [
+			"vendor/erusev/parsedown-extra/test"
+		]
 	},
 	"require": {
 		"edoceo/lowline_php": "dev-master",
