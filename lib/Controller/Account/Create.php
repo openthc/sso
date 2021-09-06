@@ -30,8 +30,6 @@ class Create extends \App\Controller\Base
 		$cfg = \OpenTHC\Config::get('google');
 		$data['Google']['recaptcha_public'] = $cfg['recaptcha-public'];
 
-		$data['CSRF'] = \App\CSRF::getToken();
-
 		return $RES->write( $this->render('account/create.php', $data) );
 	}
 
@@ -95,7 +93,7 @@ class Create extends \App\Controller\Base
 		$dbc_auth->insert('auth_contact', array(
 			'id' => $Contact['id'],
 			'username' => $Contact['email'],
-			'password' => 'NONE:' . sha1(json_encode($_SERVER).json_encode($_POST)),
+			'password' => '',
 		));
 
 		// Auth Hash Link

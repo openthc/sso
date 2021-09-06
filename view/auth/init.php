@@ -1,5 +1,7 @@
 
 <form method="post">
+<input name="CSRF" type="hidden" value="<?= $data['CSRF'] ?>">
+
 <div class="container mt-4">
 <h1>Select Company</h1>
 <div class="row">

@@ -1,5 +1,7 @@
 
 <form autocomplete="off" method="post">
+<input name="CSRF" type="hidden" value="<?= $data['CSRF'] ?>">
+
 <div class="auth-wrap">
 
 	<div class="card">
@@ -33,7 +35,6 @@
 	</div>
 
 	<div class="card-footer r">
-		<input name="CSRF" type="hidden" value="<?= $data['CSRF'] ?>">
 		<button class="btn btn-outline-primary" id="btn-account-create" name="a" type="submit" value="contact-next">Create Account <i class="icon icon-arrow-right"></i></button>
 	</div>
 

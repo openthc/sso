@@ -41,7 +41,7 @@ class CSRF
 			if ($age > 0) {
 				$ret = $key;
 				break;
-			} elseif ($age <= 0) {
+			} else {
 				// Invalid
 				unset($_SESSION['_csrf'][$key]);
 			}
@@ -70,14 +70,14 @@ class CSRF
 		self::init();
 
 		if (empty($key)) {
-			return false;
 			__exit_text('Invalid Request [ALC-072]', 400);
+			return false;
 		}
 
 		$tok = $_SESSION['_csrf'][$key];
 		if (empty($tok)) {
-			return false;
 			__exit_text('Invalid Request [ALC-077]', 400);
+			return false;
 		}
 
 		$age = $tok['expires_at'] - $_SERVER['REQUEST_TIME'];
@@ -88,6 +88,7 @@ class CSRF
 			return true;
 		}
 
+		__exit_text('Invalid Request [ALC-091]', 400);
 		return false;
 	}
 

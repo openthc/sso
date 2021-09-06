@@ -45,6 +45,8 @@ class Password extends \App\Controller\Base
 	 */
 	function post($REQ, $RES, $ARG)
 	{
+		\App\CSRF::verify($_POST['CSRF']);
+
 		$ARG = $this->parseArg();
 
 		// Set Their Password
@@ -89,6 +91,13 @@ class Password extends \App\Controller\Base
 
 			$sql = 'UPDATE auth_contact SET password = :pw WHERE id = :c0';
 			$dbc_auth->query($sql, $arg);
+
+			// Log It
+			$dbc_auth->insert('log_event', [
+				'contact_id' => $ARG['contact']['id'],
+				'code' => 'Contact/Password/Update',
+				'meta' => json_encode($_SESSION),
+			]);
 
 			$RES = $RES->withAttribute('Contact', [
 				'id' => $ARG['contact']['id'],

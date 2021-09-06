@@ -86,6 +86,8 @@ class Profile extends \App\Controller\Base
 	 */
 	function post($REQ, $RES, $ARG)
 	{
+		\App\CSRF::verify($_POST['CSRF']);
+
 		$dbc_auth = $this->_container->DBC_AUTH;
 		$dbc_main = $this->_container->DBC_MAIN;
 

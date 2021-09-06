@@ -1,5 +1,7 @@
 
 <form autocomplete="off" method="post">
+<input name="CSRF" type="hidden" value="<?= $data['CSRF'] ?>">
+
 <div class="auth-wrap">
 
 <div class="card">

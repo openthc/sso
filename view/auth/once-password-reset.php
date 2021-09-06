@@ -1,5 +1,7 @@
 
 <form method="post">
+<input name="CSRF" type="hidden" value="<?= $data['CSRF'] ?>">
+
 <div class="auth-wrap">
 <div class="card">
 
@@ -23,7 +25,7 @@
 <div class="card-footer">
 	<div class="row">
 		<div class="col-md-6">
-			<button class="btn btn-success" name="a" type="submit" value="password-reset-request">Request Password Reset</button>
+			<button class="btn btn-success" id="btn-password-reset" name="a" type="submit" value="password-reset-request">Request Password Reset</button>
 		</div>
 	</div>
 </div>

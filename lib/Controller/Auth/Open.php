@@ -83,6 +83,8 @@ class Open extends \App\Controller\Base
 	 */
 	function post($REQ, $RES, $ARG)
 	{
+		\App\CSRF::verify($_POST['CSRF']);
+
 		switch ($_POST['a']) {
 		case 'password-reset-request':
 			return $this->sendPasswordReset($RES);
