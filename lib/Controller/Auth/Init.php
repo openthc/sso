@@ -7,7 +7,7 @@ namespace App\Controller\Auth;
 
 use Edoceo\Radix\Session;
 
-use App\Contact;
+use OpenTHC\Contact;
 
 class Init extends \App\Controller\Base
 {
@@ -74,14 +74,13 @@ class Init extends \App\Controller\Base
 				break;
 		}
 
-		$Contact = $this->contact_inflate($act_data['contact']);
-
 		// Contact has Disabled Flags?
+		$Contact = $this->contact_inflate($act_data['contact']);
 		if (0 != ($Contact['flag'] & Contact::FLAG_DISABLED)) {
 			_err_exit_html('Invalid Account [CAI-068]', 403);
 		}
 
-		// Contact Globally Disabled?
+		// Contact Status Switch
 		switch ($Contact['stat']) {
 			case Contact::STAT_INIT:
 				return $RES->withRedirect(sprintf('/verify?_=%s', $_GET['_']));

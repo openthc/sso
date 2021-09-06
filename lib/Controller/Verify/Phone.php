@@ -5,7 +5,7 @@
 
 namespace App\Controller\Verify;
 
-use App\Contact;
+use OpenTHC\Contact;
 
 class Phone extends \App\Controller\Verify\Base
 {

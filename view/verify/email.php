@@ -13,7 +13,7 @@
 			<input autocomplete="off" class="form-control" id="contact-email" inputmode="email" name="contact-email" placeholder="eg: you@example.com" required type="email" value="<?= h($data['Contact']['email']) ?>">
 			<div class="input-group-append">
 				<div class="input-group-text">
-					<?= (\App\Contact::FLAG_EMAIL_GOOD & $data['Contact']['flag'] ? 'OK' : '-??-' ) ?>
+					<?= (\OpenTHC\Contact::FLAG_EMAIL_GOOD & $data['Contact']['flag'] ? 'OK' : '-??-' ) ?>
 				</div>
 			</div>
 		</div>

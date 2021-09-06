@@ -6,7 +6,7 @@
 
 namespace App\Controller\Verify;
 
-use App\Contact;
+use OpenTHC\Contact;
 
 class Main extends \App\Controller\Verify\Base
 {
@@ -48,17 +48,13 @@ class Main extends \App\Controller\Verify\Base
 	{
 		$dbc_auth = $this->_container->DBC_AUTH;
 
-		$CT0 = $dbc_auth->fetchRow('SELECT id, password, flag, stat, iso3166, tz FROM auth_contact WHERE id = :ct0', [
-			':ct0' => $act_data['contact']['id']
-		]);
+		$CT0 = new \App\Auth_Contact($dbc_auth, $act_data['contact']);
 
 		// Verify Email
-		if (0 == ($CT0['flag'] & Contact::FLAG_EMAIL_GOOD)) {
+		if ( ! $CT0->hasFlag(Contact::FLAG_EMAIL_GOOD)) {
 			return $RES->withRedirect(sprintf('/verify/email?_=%s', $_GET['_']));
 		}
-		// Want to Re-Verify?
-		if (0 != ($CT0['flag'] & Contact::FLAG_EMAIL_WANT)) {
-			// Can I update the Token Easily?
+		if ($CT0->hasFlag(Contact::FLAG_EMAIL_WANT)) {
 			return $RES->withRedirect(sprintf('/verify/email?_=%s', $_GET['_']));
 		}
 
@@ -70,43 +66,35 @@ class Main extends \App\Controller\Verify\Base
 		// Verify Location
 		if (empty($CT0['iso3166'])) {
 			return $RES->withRedirect(sprintf('/verify/location?_=%s', $_GET['_']));
-		// } else {
-			// Load It Up?
-			// $_SESSION['iso3166'] = $CT0['iso3166'];
 		}
 
+		// Timezone
 		if (empty($CT0['tz'])) {
 			return $RES->withRedirect(sprintf('/verify/timezone?_=%s', $_GET['_']));
 		}
 
-		if (0 == ($CT0['flag'] & Contact::FLAG_PHONE_GOOD)) {
+		// Phone
+		if ( ! $CT0->hasFlag(Contact::FLAG_PHONE_GOOD)) {
+			return $RES->withRedirect(sprintf('/verify/phone?_=%s', $_GET['_']));
+		}
+		if ($CT0->hasFlag(Contact::FLAG_PHONE_WANT)) {
 			return $RES->withRedirect(sprintf('/verify/phone?_=%s', $_GET['_']));
 		}
 
 		// Company
 		$chk = $dbc_auth->fetchOne('SELECT count(id) FROM auth_company_contact WHERE contact_id = :ct0', [
-			':ct0' => $act_data['contact']['id'],
+			':ct0' => $CT0['id'],
 		]);
 		if (empty($chk)) {
 			return $RES->withRedirect(sprintf('/verify/company?_=%s', $_GET['_']));
 		}
 
-		// Verify Company Profile in Directory?
-		// $chk = $dbc_auth->fetchOne('SELECT id, stat, flag, iso3316, tz FROM auth_company WHERE id = :cy0', [
-		// 	':cy0' => $act_data['contact']['id'],
-		// ]);
-		// if (empty($chk)) {
-		// 	__exit_text('Verify Company');
-		// }
-
 		// Update Contact Status
-		$dbc_auth->query('UPDATE auth_contact SET stat = :s1 WHERE id = :pk AND stat != :s1', [
-			':pk' => $CT0['id'],
-			':s1' => Contact::STAT_LIVE
-		]);
+		$CT0['stat'] = Contact::STAT_LIVE;
+		$CT0->save();
 
 		$dbc_auth->insert('log_event', [
-			'contact_id' => $data['contact']['id'],
+			'contact_id' => $CT0['id'],
 			'code' => 'Contact/Account/Live',
 			'meta' => json_encode($_SESSION),
 		]);

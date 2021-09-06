@@ -74,43 +74,38 @@ class Once extends \App\Controller\Base
 	/**
 	 * Account Create Confirm
 	 */
-	private function accountCreate($RES, $data)
+	private function accountCreate($RES, $act_data)
 	{
 		$dbc_auth = $this->_container->DBC_AUTH;
 		$dbc_main = $this->_container->DBC_MAIN;
 
 		// Update Contact, Promote Email to Username
-		$chk = $dbc_auth->fetchOne('SELECT id FROM auth_contact WHERE username = :u0', [ ':u0' => $data['contact']['email'] ]);
+		$chk = $dbc_auth->fetchOne('SELECT id, flag, stat FROM auth_contact WHERE id = :c0', [ ':c0' => $act_data['contact']['id'] ]);
 		if (empty($chk)) {
 			__exit_text('Invalid Account [CAO-079]', 400);
 		}
-		$data['contact']['username'] = $data['contact']['email'];
 
-		// Log It
+		// Log It (outside of transaction)
 		$dbc_auth->insert('log_event', [
-			'contact_id' => $data['contact']['id'],
+			'contact_id' => $act_data['contact']['id'],
 			'code' => 'Contact/Account/Create',
-			'meta' => json_encode($data),
+			'meta' => json_encode($act_data),
 		]);
 
 		$dbc_auth->query('BEGIN');
 		$dbc_main->query('BEGIN');
 
 		// Update Auth Contact
-		$sql = 'UPDATE auth_contact SET password = NULL, flag = flag | :f1 WHERE id = :pk';
-		$arg = [
-			':pk' => $data['contact']['id'],
-			':f1' => \App\Contact::FLAG_EMAIL_GOOD | \App\Contact::FLAG_PHONE_WANT,
-		];
-		$dbc_auth->query($sql, $arg);
+		$ct_auth = new \App\Auth_Contact($dbc_auth, $act_data['contact']);
+		$ct_auth['username'] = $act_data['contact']['email'];
+		$ct_auth['password'] = null;
+		$ct_auth->setFlag(\OpenTHC\Contact::FLAG_EMAIL_GOOD | \OpenTHC\Contact::FLAG_PHONE_WANT);
+		$ct_auth->save();
 
 		// Update Base Contact
-		$sql = 'UPDATE contact SET flag = flag | :f1 WHERE id = :pk';
-		$arg = [
-			':pk' => $data['contact']['id'],
-			':f1' => \App\Contact::FLAG_EMAIL_GOOD | \App\Contact::FLAG_PHONE_WANT,
-		];
-		$dbc_main->query($sql, $arg);
+		$ct_main = new \OpenTHC\Contact($dbc_main, $act_data['contact']);
+		$ct_main->setFlag(\OpenTHC\Contact::FLAG_EMAIL_GOOD | \OpenTHC\Contact::FLAG_PHONE_WANT);
+		$ct_main->save();
 
 		$dbc_auth->query('COMMIT');
 		$dbc_main->query('COMMIT');
