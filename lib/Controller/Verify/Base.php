@@ -22,7 +22,7 @@ class Base extends \App\Controller\Base
 		$act = json_decode($chk['meta'], true);
 
 		if (empty($act)) {
-			__exit_text('Invalid Request [CVB-024]', 400);
+			_exit_html_fail('<h1>Invalid Request [CVB-024]</h1>', 400);
 		}
 
 		// Load Contact
@@ -44,12 +44,12 @@ SQL;
 		// Inflate this onto the ACT
 		$CT0 = $dbc_auth->fetchRow($sql, $arg);
 		if (empty($CT0['id'])) {
-			_err_exit_html('Invalid Request [CAV-037]', 400);
+			_exit_html_fail('<h1>Invalid Request [CAV-037]</h1>', 400);
 		}
 
 		$CT1 = $this->_container->DBC_MAIN->fetchRow('SELECT id, email, phone FROM contact WHERE id = :c0', $arg);
 		if (empty($CT1['id'])) {
-			_err_exit_html('Invalid Request [CAV-040]', 400);
+			_exit_html_fail('<h1>Invalid Request [CAV-040]</h1>', 400);
 		}
 
 		$act['contact']['flag'] = $CT0['flag'];

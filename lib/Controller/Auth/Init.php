@@ -18,7 +18,7 @@ class Init extends \App\Controller\Base
 	{
 		// Check Input
 		if (!preg_match('/^([\w\-]{32,128})$/i', $_GET['_'], $m)) {
-			_err_exit_html('<h1>Invalid Request [CAI-026]</h1>', 400);
+			_exit_html_warn('<h1>Invalid Request [CAI-026]</h1>', 400);
 		}
 
 		// Clear Session
@@ -56,11 +56,11 @@ class Init extends \App\Controller\Base
 		// Load Auth Ticket
 		$act = $dbc_auth->fetchRow('SELECT id, meta FROM auth_context_ticket WHERE id = :t', [ ':t' => $_GET['_'] ]);
 		if (empty($act['id'])) {
-			_err_exit_html('<h1>Invalid Request [CAI-034]</a></h1>', 400);
+			_exit_html_warn('<h1>Invalid Request [CAI-034]</a></h1>', 400);
 		}
 		$act_data = json_decode($act['meta'], true);
 		if (empty($act_data['contact']['id'])) {
-			_err_exit_html('<h1>Invalid Request [CAI-038]</h1>', 400);
+			_exit_html_warn('<h1>Invalid Request [CAI-038]</h1>', 400);
 		}
 		// Check Intent
 		switch ($act_data['intent']) {
@@ -70,14 +70,14 @@ class Init extends \App\Controller\Base
 				// OK
 				break;
 			default:
-				_err_exit_html('<h1>Invalid Request [CAI-046]</h1>', 400);
+				_exit_html_warn('<h1>Invalid Request [CAI-046]</h1>', 400);
 				break;
 		}
 
 		// Contact has Disabled Flags?
 		$Contact = $this->contact_inflate($act_data['contact']);
 		if (0 != ($Contact['flag'] & Contact::FLAG_DISABLED)) {
-			_err_exit_html('Invalid Account [CAI-068]', 403);
+			_exit_html_warn('<h1>Invalid Account [CAI-068]</h1>', 403);
 		}
 
 		// Contact Status Switch
@@ -90,11 +90,11 @@ class Init extends \App\Controller\Base
 				return $this->account_init($RES, $act_data, $Contact);
 				break;
 			case 410:
-				_err_exit_html('Invalid Account [CAI-049]', 403);
+				_exit_html_warn('<h1>Invalid Account [CAI-049]</h1>', 403);
 				break;
 		}
 
-		_err_exit_html('Invalid Request [CAI-066]', 400);
+		_exit_html_warn('<h1>Invalid Request [CAI-066]</h1>', 400);
 
 	}
 
@@ -129,7 +129,7 @@ SQL;
 		switch (count($company_list)) {
 			case 0:
 				// return $RES->withRedirect(sprintf('/verify?_=%s', $_GET['_']));
-				_err_exit_html('<h1>Unexpected Session State [CAI-051]</h1><p>You may want to <a href="/auth/shut">close your session</a> and try again.</p><p>If the issue continues, contact support</p>', 400);
+				_exit_html_fail('<h1>Unexpected Session State [CAI-051]</h1><p>You may want to <a href="/auth/shut">close your session</a> and try again.</p><p>If the issue continues, contact support</p>', 500);
 				break;
 			case 1:
 				$Company = $company_list[0];
@@ -212,7 +212,7 @@ SQL;
 				$ret = '/oauth2/authorize?' . http_build_query($act_data['oauth-request']);
 				break;
 			default:
-				__exit_text('Invalid Request [CAI-188]', 400);
+				_exit_html_warn('<h1>Invalid Request [CAI-188]</h1>', 400);
 		}
 
 		return $RES->withRedirect($ret);
@@ -229,7 +229,7 @@ SQL;
 		$arg = [ ':pk' => $Contact['id'] ];
 		$CT0 = $this->_container->DBC_AUTH->fetchRow($sql, $arg);
 		if (empty($CT0['id'])) {
-			_err_exit_html('<h1>Unexpected Session State [CAI-047]</h1><p>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support.</p>', 400);
+			_exit_html_fail('<h1>Unexpected Session State [CAI-047]</h1><p>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support.</p>', 500);
 		}
 
 		// Base/Contact
@@ -237,7 +237,7 @@ SQL;
 		$arg = [ ':pk' => $Contact['id'] ];
 		$CT1 = $this->_container->DBC_MAIN->fetchRow($sql, $arg);
 		if (empty($CT1['id'])) {
-			_err_exit_html('<h1>Unexpected Session State [CAI-058]</h1><p>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support.</p>', 400);
+			_exit_html_fail('<h1>Unexpected Session State [CAI-058]</h1><p>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support.</p>', 500);
 		}
 
 		$Contact = array_merge($CT0, $CT1);
