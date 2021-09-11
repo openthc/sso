@@ -90,6 +90,12 @@ class Location extends \App\Controller\Verify\Base
 					':iso' => $iso3166_2_pick['id'],
 				]);
 
+				$dbc->insert('log_event', [
+					'contact_id' => $act['contact']['id'],
+					'code' => 'Contact/Location/Update',
+					'meta' => json_encode($_SESSION),
+				]);
+
 				// Back to main to see what happens
 				return $RES->withRedirect(sprintf('/verify?_=%s', $_GET['_']));
 		}

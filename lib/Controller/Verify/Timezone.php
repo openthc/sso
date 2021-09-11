@@ -48,6 +48,13 @@ class Timezone extends \App\Controller\Verify\Base
 			':tz1' => $time_zone_pick,
 		]);
 
+		$dbc->insert('log_event', [
+			'contact_id' => $ARG['contact']['id'],
+			'code' => 'Contact/Timezone/Update',
+			'meta' => json_encode($_SESSION),
+		]);
+
+
 		return $RES->withRedirect(sprintf('/verify?_=%s', $_GET['_']));
 
 	}

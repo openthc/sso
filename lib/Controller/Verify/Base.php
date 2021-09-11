@@ -25,9 +25,15 @@ class Base extends \App\Controller\Base
 			__exit_text('Invalid Request [CVB-024]', 400);
 		}
 
-		// Load Contact (from ticket, no DB?)
+		// Load Contact
 		$sql = <<<SQL
-SELECT auth_contact.id, auth_contact.stat, auth_contact.flag, auth_contact.username
+SELECT auth_contact.id
+  , auth_contact.stat
+  , auth_contact.flag
+  , auth_contact.username
+  , auth_contact.password
+  , auth_contact.iso3166
+  , auth_contact.tz
 FROM auth_contact
 WHERE auth_contact.id = :c0
 SQL;
@@ -48,7 +54,12 @@ SQL;
 
 		$act['contact']['flag'] = $CT0['flag'];
 		$act['contact']['stat'] = $CT0['stat'];
-		$act['contact']['email'] = $CT0['username'];
+		$act['contact']['username'] = $CT0['username'];
+		$act['contact']['password'] = $CT0['password'];
+		$act['contact']['iso3166'] = $CT0['iso3166'];
+		$act['contact']['tz'] = $CT0['tz'];
+
+		$act['contact']['email'] = $CT1['email'];
 		$act['contact']['phone'] = $CT1['phone'];
 
 		return $act;
