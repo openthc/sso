@@ -70,13 +70,13 @@ class CSRF
 		self::init();
 
 		if (empty($key)) {
-			__exit_text('Invalid Request [ALC-072]', 400);
+			_exit_html_warn('<h1>Invalid Request [ALC-072]</h1><h2><a href="javascript:history.back();">go back</a></h2>', 400);
 			return false;
 		}
 
 		$tok = $_SESSION['_csrf'][$key];
 		if (empty($tok)) {
-			__exit_text('Invalid Request [ALC-077]', 400);
+			_exit_html_warn('<h1>Invalid Request [ALC-077]</h1><h2><a href="javascript:history.back();">go back</a></h2>', 400);
 			return false;
 		}
 
