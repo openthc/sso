@@ -12,7 +12,7 @@ class Profile extends \App\Controller\Base
 		$data = $this->data;
 		$data['Page'] = [ 'title' => 'Account' ];
 		if (empty($_SESSION['Contact']['id'])) {
-			__exit_text('Invalid Session [CAP-017]', 403);
+			_exit_html_fail('<h1>Invalid Session [CAP-017]</h1>', 403);
 		}
 
 		$dbc_auth = $this->_container->DBC_AUTH;
@@ -21,11 +21,11 @@ class Profile extends \App\Controller\Base
 
 		$C0 = $dbc_auth->fetchRow('SELECT * FROM auth_contact WHERE id = :ct0', [ ':ct0' => $_SESSION['Contact']['id'] ]);
 		if (empty($C0['id'])) {
-			__exit_text('Invalid Session [CAP-027]', 403);
+			_exit_html_fail('<h1>Invalid Session [CAP-027]</h1>', 403);
 		}
 		$C1 = $dbc_main->fetchRow('SELECT * FROM contact WHERE id = :ct0', [ ':ct0' => $_SESSION['Contact']['id'] ]);
 		if (empty($C1['id'])) {
-			__exit_text('Invalid Session [CAP-031]', 403);
+			_exit_html_fail('<h1>Invalid Session [CAP-031]</h1>', 403);
 		}
 
 		$data['Contact_Auth'] = $C0;
@@ -39,6 +39,9 @@ class Profile extends \App\Controller\Base
 
 		$svc_list = \OpenTHC\Config::get('openthc');
 		// var_dump($svc_list);
+
+		// $service_list = $dbc_auth->fetchAll('SELECT id, name FROM auth_service ORDER BY name');
+		// $data['service_list'] = $service_list;
 
 		// $data['service_list'] = [];
 
