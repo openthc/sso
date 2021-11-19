@@ -15,6 +15,5 @@ require_once(APP_ROOT . '/vendor/autoload.php');
 _error_handler_init();
 
 if ( ! \OpenTHC\Config::init(APP_ROOT) ) {
-	echo "Failed to Load Configuration";
-	exit(1);
+	_exit_html_fail('<h1>Invalid Application Configuration [ALB-035]</h1>', 500);
 }
