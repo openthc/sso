@@ -34,8 +34,8 @@
 	-->
 	</div>
 
-	<div class="card-footer r">
-		<button class="btn btn-outline-primary" id="btn-account-create" name="a" type="submit" value="contact-next">Create Account <i class="icon icon-arrow-right"></i></button>
+	<div class="card-footer">
+		<button class="btn btn-primary" id="btn-account-create" name="a" type="submit" value="contact-next">Create Account <i class="icon icon-arrow-right"></i></button>
 	</div>
 
 	</div>

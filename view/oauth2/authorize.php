@@ -15,7 +15,7 @@
 			<div class="input-group">
 				<div class="form-control"><code><?= h($data['Company']['name']) ?></code></div>
 				<div class="input-group-append">
-					<a class="btn btn-outline-secondary" href="/auth/init"><i class="fas fa-building"></i> Switch</a>
+					<a class="btn btn-outline-secondary" href="/auth/open"><i class="fas fa-building"></i> Switch</a>
 				</div>
 			</div>
 		</div>

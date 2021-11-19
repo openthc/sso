@@ -7,7 +7,7 @@
 
 <h1 class="card-header"><?= $data['Page']['title'] ?></h1>
 
-<div class="card-body">
+<div class="card-body" style="min-height: 212px;">
 
 	<?= $data['auth_hint'] ?>
 
@@ -16,16 +16,21 @@
 		<input class="form-control" id="username" inputmode="email" name="username" placeholder="- user@example.com -" value="<?= h($data['auth_username']) ?>">
 	</div>
 
-	<div class="form-group">
-		<div class="g-recaptcha" data-sitekey="<?= $data['Google']['recaptcha_public'] ?>"></div>
-	</div>
-
+	<?php
+	if ($data['Google']['recaptcha_public']) {
+	?>
+		<div class="form-group" style="min-height: 78px;">
+			<div class="g-recaptcha" data-sitekey="<?= $data['Google']['recaptcha_public'] ?>"></div>
+		</div>
+	<?php
+	}
+	?>
 </div>
 
 <div class="card-footer">
 	<div class="row">
 		<div class="col-md-6">
-			<button class="btn btn-success" id="btn-password-reset" name="a" type="submit" value="password-reset-request">Request Password Reset</button>
+			<button class="btn btn-primary" id="btn-password-reset" name="a" type="submit" value="password-reset-request">Request Password Reset</button>
 		</div>
 	</div>
 </div>
