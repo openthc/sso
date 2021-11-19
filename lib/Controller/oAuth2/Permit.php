@@ -21,8 +21,7 @@ class Permit extends \App\Controller\Base
 
 		$_GET = $x;
 
-		$cfg = \OpenTHC\Config::get('oauth');
-		$_ENV['fast-redirect'] = $cfg['fast-redirect'];
+		$_ENV['fast-redirect'] = \OpenTHC\Config::get('app/fast-redirect');
 
 		// Load & Validate The Client
 		$Auth_Service = $this->_container->DBC_AUTH->fetchRow('SELECT id,name,code,hash FROM auth_service WHERE code = ?', array($_GET['client_id']));
