@@ -4,11 +4,12 @@
 
 <div class="container mt-4">
 <h1>Select Company</h1>
+
 <div class="row">
-	<?php
-	foreach ($data['company_list'] as $Company) {
-	?>
-	<div class="col-md-4 mb-4">
+<?php
+foreach ($data['company_list'] as $Company) {
+?>
+	<div class="col mb-4">
 
 		<div class="card" style="height: 100%;">
 			<div class="card-body">
@@ -20,9 +21,10 @@
 		</div>
 
 	</div>
-	<?php
-	}
-	?>
+<?php
+}
+?>
 </div>
+
 </div>
 </form>
