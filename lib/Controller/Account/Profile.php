@@ -37,47 +37,63 @@ class Profile extends \App\Controller\Base
 		]);
 		$data['company_list'] = $res;
 
-		$svc_list = \OpenTHC\Config::get('openthc');
+		// Active Service List
+		// $res = $dbc_auth->fetchAll('SELECT id, name FROM auth_company WHERE id IN (SELECT company_id FROM auth_company_contact WHERE contact_id = :ct0)', [
+		// 	':ct0' => $_SESSION['Contact']['id'],
+		// ]);
+		// $data['service_list'] = $res;
+
+		$data['service_list_default'] = [];
+
+		// $svc_list = \OpenTHC\Config::get('openthc');
 		// var_dump($svc_list);
 
 		// $service_list = $dbc_auth->fetchAll('SELECT id, name FROM auth_service ORDER BY name');
 		// $data['service_list'] = $service_list;
 
 		// $data['service_list'] = [];
+		// $cfg = \OpenTHC\Config::get('openthc/*');
 
-		// $data['service_list'][] = [
-		// 	'name' => 'App',
-		// 	'link' => 'https://app.openthc.dev/auth/open?a=oauth',
-		// ];
+		$x = \OpenTHC\Config::get('openthc/app/hostname');
+		if ($x) {
+			$data['service_list_default'][] = [
+				'link' => sprintf('https://%s/auth/sso', $x),
+				'name' => 'App',
+				'hint' => 'Connect to the primary seed-to-sale application for crop and inventory management'
+			];
+		}
 
-		// $data['service_list'][] = [
-		// 	'name' => 'Directory',
-		// 	'link' => 'https://dir.openthc.dev/auth/open?a=oauth',
-		// ];
+		$x = \OpenTHC\Config::get('openthc/dir/hostname');
+		if ($x) {
+			$data['service_list_default'][] = [
+				'link' => sprintf('https://%s/auth/open?v=sso', $x),
+				'name' => 'Directory',
+				'hint' => 'Connect to the Directory to update your semi-public contact and company profiles'
+			];
+		}
 
-		// $data['service_list'][] = [
-		// 	'name' => 'Lab',
-		// 	'link' => 'https://lab.openthc.dev/auth/open?a=oauth',
-		// ];
+		$x = \OpenTHC\Config::get('openthc/lab/hostname');
+		if ($x) {
+			$data['service_list_default'][] = [
+				'link' => sprintf('https://%s/auth/open?v=sso', $x),
+				'name' => 'Laboratory Portal',
+				'hint' => 'SOmtihng',
+			];
+
+		}
+
+		$x = \OpenTHC\Config::get('openthc/pos/hostname');
+		if ($x) {
+			$data['service_list_default'][] = [
+				'link' => sprintf('https://%s/auth/open?v=sso', $x),
+				'name' => 'Retail POS',
+				'hint' => 'Connect to the Point of Sale to perform front-of-the-house retail operations',
+			];
+		}
 
 		// $data['service_list'][] = [
 		// 	'name' => 'B2B',
 		// 	'link' => 'https://b2b.openthc.dev/auth/open?a=oauth',
-		// ];
-
-		// $data['service_list'][] = [
-		// 	'name' => 'POS',
-		// 	'link' => 'https://pos.openthc.dev/auth/open?a=oauth',
-		// ];
-
-		// $data['service_list'][] = [
-		// 	'name' => 'OPS',
-		// 	'link' => 'https://ops.openthc.dev/auth/open?a=oauth',
-		// ];
-
-		// $data['service_list'][] = [
-		// 	'name' => 'CIC',
-		// 	'link' => 'https://cic.openthc.dev/auth/open?a=oauth',
 		// ];
 
 		return $RES->write( $this->render('account/profile.php', $data) );
