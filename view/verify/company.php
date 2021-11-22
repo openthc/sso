@@ -31,9 +31,9 @@
 
 </div>
 
-<div class="card-footer r">
-	<button class="btn btn-outline-secondary" id="btn-company-skip" name="a" tabindex="2" type="submit" value="company-skip">Skip <i class="icon icon-arrow-right"></i></button>
+<div class="card-footer">
 	<button class="btn btn-primary" name="a" tabindex="1" type="submit" value="company-save">Save <i class="icon icon-arrow-right"></i></button>
+	<button class="btn btn-outline-secondary" id="btn-company-skip" name="a" tabindex="2" type="submit" value="company-skip">Skip <i class="icon icon-arrow-right"></i></button>
 </div>
 
 </div>

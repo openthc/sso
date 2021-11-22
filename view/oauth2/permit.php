@@ -24,7 +24,7 @@
 
 	</div>
 	<div class="card-footer">
-		<a class="btn btn-success" href="<?= $data['return_url'] ?>">Continue <i class="fas fa-arrow-right"></i></a>
+		<a class="btn btn-primary" href="<?= $data['return_url'] ?>">Continue <i class="fas fa-arrow-right"></i></a>
 	</div>
 
 </div>

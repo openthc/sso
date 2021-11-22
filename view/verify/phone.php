@@ -51,7 +51,7 @@
 
 </div>
 
-<div class="card-footer r">
+<div class="card-footer">
 	<?php
 	if (empty($data['verify_phone_code'])) {
 		echo ' <button class="btn btn-primary" id="btn-contact-phone-verify-send" name="a" tabindex="1" type="submit" value="phone-verify-send">Send Confirmation <i class="icon icon-arrow-right"></i></button>';
@@ -60,8 +60,8 @@
 		// Default Hidden Action, for when 'Enter' is pressed?
 		// echo ' <input name="a" type="hidden" value="phone-verify-save">';
 
-		echo ' <button class="btn btn-outline-secondary" name="a" tabindex="2" type="submit" value="phone-verify-send">Resend <i class="icon icon-arrow-right"></i></button>';
 		echo ' <button class="btn btn-primary" id="btn-contact-phone-verify-save" name="a" tabindex="1" type="submit" value="phone-verify-save">Confirm <i class="icon icon-arrow-right"></i></button>';
+		echo ' <button class="btn btn-outline-secondary" name="a" tabindex="2" type="submit" value="phone-verify-send">Resend <i class="icon icon-arrow-right"></i></button>';
 
 		if ($data['verify_phone_tick'] > 2) {
 			echo ' <button class="btn btn-outline-warning" name="a" tabindex="2" type="submit" value="phone-verify-skip">Skip</button>';

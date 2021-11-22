@@ -33,7 +33,7 @@
 		<div class="col">
 			<div class="btn-group">
 				<a
-					class="btn btn-success"
+					class="btn btn-primary"
 					href="/oauth2/permit?_=<?= $data['link_crypt'] ?>"
 					style="width:8em;">Yes</a>
 				<a

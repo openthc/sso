@@ -31,7 +31,7 @@
 	</div>
 
 </div>
-<div class="card-footer r">
+<div class="card-footer">
 	<button class="btn btn-outline-primary" disabled id="btn-password-update" name="a" type="submit" value="update">Update <i class="icon icon-arrow-right"></i></button>
 </div>
 </div>
@@ -116,9 +116,11 @@ function password_matcher(e)
 	if (p0 === p1) {
 		$('#password-match').addClass('text-success');
 		$('#btn-password-update').prop('disabled', false);
+		$('#btn-password-update').addClass('btn-primary').removeClass('btn-outline-primary');
 	} else {
 		$('#password-match').removeClass('text-success');
 		$('#btn-password-update').prop('disabled', true);
+		$('#btn-password-update').addClass('btn-outline-primary').removeClass('btn-primary');
 	}
 
 }

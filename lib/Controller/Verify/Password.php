@@ -16,9 +16,7 @@ class Password extends \App\Controller\Verify\Base
 		$data['Page']['title'] = 'Update Password';
 
 		$act = $this->loadTicket();
-		$data = [
-			'auth_username' => $act['contact']['username']
-		];
+		$data['auth_username'] = $act['contact']['username'];
 
 		return $RES->write( $this->render('account/password.php', $data) );
 
