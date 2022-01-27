@@ -60,7 +60,6 @@ class Company extends \App\Controller\Verify\Base
 
 				$CY0 = [
 					'id' => _ulid(),
-					// 'hash' => '-',
 					'name' => $act['contact']['name'],
 					'stat' => 200, // $act['contact']['stat'],
 					'flag' => 3, // $act['contact']['flag'],

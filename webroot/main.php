@@ -25,12 +25,12 @@ unset($con['phpErrorHandler']);
 // Database Connections
 $con['DBC_AUTH'] = function() {
 	$cfg = \OpenTHC\Config::get('database/auth');
-	$dsn = sprintf('pgsql:host=%s;dbname=%s', $cfg['hostname'], $cfg['database']);
+	$dsn = sprintf('pgsql:application_name=openthc-sso;host=%s;dbname=%s', $cfg['hostname'], $cfg['database']);
 	return new \Edoceo\Radix\DB\SQL($dsn, $cfg['username'], $cfg['password']);
 };
 $con['DBC_MAIN'] = function() {
 	$cfg = \OpenTHC\Config::get('database/main');
-	$dsn = sprintf('pgsql:host=%s;dbname=%s', $cfg['hostname'], $cfg['database']);
+	$dsn = sprintf('pgsql:application_name=openthc-sso;host=%s;dbname=%s', $cfg['hostname'], $cfg['database']);
 	return new \Edoceo\Radix\DB\SQL($dsn, $cfg['username'], $cfg['password']);
 };
 

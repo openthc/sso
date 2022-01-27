@@ -119,7 +119,7 @@ FROM auth_company
 JOIN auth_company_contact ON auth_company.id = auth_company_contact.company_id
 WHERE auth_company_contact.contact_id = :c0
   AND auth_company_contact.stat IN (100, 200)
-ORDER BY auth_company_contact.stat, auth_company_contact.created_at ASC
+ORDER BY auth_company_contact.stat, auth_company.name ASC
 SQL;
 
 		$arg = [ ':c0' => $Contact['id'] ];

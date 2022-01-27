@@ -38,7 +38,7 @@
 	<div class="form-group">
 		<label>Phone</label>
 		<div class="input-group">
-			<input class="form-control" name="contact-phone" type="tel" value="<?= h($data['Contact_Base']['phone']) ?>">
+			<input class="form-control" name="contact-phone" readonly type="tel" value="<?= h($data['Contact_Base']['phone']) ?>">
 			<div class="input-group-append">
 				<button class="btn btn-outline-secondary" name="a" value="contact-phone-update">Change</button>
 			</div>
@@ -89,18 +89,27 @@ if ($data['service_list']) {
 		</div>
 	</div>
 <?php
-} else {
+} elseif ($data['service_list_default']) {
 ?>
 	<hr>
 	<div class="card">
 		<h2 class="card-header">Service Connections</h2>
 		<div class="card-body">
-			<p>You do not appear to have any service connections</p>
-			<p>You will want to connect your account to one, or more services to take full advantage of the OpenTHC Plantform</p>
 
-			<a class="btn btn-lg btn-outline-primary" href="https://dir.openthc.dev/auth/open?v=sso">Connect DIR</a>
-			<a class="btn btn-lg btn-outline-primary" href="https://app.openthc.dev/auth/open?v=sso">Connect AMP</a>
-			<a class="btn btn-lg btn-outline-primary" href="https://pos.openthc.dev/auth/open?v=sso">Connect POS</a>
+			<p>You do not appear to have any service connections</p>
+			<p>You will want to connect your account to one, or more services to take full advantage of the OpenTHC Platform</p>
+
+			<?php
+			foreach ($data['service_list_default'] as $s) {
+			?>
+				<div class="mb-4">
+					<h3><?= __h($s['name']) ?></h3>
+					<p><?= __h($s['hint']) ?></p>
+					<a class="btn btn-lg btn-outline-primary" href="<?= $s['link'] ?>" target="_blank">Open <?= h($s['name']) ?></a>
+				</div>
+			<?php
+			}
+			?>
 
 		</div>
 	</div>
