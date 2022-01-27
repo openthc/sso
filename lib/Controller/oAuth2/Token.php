@@ -1,6 +1,8 @@
 <?php
 /**
  * Generate an oAuth2 Token
+ *
+ * SPDX-License-Identifier: MIT
  */
 
 namespace App\Controller\oAuth2;

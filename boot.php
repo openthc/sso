@@ -1,6 +1,8 @@
 <?php
 /**
  * OpenTHC SSO Bootstrap
+ *
+ * SPDX-License-Identifier: MIT
  */
 
 define('APP_ROOT', __DIR__);

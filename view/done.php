@@ -1,3 +1,9 @@
+<?php
+/**
+ * SPDX-License-Identifier: MIT
+ */
+
+?>
 
 <div class="auth-wrap">
 

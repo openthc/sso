@@ -1,6 +1,8 @@
 <?php
 /**
  * Enables Test Mode
+ *
+ * SPDX-License-Identifier: MIT
  */
 
 namespace App\Middleware;

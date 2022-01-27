@@ -1,6 +1,8 @@
 <?php
 /**
  * Provide a Contact Profile
+ *
+ * SPDX-License-Identifier: MIT
  */
 
 namespace App\Controller\oAuth2;

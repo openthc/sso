@@ -1,6 +1,8 @@
 <?php
 /**
  * View your Own Account
+ *
+ * SPDX-License-Identifier: MIT
  */
 
 namespace App\Controller\Account;

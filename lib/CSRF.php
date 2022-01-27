@@ -1,6 +1,8 @@
 <?php
 /**
  * Handles CSRF / DUR Tokens
+ *
+ * SPDX-License-Identifier: MIT
  */
 
 namespace App;

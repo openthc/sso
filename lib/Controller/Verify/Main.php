@@ -2,6 +2,8 @@
 /**
  * Verify Main Controller
  * Contact Name + Email => Region + Timezone => Phone => Company Name => License Name
+ *
+ * SPDX-License-Identifier: MIT
  */
 
 namespace App\Controller\Verify;

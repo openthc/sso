@@ -1,6 +1,8 @@
 <?php
 /**
  * Verify Company
+ *
+ * SPDX-License-Identifier: MIT
  */
 
 namespace App\Controller\Verify;

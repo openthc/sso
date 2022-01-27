@@ -1,6 +1,8 @@
 <?php
 /**
  * PSR7 Reponse w/Features
+ *
+ * SPDX-License-Identifier: MIT
  */
 
 namespace App;

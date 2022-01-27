@@ -1,6 +1,8 @@
 <?php
 /**
  * Authenticate
+ *
+ * SPDX-License-Identifier: MIT
  */
 
 namespace App\Controller\Auth;

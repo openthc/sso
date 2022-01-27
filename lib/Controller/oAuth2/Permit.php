@@ -1,6 +1,8 @@
 <?php
 /**
  * Contact Permited Authorization
+ *
+ * SPDX-License-Identifier: MIT
  */
 
 namespace App\Controller\oAuth2;

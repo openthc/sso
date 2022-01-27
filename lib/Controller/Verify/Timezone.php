@@ -1,6 +1,8 @@
 <?php
 /**
- * Verify Region
+ * Verify Timezone
+ *
+ * SPDX-License-Identifier: MIT
  */
 
 namespace App\Controller\Verify;

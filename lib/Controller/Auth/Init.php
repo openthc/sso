@@ -1,6 +1,8 @@
 <?php
 /**
  * Initialise an Authenticated Session
+ *
+ * SPDX-License-Identifier: MIT
  */
 
 namespace App\Controller\Auth;

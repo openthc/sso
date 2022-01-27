@@ -1,3 +1,8 @@
+<?php
+/**
+ * SPDX-License-Identifier: MIT
+ */
+?>
 <!DOCTYPE html>
 <html>
 <head>

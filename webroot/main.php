@@ -1,6 +1,8 @@
 <?php
 /**
- * OpenTHC SSO Front Controller
+ * OpenTHC SSO Main Controller
+ *
+ * SPDX-License-Identifier: MIT
  */
 
 $e0 = error_get_last();

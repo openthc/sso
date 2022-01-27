@@ -1,3 +1,9 @@
+<?php
+/**
+ * SPDX-License-Identifier: MIT
+ */
+
+?>
 
 <form autocomplete="off" method="post">
 <input name="CSRF" type="hidden" value="<?= $data['CSRF'] ?>">

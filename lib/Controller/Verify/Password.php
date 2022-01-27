@@ -1,6 +1,8 @@
 <?php
 /**
  * Verify Password Set
+ *
+ * SPDX-License-Identifier: MIT
  */
 
 namespace App\Controller\Verify;

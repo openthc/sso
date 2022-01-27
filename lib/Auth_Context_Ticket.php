@@ -1,6 +1,8 @@
 <?php
 /**
  * An Authentication Context Ticket
+ *
+ * SPDX-License-Identifier: MIT
  */
 
 namespace App;

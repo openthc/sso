@@ -1,6 +1,8 @@
 <?php
 /**
  * One Time Link Handler
+ *
+ * SPDX-License-Identifier: MIT
  */
 
 namespace App\Controller\Auth;

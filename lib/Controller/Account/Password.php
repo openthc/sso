@@ -2,6 +2,8 @@
 /**
  * Set a Password
  * @todo move to auth/once/password or something?
+ *
+ * SPDX-License-Identifier: MIT
  */
 
 namespace App\Controller\Account;

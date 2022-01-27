@@ -1,6 +1,8 @@
 <?php
 /**
  * Reject the Access
+ *
+ * SPDX-License-Identifier: MIT
  */
 
 namespace App\Controller\oAuth2;

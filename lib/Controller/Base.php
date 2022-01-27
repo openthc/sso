@@ -1,6 +1,8 @@
 <?php
 /**
  * Application Base Controller
+ *
+ * SPDX-License-Identifier: MIT
  */
 
 namespace App\Controller;

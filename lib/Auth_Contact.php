@@ -1,6 +1,8 @@
 <?php
 /**
  * A Thin Contact Model
+ *
+ * SPDX-License-Identifier: MIT
  */
 
 namespace App;
