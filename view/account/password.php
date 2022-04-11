@@ -15,12 +15,12 @@
 
 	<div class="form-group">
 		<label>Email:</label>
-		<input class="form-control" id="username" inputmode="email" name="username" placeholder="- user@example.com -" readonly value="<?= h($data['auth_username']) ?>">
+		<input autocomplete="email" class="form-control" id="username" inputmode="email" name="username" placeholder="- user@example.com -" readonly value="<?= h($data['auth_username']) ?>">
 	</div>
 
 	<div class="form-group">
 		<label>New Password:</label>
-		<input autofocus class="form-control password-input" id="password0" type="password" name="p0" >
+		<input autofocus autocomplete="new-password" class="form-control password-input" id="password0" type="password" name="p0" >
 		<small class="form-text text-muted" id="password-hint">
 			Your password must be at least
 			<span id="password-length">8 characters</span>, contain
@@ -32,7 +32,7 @@
 
 	<div class="form-group">
 		<label>Confirm Password:</label>
-		<input class="form-control password-input" id="password1" type="password" name="p1" >
+		<input autocomplete="new-password" class="form-control password-input" id="password1" type="password" name="p1" >
 		<small class="form-text text-muted" id="password-hint">Must <span id="password-match">match</span> above entry</small>
 	</div>
 
