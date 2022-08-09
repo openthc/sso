@@ -36,7 +36,7 @@ footer a {
 }
 
 .auth-wrap {
-	margin: 10vh auto 0 auto;
+	margin: 2vh auto 0 auto;
 	max-width: 690px;
 }
 
