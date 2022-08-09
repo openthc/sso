@@ -5,11 +5,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-namespace App\Controller\Auth;
+namespace OpenTHC\SSO\Controller\Auth;
 
-use App\Contact;
+use OpenTHC\SSO\Contact;
 
-class Once extends \App\Controller\Base
+class Once extends \OpenTHC\SSO\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{

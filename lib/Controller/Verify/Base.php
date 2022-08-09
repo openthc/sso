@@ -4,9 +4,9 @@
  */
 
 
-namespace App\Controller\Verify;
+namespace OpenTHC\SSO\Controller\Verify;
 
-class Base extends \App\Controller\Base
+class Base extends \OpenTHC\SSO\Controller\Base
 {
 	function loadTicket()
 	{

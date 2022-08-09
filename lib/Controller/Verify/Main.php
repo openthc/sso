@@ -6,11 +6,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-namespace App\Controller\Verify;
+namespace OpenTHC\SSO\Controller\Verify;
 
 use OpenTHC\Contact;
 
-class Main extends \App\Controller\Verify\Base
+class Main extends \OpenTHC\SSO\Controller\Verify\Base
 {
 	/**
 	 *
@@ -50,7 +50,7 @@ class Main extends \App\Controller\Verify\Base
 	{
 		$dbc_auth = $this->_container->DBC_AUTH;
 
-		$CT0 = new \App\Auth_Contact($dbc_auth, $act_data['contact']);
+		$CT0 = new Auth_Contact($dbc_auth, $act_data['contact']);
 
 		// Verify Email
 		if ( ! $CT0->hasFlag(Contact::FLAG_EMAIL_GOOD)) {

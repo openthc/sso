@@ -5,10 +5,15 @@
  * SPDX-License-Identifier: MIT
  */
 
-namespace App\Controller\Account;
+namespace OpenTHC\SSO\Controller\Account;
 
-class Create extends \App\Controller\Base
+use OpenTHC\SSO\CSRF;
+
+class Create extends \OpenTHC\SSO\Controller\Base
 {
+	/**
+	 *
+	 */
 	function __invoke($REQ, $RES, $ARG)
 	{
 		$data = $this->data;
@@ -41,7 +46,7 @@ class Create extends \App\Controller\Base
 	function post($REQ, $RES, $ARG)
 	{
 		// _check_recaptcha();
-		$chk = \App\CSRF::verify($_POST['CSRF']);
+		$chk = CSRF::verify($_POST['CSRF']);
 		if (empty($chk)) {
 			return $RES->withRedirect('/account/create?e=CAC-049');
 		}
@@ -99,7 +104,7 @@ class Create extends \App\Controller\Base
 		));
 
 		// Auth Hash Link
-		$act = new \App\Auth_Context_Ticket($dbc_auth);
+		$act = new Auth_Context_Ticket($dbc_auth);
 		$act->create(array(
 			'intent' => 'account-create',
 			'service' => $_GET['service'],

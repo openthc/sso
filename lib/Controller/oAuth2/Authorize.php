@@ -5,9 +5,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-namespace App\Controller\oAuth2;
+namespace OpenTHC\SSO\Controller\oAuth2;
 
-class Authorize extends \App\Controller\Base
+class Authorize extends \OpenTHC\SSO\Controller\Base
 {
 	/**
 	 *

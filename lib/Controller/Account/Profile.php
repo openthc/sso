@@ -5,9 +5,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-namespace App\Controller\Account;
+namespace OpenTHC\SSO\Controller\Account;
 
-class Profile extends \App\Controller\Base
+class Profile extends \OpenTHC\SSO\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{
@@ -107,7 +107,7 @@ class Profile extends \App\Controller\Base
 	 */
 	function post($REQ, $RES, $ARG)
 	{
-		\App\CSRF::verify($_POST['CSRF']);
+		CSRF::verify($_POST['CSRF']);
 
 		$dbc_auth = $this->_container->DBC_AUTH;
 		$dbc_main = $this->_container->DBC_MAIN;

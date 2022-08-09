@@ -5,11 +5,11 @@
  * SPDX-License-Identifier: MIT
  */
 
-namespace App\Controller\Verify;
+namespace OpenTHC\SSO\Controller\Verify;
 
 use OpenTHC\Contact;
 
-class Email extends \App\Controller\Verify\Base
+class Email extends \OpenTHC\SSO\Controller\Verify\Base
 {
 	/**
 	 *

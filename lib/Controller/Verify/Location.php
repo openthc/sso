@@ -5,9 +5,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-namespace App\Controller\Verify;
+namespace OpenTHC\SSO\Controller\Verify;
 
-class Location extends \App\Controller\Verify\Base
+class Location extends \OpenTHC\SSO\Controller\Verify\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{

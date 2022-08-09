@@ -47,14 +47,14 @@ $con['response'] = function() {
 // Authentication Routes
 $app->group('/auth', function() {
 
-	$this->get('/open', 'App\Controller\Auth\Open')->setName('auth/open');
-	$this->post('/open', 'App\Controller\Auth\Open:post')->setName('auth/open/post');
+	$this->get('/open', 'OpenTHC\SSO\Controller\Auth\Open')->setName('auth/open');
+	$this->post('/open', 'OpenTHC\SSO\Controller\Auth\Open:post')->setName('auth/open/post');
 
-	$this->get('/once', 'App\Controller\Auth\Once');
+	$this->get('/once', 'OpenTHC\SSO\Controller\Auth\Once');
 
-	$this->map(['GET','POST'], '/init', 'App\Controller\Auth\Init');
+	$this->map(['GET','POST'], '/init', 'OpenTHC\SSO\Controller\Auth\Init');
 
-	// $this->get('/ping', 'App\Controller\Auth\Ping');
+	// $this->get('/ping', 'OpenTHC\SSO\Controller\Auth\Ping');
 	$this->get('/ping', function($REQ, $RES) {
 		return $RES->withJSON([
 			'_COOKIE' => $_COOKIE,
@@ -62,7 +62,7 @@ $app->group('/auth', function() {
 		]);
 	});
 
-	$this->get('/shut', 'App\Controller\Auth\Shut');
+	$this->get('/shut', 'OpenTHC\SSO\Controller\Auth\Shut');
 
 })->add('OpenTHC\Middleware\Session');
 
@@ -70,13 +70,13 @@ $app->group('/auth', function() {
 // oAuth2 Routes
 $app->group('/oauth2', function() {
 
-	$this->post('/token', 'App\Controller\oAuth2\Token');
+	$this->post('/token', 'OpenTHC\SSO\Controller\oAuth2\Token');
 
-	$this->get('/authorize', 'App\Controller\oAuth2\Authorize');
-	$this->get('/permit', 'App\Controller\oAuth2\Permit');
-	$this->get('/reject', 'App\Controller\oAuth2\Reject');
+	$this->get('/authorize', 'OpenTHC\SSO\Controller\oAuth2\Authorize');
+	$this->get('/permit', 'OpenTHC\SSO\Controller\oAuth2\Permit');
+	$this->get('/reject', 'OpenTHC\SSO\Controller\oAuth2\Reject');
 
-	$this->get('/profile', 'App\Controller\oAuth2\Profile');
+	$this->get('/profile', 'OpenTHC\SSO\Controller\oAuth2\Profile');
 
 })->add('OpenTHC\Middleware\Session');
 
@@ -84,17 +84,17 @@ $app->group('/oauth2', function() {
 // Account
 $app->group('/account', function() {
 
-	$this->get('', 'App\Controller\Account\Profile');
-	$this->post('', 'App\Controller\Account\Profile:post');
+	$this->get('', 'OpenTHC\SSO\Controller\Account\Profile');
+	$this->post('', 'OpenTHC\SSO\Controller\Account\Profile:post');
 
-	$this->get('/create', 'App\Controller\Account\Create');
-	$this->post('/create', 'App\Controller\Account\Create:post')->setName('account/create');
+	$this->get('/create', 'OpenTHC\SSO\Controller\Account\Create');
+	$this->post('/create', 'OpenTHC\SSO\Controller\Account\Create:post')->setName('account/create');
 
-	$this->get('/create/company', 'App\Controller\Account\Company');
-	$this->post('/create/company', 'App\Controller\Account\Company:post');
+	$this->get('/create/company', 'OpenTHC\SSO\Controller\Account\Company');
+	$this->post('/create/company', 'OpenTHC\SSO\Controller\Account\Company:post');
 
-	$this->get('/password', 'App\Controller\Account\Password');
-	$this->post('/password', 'App\Controller\Account\Password:post')->setName('account/password/update');
+	$this->get('/password', 'OpenTHC\SSO\Controller\Account\Password');
+	$this->post('/password', 'OpenTHC\SSO\Controller\Account\Password:post')->setName('account/password/update');
 
 })->add('OpenTHC\Middleware\Session');
 
@@ -102,39 +102,39 @@ $app->group('/account', function() {
 // Verification Steps
 $app->group('/verify', function() {
 
-	$this->get('', 'App\Controller\Verify\Main');
+	$this->get('', 'OpenTHC\SSO\Controller\Verify\Main');
 
-	$this->get('/email', 'App\Controller\Verify\Email');
-	$this->post('/email', 'App\Controller\Verify\Email:post');
+	$this->get('/email', 'OpenTHC\SSO\Controller\Verify\Email');
+	$this->post('/email', 'OpenTHC\SSO\Controller\Verify\Email:post');
 
-	$this->get('/password', 'App\Controller\Verify\Password');
-	$this->post('/password', 'App\Controller\Verify\Password:post');
+	$this->get('/password', 'OpenTHC\SSO\Controller\Verify\Password');
+	$this->post('/password', 'OpenTHC\SSO\Controller\Verify\Password:post');
 
-	$this->get('/location', 'App\Controller\Verify\Location');
-	$this->post('/location', 'App\Controller\Verify\Location:post');
+	$this->get('/location', 'OpenTHC\SSO\Controller\Verify\Location');
+	$this->post('/location', 'OpenTHC\SSO\Controller\Verify\Location:post');
 
-	$this->get('/timezone', 'App\Controller\Verify\Timezone');
-	$this->post('/timezone', 'App\Controller\Verify\Timezone:post');
+	$this->get('/timezone', 'OpenTHC\SSO\Controller\Verify\Timezone');
+	$this->post('/timezone', 'OpenTHC\SSO\Controller\Verify\Timezone:post');
 
-	$this->get('/phone', 'App\Controller\Verify\Phone');
-	$this->post('/phone', 'App\Controller\Verify\Phone:post');
+	$this->get('/phone', 'OpenTHC\SSO\Controller\Verify\Phone');
+	$this->post('/phone', 'OpenTHC\SSO\Controller\Verify\Phone:post');
 
-	$this->get('/company', 'App\Controller\Verify\Company');
-	$this->post('/company', 'App\Controller\Verify\Company:post');
+	$this->get('/company', 'OpenTHC\SSO\Controller\Verify\Company');
+	$this->post('/company', 'OpenTHC\SSO\Controller\Verify\Company:post');
 
-	$this->get('/license', 'App\Controller\Verify\License');
-	$this->post('/license', 'App\Controller\Verify\License:post');
+	$this->get('/license', 'OpenTHC\SSO\Controller\Verify\License');
+	$this->post('/license', 'OpenTHC\SSO\Controller\Verify\License:post');
 
 })->add('OpenTHC\Middleware\Session');
 
 
 // the Done/Stop Page
-$app->get('/done', 'App\Controller\Done')
+$app->get('/done', 'OpenTHC\SSO\Controller\Done')
 	->add('OpenTHC\Middleware\Session');;
 
 
 // Enable Test Options
-$app->add('App\Middleware\TestMode');
+$app->add('OpenTHC\SSO\Middleware\TestMode');
 
 
 // Custom Middleware?

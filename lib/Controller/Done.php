@@ -5,9 +5,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-namespace App\Controller;
+namespace OpenTHC\SSO\Controller;
 
-class Done extends \App\Controller\Base
+class Done extends \OpenTHC\SSO\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{

@@ -5,9 +5,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-namespace App\Controller\Verify;
+namespace OpenTHC\SSO\Controller\Verify;
 
-class Password extends \App\Controller\Verify\Base
+class Password extends \OpenTHC\SSO\Controller\Verify\Base
 {
 	/**
 	 *

@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-namespace App\Middleware;
+namespace OpenTHC\SSO\Middleware;
 
 class TestMode extends \OpenTHC\Middleware\Base
 {

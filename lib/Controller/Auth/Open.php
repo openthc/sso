@@ -5,14 +5,14 @@
  * SPDX-License-Identifier: MIT
  */
 
-namespace App\Controller\Auth;
+namespace OpenTHC\SSO\Controller\Auth;
 
 use Edoceo\Radix\Filter;
 use Edoceo\Radix\Session;
 
-use App\Contact;
+use OpenTHC\SSO\Contact;
 
-class Open extends \App\Controller\Base
+class Open extends \OpenTHC\SSO\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{

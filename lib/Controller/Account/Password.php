@@ -6,9 +6,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-namespace App\Controller\Account;
+namespace OpenTHC\SSO\Controller\Account;
 
-class Password extends \App\Controller\Base
+class Password extends \OpenTHC\SSO\Controller\Base
 {
 	/**
 	 *
@@ -47,7 +47,7 @@ class Password extends \App\Controller\Base
 	 */
 	function post($REQ, $RES, $ARG)
 	{
-		\App\CSRF::verify($_POST['CSRF']);
+		CSRF::verify($_POST['CSRF']);
 
 		$ARG = $this->parseArg();
 
@@ -124,7 +124,7 @@ class Password extends \App\Controller\Base
 
 		if (!empty($_GET['_'])) {
 
-			$act = new \App\Auth_Context_Ticket($this->_container->DBC_AUTH, $_GET['_']);
+			$act = new Auth_Context_Ticket($this->_container->DBC_AUTH, $_GET['_']);
 			if (!empty($act['id'])) {
 				$ARG = json_decode($act['meta'], true);
 			}

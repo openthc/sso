@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-namespace App;
+namespace OpenTHC\SSO;
 
 class Auth_Contact extends \OpenTHC\SQL\Record
 {

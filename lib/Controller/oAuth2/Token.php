@@ -5,9 +5,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-namespace App\Controller\oAuth2;
+namespace OpenTHC\SSO\Controller\oAuth2;
 
-class Token extends \App\Controller\Base
+class Token extends \OpenTHC\SSO\Controller\Base
 {
 	private $_cfg;
 	private $_auth_token;

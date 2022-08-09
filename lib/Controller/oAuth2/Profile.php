@@ -5,9 +5,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-namespace App\Controller\oAuth2;
+namespace OpenTHC\SSO\Controller\oAuth2;
 
-class Profile extends \App\Controller\Base
+class Profile extends \OpenTHC\SSO\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)
 	{

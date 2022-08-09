@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-namespace App\Controller;
+namespace OpenTHC\SSO\Controller;
 
 class Base extends \OpenTHC\Controller\Base
 {
@@ -20,7 +20,7 @@ class Base extends \OpenTHC\Controller\Base
 		$data['Page'] = [];
 		$data['Page']['title'] = 'OpenTHC';
 
-		$data['CSRF'] = \App\CSRF::getToken();
+		$data['CSRF'] = \OpenTHC\SSO\CSRF::getToken();
 
 		$data['OpenTHC'] = [];
 		$data['OpenTHC']['cic'] = \OpenTHC\Config::get('openthc/cic');

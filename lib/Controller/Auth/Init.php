@@ -5,13 +5,13 @@
  * SPDX-License-Identifier: MIT
  */
 
-namespace App\Controller\Auth;
+namespace OpenTHC\SSO\Controller\Auth;
 
 use Edoceo\Radix\Session;
 
 use OpenTHC\Contact;
 
-class Init extends \App\Controller\Base
+class Init extends \OpenTHC\SSO\Controller\Base
 {
 	/**
 	 *

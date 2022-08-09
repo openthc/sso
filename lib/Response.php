@@ -5,7 +5,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-namespace App;
+namespace OpenTHC\SSO;
 
 class Response extends \Slim\Http\Response
 {
