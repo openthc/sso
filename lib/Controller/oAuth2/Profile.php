@@ -78,7 +78,7 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 			$Profile['Company']['flag'] = $res['flag'];
 			$Profile['Company']['name'] = $res['name'];
 		}
-		$RES = $RES->withAttribute('Company', $Company);
+		$RES = $RES->withAttribute('Company', $Profile['Company']);
 
 		// Scope
 		$Profile['scope'] = explode(' ', $tok['meta']['scope']);

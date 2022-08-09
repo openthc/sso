@@ -22,9 +22,8 @@ class Phone extends \OpenTHC\SSO\Controller\Verify\Base
 		$act = $this->loadTicket();
 
 		$data['Contact'] = $act['contact'];
-		// $data['Contact']['phone'] = $data['Contact']['username'];
 
-		$data['contact_phone'] = $Contact_Base['phone'];
+		$data['contact_phone'] = $data['Contact']['phone'];
 		if (!empty($_SESSION['verify']['phone']['e164'])) {
 			$data['contact_phone'] = $_SESSION['verify']['phone']['e164'];
 		}
@@ -187,7 +186,7 @@ class Phone extends \OpenTHC\SSO\Controller\Verify\Base
 						break;
 				}
 
-			} catch (Exception $e) {
+			} catch (\Exception $e) {
 				$ret_args['e'] = 'CAV-304';
 				$reg_args['s'] = 'e'; // Exception Notice
 			}

@@ -158,7 +158,7 @@ class Email extends \OpenTHC\SSO\Controller\Verify\Base
 					$ret_args['s'] = 't';
 				}
 
-			} catch (Exception $e) {
+			} catch (\Exception $e) {
 				$ret_args['e'] = 'CAV-255';
 				$ret_args['s'] = 'f';
 			}

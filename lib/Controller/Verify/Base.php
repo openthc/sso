@@ -1,5 +1,6 @@
 <?php
 /**
+ *
  * SPDX-License-Identifier: MIT
  */
 
@@ -8,7 +9,10 @@ namespace OpenTHC\SSO\Controller\Verify;
 
 class Base extends \OpenTHC\SSO\Controller\Base
 {
-	function loadTicket()
+	/**
+	 *
+	 */
+	function loadTicket() : ?array
 	{
 		$dbc_auth = $this->_container->DBC_AUTH;
 		$chk = $dbc_auth->fetchRow('SELECT expires_at, meta FROM auth_context_ticket WHERE id = :t', [ ':t' => $_GET['_']]);

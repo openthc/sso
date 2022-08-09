@@ -31,7 +31,7 @@ class Auth_Context_Ticket extends \OpenTHC\SQL\Record
 	function isValid()
 	{
 		// @todo Check the expires_at Time
-		$dt0 = new \DateTime($this->data['expires_at']);
+		$dt0 = new \DateTime($this->_data['expires_at']);
 		$dt1 = new \DateTime();
 
 	}

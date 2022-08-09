@@ -10,7 +10,8 @@ namespace OpenTHC\SSO\Controller\Auth;
 use Edoceo\Radix\Filter;
 use Edoceo\Radix\Session;
 
-use OpenTHC\SSO\Contact;
+use OpenTHC\SSO\CSRF;
+use OpenTHC\SSO\Auth_Contact;
 
 class Open extends \OpenTHC\SSO\Controller\Base
 {
@@ -85,7 +86,7 @@ class Open extends \OpenTHC\SSO\Controller\Base
 	 */
 	function post($REQ, $RES, $ARG)
 	{
-		\App\CSRF::verify($_POST['CSRF']);
+		CSRF::verify($_POST['CSRF']);
 
 		switch ($_POST['a']) {
 		case 'password-reset-request':

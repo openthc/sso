@@ -29,7 +29,7 @@ class Password extends \OpenTHC\SSO\Controller\Verify\Base
 	 */
 	function post($REQ, $RES, $ARG)
 	{
-		$sub = new \App\Controller\Account\Password($this->_container);
+		$sub = new \OpenTHC\SSO\Controller\Account\Password($this->_container);
 		$RES = $sub->post($REQ, $RES, $ARG);
 		// @todo If Success
 		return $RES->withRedirect(sprintf('/verify?_=%s', $_GET['_']));

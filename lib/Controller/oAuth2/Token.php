@@ -12,6 +12,9 @@ class Token extends \OpenTHC\SSO\Controller\Base
 	private $_cfg;
 	private $_auth_token;
 
+	/**
+	 *
+	 */
 	function __invoke($REQ, $RES, $ARG)
 	{
 		$this->_cfg = \OpenTHC\Config::get('openthc/sso');
@@ -45,7 +48,7 @@ class Token extends \OpenTHC\SSO\Controller\Base
 		// Generate Data Response
 		$ret = [];
 		$ret['access_token'] = $hash;
-		$ret['refresh_token'] = $hex;
+		$ret['refresh_token'] = ''; // $hex;
 		$ret['token_type'] = 'bearer';
 		$ret['scope'] = $this->_auth_token['scope'];
 		$ret['expires_in'] = 86400 / 2;

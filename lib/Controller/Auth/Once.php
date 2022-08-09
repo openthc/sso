@@ -7,7 +7,7 @@
 
 namespace OpenTHC\SSO\Controller\Auth;
 
-use OpenTHC\SSO\Contact;
+use OpenTHC\SSO\Auth_Contact;
 
 class Once extends \OpenTHC\SSO\Controller\Base
 {
@@ -98,7 +98,7 @@ class Once extends \OpenTHC\SSO\Controller\Base
 		$dbc_main->query('BEGIN');
 
 		// Update Auth Contact
-		$ct_auth = new \App\Auth_Contact($dbc_auth, $act_data['contact']);
+		$ct_auth = new Auth_Contact($dbc_auth, $act_data['contact']);
 		$ct_auth['username'] = $act_data['contact']['email'];
 		$ct_auth['password'] = null;
 		$ct_auth->setFlag(\OpenTHC\Contact::FLAG_EMAIL_GOOD | \OpenTHC\Contact::FLAG_PHONE_WANT);

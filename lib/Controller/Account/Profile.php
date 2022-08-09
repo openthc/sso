@@ -7,6 +7,8 @@
 
 namespace OpenTHC\SSO\Controller\Account;
 
+use OpenTHC\SSO\CSRF;
+
 class Profile extends \OpenTHC\SSO\Controller\Base
 {
 	function __invoke($REQ, $RES, $ARG)

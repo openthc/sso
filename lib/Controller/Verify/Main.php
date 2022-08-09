@@ -10,6 +10,8 @@ namespace OpenTHC\SSO\Controller\Verify;
 
 use OpenTHC\Contact;
 
+use OpenTHC\SSO\Auth_Contact;
+
 class Main extends \OpenTHC\SSO\Controller\Verify\Base
 {
 	/**

@@ -38,7 +38,7 @@ $con['DBC_MAIN'] = function() {
 
 // Custom Response Object
 $con['response'] = function() {
-	$RES = new App\Response(200);
+	$RES = new \OpenTHC\SSO\Response(200);
 	$RES = $RES->withHeader('content-type', 'text/html; charset=utf-8');
 	return $RES;
 };
