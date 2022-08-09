@@ -1,6 +1,6 @@
 <?php
 /**
- * OpenTHC SS Configuration Example
+ * OpenTHC SS0 Configuration Example
  */
 
 $cfg = [];
@@ -27,10 +27,10 @@ $cfg['database'] = [
 
 $cfg['openthc'] = [
 	'app' => [
-		'hostname' => 'app.openthc.dev',
+		'hostname' => 'app.openthc.example.com',
 	],
 	'dir' => [
-		'hostname' => 'dir.openthc.dev'
+		'hostname' => 'dir.openthc.example.com'
 	]
 ];
 
