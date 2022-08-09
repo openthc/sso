@@ -1,9 +1,11 @@
 <?php
 /**
  * Shut
+ *
+ * SPDX-License-Identifier: MIT
  */
 
-namespace App\Controller\Auth;
+namespace OpenTHC\SSO\Controller\Auth;
 
 class Shut extends \OpenTHC\Controller\Auth\Shut
 {
