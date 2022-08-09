@@ -1,0 +1,14 @@
+#
+# OpenTHC PHPStan for SSO
+#
+
+parameters:
+	bootstrapFiles:
+		- ../boot.php
+	level: 6
+	paths:
+		- ../bin
+		- ../lib
+		- ../test
+		- ../view
+	tipsOfTheDay: false
