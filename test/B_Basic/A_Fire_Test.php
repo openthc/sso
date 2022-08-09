@@ -3,9 +3,9 @@
  * Test the Authentication Pages
  */
 
-namespace Test\B_Basic;
+namespace OpenTHC\SSO\Test\B_Basic;
 
-class A_Fire_Test extends \Test\Base_Case
+class A_Fire_Test extends \OpenTHC\SSO\Test\Base_Case
 {
 	/**
 	 *

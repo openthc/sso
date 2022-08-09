@@ -3,9 +3,9 @@
  * Base Class for API Testing
  */
 
-namespace Test\A_Core;
+namespace OpenTHC\SSO\Test\A_Core;
 
-class C_Site_Test extends \Test\Base_Case
+class C_Site_Test extends \OpenTHC\SSO\Test\Base_Case
 {
 	function test_page_all()
 	{
@@ -24,6 +24,9 @@ class C_Site_Test extends \Test\Base_Case
 
 		$res = $ghc->get('/auth/open');
 		$this->assertValidResponse($res);
+
+		// $res = $ghc->get('/.well-known/change-password');
+		// $this->assertValidResponse($res);
 
 		$res = $ghc->get('/auth/open?a=password-reset');
 		$this->assertValidResponse($res);

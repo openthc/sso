@@ -3,7 +3,7 @@
  * Base Class for API Testing
  */
 
-namespace Test;
+namespace OpenTHC\SSO\Test;
 
 class Base_Case extends \PHPUnit\Framework\TestCase
 {

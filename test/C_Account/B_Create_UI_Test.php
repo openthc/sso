@@ -3,12 +3,12 @@
  * Account Create Testing - UI
  */
 
-namespace Test\C_Account;
+namespace OpenTHC\SSO\Test\C_Account;
 
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverSelect;
 
-class B_Create_UI_Test extends \Test\UI_Test_Case
+class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 {
 	/**
 	 *

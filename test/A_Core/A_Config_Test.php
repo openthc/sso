@@ -3,18 +3,17 @@
  * Base Class for API Testing
  */
 
-namespace Test\A_Core;
+namespace OpenTHC\SSO\Test\A_Core;
 
-class A_Config_Test extends \Test\Base_Case
+class A_Config_Test extends \OpenTHC\SSO\Test\Base_Case
 {
 	function test_env()
 	{
 		$env_list = [
 			'OPENTHC_TEST_HOST',
 			'OPENTHC_TEST_HASH',
-			'OPENTHC_TEST_CONTACT_USERNAME',
+			'OPENTHC_TEST_CONTACT',
 			'OPENTHC_TEST_CONTACT_PASSWORD',
-			'OPENTHC_TEST_CONTACT_EMAIL',
 			'OPENTHC_TEST_CONTACT_PHONE',
 			'OPENTHC_TEST_WEBDRIVER_URL',
 		];

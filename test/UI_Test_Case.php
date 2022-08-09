@@ -7,11 +7,11 @@
  * https://www.browserstack.com/docs?product=automate
  */
 
-namespace Test;
+namespace OpenTHC\SSO\Test;
 
 use \Facebook\WebDriver\Remote\RemoteWebDriver;
 
-class UI_Test_Case extends \Test\Base_Case
+class UI_Test_Case extends \OpenTHC\SSO\Test\Base_Case
 {
 	protected static $driver;
 	// protected static $bs_local;
