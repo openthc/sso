@@ -115,9 +115,9 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 	/**
 	 * [verifyScope description]
 	 * Modifies the Scope in $_GET
-	 * @return string
+	 * @return array
 	 */
-	function verifyScope() : string
+	function verifyScope() : array
 	{
 		$res = $this->_container->DBC_AUTH->fetchAll('SELECT code FROM auth_context');
 		$scope_list_all = array_reduce($res, function($ret, $cur) {
