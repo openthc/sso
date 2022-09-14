@@ -169,7 +169,7 @@ SQL;
 	/**
 	 * @return Response ready to be redirected
 	 */
-	protected function _create_ticket_and_redirect($RES, $act_data, $Contact, $Company)
+	protected function _create_ticket_and_redirect($RES, $act_data, $Contact, $Company) : \OpenTHC\SSO\Response
 	{
 		$_SESSION['Contact'] = $Contact;
 		$_SESSION['Company'] = $Company;
