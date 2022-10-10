@@ -1,0 +1,29 @@
+{
+  "name": "@openthc/sso",
+  "version": "420.22.207",
+  "description": "OpenTHC SSO Module",
+  "main": "main.js",
+  "directories": {
+    "lib": "lib",
+    "test": "test"
+  },
+  "dependencies": {
+    "@popperjs/core": "^2.11.5",
+    "bootstrap": "^5.2.0",
+    "jquery": "^3.6.1",
+    "jquery-ui": "^1.13.2"
+  },
+  "scripts": {
+    "test": "test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/openthc/sso.git"
+  },
+  "author": "OpenTHC, Inc.",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/openthc/sso/issues"
+  },
+  "homepage": "https://github.com/openthc/sso#readme"
+}
