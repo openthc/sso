@@ -167,7 +167,7 @@ SQL;
 	}
 
 	/**
-	 * @return Response ready to be redirected
+	 * @return \OpenTHC\SSO\Response ready to be redirected
 	 */
 	protected function _create_ticket_and_redirect($RES, $act_data, $Contact, $Company) : \OpenTHC\SSO\Response
 	{
