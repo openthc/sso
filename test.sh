@@ -27,22 +27,22 @@ mkdir -p "${OUTPUT_BASE}"
 
 #
 # Lint
-vendor/openthc/common/test/phplint.sh
+bash vendor/openthc/common/test/phplint.sh
 
 
 #
 # PHP-CPD
-vendor/openthc/common/test/phpcpd.sh
+bash vendor/openthc/common/test/phpcpd.sh
 
 
 #
 # PHPStan
-vendor/openthc/common/test/phpstan.sh
+bash vendor/openthc/common/test/phpstan.sh
 
 
 #
 # PHPUnit
-vendor/openthc/common/test/phpunit.sh "$@"
+bash vendor/openthc/common/test/phpunit.sh "$@"
 
 
 #
