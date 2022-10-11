@@ -20,6 +20,7 @@ class Done extends \OpenTHC\SSO\Controller\Base
 		if (!empty($_GET['e'])) {
 			switch ($_GET['e']) {
 				case 'CAC-065':
+					$data['Page']['title'] = 'Account Error';
 					$data['warn'] = 'You have already created an account, sign in to that one';
 					$data['foot'] = '<div class="r"><a class="btn btn-outline-primary" href="/auth/open">Sign In <i class="icon icon-arrow-right"></i></a></div>';
 				break;

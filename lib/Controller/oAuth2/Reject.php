@@ -30,7 +30,7 @@ class Reject extends \OpenTHC\SSO\Controller\Base
 		if (empty($uri['query'])) {
 			$uri['query'] = array();
 		} elseif (!empty($uri['query'])) {
-			$uri['query'] = _parse_str($uri['query']);
+			$uri['query'] = __parse_str($uri['query']);
 		}
 
 		$uri['query']['error'] = 'rejected';

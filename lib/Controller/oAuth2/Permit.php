@@ -60,7 +60,7 @@ class Permit extends \OpenTHC\SSO\Controller\Base
 		if (empty($ruri['query'])) {
 			$ruri['query'] = array();
 		} elseif (!empty($ruri['query'])) {
-			$ruri['query'] = _parse_str($ruri['query']);
+			$ruri['query'] = __parse_str($ruri['query']);
 		}
 
 		$ruri['query']['code'] = $hash;
