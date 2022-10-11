@@ -32,6 +32,12 @@ class Open extends \OpenTHC\SSO\Controller\Base
 			case 'CAO-093':
 				$data['Page']['flash'] = '<div class="alert alert-danger">Invalid Username or Password</div>';
 				break;
+			case 'CAO-153':
+				$data['Page']['flash'] = '<div class="alert alert-danger">Invalid Username or Password</div>';
+				break;
+			case 'CAO-159':
+				$data['Page']['flash'] = '<div class="alert alert-danger">Invalid Account Status</div>';
+				break;
 			case 'CAP-080':
 				$data['Page']['flash'] = '<div class="alert alert-info">Your Password has been updated, please sign-in to continue</div>';
 				break;
@@ -145,16 +151,15 @@ class Open extends \OpenTHC\SSO\Controller\Base
 		}
 
 		if (!password_verify($password, $chk['password'])) {
-
-			if (100 == $chk['stat']) {
-				return $RES->withRedirect('/done?' . http_build_query([
-					'e' => 'CAO-144'
-				]));
-			}
-
 			return $RES->withRedirect('/auth/open?' . http_build_query([
 				'_' => $_GET['_'],
-				'e' => 'CAO-093'
+				'e' => 'CAO-153'
+			]));
+		}
+
+		if (100 == $chk['stat']) {
+			return $RES->withRedirect('/done?' . http_build_query([
+				'e' => 'CAO-159'
 			]));
 		}
 
@@ -234,8 +239,9 @@ class Open extends \OpenTHC\SSO\Controller\Base
 		if ($_ENV['test']) {
 
 			// Pass Information Back
-			$ret_args['r'] = '/auth/once';
-			$ret_args['a'] = $act['id'];
+			$ret_args['r'] = sprintf('/auth/once?%s', http_build_query([
+				'_' => $act['id'],
+			]));
 
 		} else {
 
