@@ -20,10 +20,6 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 			, getenv('OPENTHC_TEST_HASH')
 		));
 
-		// self::$driver->manage()->addCookie([
-
-		// ]); // 'test=' . getenv('OPENTHC_TEST_HASH'));
-
 		$node = self::$driver->findElement(WebDriverBy::id('contact-name'));
 		$node->sendKeys(sprintf('%s-ui', getenv('OPENTHC_TEST_CONTACT')));
 

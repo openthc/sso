@@ -7,6 +7,9 @@ namespace OpenTHC\SSO\Test\A_Core;
 
 class A_Config_Test extends \OpenTHC\SSO\Test\Base_Case
 {
+	/**
+	 * ack -o 'getenv\(.+\)'  test | cut -d':' -f2|sort |uniq -c | sort -nr
+	 */
 	function test_env()
 	{
 		$env_list = [
@@ -22,6 +25,7 @@ class A_Config_Test extends \OpenTHC\SSO\Test\Base_Case
 			$v = getenv($x);
 			$this->assertNotEmpty($v, sprintf('Environment "%s" missing', $x));
 		}
+
 	}
 
 	/**

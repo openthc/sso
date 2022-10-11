@@ -14,12 +14,14 @@ class A_Fire_Test extends \OpenTHC\SSO\Test\Base_Case
 	{
 		$c = $this->_ua();
 		$res = $c->get('/auth/open');
-		$res = $this->assertValidResponse($res);
+		$html = $this->assertValidResponse($res);
 
-		$this->assertMatchesRegularExpression('/input.+id="username"/', $res);
-		$this->assertMatchesRegularExpression('/input.+id="password" name="password" type="password"/', $res);
+		$this->assertMatchesRegularExpression('/input.+name="CSRF"/', $html);
+		$this->assertMatchesRegularExpression('/input.+id="username"/', $html);
+		$this->assertMatchesRegularExpression('/input.+id="password" name="password" type="password"/', $html);
 
 		$res = $c->post('/auth/open', [ 'form_params' => [
+			'CSRF' => $this->getCSRF($html),
 			'a' => 'account-open',
 			'username' => 'invalid-email@invalid-domain',
 			'password' => 'invalid-password',
@@ -29,10 +31,10 @@ class A_Fire_Test extends \OpenTHC\SSO\Test\Base_Case
 		$this->assertEquals('/auth/open?e=CAO-049', $url);
 
 		$res = $c->get($url);
-		$this->assertValidResponse($res);
+		$html = $this->assertValidResponse($res);
 
-		// file_put_contents('Fire_Test_test_auth_open.html', $this->raw);
-		$this->assertMatchesRegularExpression('/Invalid email, please use a proper email address/', $this->raw);
+		// file_put_contents('Fire_Test_test_auth_open.html', $html);
+		$this->assertMatchesRegularExpression('/Invalid email, please use a proper email address/', $html);
 	}
 
 	/**
@@ -42,11 +44,12 @@ class A_Fire_Test extends \OpenTHC\SSO\Test\Base_Case
 	{
 		$c = $this->_ua();
 		$res = $c->get('/auth/open?a=password-reset');
-		$res = $this->assertValidResponse($res);
+		$html = $this->assertValidResponse($res);
 
-		$this->assertMatchesRegularExpression('/input.+id="username"/', $res);
+		$this->assertMatchesRegularExpression('/input.+id="username"/', $html);
 
 		$res = $c->post('/auth/open?a=password-reset', [ 'form_params' => [
+			'CSRF' => $this->getCSRF($html),
 			'a' => 'password-reset-request',
 			'username' => 'invalid-email@invalid-domain',
 		]]);

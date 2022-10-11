@@ -3,12 +3,19 @@
  * Account Create Testing
  */
 
-namespace Test\C_Account;
+namespace OpenTHC\SSO\Test\C_Account;
 
-class A_Create_Test extends \Test\Base_Case
+class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 {
-	// private $account_username =
 	private $link_verify;
+
+	protected static $username;
+
+	public static function setupBeforeClass(): void
+	{
+		parent::setupBeforeClass();
+		self::$username = sprintf('%s@openthc.dev', getenv('OPENTHC_TEST_CONTACT'));
+	}
 
 	/**
 	 * Creates the Account and Sets the Password
@@ -31,16 +38,17 @@ class A_Create_Test extends \Test\Base_Case
 		$this->assertMatchesRegularExpression('/input.+id="contact\-phone"/', $html);
 
 		$arg = [
-			'CSRF' => (preg_match('/name="CSRF" type="hidden" value="([^"]+)"/', $html, $m) ? $m[1] : ''),
+			'CSRF' => $this->getCSRF($html),
 			'a' => 'contact-next',
 			// 'company-name' => sprintf('Test License %06x', $this->_pid),
 			'contact-name' => sprintf('Test Contact %06x', $this->_pid),
-			'contact-email' => getenv('OPENTHC_TEST_CONTACT_USERNAME'),
+			'contact-email' => self::$username,
 			// 'contact-phone' => '1234567890',
 		];
 		$res = $c->post('/account/create', [ 'form_params' => $arg ]);
 		$this->assertValidResponse($res, 302);
 
+		// Fails cause we already have an account
 		$done_link = $res->getHeaderLine('location');
 		$this->assertMatchesRegularExpression('/^\/done\?e=CAC\-111/', $done_link);
 		$this->assertMatchesRegularExpression('/^\/done\?e=CAC\-111.+r=/', $done_link); // Has Test Link
@@ -112,6 +120,12 @@ class A_Create_Test extends \Test\Base_Case
 		$res = $c->get($link3);
 		$this->assertValidResponse($res, 302);
 		$url = $res->getHeaderLine('location');
+
+		$this->assertMatchesRegularExpression('/^\/verify/', $url);
+		$res = $c->get($url);
+		$this->assertValidResponse($res, 302);
+		$url = $res->getHeaderLine('location');
+
 		$this->assertMatchesRegularExpression('/^\/verify\/password.+/', $url);
 
 		return $url;
@@ -132,6 +146,7 @@ class A_Create_Test extends \Test\Base_Case
 		$this->assertStringContainsString('Set Password', $html);
 
 		$arg = [
+			'CSRF' => $this->getCSRF($html),
 			'a' => 'update',
 			'p0' => getenv('OPENTHC_TEST_CONTACT_PASSWORD'),
 			'p1' => getenv('OPENTHC_TEST_CONTACT_PASSWORD'),
@@ -162,25 +177,27 @@ class A_Create_Test extends \Test\Base_Case
 		$this->assertStringContainsString('Verify Profile Location', $html);
 
 		$arg = [
+			'CSRF' => $this->getCSRF($html),
 			'a' => 'iso3166-1-save-next',
-			'contact-country' => 'US',
+			'contact-iso3166-1' => 'US',
 		];
 		$res = $c->post($url0, [ 'form_params' => $arg ]);
-		$this->assertValidResponse($res, 302);
+		$html = $this->assertValidResponse($res, 302);
 		$url1 = $res->getHeaderLine('location');
 		$this->assertMatchesRegularExpression('/^\/verify\/location.+/', $url1);
 
 		$arg = [
+			'CSRF' => $this->getCSRF($html),
 			'a' => 'iso3166-2-save-next',
 			'contact-iso3166-2' => 'US-WA',
 		];
 		$res = $c->post($url1, [ 'form_params' => $arg ]);
-		$this->assertValidResponse($res, 302);
+		$html = $this->assertValidResponse($res, 302);
 		$url2 = $res->getHeaderLine('location');
 		$this->assertMatchesRegularExpression('/^\/verify/', $url2);
 
 		$res = $c->get($url2);
-		$this->assertValidResponse($res, 302);
+		$html = $this->assertValidResponse($res, 302);
 		$url3 = $res->getHeaderLine('location');
 		$this->assertMatchesRegularExpression('/^\/verify\/timezone.+/', $url3);
 
@@ -204,6 +221,7 @@ class A_Create_Test extends \Test\Base_Case
 		$this->assertStringContainsString('TEST MODE', $html);
 		$this->assertStringContainsString('Verify Profile Timezone', $html);
 		$arg = [
+			'CSRF' => $this->getCSRF($html),
 			'a' => 'timezone-save-next',
 			'contact-timezone' => 'America/Los_Angeles',
 		];
@@ -242,6 +260,7 @@ class A_Create_Test extends \Test\Base_Case
 
 		// // POST Phone Verify
 		$res = $c->post($url0, [ 'form_params' => [
+			'CSRF' => $this->getCSRF($html),
 			'a' => 'phone-verify-send',
 			'contact-phone' => '+18559769333',
 		]]);
@@ -265,6 +284,7 @@ class A_Create_Test extends \Test\Base_Case
 
 		// // POST to Verify Code, 302 => Verify, 302 => Password
 		$res = $c->post($url1, [ 'form_params' => [
+			'CSRF' => $this->getCSRF($html),
 			'a' => 'phone-verify-save',
 			'phone-verify-code' => $phone_code,
 		]]);
@@ -295,28 +315,37 @@ class A_Create_Test extends \Test\Base_Case
 		$res = $c->get($url0);
 		$html = $this->assertValidResponse($res);
 		$arg = [
+			'CSRF' => $this->getCSRF($html),
 			'a' => 'company-skip',
 		];
 
 		$res = $c->post($url0, [ 'form_params' => $arg ]);
 		$this->assertValidResponse($res, 302);
 		$url1 = $res->getHeaderLine('location');
+		$this->assertMatchesRegularExpression('/^\/verify\?_=.+/', $url1);
 
-		return $url1;
+		$res = $c->get($url1);
+		$this->assertValidResponse($res, 302);
+		$url2 = $res->getHeaderLine('location');
+
+		return $url2;
 
 	}
 
 	/**
-	 * @depends test_account_verify
+	 * @depends test_verify_company
 	 */
-	// function test_account_password($url)
-	// {
-	// 	$this->assertNotEmpty($url);
-	// 	$this->assertMatchesRegularExpression('/^\/account\/password\?_=.+/', $url);
+	function test_account_create_done($url)
+	{
+		$this->assertNotEmpty($url);
+		$this->assertMatchesRegularExpression('/^\/auth\/init\?_=.+/', $url);
 
-	// 	$c = $this->_ua();
-	// 	$res = $c->get($url);
-	// 	$html = $this->assertValidResponse($res);
+		$c = $this->_ua();
+		$res = $c->get($url);
+		$this->assertValidResponse($res, 302);
+		$url1 = $res->getHeaderLine('location');
+		$this->assertMatchesRegularExpression('/^\/account/', $url1);
+
 
 	// 	$this->assertStringContainsString('TEST MODE', $html);
 	// 	$this->assertStringContainsString('Set Password', $html);
@@ -333,7 +362,7 @@ class A_Create_Test extends \Test\Base_Case
 	// 	$url = $res->getHeaderLine('location');
 	// 	$this->assertMatchesRegularExpression('/^\/auth\/open/', $url);
 
-	// }
+	}
 
 	/**
 	 * Duplicate Email should be Rejected
@@ -342,29 +371,34 @@ class A_Create_Test extends \Test\Base_Case
 	{
 		$c = $this->_ua();
 		$res = $c->get('/account/create');
-		$res = $this->assertValidResponse($res);
+		$html = $this->assertValidResponse($res);
 
-		$this->assertMatchesRegularExpression('/Create Account/', $res);
-		$this->assertMatchesRegularExpression('/input.+id="company\-name"/', $res);
-		$this->assertMatchesRegularExpression('/input.+id="contact\-name"/', $res);
-		$this->assertMatchesRegularExpression('/input.+id="contact\-email"/', $res);
-		$this->assertMatchesRegularExpression('/input.+id="contact\-phone"/', $res);
+		$this->assertMatchesRegularExpression('/Create Account/', $html);
+		$this->assertMatchesRegularExpression('/input.+id="company\-name"/', $html);
+		$this->assertMatchesRegularExpression('/input.+id="contact\-name"/', $html);
+		$this->assertMatchesRegularExpression('/input.+id="contact\-email"/', $html);
+		$this->assertMatchesRegularExpression('/input.+id="contact\-phone"/', $html);
 
 		$res = $c->post('/account/create', [ 'form_params' => [
+			'CSRF' => $this->getCSRF($html),
 			'a' => 'contact-next',
 			'contact-name' => sprintf('Test Contact %06x', $this->_pid),
-			'contact-email' => getenv('OPENTHC_TEST_CONTACT_USERNAME'),
+			'contact-email' => self::$username,
 		]]);
 		$this->assertValidResponse($res, 302);
 
 		$url1 = $res->getHeaderLine('location');
-		$this->assertEquals('/account/create?e=CAC-049', $url1);
+		$this->assertEquals('/done?e=CAC-065', $url1);
 
 		$res = $c->get($url1);
-		$this->assertValidResponse($res);
-
+		$html = $this->assertValidResponse($res);
+		$this->assertStringContainsString('You have already created an account, sign in to that one', $html);
+		// Sign iN Button?
 	}
 
+	/**
+	 *
+	 */
 	function test_account_create_fail_email()
 	{
 		$c = $this->_ua();
@@ -381,19 +415,18 @@ class A_Create_Test extends \Test\Base_Case
 
 		// Create1/POST
 		$res = $c->post('/account/create', [ 'form_params' => [
-			'CSRF' => (preg_match('/name="CSRF" type="hidden" value="([^"]+)"/', $html, $m) ? $m[1] : ''),
+			'CSRF' => $this->getCSRF($html),
 			'a' => 'contact-next',
-			// 'company-name' => sprintf('Test Company %06x', $this->_pid),
 			'contact-name' => sprintf('Test Contact %06x', $this->_pid),
 			'contact-email' => 'invalid.email-typeA',
-			// 'contact-phone' => '1234567890',
 		]]);
 		$this->assertValidResponse($res, 302);
 		$url1= $res->getHeaderLine('location');
 		$this->assertEquals('/account/create?e=CAC-035', $url1);
 
 		$res = $c->get($url1);
-		$this->assertValidResponse($res);
+		$html = $this->assertValidResponse($res);
+		$this->assertStringContainsString('Invalid Email Address', $html);
 
 	}
 
@@ -406,19 +439,20 @@ class A_Create_Test extends \Test\Base_Case
 
 		// GET
 		$res = $c->get('/auth/open');
-		$res = $this->assertValidResponse($res);
-		$this->assertStringContainsString('/auth/open?a=password-reset', $res);
+		$html = $this->assertValidResponse($res);
+		$this->assertStringContainsString('/auth/open?a=password-reset', $html);
 
 		// GET
 		$res = $c->get('/auth/open?a=password-reset');
-		$this->assertValidResponse($res);
-		$this->assertStringContainsString('<input class="form-control" id="username" inputmode="email" name="username" placeholder="- user@example.com -" value="">', $this->raw);
-		$this->assertStringContainsString('<button class="btn btn-success" name="a" type="submit" value="password-reset-request">Request Password Reset</button>', $this->raw);
+		$html = $this->assertValidResponse($res);
+		$this->assertStringContainsString('<input class="form-control" id="username" inputmode="email" name="username" placeholder="- user@example.com -" value="">', $html);
+		$this->assertStringContainsString('<button class="btn btn-primary" id="btn-password-reset" name="a" type="submit" value="password-reset-request">Request Password Reset</button>', $html);
 
 		// POST
 		$res = $c->post('/auth/open?a=password-reset', [ 'form_params' => [
+			'CSRF' => $this->getCSRF($html),
 			'a' => 'password-reset-request',
-			'username' => getenv('OPENTHC_TEST_CONTACT_USERNAME'),
+			'username' => self::$username,
 		]]);
 		$this->assertValidResponse($res, 302);
 		$url = $res->getHeaderLine('location');
@@ -426,15 +460,26 @@ class A_Create_Test extends \Test\Base_Case
 		$this->assertMatchesRegularExpression('/^\/done\?e=CAO\-100&l=200&r=.+/', $url);
 
 		$res = $c->get($url);
-		$this->assertValidResponse($res);
+		$html = $this->assertValidResponse($res);
 
 		// @todo Verify Contents of the Done Page
-		$this->assertStringContainsString('Check Your Inbox', $this->raw);
-		$this->assertGreaterThan(1024, strlen($this->raw));
+		$this->assertStringContainsString('Check Your Inbox', $html);
 
-		$url = preg_match('/r=(.+)$/', $url, $m) ? $m[1] : '';
+		$url1 = preg_match('/r=(.+)$/', $url, $m) ? $m[1] : '';
+		$url1 = rawurldecode($url1);
+		$this->assertNotEmpty($url1);
 
-		$this->assertNotEmpty($url);
+		// Follow to Password Reset Page?
+		var_dump($url1);
+		$res = $c->get($url1);
+		$this->assertValidResponse($res, 302);
+		$url2 = $res->getHeaderLine('location');
+		$this->assertMatchesRegularExpression('/\/account\/password\?_=.+/', $url2);
+
+		$res = $c->get($url2);
+		$html = $this->assertValidResponse($res);
+		$this->assertStringContainsString('Set Password', $html);
+
 
 	}
 

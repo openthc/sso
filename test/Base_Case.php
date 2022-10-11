@@ -9,6 +9,8 @@ class Base_Case extends \PHPUnit\Framework\TestCase
 {
 	protected $_pid = null;
 
+	protected $raw = '';
+
 	/**
 	 *
 	 */
@@ -76,6 +78,14 @@ class Base_Case extends \PHPUnit\Framework\TestCase
 
 		return $this->raw;
 
+	}
+
+	/**
+	 * Parses the CSRF
+	 */
+	function getCSRF(string $html)
+	{
+		return (preg_match('/name="CSRF" type="hidden" value="([^"]+)"/', $html, $m) ? $m[1] : 'CSRF');
 	}
 
 }
