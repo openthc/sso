@@ -106,7 +106,7 @@ if ($data['service_list']) {
 				<div class="mb-4">
 					<h3><?= __h($s['name']) ?></h3>
 					<p><?= __h($s['hint']) ?></p>
-					<a class="btn btn-lg btn-outline-primary" href="<?= $s['link'] ?>" target="_blank">Open <?= h($s['name']) ?></a>
+					<a class="btn btn-lg btn-outline-primary btn-service-connect" data-service-name="<?= h(strtolower($s['name'])) ?>" href="<?= $s['link'] ?>" target="_blank">Open <?= h($s['name']) ?></a>
 				</div>
 			<?php
 			}

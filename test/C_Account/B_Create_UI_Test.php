@@ -31,8 +31,8 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 
 		// Should Submit and then take us to the /DONE page, with the trigger in the URL
 		$url1 = self::$driver->getCurrentUrl();
-		$this->assertMatchesRegularExpression('/\/done\?e=CAC\-111/', $url1);
-		$this->assertMatchesRegularExpression('/\/done\?e=CAC\-111.+r=/', $url1); // Has Test Link
+		$this->assertMatchesRegularExpression('/\/done\?e=CAC\-0?\d+/', $url1);
+		$this->assertMatchesRegularExpression('/\/done\?e=CAC\-0?\d+.+r=/', $url1); // Has Test Link
 
 		$url1 = preg_match('/r=(.+)$/', $url1, $m) ? $m[1] : '';
 		$url1 = rawurldecode($url1);

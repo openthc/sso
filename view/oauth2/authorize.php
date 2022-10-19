@@ -40,6 +40,7 @@
 			<div class="btn-group">
 				<a
 					class="btn btn-primary"
+					id="oauth2-authorize-permit"
 					href="/oauth2/permit?_=<?= $data['link_crypt'] ?>"
 					style="width:8em;">Yes</a>
 				<a
@@ -52,6 +53,7 @@
 		<div class="col r">
 			<a
 				class="btn btn-outline-danger"
+				id="oauth2-authorize-reject"
 				href="/oauth2/reject?_=<?= $data['link_crypt'] ?>"
 				style="width: 8em;">No</a>
 		</div>
