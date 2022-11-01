@@ -81,7 +81,7 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 			$data['service_list_default'][] = [
 				'link' => sprintf('https://%s/auth/open?v=sso', $x),
 				'name' => 'Laboratory Portal',
-				'hint' => 'SOmtihng',
+				'hint' => 'Laboratory LIMS and Lab Report management',
 			];
 
 		}
@@ -92,6 +92,15 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 				'link' => sprintf('https://%s/auth/open?v=sso', $x),
 				'name' => 'Retail POS',
 				'hint' => 'Connect to the Point of Sale to perform front-of-the-house retail operations',
+			];
+		}
+
+		$x = \OpenTHC\Config::get('openthc/b2b/hostname');
+		if ($x) {
+			$data['service_list_default'][] = [
+				'link' => sprintf('https://%s/auth/open?v=sso', $x),
+				'name' => 'B2B Marketplace',
+				'hint' => 'Connect to the B2B Marketplace to connect with vendors and suppliers',
 			];
 		}
 

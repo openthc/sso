@@ -8,7 +8,7 @@ namespace OpenTHC\SSO\Test\G_oAuth2;
 class A_Service_Test extends \OpenTHC\SSO\Test\Base_Case
 {
 	/**
-	 *
+	 * Test service connection to App
 	 */
 	function test_auth_pass_app()
 	{
@@ -35,6 +35,32 @@ class A_Service_Test extends \OpenTHC\SSO\Test\Base_Case
 		// var_dump($url);
 		// $this->assertNotEmpty($url);
 		// $this->assertMatchesRegularExpression('/https:\/\/sso.openthc.+authorize.+scope.+state.+client_id/', $l);
+	}
+
+	/**
+	 * Test service connection to B2B Marketplace
+	 */
+	function test_auth_pass_b2b()
+	{
+		$sso_ua = $this->_ua();
+
+		$cfg = \OpenTHC\Config::get('openthc/b2b/hostname');
+		$this->assertNotEmpty($cfg);
+
+		$b2b_ua = new \GuzzleHttp\Client(array(
+			'base_uri' => sprintf('https://%s/', $cfg),
+			'allow_redirects' => false,
+			'debug' => $_ENV['debug-http'],
+			'request.options' => array(
+				'exceptions' => false,
+			),
+			'http_errors' => false,
+			'cookies' => true,
+		));
+
+		// Get a Service Page
+		$res = $b2b_ua->get('/auth/open?a=oauth');
+		$this->assertValidResponse($res, 302);
 	}
 
 	/**
