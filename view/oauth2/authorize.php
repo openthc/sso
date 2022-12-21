@@ -21,7 +21,7 @@
 			<div class="input-group">
 				<div class="form-control"><code><?= h($data['Company']['name']) ?></code></div>
 				<div class="input-group-append">
-					<a class="btn btn-outline-secondary" href="/auth/open"><i class="fas fa-building"></i> Switch</a>
+					<a class="btn btn-outline-secondary" href="/auth/open" title="Switch to another organization"><i class="fas fa-building"></i> Switch</a>
 				</div>
 			</div>
 		</div>
@@ -42,10 +42,13 @@
 					class="btn btn-primary"
 					id="oauth2-authorize-permit"
 					href="/oauth2/permit?_=<?= $data['link_crypt'] ?>"
-					style="width:8em;">Yes</a>
+					style="width:8em;"
+					title="Yes for this Session"
+					>Yes</a>
 				<a
 					class="btn btn-outline-secondary"
 					href="/oauth2/permit?_=<?= $data['link_crypt_save'] ?>"
+					title="Yes for all Sessions"
 					><i class="fas fa-check-square-o"></i> Yes &amp; Remember</a>
 			</div>
 		</div>
@@ -55,7 +58,9 @@
 				class="btn btn-outline-danger"
 				id="oauth2-authorize-reject"
 				href="/oauth2/reject?_=<?= $data['link_crypt'] ?>"
-				style="width: 8em;">No</a>
+				style="width: 8em;"
+				title="Do not Sign-In with this Account"
+				>No</a>
 		</div>
 		</div>
 	</div>
