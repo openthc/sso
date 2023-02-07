@@ -15,7 +15,7 @@
 <?php
 foreach ($data['company_list'] as $Company) {
 ?>
-	<div class="col mb-4">
+	<div class="col-md-4 mb-4">
 
 		<div class="card" style="height: 100%;">
 			<div class="card-body">
