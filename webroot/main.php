@@ -125,6 +125,8 @@ $app->group('/verify', function() {
 	$this->get('/license', 'OpenTHC\SSO\Controller\Verify\License');
 	$this->post('/license', 'OpenTHC\SSO\Controller\Verify\License:post');
 
+	$this->get('/done', 'OpenTHC\SSO\Controller\Verify\Done');
+
 })->add('OpenTHC\Middleware\Session');
 
 

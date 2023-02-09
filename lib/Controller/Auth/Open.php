@@ -10,6 +10,8 @@ namespace OpenTHC\SSO\Controller\Auth;
 use Edoceo\Radix\Filter;
 use Edoceo\Radix\Session;
 
+use\OpenTHC\Contact;
+
 use OpenTHC\SSO\CSRF;
 use OpenTHC\SSO\Auth_Contact;
 
@@ -141,36 +143,57 @@ class Open extends \OpenTHC\SSO\Controller\Base
 		$dbc = $this->_container->DBC_AUTH;
 		$sql = 'SELECT id, flag, stat, username, password FROM auth_contact WHERE username = :un';
 		$arg = [ ':un' => $username ];
-		$chk = $dbc->fetchRow($sql, $arg);
+		$Contact = $dbc->fetchRow($sql, $arg);
 
-		if (empty($chk['id'])) {
+		if (empty($Contact['id'])) {
 			return $RES->withRedirect('/auth/open?' . http_build_query([
 				'_' => $_GET['_'],
 				'e' => 'CAO-093'
 			]));
 		}
 
-		if (!password_verify($password, $chk['password'])) {
+		if (!password_verify($password, $Contact['password'])) {
 			return $RES->withRedirect('/auth/open?' . http_build_query([
 				'_' => $_GET['_'],
 				'e' => 'CAO-153'
 			]));
 		}
 
-		if (100 == $chk['stat']) {
-			return $RES->withRedirect('/done?' . http_build_query([
-				'e' => 'CAO-159'
-			]));
+		// Switch on Status
+		switch ($Contact['stat']) {
+			case Contact::STAT_INIT:
+				return $RES->withRedirect('/verify' . http_build_query([
+					'intent' => 'account-verify',
+				]));
+				break;
+			case Contact::STAT_LIVE:
+				// Maybe their stat never becomes LIVE until EMAIL and PHONE are done?
+				// And doesn't FLAG_DIABLED become stat 403 or somethign?
+				// OK
+				if (0 != ($Contact['flag'] & Contact::FLAG_EMAIL)) {
+					_exit_html_warn('<h1>Invalid Account [CAI-170]</h1>', 403);
+				}
+				if (0 != ($Contact['flag'] & Contact::FLAG_PHONE)) {
+					_exit_html_warn('<h1>Invalid Account [CAI-173]</h1>', 403);
+				}
+				if (0 != ($Contact['flag'] & Contact::FLAG_DISABLED)) {
+					_exit_html_warn('<h1>Invalid Account [CAI-177]</h1>', 403);
+				}
+				break;
+			default:
+				__exit_text('Invalid Contact [CAO-171]', 500);
 		}
 
+
+		// @todo JWT
 		// Create Next Ticket & Redirect
 		$act_data = [
 			'intent' => 'account-open',
 			'contact' => [
-				'id' => $chk['id'],
-				'flag' => $chk['flag'],
+				'id' => $Contact['id'],
+				'flag' => $Contact['flag'],
 				'stat' => 200,
-				'username' => $chk['username'],
+				'username' => $Contact['username'],
 			],
 			'feature' => [
 				'javascript' => $_POST['js-enabled'],

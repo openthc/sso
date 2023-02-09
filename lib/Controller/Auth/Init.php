@@ -78,9 +78,6 @@ class Init extends \OpenTHC\SSO\Controller\Base
 
 		// Contact has Disabled Flags?
 		$Contact = $this->contact_inflate($act_data['contact']);
-		if (0 != ($Contact['flag'] & Contact::FLAG_DISABLED)) {
-			_exit_html_warn('<h1>Invalid Account [CAI-068]</h1>', 403);
-		}
 
 		// Contact Status Switch
 		switch ($Contact['stat']) {

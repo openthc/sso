@@ -35,8 +35,6 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 
 		switch ($act['intent']) {
 			case 'account-create':
-			case 'account-open':
-			case 'oauth-authorize':
 				return $this->guessNextStep($RES, $act);
 				break;
 		}
@@ -46,7 +44,7 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 	}
 
 	/**
-	 *
+	 * Guess next step of the verification process
 	 */
 	function guessNextStep($RES, $act_data)
 	{
@@ -94,17 +92,19 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 		}
 
 		// Update Contact Status
-		$CT0['stat'] = Contact::STAT_LIVE;
-		$CT0->save();
+		// $CT0['stat'] = Contact::STAT_LIVE;
+		// $CT0->save();
 
-		$dbc_auth->insert('log_event', [
-			'contact_id' => $CT0['id'],
-			'code' => 'Contact/Account/Live',
-			'meta' => json_encode($_SESSION),
-		]);
+		// $dbc_auth->insert('log_event', [
+		// 	'contact_id' => $CT0['id'],
+		// 	'code' => 'Contact/Account/Live',
+		// 	'meta' => json_encode($_SESSION),
+		// ]);
 
-		// pass back to /auth/init with same token
-		return $RES->withRedirect(sprintf('/auth/init?_=%s', $_GET['_']));
+		// // pass back to /auth/init with same token
+		// return $RES->withRedirect(sprintf('/auth/init?_=%s', $_GET['_']));
+
+		return $RES->withRedirect('/verify/done');
 
 	}
 }
