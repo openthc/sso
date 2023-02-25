@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+return require_once(sprintf('%s/vendor/openthc/common/view/account/password.php', APP_ROOT));
 ?>
 
 <form autocomplete="new-password" method="post">

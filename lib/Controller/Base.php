@@ -11,7 +11,7 @@ class Base extends \OpenTHC\Controller\Base
 {
 	protected $data;
 
-	function __construct($c)
+	function __construct(\Slim\Container $c)
 	{
 		parent::__construct($c);
 
