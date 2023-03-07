@@ -1,7 +1,2 @@
-#
-# Hello robots!
-# Nobody is allowed
-#
-
 user-agent: *
 disallow: /
