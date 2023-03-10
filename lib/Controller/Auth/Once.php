@@ -3,6 +3,8 @@
  * One Time Link Handler
  *
  * SPDX-License-Identifier: MIT
+ *
+ * @todo merge into the "Open" controller
  */
 
 namespace OpenTHC\SSO\Controller\Auth;

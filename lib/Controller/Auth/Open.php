@@ -17,8 +17,15 @@ use OpenTHC\SSO\Auth_Contact;
 
 class Open extends \OpenTHC\SSO\Controller\Base
 {
+	/**
+	 *
+	 */
 	function __invoke($REQ, $RES, $ARG)
 	{
+		if ( ! empty($_GET['jwt'])) {
+			return $this->handleJWT($RES, $_GET['jwt']);
+		}
+
 		$data = $this->data;
 		$data['Page']['title'] = 'Sign In';
 
@@ -222,6 +229,56 @@ class Open extends \OpenTHC\SSO\Controller\Base
 
 		return $RES->withRedirect('/auth/init?_=' . $act['id']);
 	}
+
+
+	/**
+	 * Do the Password Reset Thing
+	 */
+	private function handleJWT($RES, $jwt)
+	{
+		$_SESSION = [];
+
+		try {
+
+			$key = \OpenTHC\Config::get('openthc/sso/secret');
+			$jwt = \OpenTHC\JWT::decode($jwt, $key);
+
+			// $_SESSION['Contact'] = [
+			// 	'id' => $jwt['sub']
+			// ];
+
+			// $_SESSION['Company'] = [
+			// 	'id' => $jwt['company']
+			// ];
+
+			// $_SESSION['License'] = [
+			// 	'id' => $jwt['license']
+			// ];
+
+			// would like init to work from it's own JWT?
+			// or it works from just a minimally populated session?
+			// return $RES->withRedirect('/auth/init');
+
+			$act = [];
+			$act['id'] = _random_hash();
+			$act['meta'] = json_encode([
+				'intent' => 'account-open',
+				'contact' => [
+					'id' => $jwt['sub']
+				]
+			]);
+
+			$dbc = $this->_container->DBC_AUTH;
+			$dbc->insert('auth_context_ticket', $act);
+
+			return $RES->withRedirect('/auth/init?_=' . $act['id']);
+
+		} catch (\Exception $e) {
+			__exit_text($e, 500);
+			return $RES->withRedirect('/auth/shut?e=CAO-243');
+		}
+	}
+
 
 	/**
 	 * Do the Password Reset Thing
