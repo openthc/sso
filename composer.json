@@ -20,10 +20,9 @@
 		"openthc/common": "dev-master"
 	},
 	"require-dev": {
-		"behat/behat": "3.11.0",
-		"php-webdriver/webdriver": "1.13.0",
-		"phpstan/phpstan": "1.8.8",
-		"phpunit/phpunit": "9.5.25",
-		"sebastian/phpcpd": "6.0.3"
+		"behat/behat": "3.12.0",
+		"php-webdriver/webdriver": "1.14.0",
+		"phpstan/phpstan": "1.10.5",
+		"phpunit/phpunit": "9.6.4"
 	}
 }
