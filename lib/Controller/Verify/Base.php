@@ -14,13 +14,21 @@ class Base extends \OpenTHC\SSO\Controller\Base
 	 */
 	function loadTicket() : ?array
 	{
-		$dbc_auth = $this->_container->DBC_AUTH;
-		$chk = $dbc_auth->fetchRow('SELECT expires_at, meta FROM auth_context_ticket WHERE id = :t', [ ':t' => $_GET['_']]);
-		$act = json_decode($chk['meta'], true);
+		// Load Auth Ticket
+		$rdb = \OpenTHC\Service\Redis::factory();
+		$tmp = $rdb->get(sprintf('/auth-ticket/%s', $_GET['_']));
+		if (empty($tmp)) {
+			_exit_html_warn('<h1>Invalid Request [CAI-034]</a></h1>', 400);
+		}
+
+		// Auth Context Ticket
+		$act = json_decode($tmp, true);
 
 		if (empty($act)) {
 			_exit_html_fail('<h1>Invalid Request [CVB-024]</h1>', 400);
 		}
+
+		$dbc_auth = $this->_container->DBC_AUTH;
 
 		// Load Contact
 		$sql = <<<SQL

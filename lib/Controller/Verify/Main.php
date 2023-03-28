@@ -33,11 +33,7 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 
 		$act = $this->loadTicket();
 
-		switch ($act['intent']) {
-			case 'account-create':
-				return $this->guessNextStep($RES, $act);
-				break;
-		}
+		return $this->guessNextStep($RES, $act);
 
 		__exit_text('Invalid Request [CVM-032]', 400);
 
@@ -48,9 +44,7 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 	 */
 	function guessNextStep($RES, $act_data)
 	{
-		$dbc_auth = $this->_container->DBC_AUTH;
-
-		$CT0 = new Auth_Contact($dbc_auth, $act_data['contact']);
+		$CT0 = new Auth_Contact(null, $act_data['contact']);
 
 		// Verify Email
 		if ( ! $CT0->hasFlag(Contact::FLAG_EMAIL_GOOD)) {
@@ -84,6 +78,7 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 		}
 
 		// Company
+		$dbc_auth = $this->_container->DBC_AUTH;
 		$chk = $dbc_auth->fetchOne('SELECT count(id) FROM auth_company_contact WHERE contact_id = :ct0', [
 			':ct0' => $CT0['id'],
 		]);

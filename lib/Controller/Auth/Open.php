@@ -62,7 +62,7 @@ class Open extends \OpenTHC\SSO\Controller\Base
 		case 'password-reset':
 
 			$data['Page']['title'] = 'Password Reset';
-			$data['auth_username'] = $_SESSION['email'];
+			$data['auth_username'] = $_SESSION['auth-open-email'];
 
 			$cfg = \OpenTHC\Config::get('google');
 			$data['Google']['recaptcha_public'] = $cfg['recaptcha-public'];
@@ -75,7 +75,7 @@ class Open extends \OpenTHC\SSO\Controller\Base
 		// Inputs
 		$data['auth_username'] = $REQ->getAttribute('auth_username');
 		if (empty($data['auth_username'])) {
-			$data['auth_username'] = $_SESSION['email'];
+			$data['auth_username'] = $_SESSION['auth-open-email'];
 		}
 		$data['auth_password'] = $REQ->getAttribute('auth_password');
 		$data['auth_hint'] = $REQ->getAttribute('auth_hint');
@@ -122,12 +122,10 @@ class Open extends \OpenTHC\SSO\Controller\Base
 	}
 
 	/**
-	 *
+	 * Simply Verify the Account Loads and redirect to /auth/init
 	 */
 	function openAccount($RES)
 	{
-		$_SESSION = [];
-
 		$username = strtolower(trim($_POST['username']));
 		$username = \Edoceo\Radix\Filter::email($username);
 		if (empty($username)) {
@@ -136,7 +134,7 @@ class Open extends \OpenTHC\SSO\Controller\Base
 				'e' => 'CAO-049'
 			]));
 		}
-		$_SESSION['email'] = $username;
+		$_SESSION['auth-open-email'] = $username;
 
 		$password = trim($_POST['password']);
 		if (empty($password) || (strlen($password) < 8) || (strlen($password) > 60)) {
@@ -148,8 +146,8 @@ class Open extends \OpenTHC\SSO\Controller\Base
 
 		// Find Contact
 		$dbc = $this->_container->DBC_AUTH;
-		$sql = 'SELECT id, flag, stat, username, password FROM auth_contact WHERE username = :un';
-		$arg = [ ':un' => $username ];
+		$sql = 'SELECT id, flag, stat, username, password FROM auth_contact WHERE username = :u0';
+		$arg = [ ':u0' => $username ];
 		$Contact = $dbc->fetchRow($sql, $arg);
 
 		if (empty($Contact['id'])) {
@@ -159,49 +157,20 @@ class Open extends \OpenTHC\SSO\Controller\Base
 			]));
 		}
 
-		if (!password_verify($password, $Contact['password'])) {
+		if ( ! password_verify($password, $Contact['password'])) {
 			return $RES->withRedirect('/auth/open?' . http_build_query([
 				'_' => $_GET['_'],
 				'e' => 'CAO-153'
 			]));
 		}
 
-		// Switch on Status
-		switch ($Contact['stat']) {
-			case Contact::STAT_INIT:
-				return $RES->withRedirect('/verify?' . http_build_query([
-					'intent' => 'account-verify',
-				]));
-				break;
-			case Contact::STAT_LIVE:
-				// Maybe their stat never becomes LIVE until EMAIL and PHONE are done?
-				// And doesn't FLAG_DIABLED become stat 403 or somethign?
-				// OK
-/*
-				if (0 != ($Contact['flag'] & Contact::FLAG_EMAIL_GOOD)) {
-					_exit_html_warn('<h1>Invalid Account [CAI-170]</h1>', 403);
-				}
-				if (0 != ($Contact['flag'] & Contact::FLAG_PHONE)) {
-					_exit_html_warn('<h1>Invalid Account [CAI-173]</h1>', 403);
-				}
-				if (0 != ($Contact['flag'] & Contact::FLAG_DISABLED)) {
-					_exit_html_warn('<h1>Invalid Account [CAI-177]</h1>', 403);
-				}
-*/
-				break;
-			default:
-				__exit_text('Invalid Contact [CAO-171]', 500);
-		}
-
-
-		// @todo JWT
-		// Create Next Ticket & Redirect
-		$act_data = [
+		// Ok, Pass Authentication Data to /auth/init
+		$tok_data = [
 			'intent' => 'account-open',
 			'contact' => [
 				'id' => $Contact['id'],
 				'flag' => $Contact['flag'],
-				'stat' => 200,
+				'stat' => $Contact['stat'],
 				'username' => $Contact['username'],
 			],
 			'feature' => [
@@ -213,7 +182,10 @@ class Open extends \OpenTHC\SSO\Controller\Base
 		];
 
 		// If we have a Prevous Auth-Ticket
-		if (!empty($_GET['_'])) {
+		if ( ! empty($_GET['_'])) {
+
+			throw new \Exception('@deprecated [CAO-234]');
+
 			$act_prev = $dbc->fetchOne('SELECT meta FROM auth_context_ticket WHERE id = :t0', [ ':t0' => $_GET['_'] ]);
 			$act_prev = json_decode($act_prev, true);
 			switch ($act_prev['intent']) {
@@ -224,12 +196,13 @@ class Open extends \OpenTHC\SSO\Controller\Base
 			}
 		}
 
-		$act = [];
-		$act['id'] = _random_hash();
-		$act['meta'] = json_encode($act_data);
-		$dbc->insert('auth_context_ticket', $act);
+		$rdb = \OpenTHC\Service\Redis::factory();
+		$val = json_encode($tok_data);
+		$tok = _random_hash();
+		$rdb->set(sprintf('/auth-ticket/%s', $tok), $val, [ 'ex' => '420' ]);
 
-		return $RES->withRedirect('/auth/init?_=' . $act['id']);
+		return $RES->withRedirect(sprintf('/auth/init?_=%s', $tok));
+
 	}
 
 
@@ -301,7 +274,7 @@ class Open extends \OpenTHC\SSO\Controller\Base
 			return $RES->withRedirect('/done?e=CAO-100&l=173');
 		}
 
-		$_SESSION['email'] = $username;
+		$_SESSION['auth-open-email'] = $username;
 
 		// Generate Authentication Hash
 		$act = [];

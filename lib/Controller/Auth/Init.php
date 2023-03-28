@@ -23,47 +23,25 @@ class Init extends \OpenTHC\SSO\Controller\Base
 			_exit_html_warn('<h1>Invalid Request [CAI-026]</h1>', 400);
 		}
 
+		// Load Auth Ticket
+		$rdb = \OpenTHC\Service\Redis::factory();
+		$tmp = $rdb->get(sprintf('/auth-ticket/%s', $_GET['_']));
+		if (empty($tmp)) {
+			_exit_html_warn('<h1>Invalid Request [CAI-034]</a></h1>', 400);
+		}
+		$act_data = json_decode($tmp, true);
+		if (empty($act_data['contact']['id'])) {
+			_exit_html_warn('<h1>Invalid Request [CAI-038]</h1>', 400);
+		}
+
 		// Clear Session
 		$_SESSION = [];
 
 		// Load Location
-		// Would like to put this behind a cache
-		if (empty($_SESSION['geoip'])) {
-
-			$cfg = \OpenTHC\Config::get('maxmind');
-			if (!empty($cfg['account'])) {
-
-				$api = new \GeoIp2\WebService\Client($cfg['account'], $cfg['license-key']);
-				$geo = $api->city($_SERVER['REMOTE_ADDR']);
-				$raw = $geo->raw;
-
-				$_SESSION['geoip'] = true;
-
-				$_SESSION['iso3166_1'] = [
-					'id' => $raw['country']['iso_code'],
-					'name' => $raw['country']['names']['en'],
-				];
-
-				$_SESSION['iso3166_2'] = [
-					'id' => sprintf('%s-%s', $raw['country']['iso_code'], $raw['subdivisions'][0]['iso_code']),
-					'name' => $raw['subdivisions'][0]['names']['en']
-				];
-
-				$_SESSION['tz'] = $raw['location']['time_zone'];
-			}
-		}
+		$this->loadGeoIP();
 
 		$dbc_auth = $this->_container->DBC_AUTH;
 
-		// Load Auth Ticket
-		$act = $dbc_auth->fetchRow('SELECT id, meta FROM auth_context_ticket WHERE id = :t', [ ':t' => $_GET['_'] ]);
-		if (empty($act['id'])) {
-			_exit_html_warn('<h1>Invalid Request [CAI-034]</a></h1>', 400);
-		}
-		$act_data = json_decode($act['meta'], true);
-		if (empty($act_data['contact']['id'])) {
-			_exit_html_warn('<h1>Invalid Request [CAI-038]</h1>', 400);
-		}
 		// Check Intent
 		switch ($act_data['intent']) {
 			case 'account-create':
@@ -94,6 +72,42 @@ class Init extends \OpenTHC\SSO\Controller\Base
 		}
 
 		_exit_html_warn('<h1>Invalid Request [CAI-066]</h1>', 400);
+
+	}
+
+	/**
+	 * Load GeoIP Data to Session
+	 */
+	protected function loadGeoIP() : void
+	{
+		// Would like to put this behind a cache
+		if ( ! empty($_SESSION['geoip'])) {
+			return;
+		}
+
+		$cfg = \OpenTHC\Config::get('maxmind');
+
+		if (empty($cfg['account'])) {
+			return;
+		}
+
+		$api = new \GeoIp2\WebService\Client($cfg['account'], $cfg['license-key']);
+		$geo = $api->city($_SERVER['REMOTE_ADDR']);
+		$raw = $geo->raw;
+
+		$_SESSION['geoip'] = true;
+
+		$_SESSION['iso3166_1'] = [
+			'id' => $raw['country']['iso_code'],
+			'name' => $raw['country']['names']['en'],
+		];
+
+		$_SESSION['iso3166_2'] = [
+			'id' => sprintf('%s-%s', $raw['country']['iso_code'], $raw['subdivisions'][0]['iso_code']),
+			'name' => $raw['subdivisions'][0]['names']['en']
+		];
+
+		$_SESSION['tz'] = $raw['location']['time_zone'];
 
 	}
 
@@ -171,15 +185,13 @@ SQL;
 		$_SESSION['Contact'] = $Contact;
 		$_SESSION['Company'] = $Company;
 
-		// $act_data['intent'] = 'account-init';
 		$act_data['company'] = $Company;
 
-		$act = [];
-		$act['id'] = _random_hash();
-		$act['meta'] = json_encode($act_data);
+		$tok = _random_hash();
+		$val = json_encode($act_data);
 
-		$dbc_auth = $this->_container->DBC_AUTH;
-		$dbc_auth->insert('auth_context_ticket', $act);
+		$rdb = \OpenTHC\Service\Redis::factory();
+		$rdb->set(sprintf('/auth-ticket/%s', $tok), $val, [ 'ex' => 420 ]);
 
 		// No Return? Load Default
 		$ret = '/account';
@@ -195,7 +207,7 @@ SQL;
 				// 	}
 				// }
 
-				if (!empty($act_data['service'])) {
+				if ( ! empty($act_data['service'])) {
 					// @todo Lookup Service in Database before building this link?
 					// So it's only going against known services
 					$ret = sprintf('https://%s/auth/back?ping={PING}', $act_data['service']);
