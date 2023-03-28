@@ -169,7 +169,7 @@ class Open extends \OpenTHC\SSO\Controller\Base
 		// Switch on Status
 		switch ($Contact['stat']) {
 			case Contact::STAT_INIT:
-				return $RES->withRedirect('/verify' . http_build_query([
+				return $RES->withRedirect('/verify?' . http_build_query([
 					'intent' => 'account-verify',
 				]));
 				break;
@@ -177,7 +177,8 @@ class Open extends \OpenTHC\SSO\Controller\Base
 				// Maybe their stat never becomes LIVE until EMAIL and PHONE are done?
 				// And doesn't FLAG_DIABLED become stat 403 or somethign?
 				// OK
-				if (0 != ($Contact['flag'] & Contact::FLAG_EMAIL)) {
+/*
+				if (0 != ($Contact['flag'] & Contact::FLAG_EMAIL_GOOD)) {
 					_exit_html_warn('<h1>Invalid Account [CAI-170]</h1>', 403);
 				}
 				if (0 != ($Contact['flag'] & Contact::FLAG_PHONE)) {
@@ -186,6 +187,7 @@ class Open extends \OpenTHC\SSO\Controller\Base
 				if (0 != ($Contact['flag'] & Contact::FLAG_DISABLED)) {
 					_exit_html_warn('<h1>Invalid Account [CAI-177]</h1>', 403);
 				}
+*/
 				break;
 			default:
 				__exit_text('Invalid Contact [CAO-171]', 500);
