@@ -14,11 +14,11 @@ class A_Service_Test extends \OpenTHC\SSO\Test\Base_Case
 	{
 		$sso_ua = $this->_ua();
 
-		$cfg = \OpenTHC\Config::get('openthc/app/hostname');
-		$this->assertNotEmpty($cfg);
+		$url = \OpenTHC\Config::get('openthc/app/base');
+		$this->assertNotEmpty($url);
 
 		$app_ua = new \GuzzleHttp\Client(array(
-			'base_uri' => sprintf('https://%s/', $cfg),
+			'base_uri' => $url,
 			'allow_redirects' => false,
 			'debug' => $_ENV['debug-http'],
 			'request.options' => array(
@@ -44,11 +44,11 @@ class A_Service_Test extends \OpenTHC\SSO\Test\Base_Case
 	{
 		$sso_ua = $this->_ua();
 
-		$cfg = \OpenTHC\Config::get('openthc/b2b/hostname');
+		$url = \OpenTHC\Config::get('openthc/b2b/base');
 		$this->assertNotEmpty($cfg);
 
 		$b2b_ua = new \GuzzleHttp\Client(array(
-			'base_uri' => sprintf('https://%s/', $cfg),
+			'base_uri' => $url,
 			'allow_redirects' => false,
 			'debug' => $_ENV['debug-http'],
 			'request.options' => array(
@@ -70,9 +70,9 @@ class A_Service_Test extends \OpenTHC\SSO\Test\Base_Case
 	{
 		$sso_ua = $this->_ua();
 
-		$cfg = \OpenTHC\Config::get('openthc/ops/hostname');
+		$url = \OpenTHC\Config::get('openthc/ops/base');
 		$ops_ua = new \GuzzleHttp\Client(array(
-			'base_uri' => sprintf('https://%s/', $cfg),
+			'base_uri' => $url,
 			'allow_redirects' => false,
 			// 'debug' => $_ENV['debug-http'],
 			'request.options' => array(

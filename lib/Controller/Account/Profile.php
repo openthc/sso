@@ -58,56 +58,51 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 		// $data['service_list'] = [];
 		// $cfg = \OpenTHC\Config::get('openthc/*');
 
-		$x = \OpenTHC\Config::get('openthc/app/hostname');
+		$x = \OpenTHC\Config::get('openthc/app/base');
 		if ($x) {
 			$data['service_list_default'][] = [
-				'link' => sprintf('https://%s/auth/sso', $x),
+				'link' => sprintf('%s/auth/sso', rtrim($x, '/')),
 				'name' => 'App',
 				'hint' => 'Connect to the primary seed-to-sale application for crop and inventory management'
 			];
 		}
 
-		$x = \OpenTHC\Config::get('openthc/dir/hostname');
+		$x = \OpenTHC\Config::get('openthc/dir/base');
 		if ($x) {
 			$data['service_list_default'][] = [
-				'link' => sprintf('https://%s/auth/open?v=sso', $x),
+				'link' => sprintf('%s/auth/open?v=sso', rtrim($x, '/')),
 				'name' => 'Directory',
 				'hint' => 'Connect to the Directory to update your semi-public contact and company profiles'
 			];
 		}
 
-		$x = \OpenTHC\Config::get('openthc/lab/hostname');
+		$x = \OpenTHC\Config::get('openthc/lab/base');
 		if ($x) {
 			$data['service_list_default'][] = [
-				'link' => sprintf('https://%s/auth/open?v=sso', $x),
+				'link' => sprintf('%s/auth/open?v=sso', rtrim($x, '/')),
 				'name' => 'Laboratory Portal',
 				'hint' => 'Laboratory LIMS and Lab Report management',
 			];
 
 		}
 
-		$x = \OpenTHC\Config::get('openthc/pos/hostname');
+		$x = \OpenTHC\Config::get('openthc/pos/base');
 		if ($x) {
 			$data['service_list_default'][] = [
-				'link' => sprintf('https://%s/auth/open?v=sso', $x),
+				'link' => sprintf('%s/auth/open?v=sso', rtrim($x, '/')),
 				'name' => 'Retail POS',
 				'hint' => 'Connect to the Point of Sale to perform front-of-the-house retail operations',
 			];
 		}
 
-		$x = \OpenTHC\Config::get('openthc/b2b/hostname');
+		$x = \OpenTHC\Config::get('openthc/b2b/base');
 		if ($x) {
 			$data['service_list_default'][] = [
-				'link' => sprintf('https://%s/auth/open?v=sso', $x),
+				'link' => sprintf('%s/auth/open?v=sso', rtrim($x, '/')),
 				'name' => 'B2B Marketplace',
 				'hint' => 'Connect to the B2B Marketplace to connect with vendors and suppliers',
 			];
 		}
-
-		// $data['service_list'][] = [
-		// 	'name' => 'B2B',
-		// 	'link' => 'https://b2b.openthc.dev/auth/open?a=oauth',
-		// ];
 
 		return $RES->write( $this->render('account/profile.php', $data) );
 
