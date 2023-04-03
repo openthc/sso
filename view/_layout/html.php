@@ -9,7 +9,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="initial-scale=1, user-scalable=yes">
 <meta name="application-name" content="OpenTHC">
-<link rel="stylesheet" href="https://cdn.openthc.com/bootstrap/4.6.0/bootstrap.css" integrity="sha256-T/zFmO5s/0aSwc6ics2KLxlfbewyRz6UNw1s3Ppf5gE=" crossorigin="anonymous">
+<link rel="stylesheet" href="/vendor/bootstrap/bootstrap.min.css" integrity="sha256-IUOUHAPazai08QFs7W4MbzTlwEWFo7z/4zw8YmxEiko=" crossorigin="anonymous">
 <style>
 body {
 	display: flex;
@@ -103,8 +103,8 @@ if (!empty($_ENV['test'])) {
 }
 ?>
 
-<script src="https://cdn.openthc.com/jquery/3.4.1/jquery.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
-<script src="https://cdn.openthc.com/bootstrap/4.6.0/bootstrap.js" integrity="sha256-sCElQ8xaSgoxwbWp0eiXMmGZIRa0z94+ffzzO06BqXs=" crossorigin="anonymous"></script>
+<script src="/vendor/jquery/jquery.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script src="/vendor/bootstrap/bootstrap.bundle.min.js" integrity="sha256-xLI5SjD6DkojxrMIVBNT4ghypv12Xtj7cOa0AgKd6wA=" crossorigin="anonymous"></script>
 <?= $this->foot_script ?>
 </body>
 </html>
