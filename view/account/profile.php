@@ -24,15 +24,22 @@
 			</div>
 		</div>
 	</div>
+
+	<div class="form-group">
+		<label>Password</label>
+		<div class="input-group">
+			<input class="form-control" readonly type="text" value="<?= h('********') ?>">
+			<button class="btn btn-outline-secondary" name="a" value="contact-password-update">Change</button>
+		</div>
+	</div>
+
 	</form>
 
 	<div class="form-group">
 		<label>Email / Username</label>
 		<div class="input-group">
 			<input class="form-control" name="contact-email" readonly type="email" value="<?= h($data['Contact_Auth']['username']) ?>">
-			<div class="input-group-append">
-				<button class="btn btn-outline-secondary" name="a" value="contact-email-update"><i class="fas fa-save"></i> Change</button>
-			</div>
+			<button class="btn btn-outline-secondary" name="a" value="contact-email-update"><i class="fas fa-save"></i> Change</button>
 		</div>
 	</div>
 
@@ -40,9 +47,7 @@
 		<label>Phone</label>
 		<div class="input-group">
 			<input class="form-control" name="contact-phone" readonly type="tel" value="<?= h($data['Contact_Base']['phone']) ?>">
-			<div class="input-group-append">
-				<button class="btn btn-outline-secondary" name="a" value="contact-phone-update">Change</button>
-			</div>
+			<button class="btn btn-outline-secondary" name="a" value="contact-phone-update">Change</button>
 		</div>
 	</div>
 
