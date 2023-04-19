@@ -11,6 +11,9 @@ use OpenTHC\SSO\CSRF;
 
 class Profile extends \OpenTHC\SSO\Controller\Base
 {
+	/**
+	 *
+	 */
 	function __invoke($REQ, $RES, $ARG)
 	{
 		$data = $this->data;

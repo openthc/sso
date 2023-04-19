@@ -9,6 +9,9 @@ namespace OpenTHC\SSO\Controller\oAuth2;
 
 class Permit extends \OpenTHC\SSO\Controller\Base
 {
+	/**
+	 *
+	 */
 	function __invoke($REQ, $RES, $ARG)
 	{
 		if (empty($_GET['_'])) {

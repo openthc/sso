@@ -9,6 +9,9 @@ namespace OpenTHC\SSO\Controller\oAuth2;
 
 class Reject extends \OpenTHC\SSO\Controller\Base
 {
+	/**
+	 *
+	 */
 	function __invoke($REQ, $RES, $ARG)
 	{
 		if (empty($_GET['_'])) {
@@ -23,8 +26,7 @@ class Reject extends \OpenTHC\SSO\Controller\Base
 
 		$_GET = $x;
 
-		$cfg = \OpenTHC\Config::get('oauth');
-		$_ENV['fast-redirect'] = $cfg['fast-redirect'];
+		$_ENV['fast-redirect'] = \OpenTHC\Config::get('app/fast-redirect');
 
 		// Rebuild URL
 		if (empty($uri['query'])) {
