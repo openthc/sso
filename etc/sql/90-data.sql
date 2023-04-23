@@ -9,7 +9,6 @@ INSERT INTO auth_company_contact (company_id, contact_id) VALUES ('018NY6XC00C0M
 
 INSERT INTO auth_context (id, code, name) VALUES (ulid_create(), 'ops', 'OPS');
 INSERT INTO auth_context (id, code, name) VALUES (ulid_create(), 'b2b', 'Business to Business Sales Platform');
-INSERT INTO auth_context (id, code, name) VALUES (ulid_create(), 'cic', 'Communications Information Center');
 INSERT INTO auth_context (id, code, name) VALUES (ulid_create(), 'company', 'Company Profile');
 INSERT INTO auth_context (id, code, name) VALUES (ulid_create(), 'contact', 'Contact Profile');
 INSERT INTO auth_context (id, code, name) VALUES (ulid_create(), 'crm', 'CRM Tools');
