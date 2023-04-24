@@ -13,6 +13,9 @@ use OpenTHC\SSO\Auth_Contact;
 
 class Once extends \OpenTHC\SSO\Controller\Base
 {
+	/**
+	 *
+	 */
 	function __invoke($REQ, $RES, $ARG)
 	{
 		// Token Links
@@ -27,25 +30,12 @@ class Once extends \OpenTHC\SSO\Controller\Base
 			], 400);
 		}
 
-		$dbc_auth = $this->_container->DBC_AUTH;
-		$chk = $dbc_auth->fetchRow('SELECT expires_at, meta FROM auth_context_ticket WHERE id = :t', [ ':t' => $_GET['_']]);
-		if (empty($chk['meta'])) {
-			$dbc_auth->query('DELETE FROM auth_context_ticket WHERE id = :t0', [ ':t0' => $_GET['_'] ]);
-			return $RES->withRedirect('/done?' . http_build_query([
-				'_' => $_GET['_'],
-				'e' => 'CAO-066'
-			]));
-		}
-		$act = json_decode($chk['meta'], true);
+		$rdb = \OpenTHC\Service\Redis::factory();
+		$act = $rdb->get(sprintf('/auth-ticket/%s', $_GET['_']));
+		$act = json_decode($act, true);
 		if (empty($act)) {
-			$dbc_auth->query('DELETE FROM auth_context_ticket WHERE id = :t0', [ ':t0' => $_GET['_'] ]);
 			return $RES->withRedirect('/done?e=CAO-077');
 		}
-
-		// if (strtotime($act['expires_at']) < $_SERVER['REQUEST_TIME']) {
-		// 	$dbc->query('DELETE FROM auth_context_ticket WHERE id = :t0', $act['id']);
-		// 	__exit_html('<h1>Invalid Ticket [CAO-028]</h2><p>The link you followed has expired</p>', 400);
-		// }
 
 		// Intention Router
 		switch ($act['intent']) {
