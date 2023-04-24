@@ -9,10 +9,13 @@ namespace OpenTHC\SSO;
 
 class Auth_Context_Ticket extends \OpenTHC\Auth_Context_Ticket
 {
-	static function get($k)
+	/**
+	 *
+	 */
+	static function get($key)
 	{
 		$rdb = \OpenTHC\Service\Redis::factory();
-		$ret = $rdb->get(sprintf('/auth-ticket/%s', $v));
+		$ret = $rdb->get(sprintf('/auth-ticket/%s', $key));
 		$ret = json_decode($ret, true);
 		return $ret;
 	}
@@ -20,16 +23,16 @@ class Auth_Context_Ticket extends \OpenTHC\Auth_Context_Ticket
 	/**
 	 *
 	 */
-	static function set($v, $t=420)
+	static function set($val, $ttl=420)
 	{
-		if (is_array($v)) {
-			$v = json_encode($v);
+		if (is_array($val)) {
+			$val = json_encode($val, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 		}
 
 		$rdb = \OpenTHC\Service\Redis::factory();
 
 		$tok = _random_hash();
-		$res = $rdb->set(sprintf('/auth-ticket/%s', $tok), $val, [ 'ex' => '420' ]);
+		$res = $rdb->set(sprintf('/auth-ticket/%s', $tok), $val, [ 'ex' => $ttl ]);
 
 		return $tok;
 
