@@ -138,7 +138,7 @@ class Create extends \OpenTHC\SSO\Controller\Base
 			$arg = [];
 			$arg['address_target'] = $Contact['email'];
 			$arg['file'] = 'sso/account-create.tpl';
-			$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
+			$arg['data']['app_url'] = APP_BASE;
 			$arg['data']['mail_subject'] = 'Account Confirmation';
 			$arg['data']['auth_context_ticket'] = $act['id'];
 

@@ -30,7 +30,7 @@ class Open extends \OpenTHC\SSO\Controller\Base
 		$data['Page']['title'] = 'Sign In';
 
 		// Add Errors
-		if (!empty($_GET['e'])) {
+		if ( ! empty($_GET['e'])) {
 			switch ($_GET['e']) {
 			case 'CAO-049':
 				$data['Page']['flash'] = '<div class="alert alert-danger">Invalid email, please use a proper email address</div>';
@@ -80,7 +80,8 @@ class Open extends \OpenTHC\SSO\Controller\Base
 		$data['auth_password'] = $REQ->getAttribute('auth_password');
 		$data['auth_hint'] = $REQ->getAttribute('auth_hint');
 
-		if (!empty($_GET['_'])) {
+		// @deprecated?
+		if ( ! empty($_GET['_'])) {
 			$dbc = $this->_container->DBC_AUTH;
 			$act = $dbc->fetchOne('SELECT meta FROM auth_context_ticket WHERE id = :t0', [ ':t0' => $_GET['_'] ]);
 			$act = json_decode($act, true);
@@ -190,9 +191,9 @@ class Open extends \OpenTHC\SSO\Controller\Base
 			$act_prev = json_decode($act_prev, true);
 			switch ($act_prev['intent']) {
 				case 'oauth-authorize':
-					$act_data['intent'] = $act_prev['intent'];
-					$act_data['service'] = $act_prev['service'];
-					$act_data['oauth-request'] = $act_prev['oauth-request'];
+					$tok_data['intent'] = $act_prev['intent'];
+					$tok_data['service'] = $act_prev['service'];
+					$tok_data['oauth-request'] = $act_prev['oauth-request'];
 			}
 		}
 
@@ -303,7 +304,7 @@ class Open extends \OpenTHC\SSO\Controller\Base
 			$arg = [];
 			$arg['address_target'] = $Contact['username'];
 			$arg['file'] = 'sso/contact-password-reset.tpl';
-			$arg['data']['app_url'] = sprintf('https://%s', $_SERVER['SERVER_NAME']);
+			$arg['data']['app_url'] = APP_BASE;
 			$arg['data']['mail_subject'] = 'Password Reset Request';
 			$arg['data']['auth_context_ticket'] = $act['id'];
 

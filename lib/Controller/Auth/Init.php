@@ -222,7 +222,7 @@ SQL;
 				}
 
 				// Place Ping Back Token
-				$ping = sprintf('https://%s/auth/once?_=%s', $_SERVER['SERVER_NAME'], $act['id']);
+				$ping = sprintf('%s/auth/once?_=%s', APP_BASE, $tok);
 				$ret = str_replace('{PING}', $ping, $ret);
 
 				break;

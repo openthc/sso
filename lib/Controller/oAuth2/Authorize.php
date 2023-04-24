@@ -30,7 +30,7 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 			_exit_json(array(
 				'error' => 'invalid_client',
 				'error_description' => 'Invalid Client [COA-051]',
-				'error_uri' => sprintf('https://%s/auth/doc', $_SERVER['SERVER_NAME']),
+				'error_uri' => sprintf('%s/auth/doc', APP_BASE),
 			), 401);
 		}
 
@@ -161,7 +161,7 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 		foreach ($scope_ask as $s) {
 			if (!in_array($s, $scope_may, true)) {
 				$html = sprintf('<h1>Access Denied to Context &quot;%s&quot; [COA-151]</h1>', $s);
-				$html.= sprintf('<p>See <a href="https://%s/doc#COA-151">documentation</p>', $_SERVER['SERVER_NAME']);
+				$html.= sprintf('<p>See <a href="%s/doc#COA-151">documentation</p>', APP_BASE);
 				$html.= '<p>Or <a href="/auth/shut">sign-out</a> and start over</p>';
 				__exit_html($html, 403);
 			}
@@ -192,7 +192,7 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 			]);
 
 			$this->_container->DBC_AUTH->insert('auth_context_ticket', $act);
-			$ret = sprintf('https://%s/auth/open?_=%s', $_SERVER['SERVER_NAME'], $act['id']);
+			$ret = sprintf('%s/auth/open?_=%s', APP_BASE, $act['id']);
 
 			return $RES->withRedirect($ret);
 
@@ -212,7 +212,7 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 			]);
 
 			$this->_container->DBC_AUTH->insert('auth_context_ticket', $act);
-			$ret = sprintf('https://%s/auth/open?_=%s', $_SERVER['SERVER_NAME'], $act['id']);
+			$ret = sprintf('%s/auth/open?_=%s', APP_BASE, $act['id']);
 
 			return $RES->withRedirect($ret);
 		}
