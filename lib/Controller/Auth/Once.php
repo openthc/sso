@@ -30,9 +30,7 @@ class Once extends \OpenTHC\SSO\Controller\Base
 			], 400);
 		}
 
-		$rdb = \OpenTHC\Service\Redis::factory();
-		$act = $rdb->get(sprintf('/auth-ticket/%s', $_GET['_']));
-		$act = json_decode($act, true);
+		$act = \OpenTHC\SSO\Auth_Context_Ticket::get($_GET['_']);
 		if (empty($act)) {
 			return $RES->withRedirect('/done?e=CAO-077');
 		}

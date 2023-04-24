@@ -24,12 +24,7 @@ class Init extends \OpenTHC\SSO\Controller\Base
 		}
 
 		// Load Auth Ticket
-		$rdb = \OpenTHC\Service\Redis::factory();
-		$tmp = $rdb->get(sprintf('/auth-ticket/%s', $_GET['_']));
-		if (empty($tmp)) {
-			_exit_html_warn('<h1>Invalid Request [CAI-034]</a></h1>', 400);
-		}
-		$act_data = json_decode($tmp, true);
+		$act_data = \OpenTHC\SSO\Auth_Context_Ticket::get($_GET['_']);
 		if (empty($act_data['contact']['id'])) {
 			_exit_html_warn('<h1>Invalid Request [CAI-038]</h1>', 400);
 		}
@@ -195,11 +190,7 @@ SQL;
 
 		$act_data['company'] = $Company;
 
-		$tok = _random_hash();
-		$val = json_encode($act_data);
-
-		$rdb = \OpenTHC\Service\Redis::factory();
-		$rdb->set(sprintf('/auth-ticket/%s', $tok), $val, [ 'ex' => 420 ]);
+		$tok = \OpenTHC\SSO\Auth_Context_Ticket::set($act_data);
 
 		// No Return? Load Default
 		$ret = '/account';

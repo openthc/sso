@@ -46,7 +46,7 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 		$sql = 'SELECT count(service_id) FROM auth_service_contact WHERE service_id = ? AND contact_id = ? AND expires_at > now()';
 		$arg = array($Auth_Service['id'], $_SESSION['Contact']['id']);
 		$chk = $dbc->fetchOne($sql, $arg);
-		if (!empty($chk)) {
+		if ( ! empty($chk)) {
 			return $RES->withRedirect('/oauth2/permit?a=fast&_=' . $link_crypt);
 		}
 
@@ -181,9 +181,7 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 		// If no Contact, Request Sign-In
 		if (empty($_SESSION['Contact']['id'])) {
 
-			$act = [];
-			$act['id'] = _random_hash();
-			$act['meta'] = json_encode([
+			$tok = \OpenTHC\SSO\Auth_Context_Ticket::set([
 				'intent' => 'oauth-authorize',
 				'contact' => [],
 				'company' => [],
@@ -191,8 +189,7 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 				'oauth-request' => $_GET,
 			]);
 
-			$this->_container->DBC_AUTH->insert('auth_context_ticket', $act);
-			$ret = sprintf('%s/auth/open?_=%s', APP_BASE, $act['id']);
+			$ret = sprintf('%s/auth/open?_=%s', APP_BASE, $tok);
 
 			return $RES->withRedirect($ret);
 

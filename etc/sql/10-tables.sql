@@ -65,18 +65,6 @@ CREATE TABLE auth_context (
 	name varchar(256)
 );
 
---
--- Name: auth_context_ticket; Type: TABLE; Schema: public;
---
-
-CREATE TABLE auth_context_ticket (
-	id varchar(64) PRIMARY KEY,
-	created_at timestamp with time zone not null default now(),
-	expires_at timestamp with time zone not null default now() + '60 minutes',
-	meta jsonb
-);
-
-
 CREATE TABLE auth_service (
 	id varchar(26) NOT NULL DEFAULT ulid_create() PRIMARY KEY,
 	company_id varchar(26) not null,
