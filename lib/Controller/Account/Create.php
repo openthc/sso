@@ -145,7 +145,7 @@ class Create extends \OpenTHC\SSO\Controller\Base
 			try {
 
 				$ops = new \OpenTHC\Service\OpenTHC('ops');
-				$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
+				$res = $ops->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
 				switch ($res['code']) {
 					case 200:
 					case 201:
