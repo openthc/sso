@@ -55,10 +55,10 @@ class Init extends \OpenTHC\SSO\Controller\Base
 		// Contact Status Switch
 		switch ($Contact['stat']) {
 			case Contact::STAT_INIT:
-				$jwt = new \OpenTHC\JWT(array_merge(\OpenTHC\JWT::base_claims(), [
+				$jwt = new \OpenTHC\JWT([
 					'service' => 'www',
 					'r' => '/verify/done',
-				]));
+				]);
 				$cfg_www = \OpenTHC\Config::get('openthc/www');
 				$r = sprintf("https://%s/auth/jwt?jwt=%s", $cfg_www['hostname'], $jwt->__toString());
 				return $RES->withRedirect($r);
