@@ -56,11 +56,18 @@ class Open extends \OpenTHC\SSO\Controller\Base
 			}
 		}
 
+		// Inputs
+		$data['auth_username'] = $REQ->getAttribute('auth_username');
+		if (empty($data['auth_username'])) {
+			$data['auth_username'] = $_SESSION['auth-open-email'];
+		}
+		$data['auth_password'] = $REQ->getAttribute('auth_password');
+		$data['auth_hint'] = $REQ->getAttribute('auth_hint');
+
 		// Well known actions
-		// /.well-known/change-password redirect here
 		switch ($_GET['a']) {
 		case 'password-reset':
-
+			// /.well-known/change-password redirect here
 			$data['Page']['title'] = 'Password Reset';
 			$data['auth_username'] = $_SESSION['auth-open-email'];
 
@@ -70,24 +77,28 @@ class Open extends \OpenTHC\SSO\Controller\Base
 			return $RES->write( $this->render('auth/once-password-reset.php', $data) );
 
 			break;
+
+		case 'sso-migrate':
+
+			$key = \OpenTHC\Config::get('openthc/app/secret');
+			$_GET['t'] = _decrypt($_GET['t'], $key);
+			$act = json_decode($_GET['t']);
+
+			$data['Page']['flash'] = '<div class="alert alert-warning">SSO Migration in Progress</div>';
+			$data['auth_username'] = $act->username;
+			$data['auth_password'] = $act->password;
+
 		}
 
-		// Inputs
-		$data['auth_username'] = $REQ->getAttribute('auth_username');
-		if (empty($data['auth_username'])) {
-			$data['auth_username'] = $_SESSION['auth-open-email'];
-		}
-		$data['auth_password'] = $REQ->getAttribute('auth_password');
-		$data['auth_hint'] = $REQ->getAttribute('auth_hint');
-
-		// @deprecated?
+		// Incoming Parameters
 		if ( ! empty($_GET['_'])) {
-			$dbc = $this->_container->DBC_AUTH;
-			$act = $dbc->fetchOne('SELECT meta FROM auth_context_ticket WHERE id = :t0', [ ':t0' => $_GET['_'] ]);
-			$act = json_decode($act, true);
-			if (!empty($act['service'])) {
+			$act = \OpenTHC\SSO\Auth_Context_Ticket::get($_GET['_']);
+			// intent == "oauth-authorize"
+			if ( ! empty($act['service']) && ! empty($act['oauth-request'])) {
 				$data['service'] = $act['service'];
 				$data['auth_hint'] = sprintf('<p>Sign in, and then authorize the service (<em>%s</em>) via <a href="https://oauth.net/2/" target="_blank">OAuth2</a></p>', $act['service']);
+			} else {
+				unset($_GET['_']);
 			}
 		}
 
@@ -185,10 +196,7 @@ class Open extends \OpenTHC\SSO\Controller\Base
 		// If we have a Prevous Auth-Ticket
 		if ( ! empty($_GET['_'])) {
 
-			throw new \Exception('@deprecated [CAO-234]');
-
-			$act_prev = $dbc->fetchOne('SELECT meta FROM auth_context_ticket WHERE id = :t0', [ ':t0' => $_GET['_'] ]);
-			$act_prev = json_decode($act_prev, true);
+			$act_prev = \OpenTHC\SSO\Auth_Context_Ticket::get($_GET['_']);
 			switch ($act_prev['intent']) {
 				case 'oauth-authorize':
 					$tok_data['intent'] = $act_prev['intent'];
@@ -197,10 +205,7 @@ class Open extends \OpenTHC\SSO\Controller\Base
 			}
 		}
 
-		$rdb = \OpenTHC\Service\Redis::factory();
-		$val = json_encode($tok_data);
-		$tok = _random_hash();
-		$rdb->set(sprintf('/auth-ticket/%s', $tok), $val, [ 'ex' => '420' ]);
+		$tok = \OpenTHC\SSO\Auth_Context_Ticket::set($tok_data);
 
 		return $RES->withRedirect(sprintf('/auth/init?_=%s', $tok));
 
