@@ -28,14 +28,12 @@
 				}
 			?>
 			</select>
-			<div class="input-group-append">
-				<button class="btn btn-outline-secondary"
-					id="btn-timezone-pick"
-					title="Detect Timezone from Browser"
-					type="button">
-					<i class="icon icon-magic-wand"></i> Detect
-				</button>
-			</div>
+			<button class="btn btn-outline-secondary"
+				id="btn-timezone-pick"
+				title="Detect Timezone from Browser"
+				type="button">
+				<i class="icon icon-magic-wand"></i> Detect
+			</button>
 		</div>
 	</div>
 
