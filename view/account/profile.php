@@ -19,9 +19,7 @@
 		<label>Name</label>
 		<div class="input-group">
 			<input class="form-control" name="contact-name" type="text" value="<?= h($data['Contact_Base']['name']) ?>">
-			<div class="input-group-append">
-				<button class="btn btn-outline-primary" name="a" value="contact-name-save"><i class="fas fa-save"></i> Save</button>
-			</div>
+			<button class="btn btn-outline-primary" name="a" value="contact-name-save"><i class="fas fa-save"></i> Save</button>
 		</div>
 	</div>
 
