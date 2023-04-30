@@ -25,12 +25,12 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 		}
 
 		// Validate Service
-		$Auth_Service = $dbc->fetchRow('SELECT id,name,code,hash,context_list FROM auth_service WHERE code = ?', array($_GET['client_id']));
+		$Auth_Service = $dbc->fetchRow('SELECT id, name, code, hash, context_list FROM auth_service WHERE code = ?', array($_GET['client_id']));
 		if (empty($Auth_Service['id'])) {
 			_exit_json(array(
 				'error' => 'invalid_client',
 				'error_description' => 'Invalid Client [COA-051]',
-				'error_uri' => sprintf('%s/auth/doc', APP_BASE),
+				'error_uri' => sprintf('%s/auth/doc', OPENTHC_SERVICE_ORIGIN),
 			), 401);
 		}
 
@@ -161,7 +161,7 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 		foreach ($scope_ask as $s) {
 			if (!in_array($s, $scope_may, true)) {
 				$html = sprintf('<h1>Access Denied to Context &quot;%s&quot; [COA-151]</h1>', $s);
-				$html.= sprintf('<p>See <a href="%s/doc#COA-151">documentation</p>', APP_BASE);
+				$html.= sprintf('<p>See <a href="%s/doc#COA-151">documentation</p>', OPENTHC_SERVICE_ORIGIN);
 				$html.= '<p>Or <a href="/auth/shut">sign-out</a> and start over</p>';
 				__exit_html($html, 403);
 			}
@@ -189,7 +189,7 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 				'oauth-request' => $_GET,
 			]);
 
-			$ret = sprintf('%s/auth/open?_=%s', APP_BASE, $tok);
+			$ret = sprintf('/auth/open?_=%s', $tok);
 
 			return $RES->withRedirect($ret);
 
@@ -209,7 +209,7 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 			]);
 
 			$this->_container->DBC_AUTH->insert('auth_context_ticket', $act);
-			$ret = sprintf('%s/auth/open?_=%s', APP_BASE, $act['id']);
+			$ret = sprintf('/auth/open?_=%s', $act['id']);
 
 			return $RES->withRedirect($ret);
 		}

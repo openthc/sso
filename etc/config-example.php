@@ -5,10 +5,7 @@
 
 $cfg = [];
 
-$cfg['app'] = [
-	'id' => '',
-];
-
+// Database
 $cfg['database'] = [
 	'auth' => [
 		'hostname' => 'localhost',
@@ -24,16 +21,39 @@ $cfg['database'] = [
 	]
 ];
 
-
+// OpenTHC Services
 $cfg['openthc'] = [
 	'app' => [
-		'hostname' => 'app.openthc.example.com',
+		'id' => '',
+		'origin' => 'https://app.openthc.example.com',
+	],
+	'b2b' => [
+		'id' => '',
+		'origin' => 'https://b2b.openthc.example.com'
 	],
 	'dir' => [
-		'hostname' => 'dir.openthc.example.com'
+		'id' => '',
+		'origin' => 'https://dir.openthc.example.com'
+	],
+	'lab' => [
+		'id' => '',
+		'origin' => 'https://lab.openthc.example.com'
+	],
+	'pos' => [
+		'id' => '',
+		'origin' => 'https://pos.openthc.example.com'
+	],
+	'sso' => [
+		'id' => '',
+		'origin' => 'https://sso.openthc.example.com',
 	]
 ];
 
+// Google Services
+$cfg['google'] = [
+];
+
+// MaxMind
 $cfg['maxmind'] = [
 	'account' => '',
 	'license' => '',

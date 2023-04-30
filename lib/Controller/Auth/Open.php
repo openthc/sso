@@ -309,7 +309,7 @@ class Open extends \OpenTHC\SSO\Controller\Base
 			$arg = [];
 			$arg['address_target'] = $Contact['username'];
 			$arg['file'] = 'sso/contact-password-reset.tpl';
-			$arg['data']['app_url'] = APP_BASE;
+			$arg['data']['app_url'] = OPENTHC_SERVICE_ORIGIN;
 			$arg['data']['mail_subject'] = 'Password Reset Request';
 			$arg['data']['auth_context_ticket'] = $act['id'];
 

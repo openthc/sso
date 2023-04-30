@@ -18,7 +18,6 @@ if ( ! \OpenTHC\Config::init(APP_ROOT) ) {
 	_exit_html_fail('<h1>Invalid Application Configuration [ALB-035]</h1>', 500);
 }
 
-define('APP_BASE', getenv('OPENTHC_SERVICE_BASE') ?: rtrim(\OpenTHC\Config::get('openthc/sso/base'), '/'));
-define('APP_ULID', getenv('OPENTHC_SERVICE_ID')   ?: \OpenTHC\Config::get('openthc/sso/id')              );
+define('OPENTHC_SERVICE_ORIGIN', getenv('OPENTHC_SERVICE_ORIGIN') ?: \OpenTHC\Config::get('openthc/sso/origin'));
 
 _error_handler_init();

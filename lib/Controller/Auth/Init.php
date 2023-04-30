@@ -213,7 +213,7 @@ SQL;
 				}
 
 				// Place Ping Back Token
-				$ping = sprintf('%s/auth/once?_=%s', APP_BASE, $tok);
+				$ping = sprintf('%s/auth/once?_=%s', OPENTHC_SERVICE_ORIGIN, $tok);
 				$ret = str_replace('{PING}', $ping, $ret);
 
 				break;

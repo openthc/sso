@@ -145,7 +145,7 @@ class Email extends \OpenTHC\SSO\Controller\Verify\Base
 			$arg = [];
 			$arg['address_target'] = $ARG['contact']['email'];
 			$arg['file'] = 'sso/contact-email-verify.tpl';
-			$arg['data']['app_url'] = APP_BASE;
+			$arg['data']['app_url'] = OPENTHC_SERVICE_ORIGIN;
 			$arg['data']['mail_subject'] = 'Email Verification';
 			$arg['data']['auth_context_ticket'] = $acs['id'];
 
