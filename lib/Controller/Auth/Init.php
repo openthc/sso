@@ -79,42 +79,6 @@ class Init extends \OpenTHC\SSO\Controller\Base
 	}
 
 	/**
-	 * Load GeoIP Data to Session
-	 */
-	protected function loadGeoIP() : void
-	{
-		// Would like to put this behind a cache
-		if ( ! empty($_SESSION['geoip'])) {
-			return;
-		}
-
-		$cfg = \OpenTHC\Config::get('maxmind');
-
-		if (empty($cfg['account'])) {
-			return;
-		}
-
-		$api = new \GeoIp2\WebService\Client($cfg['account'], $cfg['license-key']);
-		$geo = $api->city($_SERVER['REMOTE_ADDR']);
-		$raw = $geo->raw;
-
-		$_SESSION['geoip'] = true;
-
-		$_SESSION['iso3166_1'] = [
-			'id' => $raw['country']['iso_code'],
-			'name' => $raw['country']['names']['en'],
-		];
-
-		$_SESSION['iso3166_2'] = [
-			'id' => sprintf('%s-%s', $raw['country']['iso_code'], $raw['subdivisions'][0]['iso_code']),
-			'name' => $raw['subdivisions'][0]['names']['en']
-		];
-
-		$_SESSION['tz'] = $raw['location']['time_zone'];
-
-	}
-
-	/**
 	 *
 	 */
 	protected function account_init($RES, $act_data, $Contact)
