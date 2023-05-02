@@ -51,13 +51,24 @@ $cfg['openthc'] = [
 
 // Google Services
 $cfg['google'] = [
+	'recaptcha_public' => '',
+	'recaptcha_secret' => '',
 ];
+
+// hCaptcha
+$cfg['hcaptcha'] = [];
 
 // MaxMind
 $cfg['maxmind'] = [
 	'account' => '',
 	'license' => '',
 	'license-key' => '',
+];
+
+// OpenCAGEData
+$cfg['opencage'] = [
+	'project' => '',
+	'api-key' => ''
 ];
 
 return $cfg;
