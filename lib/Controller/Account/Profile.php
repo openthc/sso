@@ -122,6 +122,17 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 		$dbc_main = $this->_container->DBC_MAIN;
 
 		switch ($_POST['a']) {
+			case 'contact-password-update':
+				// Construct Token and Redirect
+				$act = new \OpenTHC\Auth_Context_Ticket($dbc_auth);
+				$tok = $act->create([
+					'intent' => 'password-update',
+					'contact' => [
+						'id' => $_SESSION['Contact']['id']
+					]
+				]);
+				return $RES->withRedirect(sprintf('/account/password?_=%s', $tok));
+				break;
 			case 'contact-phone-update':
 				$dbc_main->query('UPDATE contact SET phone = :p1 WHERE id = :c0', [
 					':c0' => $_SESSION['Contact']['id'],
