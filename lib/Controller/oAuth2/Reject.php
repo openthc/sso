@@ -37,7 +37,7 @@ class Reject extends \OpenTHC\SSO\Controller\Base
 
 		$uri['query']['error'] = 'rejected';
 		$uri['query']['error_description'] = 'No';
-		$uri['query']['error_uri'] = sprintf('%s/oauth2/doc', APP_BASE);
+		$uri['query']['error_uri'] = sprintf('%s/oauth2/doc', OPENTHC_SERVICE_ORIGIN);
 		$uri['query']['state'] = $_GET['state'];
 		ksort($uri['query']);
 
