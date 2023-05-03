@@ -56,7 +56,6 @@ class Timezone extends \OpenTHC\SSO\Controller\Verify\Base
 			'meta' => json_encode($_SESSION),
 		]);
 
-
 		return $RES->withRedirect(sprintf('/verify?_=%s', $_GET['_']));
 
 	}

@@ -18,22 +18,37 @@ class Once extends \OpenTHC\SSO\Controller\Base
 	 */
 	function __invoke($REQ, $RES, $ARG)
 	{
+		session_regenerate_id(true);
+
+		$_SESSION = [];
+
 		// Token Links
 		if (empty($_GET['_'])) {
-			__exit_text('Invalid Request [CAO-016]', 400);
+			return $RES->withJSON([
+				'data' => null,
+				'meta' => [ 'note' => 'Invalid Request [CAO-016]' ]
+			], 400);
 		}
 
 		if (!preg_match('/^([\w\-]{32,128})$/i', $_GET['_'], $m)) {
 			return $RES->withJSON([
 				'data' => null,
-				'meta' => [ 'detail' => 'Invalid Request [CAO-022]' ]
+				'meta' => [ 'note' => 'Invalid Request [CAO-022]' ]
 			], 400);
 		}
 
-		$act = \OpenTHC\SSO\Auth_Context_Ticket::get($_GET['_']);
-		if (empty($act)) {
-			return $RES->withRedirect('/done?e=CAO-077');
+		// Get Token
+		$act = new \OpenTHC\Auth_Context_Ticket($this->_container->DBC_AUTH, $_GET['_']);
+		if ( ! $act->isValid()) {
+			$data = [
+				'error_code' => 'CAO-040'
+			];
+			$RES = $RES->withStatus(400);
+			$RES = $RES->write( $this->render('done.php', $data) );
+			return $RES;
 		}
+
+		$act = $act->getMeta();
 
 		// Intention Router
 		switch ($act['intent']) {
@@ -41,10 +56,12 @@ class Once extends \OpenTHC\SSO\Controller\Base
 				return $this->accountCreate($RES, $act);
 				break;
 			case 'email-verify':
-				return $RES->withRedirect(sprintf('/verify/email?_=%s', $_GET['_']));
+				$tok = \OpenTHC\SSO\Auth_Context_Ticket::set($act);
+				return $RES->withRedirect(sprintf('/verify/email?_=%s', $tok));
 				break;
 			case 'password-reset':
-				return $RES->withRedirect('/account/password?_=' . $_GET['_']);
+				$tok = \OpenTHC\SSO\Auth_Context_Ticket::set($act);
+				return $RES->withRedirect(sprintf('/account/password?_=%s', $tok));
 				break;
 			case 'account-open':
 			case 'oauth-migrate':
@@ -56,8 +73,8 @@ class Once extends \OpenTHC\SSO\Controller\Base
 		$data['Page']['title'] = 'Error';
 		$data['body'] = '<div class="alert alert-danger">Invalid Request [CAO-061]</div>';
 
-		$RES = $RES->write( $this->render('done.php', $data) );
 		$RES = $RES->withStatus(400);
+		$RES = $RES->write( $this->render('done.php', $data) );
 
 		return $RES;
 
@@ -72,8 +89,16 @@ class Once extends \OpenTHC\SSO\Controller\Base
 		$dbc_main = $this->_container->DBC_MAIN;
 
 		// Update Contact, Promote Email to Username
-		$chk = $dbc_auth->fetchOne('SELECT id, flag, stat FROM auth_contact WHERE id = :c0', [ ':c0' => $act_data['contact']['id'] ]);
+		$sql = 'SELECT id, flag, stat FROM auth_contact WHERE id = :c0';
+		$arg = [ ':c0' => $act_data['contact']['id'] ];
+		$chk = $dbc_auth->fetchOne($sql, $arg);
 		if (empty($chk)) {
+			$data = [
+				'error_code' => 'CAO-094'
+			];
+			$RES = $RES->withStatus(400);
+			$RES = $RES->write( $this->render('done.php', $data) );
+			return $RES;
 			__exit_text('Invalid Account [CAO-079]', 400);
 		}
 
@@ -88,22 +113,21 @@ class Once extends \OpenTHC\SSO\Controller\Base
 		$dbc_main->query('BEGIN');
 
 		// Update Auth Contact
-		$ct_auth = new Auth_Contact($dbc_auth, $act_data['contact']);
-		$ct_auth['username'] = $act_data['contact']['email'];
-		$ct_auth['password'] = null;
+		$ct_auth = new Auth_Contact($dbc_auth, $act_data['contact']['id']);
 		$ct_auth->setFlag(\OpenTHC\Contact::FLAG_EMAIL_GOOD | \OpenTHC\Contact::FLAG_PHONE_WANT);
 		$ct_auth->save();
 
 		// Update Base Contact
-		$ct_main = new \OpenTHC\Contact($dbc_main, $act_data['contact']);
+		$ct_main = new \OpenTHC\Contact($dbc_main, $act_data['contact']['id']);
 		$ct_main->setFlag(\OpenTHC\Contact::FLAG_EMAIL_GOOD | \OpenTHC\Contact::FLAG_PHONE_WANT);
 		$ct_main->save();
 
 		$dbc_auth->query('COMMIT');
 		$dbc_main->query('COMMIT');
 
-		// Init with this same token
-		return $RES->withRedirect(sprintf('/auth/init?_=%s', $_GET['_']));
+		// Verify after Create
+		$tok = \OpenTHC\SSO\Auth_Context_Ticket::set($act_data);
+		return $RES->withRedirect(sprintf('/verify?_=%s', $tok));
 
 	}
 

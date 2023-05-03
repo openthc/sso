@@ -9,18 +9,22 @@ namespace OpenTHC\SSO\Controller\Verify;
 
 class Location extends \OpenTHC\SSO\Controller\Verify\Base
 {
+	/**
+	 *
+	 */
 	function __invoke($REQ, $RES, $ARG)
 	{
 		$data = $this->data;
 		$data['Page']['title'] = 'Verify Profile Location';
 
 		$act = $this->loadTicket();
+		$this->loadGeoIP();
 
-		if (!empty($_SESSION['iso3166_1'])) {
+		if ( ! empty($_SESSION['iso3166_1'])) {
 			$data['iso3166_1_pick'] = $_SESSION['iso3166_1'];
 		}
 
-		if (!empty($_SESSION['iso3166_2'])) {
+		if ( ! empty($_SESSION['iso3166_2'])) {
 			$data['iso3166_2_pick'] = $_SESSION['iso3166_2'];
 		}
 
@@ -34,7 +38,7 @@ class Location extends \OpenTHC\SSO\Controller\Verify\Base
 			return $RES->write( $this->render('verify/location-2.php', $data) );
 		}
 
-		__exit_text('Invalid Request [CVL-057]', 400);
+		return $RES->withRedirect(sprintf('/verify?_=%s', $_GET['_']));
 
 	}
 
@@ -43,6 +47,8 @@ class Location extends \OpenTHC\SSO\Controller\Verify\Base
 	 */
 	function post($REQ, $RES, $ARG)
 	{
+		$act = $this->loadTicket();
+
 		switch ($_POST['a']) {
 			case 'iso3166-1-save-next':
 
@@ -80,9 +86,6 @@ class Location extends \OpenTHC\SSO\Controller\Verify\Base
 				}
 
 				$_SESSION['iso3166_2_pick'] = $iso3166_2_pick;
-
-				// Or Save till the end to save?
-				$act = $this->loadTicket();
 
 				$dbc = $this->_container->DBC_AUTH;
 				$sql = 'UPDATE auth_contact SET flag = flag | :f1::int, iso3166 = :iso, tz = :tz WHERE id = :ct0';

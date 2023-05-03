@@ -36,7 +36,6 @@ class Done extends \OpenTHC\SSO\Controller\Base
 					$data['body'] = '<p>We have just sent you an email, with the next steps.<p><p>You will need to confirm your request through a link in that message.</p><p>Maybe you want to read more about regulations?</p><div><a class="btn btn-outline-success" href="https://openthc.com/intro">Introduction to Track and Trace <i class="icon icon-arrow-right"></i></a></div>';
 					break;
 				case 'CAO-066':
-				case 'CAO-077':
 					$data['Page']['title'] = 'Error';
 					$data['fail'] = 'The link you followed is not valid';
 				break;

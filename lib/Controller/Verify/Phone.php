@@ -67,11 +67,9 @@ class Phone extends \OpenTHC\SSO\Controller\Verify\Base
 					if ($_SESSION['verify']['phone']['tick'] > 1) {
 
 						// Fake Something?
-						$_SESSION['verify']['phone'] = [
-							'done' => true
-						];
+						$_SESSION['verify']['phone']['done'] = true;
 
-						return $RES->withRedirect(sprintf('/verify/phone?_=%s', $_GET['_']));
+						return $RES->withRedirect(sprintf('/verify?_=%s', $_GET['_']));
 
 					}
 				}
@@ -104,8 +102,15 @@ class Phone extends \OpenTHC\SSO\Controller\Verify\Base
 
 		}
 
-		$dbc_auth = $this->_container->DBC_AUTH;
+		// Update Phone on Base Contact
+		$C0 = new Contact($this->_container->DBC_MAIN, $ARG['contact']['id']);
+		$C0['stat'] = Contact::STAT_LIVE;
+		$C0['phone'] = $_SESSION['verify']['phone']['e164'];
+		$C0->setFlag(Contact::FLAG_PHONE_GOOD);
+		$C0->delFlag(Contact::FLAG_PHONE_WANT);
+		$C0->save();
 
+		$dbc_auth = $this->_container->DBC_AUTH;
 		// Set Flag on Auth Contact
 		$sql = 'UPDATE auth_contact SET flag = flag | :f1 WHERE id = :pk';
 		$arg = [
@@ -122,17 +127,9 @@ class Phone extends \OpenTHC\SSO\Controller\Verify\Base
 		];
 		$dbc_auth->query($sql, $arg);
 
-		// Update Phone on Base Contact
-		$dbc_main = $this->_container->DBC_MAIN;
-		$sql = 'UPDATE contact SET phone = :p0, stat = 200, flag = :f1 WHERE id = :pk';
-		$arg = [
-			':pk' => $ARG['contact']['id'],
-			':p0' => $_SESSION['verify']['phone']['e164'],
-			':f1' => Contact::FLAG_PHONE_GOOD
-		];
-		$dbc_main->query($sql, $arg);
+		// @todo Create/Update Channel & Link to Contact
 
-		unset($_SESSION['verify']['phone']);
+		$_SESSION['verify']['phone']['done'] = true;
 
 		return $RES->withRedirect(sprintf('/verify?_=%s', $_GET['_']));
 
@@ -169,8 +166,8 @@ class Phone extends \OpenTHC\SSO\Controller\Verify\Base
 
 			try {
 
-				$cic = new \OpenTHC\Service\OpenTHC('cic');
-				$res = $cic->post('/api/v2018/phone/send', [ 'form_params' => $arg ]);
+				$ops = new \OpenTHC\Service\OpenTHC('ops');
+				$res = $ops->post('/api/v2018/phone/send', [ 'form_params' => $arg ]);
 				switch ($res['code']) {
 					case 200:
 						$ret_args['e'] = 'CAV-294';

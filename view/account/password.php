@@ -1,9 +1,10 @@
 <?php
 /**
+ * Account Password Update
+ *
  * SPDX-License-Identifier: MIT
  */
 
-return require_once(sprintf('%s/vendor/openthc/common/view/account/password.php', APP_ROOT));
 ?>
 
 <form autocomplete="new-password" method="post">
@@ -14,12 +15,18 @@ return require_once(sprintf('%s/vendor/openthc/common/view/account/password.php'
 <h1 class="card-header">Set Password</h1>
 <div class="card-body">
 
-	<div class="form-group">
-		<label>Email:</label>
-		<input autocomplete="email" class="form-control" id="username" inputmode="email" name="username" placeholder="- user@example.com -" readonly value="<?= h($data['auth_username']) ?>">
-	</div>
+	<?php
+	if ( ! empty($data['auth_username'])) {
+	?>
+		<div class="mt-4">
+			<label>Email:</label>
+			<input autocomplete="email" class="form-control" disabled id="username" inputmode="email" name="username" placeholder="- user@example.com -" readonly value="<?= __h($data['auth_username']) ?>">
+		</div>
+	<?php
+	}
+	?>
 
-	<div class="form-group">
+	<div class="mt-4">
 		<label>New Password:</label>
 		<input autofocus autocomplete="new-password" class="form-control password-input" id="password0" type="password" name="p0" >
 		<small class="form-text text-muted" id="password-hint">
@@ -31,7 +38,7 @@ return require_once(sprintf('%s/vendor/openthc/common/view/account/password.php'
 			<span id="password-symbol">special characters</span>.</small>
 	</div>
 
-	<div class="form-group">
+	<div class="mt-4">
 		<label>Confirm Password:</label>
 		<input autocomplete="new-password" class="form-control password-input" id="password1" type="password" name="p1" >
 		<small class="form-text text-muted" id="password-hint">Must <span id="password-match">match</span> above entry</small>

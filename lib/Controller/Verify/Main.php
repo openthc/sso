@@ -21,13 +21,15 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 	{
 		if (empty($_SESSION['verify'])) {
 			$_SESSION['verify'] = [
-				'password',
-				'iso3166-1',
-				'iso3166-2',
-				'tz',
-				'phone',
-				'company',
-				'license',
+				'contact' => [],
+				'email' => [],
+				'password' => [],
+				'iso3166-1' => [],
+				'iso3166-2' => [],
+				'tz' => [],
+				'phone' => [],
+				'company' => [],
+				'license' => [],
 			];
 		}
 
@@ -46,45 +48,80 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 	{
 		$CT0 = new Auth_Contact(null, $act_data['contact']);
 
+		$tok = \OpenTHC\SSO\Auth_Context_Ticket::set($act_data);
+
 		// Verify Email
 		if ( ! $CT0->hasFlag(Contact::FLAG_EMAIL_GOOD)) {
-			return $RES->withRedirect(sprintf('/verify/email?_=%s', $_GET['_']));
+			return $RES->withRedirect(sprintf('/verify/email?_=%s', $tok));
 		}
 		if ($CT0->hasFlag(Contact::FLAG_EMAIL_WANT)) {
-			return $RES->withRedirect(sprintf('/verify/email?_=%s', $_GET['_']));
+			return $RES->withRedirect(sprintf('/verify/email?_=%s', $tok));
 		}
 
 		// Verify Password
 		if (empty($CT0['password'])) {
-			return $RES->withRedirect(sprintf('/verify/password?_=%s', $_GET['_']));
+			return $RES->withRedirect(sprintf('/verify/password?_=%s', $tok));
 		}
 
 		// Verify Location
 		if (empty($CT0['iso3166'])) {
-			return $RES->withRedirect(sprintf('/verify/location?_=%s', $_GET['_']));
+			return $RES->withRedirect(sprintf('/verify/location?_=%s', $tok));
 		}
 
 		// Timezone
 		if (empty($CT0['tz'])) {
-			return $RES->withRedirect(sprintf('/verify/timezone?_=%s', $_GET['_']));
+			return $RES->withRedirect(sprintf('/verify/timezone?_=%s', $tok));
 		}
 
 		// Phone
-		if ( ! $CT0->hasFlag(Contact::FLAG_PHONE_GOOD)) {
-			return $RES->withRedirect(sprintf('/verify/phone?_=%s', $_GET['_']));
-		}
-		if ($CT0->hasFlag(Contact::FLAG_PHONE_WANT)) {
-			return $RES->withRedirect(sprintf('/verify/phone?_=%s', $_GET['_']));
+		if (empty($_SESSION['verify']['phone']['done'])) {
+			if ($CT0->hasFlag(Contact::FLAG_PHONE_WANT)) {
+				return $RES->withRedirect(sprintf('/verify/phone?_=%s', $tok));
+			}
+			if ( ! $CT0->hasFlag(Contact::FLAG_PHONE_GOOD)) {
+				return $RES->withRedirect(sprintf('/verify/phone?_=%s', $tok));
+			}
 		}
 
 		// Company
-		$dbc_auth = $this->_container->DBC_AUTH;
-		$chk = $dbc_auth->fetchOne('SELECT count(id) FROM auth_company_contact WHERE contact_id = :ct0', [
-			':ct0' => $CT0['id'],
-		]);
-		if (empty($chk)) {
-			return $RES->withRedirect(sprintf('/verify/company?_=%s', $_GET['_']));
+		if (empty($_SESSION['verify']['company']['done'])) {
+
+			$dbc_auth = $this->_container->DBC_AUTH;
+			$chk = $dbc_auth->fetchOne('SELECT count(id) FROM auth_company_contact WHERE contact_id = :ct0', [
+				':ct0' => $CT0['id'],
+			]);
+
+			if (empty($chk)) {
+				return $RES->withRedirect(sprintf('/verify/company?_=%s', $tok));
+			}
+
 		}
+
+		if (empty($_SESSION['verify']['license'])) {
+			return $RES->withRedirect(sprintf('/verify/license?_=%s', $tok));
+		}
+
+		// Company Link Check?
+		// $sql = <<<SQL
+		// SELECT *
+		// FROM auth_company_contact
+		// WHERE contact_id = :ct0
+		// 	AND stat IN (:s0, :s1)
+		// SQL;
+		// $CC0 = $dbc_auth->fetchAll($sql, [
+		// 	':ct0' => $CT0['id'],
+		// 	':s0' => \OpenTHC\Company_Contact::STAT_PROC,
+		// 	':s1' => \OpenTHC\Company_Contact::STAT_LIVE,
+		// ]);
+		// if (empty($CC0)) {
+		// 	return $RES->withRedirect(sprintf('/verify/company?_=%s', $tok));
+		// }
+
+		// if (1 == count($CC0)) {
+		// 	if (200 !== $CC0[0]['stat']) {
+		// 		return $RES->withRedirect('/verify/done');
+		// 	}
+		// }
 
 		// Update Contact Status
 		// $CT0['stat'] = Contact::STAT_LIVE;
@@ -97,7 +134,14 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 		// ]);
 
 		// // pass back to /auth/init with same token
-		// return $RES->withRedirect(sprintf('/auth/init?_=%s', $_GET['_']));
+		// return $RES->withRedirect(sprintf('/auth/init?_=%s', $tok));
+
+		$ops = new \OpenTHC\Service\OpenTHC('ops');
+		$ops->post('/webhook/openthc', [
+			'action' => 'account-verify-complete',
+			'contact' => $act_data['contact']['id'],
+			'session' => $_SESSION,
+		]);
 
 		return $RES->withRedirect('/verify/done');
 

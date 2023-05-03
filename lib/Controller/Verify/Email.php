@@ -151,8 +151,8 @@ class Email extends \OpenTHC\SSO\Controller\Verify\Base
 
 			try {
 
-				$cic = new \OpenTHC\Service\OpenTHC('cic');
-				$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
+				$ops = new \OpenTHC\Service\OpenTHC('ops');
+				$res = $ops->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
 
 				if (201 == $res['code']) {
 					$ret_args['s'] = 't';

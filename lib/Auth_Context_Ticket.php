@@ -7,7 +7,7 @@
 
 namespace OpenTHC\SSO;
 
-class Auth_Context_Ticket extends \OpenTHC\Auth_Context_Ticket
+class Auth_Context_Ticket // extends \OpenTHC\Auth_Context_Ticket
 {
 	/**
 	 *
@@ -17,6 +17,15 @@ class Auth_Context_Ticket extends \OpenTHC\Auth_Context_Ticket
 		$rdb = \OpenTHC\Service\Redis::factory();
 		$ret = $rdb->get(sprintf('/auth-ticket/%s', $key));
 		$ret = json_decode($ret, true);
+
+		// if (empty($ret)) {
+
+		// 	$sql = 'SELECT * FROM auth_context_ticket WHERE id = ?';
+		// 	$arg = array($_POST['code']);
+		// 	$res = $this->_dbc->fetchRow($sql, $arg);
+
+		// }
+
 		return $ret;
 	}
 
