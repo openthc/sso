@@ -124,17 +124,27 @@ function password_checker(e) {
 
 function password_matcher(e)
 {
+	var $node = $(this);
+	var $hint = $('#password-match')
+	var $btn = $('#btn-password-update');
+
+	$node.removeClass('border-success border-warning border-danger');
+	$hint.removeClass('text-success text-warning');
+
+	$btn.prop('disabled', true);
+	$btn.removeClass('btn-primary').addClass('btn-outline-primary');
+
 	var p0 = $('#password0').val();
 	var p1 = $('#password1').val();
 
 	if (p0 === p1) {
-		$('#password-match').addClass('text-success');
-		$('#btn-password-update').prop('disabled', false);
-		$('#btn-password-update').addClass('btn-primary').removeClass('btn-outline-primary');
+		$node.addClass('border-success');
+		$hint.addClass('text-success');
+		$btn.prop('disabled', false);
+		$btn.addClass('btn-primary');
 	} else {
-		$('#password-match').removeClass('text-success');
-		$('#btn-password-update').prop('disabled', true);
-		$('#btn-password-update').addClass('btn-outline-primary').removeClass('btn-primary');
+		$node.addClass('border-warning');
+		$hint.addClass('text-warning');
 	}
 
 }
