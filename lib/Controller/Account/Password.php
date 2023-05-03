@@ -14,7 +14,11 @@ use OpenTHC\SSO\Auth_Context_Ticket;
 class Password extends \OpenTHC\SSO\Controller\Base
 {
 	/**
-	 *
+	 * HTTP GET handler
+	 * @param \Slim\Http\Request $REQ
+	 * @param \Slim\Http\Response $RES
+	 * @param array $ARG
+	 * @return \Slim\Http\Response
 	 */
 	function __invoke($REQ, $RES, $ARG)
 	{
@@ -23,6 +27,7 @@ class Password extends \OpenTHC\SSO\Controller\Base
 		$data = $this->data;
 		$data['Page']['title'] = 'Account :: Password Update';
 		$data['auth_username'] = $ARG['contact']['username'];
+		$data['CSRF'] = CSRF::getToken();
 
 		if (!empty($_GET['e'])) {
 			switch ($_GET['e']) {
@@ -46,7 +51,11 @@ class Password extends \OpenTHC\SSO\Controller\Base
 	}
 
 	/**
-	 *
+	 * HTTP POST handler
+	 * @param \Slim\Http\Request $REQ
+	 * @param \Slim\Http\Response $RES
+	 * @param array $ARG
+	 * @return \Slim\Http\Response
 	 */
 	function post($REQ, $RES, $ARG)
 	{
@@ -61,31 +70,19 @@ class Password extends \OpenTHC\SSO\Controller\Base
 			$p = $_POST['p0'];
 
 			if (empty($p) || empty($_POST['p1'])) {
-				return $RES->withRedirect('/account/password?' . http_build_query([
-					'_' => $_GET['_'],
-					'e' => 'CAP-047',
-				]));
+				return $this->redirect($RES, $ARG, 'CAP-047');
 			}
 
 			if (strlen($p) < 8) {
-				return $RES->withRedirect('/account/password?' . http_build_query([
-					'_' => $_GET['_'],
-					'e' => 'CAP-052',
-				]));
+				return $this->redirect($RES, $ARG, 'CAP-052');
 			}
 
 			if (preg_match_all('/\w|\d/', $p) < 8) {
-				return $RES->withRedirect('/account/password?' . http_build_query([
-					'_' => $_GET['_'],
-					'e' => 'CAP-057',
-				]));
+				return $this->redirect($RES, $ARG, 'CAP-057');
 			}
 
 			if ($p != $_POST['p1']) {
-				return $RES->withRedirect('/account/password?' . http_build_query([
-					'_' => $_GET['_'],
-					'e' => 'CAP-062',
-				]));
+				return $this->redirect($RES, $ARG, 'CAP-062');
 			}
 
 			$dbc_auth = $this->_container->DBC_AUTH;
@@ -104,45 +101,89 @@ class Password extends \OpenTHC\SSO\Controller\Base
 				'meta' => json_encode($_SESSION),
 			]);
 
+			// For Middleware
 			$RES = $RES->withAttribute('Contact', [
 				'id' => $ARG['contact']['id'],
 				'username' => $ARG['contact']['username'],
 				'password' => $arg[':pw'],
 			]);
 
-			return $RES->withRedirect('/auth/open?' . http_build_query([
-				'e' => 'CAP-080',
-				'service' => $ARG['service'],
-			]));
+			return $this->redirect($RES, $ARG, null);
 
 			break;
 		}
 	}
 
 	/**
+	 * Parse Incoming Arguments
 	 */
 	private function parseArg()
 	{
-		$ARG = [];
+		if (empty($_GET['_'])) {
+			_exit_html_fail('<h1>Invalid Request [CAP-129]</h1>', 400);
+		}
 
-		if (!empty($_GET['_'])) {
-
-			$act = new Auth_Context_Ticket($this->_container->DBC_AUTH, $_GET['_']);
-			if (!empty($act['id'])) {
-				$ARG = json_decode($act['meta'], true);
-			}
+		// Load Auth Ticket or DIE
+		$ARG = \OpenTHC\SSO\Auth_Context_Ticket::get($_GET['_']);
+		if (empty($ARG)) {
+			_exit_html_warn('<h1>Invalid Request [CAP-133]</a></h1>', 400);
 		}
 
 		switch ($ARG['intent']) {
 		case 'account-create':
 		case 'password-reset':
-		case 'password-update':
+		case 'password-update': // @deprecated?
 			// OK
 			break;
 		default:
-			__exit_text('Invalid Request [CAP-110]', 400);
+			_exit_html_fail('<h1>Invalid Request [CAP-110]</h1>', 400);
 		}
 
 		return $ARG;
+	}
+
+	/**
+	 * Smart Redirector from Context
+	 */
+	function redirect($RES, $act, $err)
+	{
+		$arg = [
+			'_' => $_GET['_'],
+			'e' => $err,
+		];
+
+		$path = '/account/password';
+		switch ($act['intent']) {
+			case 'account-create':
+				$path = '/verify/password';
+				if (empty($err)) {
+					// Success
+					$path = '/verify';
+				}
+				break;
+			case 'password-reset':
+			case 'password-update':
+				if (empty($err)) {
+					// Success
+					$path = '/auth/open';
+					$arg = [
+						'e' => 'CAP-080'
+					];
+				}
+		}
+
+		// return $RES->withRedirect('/auth/open?' . http_build_query([
+		// 	'e' => 'CAP-080',
+		// 	'service' => $ARG['service'],
+		// ]));
+
+		// Re-Generate Token?
+
+		$arg = http_build_query($arg);
+
+		$url = sprintf('%s?%s', $path, $arg);
+
+		return $RES->withRedirect($url);
+
 	}
 }
