@@ -12,12 +12,12 @@
 	<div class="card-body">
 
 		<h2 style="margin:0;">Account:</h2>
-		<div class="form-group">
+		<div class="mt-4">
 			<div class="form-control"><code><?= h($data['Contact']['username']) ?></code></div>
 		</div>
 
 		<h2 style="margin:0;">Company:</h2>
-		<div class="form-group">
+		<div class="mt-4">
 			<div class="input-group">
 				<div class="form-control"><code><?= h($data['Company']['name']) ?></code></div>
 				<a class="btn btn-outline-secondary" href="/auth/open" title="Switch to another organization"><i class="fas fa-building"></i> Switch</a>
@@ -25,7 +25,7 @@
 		</div>
 
 		<h2 style="margin:0;">Service:</h2>
-		<div class="form-group">
+		<div class="mt-4">
 			<div class="form-control"><code><?= h($data['Service']['name']) ?></code></div>
 		</div>
 

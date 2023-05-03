@@ -17,7 +17,7 @@
 
 	<?= $data['auth_hint'] ?>
 
-	<div class="form-group">
+	<div class="mt-4">
 		<label>Email</label>
 		<input class="form-control" id="username" inputmode="email" name="username" placeholder="- user@example.com -" value="<?= h($data['auth_username']) ?>">
 	</div>
@@ -25,7 +25,7 @@
 	<?php
 	if ($data['Google']['recaptcha_public']) {
 	?>
-		<div class="form-group" style="min-height: 78px;">
+		<div class="mt-4" style="min-height: 78px;">
 			<div class="g-recaptcha" data-sitekey="<?= $data['Google']['recaptcha_public'] ?>"></div>
 		</div>
 	<?php

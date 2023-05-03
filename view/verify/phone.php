@@ -21,7 +21,7 @@
 	}
 	?>
 
-	<div class="form-group">
+	<div class="mt-4">
 		<label>Phone</label>
 		<input
 			autocomplete="off"
@@ -41,7 +41,7 @@
 	<?php
 	if ($data['verify_phone_code']) {
 	?>
-		<div class="form-group">
+		<div class="mt-4">
 			<label>Verification Code:</label>
 			<div class="input-group">
 				<input autofocus class="form-control" id="phone-verify-code" name="phone-verify-code"

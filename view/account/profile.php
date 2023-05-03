@@ -17,7 +17,7 @@ $dir_base = rtrim(\OpenTHC\Config::get('openthc/dir/base'), '/');
 	<form method="post">
 	<input name="CSRF" type="hidden" value="<?= $data['CSRF'] ?>">
 
-	<div class="form-group">
+	<div class="mt-4">
 		<label>Name</label>
 		<div class="input-group">
 			<input class="form-control" name="contact-name" type="text" value="<?= h($data['Contact_Base']['name']) ?>">
@@ -25,7 +25,7 @@ $dir_base = rtrim(\OpenTHC\Config::get('openthc/dir/base'), '/');
 		</div>
 	</div>
 
-	<div class="form-group">
+	<div class="mt-4">
 		<label>Password</label>
 		<div class="input-group">
 			<input class="form-control" readonly type="text" value="<?= h('********') ?>">
@@ -35,7 +35,7 @@ $dir_base = rtrim(\OpenTHC\Config::get('openthc/dir/base'), '/');
 
 	</form>
 
-	<div class="form-group">
+	<div class="mt-4">
 		<label>Email / Username</label>
 		<div class="input-group">
 			<input class="form-control" name="contact-email" readonly type="email" value="<?= h($data['Contact_Auth']['username']) ?>">
@@ -43,7 +43,7 @@ $dir_base = rtrim(\OpenTHC\Config::get('openthc/dir/base'), '/');
 		</div>
 	</div>
 
-	<div class="form-group">
+	<div class="mt-4">
 		<label>Phone</label>
 		<div class="input-group">
 			<input class="form-control" name="contact-phone" readonly type="tel" value="<?= h($data['Contact_Base']['phone']) ?>">

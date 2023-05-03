@@ -46,7 +46,7 @@
 
 </div>
 <div class="card-footer">
-	<button class="btn btn-outline-primary" disabled id="btn-password-update" name="a" type="submit" value="update">Update <i class="icon icon-arrow-right"></i></button>
+	<button class="btn btn-outline-primary" disabled id="btn-password-update" name="a" type="submit" value="update">Save <i class="icon icon-arrow-right"></i></button>
 </div>
 </div>
 </div>

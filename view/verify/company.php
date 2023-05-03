@@ -20,7 +20,7 @@
 		<p>If you do not have a company, like an individual operator, or a CO-OP you may skip this step</p>
 	</div>
 
-	<div class="form-group">
+	<div class="mt-4">
 		<label>Company</label>
 		<input
 			autocomplete="off"
@@ -35,7 +35,7 @@
 			value="">
 	</div>
 
-	<div class="form-group">
+	<div class="mt-4">
 		<label>Address:</label>
 		<input
 			autocomplete="off"
@@ -50,7 +50,7 @@
 			value="">
 	</div>
 
-	<div class="form-group">
+	<div class="mt-4">
 		<label>Phone:</label>
 		<input
 			autocomplete="off"
@@ -65,7 +65,7 @@
 			value="">
 	</div>
 
-	<div class="form-group">
+	<div class="mt-4">
 		<label>Email:</label>
 		<input
 			autocomplete="off"
@@ -80,7 +80,7 @@
 			value="">
 	</div>
 
-	<div class="form-group">
+	<div class="mt-4">
 		<label>Government ID:</label>
 		<input
 			autocomplete="off"

@@ -14,7 +14,7 @@
 	<h1 class="card-header"><?= $data['Page']['title'] ?></h1>
 	<div class="card-body">
 
-		<div class="form-group">
+		<div class="mt-4">
 			<label>Country:</label>
 			<select class="form-control" name="contact-iso3166-1">
 			<?php
@@ -36,3 +36,25 @@
 	</div>
 </div>
 </form>
+
+<script>
+// Provides a Point
+// Have to feedback to OpenCAGE or something
+const successCallback = (position) => {
+	console.log(position);
+	// var arg = {
+	// 	'method': 'POST',
+	// };
+	// fetch('', arg, function(res) {
+	// 	console.log(res);
+	// });
+};
+
+const errorCallback = (error) => {
+	console.log(error);
+};
+
+navigator.geolocation.getCurrentPosition(successCallback, errorCallback, {
+	requestAddress: true
+});
+</script>

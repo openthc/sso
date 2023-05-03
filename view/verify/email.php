@@ -15,7 +15,7 @@
 
 <div class="card-body">
 
-	<div class="form-group">
+	<div class="mt-4">
 		<label>Email</label>
 		<div class="input-group">
 			<input autocomplete="off" class="form-control" id="contact-email" inputmode="email" name="contact-email" placeholder="eg: you@example.com" required type="email" value="<?= h($data['Contact']['email']) ?>">

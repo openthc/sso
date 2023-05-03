@@ -14,12 +14,12 @@
 	<h1 class="card-header"><?= $data['Page']['title'] ?></h1>
 	<div class="card-body">
 
-		<div class="form-group">
+		<div class="mt-4">
 			<label>Country:</label>
 			<input class="form-control" disabled type="text" value="<?= h($_SESSION['iso3166_1_pick']['name']) ?>">
 		</div>
 
-		<div class="form-group">
+		<div class="mt-4">
 			<label>Region:</label>
 			<select class="form-control" id="contact-iso3166-2" name="contact-iso3166-2">
 			<?php

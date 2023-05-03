@@ -20,12 +20,12 @@
 		<div class="alert alert-danger">This web application <strong>requires</strong> JavaScript to be enabled.</div>
 	</noscript>
 
-	<div class="form-group">
+	<div class="mt-4">
 		<label>Email</label>
 		<input autofocus class="form-control" id="username" inputmode="email" name="username" placeholder="- user@example.com -" type="email" value="<?= h($data['auth_username']) ?>">
 	</div>
 
-	<div class="form-group">
+	<div class="mt-4">
 		<label>Password</label>
 		<input class="form-control" id="password" name="password" type="password" value="<?= h($data['auth_password']) ?>">
 	</div>
@@ -39,7 +39,7 @@
 			</div>
 			<div class="col-md-6 r">
 				<a class="btn btn-outline-secondary" href="/auth/open?a=password-reset">Forgot Password</a>
-				<a class="btn btn-outline-secondary" href="/account/create?service=<?= $data['service'] ?>">Create an Account</a>
+				<!-- <a class="btn btn-outline-secondary" href="/account/create?service=<?= $data['service'] ?>">Create an Account</a> -->
 			</div>
 		</div>
 	</div>
