@@ -87,14 +87,22 @@ $app->group('/account', function() {
 	$this->get('', 'OpenTHC\SSO\Controller\Account\Profile');
 	$this->post('', 'OpenTHC\SSO\Controller\Account\Profile:post');
 
-	$this->get('/create', 'OpenTHC\SSO\Controller\Account\Create');
-	$this->post('/create', 'OpenTHC\SSO\Controller\Account\Create:post')->setName('account/create');
-
-	$this->get('/create/company', 'OpenTHC\SSO\Controller\Account\Company');
-	$this->post('/create/company', 'OpenTHC\SSO\Controller\Account\Company:post');
+	// $this->get('/create', 'OpenTHC\SSO\Controller\Account\Create');
+	// $this->post('/create', 'OpenTHC\SSO\Controller\Account\Create:post')->setName('account/create');
 
 	$this->get('/password', 'OpenTHC\SSO\Controller\Account\Password');
 	$this->post('/password', 'OpenTHC\SSO\Controller\Account\Password:post')->setName('account/password/update');
+
+})->add('OpenTHC\Middleware\Session');
+
+
+// Company
+$app->group('/company', function() {
+
+	// $this->get('/create', 'OpenTHC\SSO\Controller\Account\Company');
+	// $this->post('/create', 'OpenTHC\SSO\Controller\Account\Company:post');
+
+	$this->get('/join', 'OpenTHC\SSO\Controller\Company\Join');
 
 })->add('OpenTHC\Middleware\Session');
 
@@ -107,8 +115,8 @@ $app->group('/verify', function() {
 	$this->get('/email', 'OpenTHC\SSO\Controller\Verify\Email');
 	$this->post('/email', 'OpenTHC\SSO\Controller\Verify\Email:post');
 
-	$this->get('/password', 'OpenTHC\SSO\Controller\Verify\Password');
-	$this->post('/password', 'OpenTHC\SSO\Controller\Verify\Password:post');
+	$this->get('/password', 'OpenTHC\SSO\Controller\Account\Password');
+	$this->post('/password', 'OpenTHC\SSO\Controller\Account\Password:post');
 
 	$this->get('/location', 'OpenTHC\SSO\Controller\Verify\Location');
 	$this->post('/location', 'OpenTHC\SSO\Controller\Verify\Location:post');
@@ -136,7 +144,7 @@ $app->get('/done', 'OpenTHC\SSO\Controller\Done')
 
 
 // Enable Test Options
-$app->add('OpenTHC\SSO\Middleware\TestMode');
+// $app->add('OpenTHC\Middleware\Test');
 
 
 // Custom Middleware?
