@@ -84,7 +84,7 @@ class Open extends \OpenTHC\SSO\Controller\Base
 			$_GET['t'] = _decrypt($_GET['t'], $key);
 			$act = json_decode($_GET['t']);
 
-			$data['Page']['flash'] = '<div class="alert alert-warning">SSO Migration in Progress</div>';
+			$data['Page']['flash'] = '<div class="alert alert-warning">SSO migration in progress, Sign In once more.</div>';
 			$data['auth_username'] = $act->username;
 			$data['auth_password'] = $act->password;
 
