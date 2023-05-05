@@ -32,16 +32,13 @@ class Password extends \OpenTHC\SSO\Controller\Base
 		if (!empty($_GET['e'])) {
 			switch ($_GET['e']) {
 			case 'CAP-047':
-				$data['Page']['flash'] = 'Invalid password';
+				$data['Page']['flash'] = 'Invalid Password [CAP-047]';
 				break;
 			case 'CAP-052':
-				$data['Page']['flash'] = 'Invalid password';
-				break;
-			case 'CAP-057':
-				$data['Page']['flash'] = 'Invalid password';
+				$data['Page']['flash'] = 'Invalid Password [CAP-052]';
 				break;
 			case 'CAP-062':
-				$data['Page']['flash'] = 'Passwords do not match';
+				$data['Page']['flash'] = 'Passwords do not match [CAP-062]';
 				break;
 			}
 		}
@@ -75,10 +72,6 @@ class Password extends \OpenTHC\SSO\Controller\Base
 
 			if (strlen($p) < 8) {
 				return $this->redirect($RES, $ARG, 'CAP-052');
-			}
-
-			if (preg_match_all('/\w|\d/', $p) < 8) {
-				return $this->redirect($RES, $ARG, 'CAP-057');
 			}
 
 			if ($p != $_POST['p1']) {

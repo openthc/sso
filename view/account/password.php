@@ -132,7 +132,7 @@ function password_matcher(e)
 	$hint.removeClass('text-success text-warning');
 
 	$btn.prop('disabled', true);
-	$btn.removeClass('btn-primary').addClass('btn-outline-primary');
+	$btn.removeClass('btn-primary btn-outline-primary');
 
 	var p0 = $('#password0').val();
 	var p1 = $('#password1').val();

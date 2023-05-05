@@ -101,28 +101,6 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 			return $RES->withRedirect(sprintf('/verify/license?_=%s', $tok));
 		}
 
-		// Company Link Check?
-		// $sql = <<<SQL
-		// SELECT *
-		// FROM auth_company_contact
-		// WHERE contact_id = :ct0
-		// 	AND stat IN (:s0, :s1)
-		// SQL;
-		// $CC0 = $dbc_auth->fetchAll($sql, [
-		// 	':ct0' => $CT0['id'],
-		// 	':s0' => \OpenTHC\Company_Contact::STAT_PROC,
-		// 	':s1' => \OpenTHC\Company_Contact::STAT_LIVE,
-		// ]);
-		// if (empty($CC0)) {
-		// 	return $RES->withRedirect(sprintf('/verify/company?_=%s', $tok));
-		// }
-
-		// if (1 == count($CC0)) {
-		// 	if (200 !== $CC0[0]['stat']) {
-		// 		return $RES->withRedirect('/verify/done');
-		// 	}
-		// }
-
 		// Update Contact Status
 		// $CT0['stat'] = Contact::STAT_LIVE;
 		// $CT0->save();
@@ -137,7 +115,7 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 		// return $RES->withRedirect(sprintf('/auth/init?_=%s', $tok));
 
 		$ops = new \OpenTHC\Service\OpenTHC('ops');
-		$ops->post('/webhook/openthc', [
+		$res = $ops->post('/webhook/openthc', [
 			'action' => 'account-verify-complete',
 			'contact' => $act_data['contact']['id'],
 			'session' => $_SESSION,
