@@ -38,17 +38,19 @@ class Once extends \OpenTHC\SSO\Controller\Base
 		}
 
 		// Get Token
-		$act = new \OpenTHC\Auth_Context_Ticket($this->_container->DBC_AUTH, $_GET['_']);
-		if ( ! $act->isValid()) {
-			$data = [
-				'error_code' => 'CAO-040'
-			];
-			$RES = $RES->withStatus(400);
-			$RES = $RES->write( $this->render('done.php', $data) );
-			return $RES;
+		$act = \OpenTHC\SSO\Auth_Context_Ticket::get($_GET['_']);
+		if (empty($act)) {
+			$act = new \OpenTHC\Auth_Context_Ticket($this->_container->DBC_AUTH, $_GET['_']);
+			if ( ! $act->isValid()) {
+				$data = [
+					'error_code' => 'CAO-040'
+				];
+				$RES = $RES->withStatus(400);
+				$RES = $RES->write( $this->render('done.php', $data) );
+				return $RES;
+			}
+			$act = $act->getMeta();
 		}
-
-		$act = $act->getMeta();
 
 		// Intention Router
 		switch ($act['intent']) {
