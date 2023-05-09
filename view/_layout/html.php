@@ -9,7 +9,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="initial-scale=1, user-scalable=yes">
 <meta name="application-name" content="OpenTHC">
-<link rel="stylesheet" href="/vendor/bootstrap/bootstrap.min.css" integrity="sha256-wLz3iY/cO4e6vKZ4zRmo4+9XDpMcgKOvv/zEU3OMlRo=" crossorigin="anonymous">
+<link href="/vendor/bootstrap/bootstrap.min.css" integrity="sha256-wLz3iY/cO4e6vKZ4zRmo4+9XDpMcgKOvv/zEU3OMlRo=" crossorigin="anonymous" rel="stylesheet">
+<link href="/vendor/fontawesome/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous" rel="stylesheet">
 <style>
 body {
 	display: flex;
@@ -62,15 +63,23 @@ footer a {
 </head>
 <body>
 
-<nav class="navbar navbar-expand-md navbar-dark bg-dark sticky-top">
+<nav class="navbar navbar-dark bg-dark sticky-top">
+<div class="container-fluid">
 
-	<a class="btn btn-sm" href="/">
+	<a class="navbar-brand" href="/">
 		<img alt="OpenTHC Icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXM
 AAC4jAAAuIwF4pT92AAAE4UlEQVRYw8WXW2xUVRSGv7Vn2gKxCF6ipAW0mHgBbVR6TiECUuSQGInhYjNAEAqiQUnQ8OADzxLjE30hRhFa0wqhECOiiYMBNQVnpkBsECHGUAgMhdICFUrb6Zmzf
 OgM6WU6M5QS99O57L3+f63177XXFoY5wpHgw8BioEOEH60S58Zw7JhsJx4/cSgJTDgSrAZOAl8Atar8GY4Et/UhlzUByeAltuX0PoeDhQgrgE8z2NwEfGNbzuV7JpAg8QBQB5QC47J0rA34HVh
 kW46bNYGGhoOUlMxPAj8LvA9sSLNes3BiiyrVpbbzN0Ao/BOl9oKhIxBpODhNVbcBJcCoNIZPAOuBHOAr4Ok0czuBkKq+U2ovOJsyAuFI8HFgF/BqGkM9wHGBTZblHB2QKgf4BHgR8KWx8T2w2racawN3wSsZwKuBl23LmWFZztFIH6UnxBpMRG068F0aOwuBqakisBjYN2DyLSAELLct5+pd1YmGgxNRrQZsYMyA37Nsy6nPVAcuArZtOfNty7l6N3s7fOxn7JL5F2zLKQPmAK3DKURdBnMu+ZKsB9kMe/prfV/PJ7Rzb5Xwfg3zP5GRVKBHEuG63+Mv4FQ/AqZ2DbblNNuW8wTwcUI0OSMImgtcBnnXtpyptuVcm3xgFgB+AG/FDkxNRbEf+ce2nM9CkWCVqs42MiLgcWCtovWlltP21JH5+fGYW9g09/Dp/rmoXbMU1TqUdX6P2tiqnZ0jGfcpv8zN93yyRoxsVdd7o2nO4R8GasBDBIx86frljKmpWAFgvl0/bNCCxsUAFNWXvae55rT4ZCsCKN5gEWq/tZMQqTE1FXu52TUl+dG/c1VG0Cd/nXvnOe/mjWeKjszbj5HPgYIBp+gAArdjKTaLLMEnZ0xNRR2AW1Hdu+jr1SnBJx6YSdOcwxTum5FbVF8WxMgphIWDRNHR03HHqTuU3LiKpzBYeX5ElpraNS6eLsKNH/TerupKRSAnP2/Mk/Vlr4uRuiEbCFfxetQbRIBu9zKj4pDnH2qtDyP7yfVHTM1aRzTeHl9Z1Zvj38oEo+MQc1iE4nQp8rpcvFtu9+AUGGnRfzs7stCWBd72+Moq/MHeZuns7EMKZi8ZwFUVtzXWJn5pTtkRSWX5HxgplvFjQDIUAc9b7q2s2pVQ+XqMbEtbeONK96VO8DQSDYTsoer/OjxFW26inW76jk/M5j5i3TAksKfE23voOncLPAVYkvIwkspydOOeBuBNfAY6utBrHWhnT+poCONNzepHio7OexRhfKpjzm2PEYvexr0eQ/wGYF40ELpYsLs0fVsuleUlwA5gGqqQ40fy88DXL2BXUIonFzblS45pRBJdj4DG4vS0dqMxL0n+JFAeDYTOZOwHkpHQjXueB2YicgM3jl6/jbZ3gmqqpl4QUE/pudxJrLkL7VEQuQC8FA2EXogGQmf6ep7xYiJb30I/rEuS2g4sAh7CU3hwFJLrv4IxxZMLzo7FJ41eR3y029aVrCOtQE00EPoIoGCXTXRZeHg3oz6EJiCyGfgABXxyBSPFBRPOj9Y4jbg6NlHnt6ho5aVAuGVEL6eINOvGPRuA5xAa8XQUrofXrR5x9SEcU5gUXRbaLF5uS9Zm76qP6tUHUlmem+j/T0547LxPkKlAKBoIxSfsLqU5EMra5n9rjuwHDvgo6gAAAABJRU5ErkJggg==">
 	</a>
 
+	<?php
+	if ( ! empty($_SESSION['Contact']['id'])) {
+		echo '<a class="btn btn-sm btn-outline-secondary" href="/auth/shut"><i class="fas fa-power-off"></i> Sign Out</a>';
+	}
+	?>
+
+</div>
 </nav>
 
 <?php
