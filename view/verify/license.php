@@ -26,6 +26,7 @@
 			name="licnese-name"
 			placeholder="License Name"
 			required
+			tabindex="1"
 			value="<?= __h($data['company']['name']) ?>">
 	</div>
 
