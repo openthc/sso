@@ -26,8 +26,6 @@ class Permit extends \OpenTHC\SSO\Controller\Base
 
 		$_GET = $x;
 
-		$_ENV['fast-redirect'] = \OpenTHC\Config::get('app/fast-redirect');
-
 		// Load & Validate The Client
 		$Auth_Service = $this->_container->DBC_AUTH->fetchRow('SELECT id,name,code,hash FROM auth_service WHERE code = ?', array($_GET['client_id']));
 		if (empty($Auth_Service['id'])) {
@@ -74,7 +72,8 @@ class Permit extends \OpenTHC\SSO\Controller\Base
 
 		$ret = _url_assemble($ruri);
 
-		if ($_ENV['fast-redirect']) {
+		// Configured to hide Confirm Prompt
+		if (getenv('OPENTHC_REDIRECT_FAST')) {
 			return $RES->withRedirect($ret);
 		}
 

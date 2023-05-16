@@ -153,41 +153,38 @@ class Phone extends \OpenTHC\SSO\Controller\Verify\Base
 			'_' => $_GET['_'],
 		];
 
-		// Test Mode
-		if ($_ENV['test']) {
+		// Send Text
+		$arg = [];
+		$arg['target'] = $_SESSION['verify']['phone']['e164'];
+		$arg['body'] = sprintf('Account Verification Code: %s', $_SESSION['verify']['phone']['code']);
 
-			$ret_args['c'] = $_SESSION['verify']['phone']['code'];
+		try {
 
-		} else {
-
-			$arg = [];
-			$arg['target'] = $_SESSION['verify']['phone']['e164'];
-			$arg['body'] = sprintf('Account Verification Code: %s', $_SESSION['verify']['phone']['code']);
-
-			try {
-
-				$ops = new \OpenTHC\Service\OpenTHC('ops');
-				$res = $ops->post('/api/v2018/phone/send', [ 'form_params' => $arg ]);
-				switch ($res['code']) {
-					case 200:
-						$ret_args['e'] = 'CAV-294';
-						$ret_args['s'] = 't'; // Send=True
-						break;
-					case 500:
-					default:
-						$ret_args['e'] = 'CAV-297';
-						$ret_args['s'] = 'f'; // Send=False
-						unset($_SESSION['verify']['phone']['code']);
-						unset($_SESSION['verify']['phone']['e164']);
-						$_SESSION['verify']['phone']['warn'] = 'Double check this number and try again';
-						break;
-				}
-
-			} catch (\Exception $e) {
-				$ret_args['e'] = 'CAV-304';
-				$reg_args['s'] = 'e'; // Exception Notice
+			$ops = new \OpenTHC\Service\OpenTHC('ops');
+			$res = $ops->post('/api/v2018/phone/send', [ 'form_params' => $arg ]);
+			switch ($res['code']) {
+				case 200:
+					$ret_args['e'] = 'CAV-294';
+					$ret_args['s'] = 't'; // Send=True
+					break;
+				case 500:
+				default:
+					$ret_args['e'] = 'CAV-297';
+					$ret_args['s'] = 'f'; // Send=False
+					unset($_SESSION['verify']['phone']['code']);
+					unset($_SESSION['verify']['phone']['e164']);
+					$_SESSION['verify']['phone']['warn'] = 'Double check this number and try again';
+					break;
 			}
 
+		} catch (\Exception $e) {
+			$ret_args['e'] = 'CAV-304';
+			$reg_args['s'] = 'e'; // Exception Notice
+		}
+
+		// Test Mode
+		if ('TEST' == getenv('OPENTHC_TEST')) {
+			$ret_args['t'] = $_SESSION['verify']['phone']['code'];
 		}
 
 		return $RES->withRedirect('/verify/phone?' . http_build_query($ret_args));

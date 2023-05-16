@@ -125,43 +125,38 @@ class Create extends \OpenTHC\SSO\Controller\Base
 		];
 		$ret_path = '/done';
 
-		// Test Mode
-		if ($_ENV['test']) {
+		// Send Email
+		$arg = [];
+		$arg['address_target'] = $Contact['email'];
+		$arg['file'] = 'sso/account-create.tpl';
+		$arg['data']['app_url'] = OPENTHC_SERVICE_ORIGIN;
+		$arg['data']['mail_subject'] = 'Account Confirmation';
+		$arg['data']['auth_context_ticket'] = $act['id'];
 
-			$ret_args['r'] = sprintf('/auth/once?%s', http_build_query([
-				'_' => $act['id'],
-			]));
+		try {
 
-		} else {
-
-			$arg = [];
-			$arg['address_target'] = $Contact['email'];
-			$arg['file'] = 'sso/account-create.tpl';
-			$arg['data']['app_url'] = OPENTHC_SERVICE_ORIGIN;
-			$arg['data']['mail_subject'] = 'Account Confirmation';
-			$arg['data']['auth_context_ticket'] = $act['id'];
-
-			try {
-
-				$ops = new \OpenTHC\Service\OpenTHC('ops');
-				$res = $ops->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
-				switch ($res['code']) {
-					case 200:
-					case 201:
-						// Cool
-						break;
-					default:
-						$ret_args['e'] = 'CAC-217';
-						$ret_args['s'] = 'e';
-						break;
-				}
-
-			} catch (\Exception $e) {
-				// Ignore
-				$ret_args['e'] = 'CAC-190';
-				$ret_args['s'] = 'e';
+			$ops = new \OpenTHC\Service\OpenTHC('ops');
+			$res = $ops->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
+			switch ($res['code']) {
+				case 200:
+				case 201:
+					// Cool
+					break;
+				default:
+					$ret_args['e'] = 'CAC-217';
+					$ret_args['s'] = 'e';
+					break;
 			}
 
+		} catch (\Exception $e) {
+			// Ignore
+			$ret_args['e'] = 'CAC-190';
+			$ret_args['s'] = 'e';
+		}
+
+		// Test Mode
+		if ('TEST' == getenv('OPENTHC_TEST')) {
+			$ret_args['t'] = $act['id'];
 		}
 
 		$RES = $RES->withAttribute('Contact', [
