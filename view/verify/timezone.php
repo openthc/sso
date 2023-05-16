@@ -21,9 +21,10 @@
 			<?php
 				foreach ($data['time_zone_list'] as $tz) {
 					$sel = ($tz == $data['time_zone_pick'] ? ' selected' : '');
-					$tz_nice = preg_replace('/^\w+\//', '', $tz);
-					$tz_nice = str_replace('/', ' / ', $tz_nice);
-					$tz_nice = str_replace('_', ' ', $tz_nice);
+					$tz_nice = $tz;
+					$tz_nice = preg_replace('/^\w+\//', '', $tz_nice); // Strip First Region
+					$tz_nice = str_replace('/', ' / ', $tz_nice); // Space Remaining '/'
+					$tz_nice = str_replace('_', ' ', $tz_nice); // Add Spaces
 					printf('<option%s value="%s">%s</option>', $sel, $tz, $tz_nice);
 				}
 			?>
@@ -50,18 +51,21 @@
 </form>
 
 <script>
-function _time_zone_pick()
+
+function _timezone_pick()
 {
-	var btn = document.querySelector('#btn-timezone-pick');
-	btn.addEventListener('click', function(e) {
-		var tz0 = Intl.DateTimeFormat().resolvedOptions().timeZone;
-		var opt = document.createElement('option');
-		opt.value = tz0;
-		opt.innerText = tz0;
-		var sel = document.querySelector('#contact-timezone');
-		sel.append(opt);
-		sel.value = tz0;
-	});
+	var tz0 = Intl.DateTimeFormat().resolvedOptions().timeZone;
+	var opt = document.createElement('option');
+	opt.value = tz0;
+	opt.innerText = tz0;
+	var sel = document.querySelector('#contact-timezone');
+	sel.append(opt);
+	sel.value = tz0;
 }
-_time_zone_pick();
+
+var btn = document.querySelector('#btn-timezone-pick');
+btn.addEventListener('click', _timezone_pick);
+
+_timezone_pick();
+
 </script>

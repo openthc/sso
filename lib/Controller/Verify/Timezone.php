@@ -19,10 +19,10 @@ class Timezone extends \OpenTHC\SSO\Controller\Verify\Base
 
 		$act = $this->loadTicket();
 
-		if (empty($_SESSION['iso3166']['code2'])) {
+		if (empty($_SESSION['iso3166_1']['id'])) {
 			$data['time_zone_list'] = \DateTimeZone::listIdentifiers();
 		} else {
-			$data['time_zone_list'] = \DateTimeZone::listIdentifiers(\DateTimeZone::PER_COUNTRY, $_SESSION['iso3166']['code2']);
+			$data['time_zone_list'] = \DateTimeZone::listIdentifiers(\DateTimeZone::PER_COUNTRY, $_SESSION['iso3166_1']['id']);
 		}
 
 		$data['time_zone_pick'] = $_SESSION['tz'];
