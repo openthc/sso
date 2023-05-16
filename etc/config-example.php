@@ -1,8 +1,9 @@
 <?php
 /**
- * OpenTHC SS0 Configuration Example
+ * OpenTHC SSO Configuration Example
  */
 
+// Init
 $cfg = [];
 
 // Database
@@ -21,7 +22,7 @@ $cfg['database'] = [
 	]
 ];
 
-// OpenTHC Services
+// OpenTHC
 $cfg['openthc'] = [
 	'app' => [
 		'id' => '',
