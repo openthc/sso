@@ -28,11 +28,13 @@ class Location extends \OpenTHC\SSO\Controller\Verify\Base
 			$data['iso3166_2_pick'] = $_SESSION['iso3166_2'];
 		}
 
+		// Pick Top Level ISO
 		if (empty($_SESSION['iso3166_1_pick'])) {
 			$data['iso3166_1_list'] = $this->_load_iso3166_list();
 			return $RES->write( $this->render('verify/location.php', $data) );
 		}
 
+		// Pick Second Level ISO
 		if (empty($_SESSION['iso3166_2_pick'])) {
 			$data['iso3166_2_list'] = $this->_load_iso3166_2_list($_SESSION['iso3166_1_pick']['id']);
 			return $RES->write( $this->render('verify/location-2.php', $data) );
@@ -50,6 +52,8 @@ class Location extends \OpenTHC\SSO\Controller\Verify\Base
 		$act = $this->loadTicket();
 
 		switch ($_POST['a']) {
+			case 'geo-resolve':
+				return $this->_geo_resolve($RES);
 			case 'iso3166-1-save-next':
 
 				$iso3166_1_pick = [];
@@ -106,6 +110,55 @@ class Location extends \OpenTHC\SSO\Controller\Verify\Base
 		}
 
 		__exit_text('Invalid Request [CVL-124]', 400);
+	}
+
+	/**
+	 *
+	 */
+	private function _geo_resolve($RES)
+	{
+		$cfg = \OpenTHC\Config::get('opencage');
+		// __exit_json($cfg);
+
+		$arg = [
+			'key' => $cfg['api-key'],
+			'q' => sprintf('%f+%f', $_POST['lat'], $_POST['lon']),
+		];
+		$url = sprintf('https://api.opencagedata.com/geocode/v1/json?%s', http_build_query($arg));
+		// __exit_text($url);
+		$req = __curl_init($url);
+		$res = curl_exec($req);
+		$res = json_decode($res);
+		$inf = curl_getinfo($req);
+		curl_close($req);
+
+		if ( ! empty($res->results[0])) {
+
+			$res = $res->results[0];
+
+			$_SESSION['iso3166_1'] = [
+				'id' => $res->components->{'ISO_3166-1_alpha-2'},
+				'name' => '',
+			];
+			$_SESSION['iso3166_2'] = [
+				'id' => $res->components->{'ISO_3166-2'}[0],
+				'name' => '',
+			];
+
+			__exit_text([
+				'data' => [
+					'iso3166_1' => $_SESSION['iso3166_1'],
+					'iso3166_2' => $_SESSION['iso3166_2'],
+				],
+				'meta' => $res,
+			]);
+		}
+
+		__exit_json([
+			'data' => null,
+			'meta' => [ 'note' => 'Not Resolved' ]
+		]);
+
 	}
 
 	/**
