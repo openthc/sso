@@ -21,7 +21,7 @@
 	</div>
 
 	<div class="mt-4">
-		<label>Company</label>
+		<label>Company Name:</label>
 		<input
 			autocomplete="off"
 			autofocus
@@ -36,10 +36,9 @@
 	</div>
 
 	<div class="mt-4">
-		<label>Address:</label>
+		<label>Full Address:</label>
 		<input
 			autocomplete="off"
-			autofocus
 			class="form-control"
 			id="company-address"
 			name="company-address"
@@ -54,7 +53,6 @@
 		<label>Phone:</label>
 		<input
 			autocomplete="off"
-			autofocus
 			class="form-control"
 			id="company-phone"
 			name="company-phone"
@@ -62,7 +60,7 @@
 			required
 			tabindex="1"
 			type="text"
-			value="">
+			value="<?= __h($data['company-phone']) ?>">>
 	</div>
 
 	<div class="mt-4">
@@ -77,7 +75,7 @@
 			required
 			tabindex="1"
 			type="text"
-			value="">
+			value="<?= __h($data['company-email']) ?>">
 	</div>
 
 	<div class="mt-4">
@@ -86,8 +84,8 @@
 			autocomplete="off"
 			autofocus
 			class="form-control"
-			id="company-email"
-			name="company-email"
+			id="company-guid"
+			name="company-guid"
 			placeholder="Company Government ID"
 			required
 			tabindex="1"

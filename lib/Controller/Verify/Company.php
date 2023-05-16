@@ -18,6 +18,8 @@ class Company extends \OpenTHC\SSO\Controller\Verify\Base
 		$data['Page']['title'] = 'Verify Company';
 
 		$act = $this->loadTicket();
+		$data['company-email'] = $act['contact']['email'];
+		$data['company-phone'] = $act['contact']['phone'];
 
 		return $RES->write( $this->render('verify/company.php', $data) );
 
@@ -51,7 +53,7 @@ class Company extends \OpenTHC\SSO\Controller\Verify\Base
 					'name' => $_POST['company-name'] ?: $act['contact']['email'],
 					'iso3166' => $act['contact']['iso3166'],
 					'tz'=> $act['contact']['tz'],
-					'cre_meta' => json_encode($_POST),
+					// 'cre_meta' => json_encode($_POST),
 				];
 
 				$dbc->insert('auth_company', $CY0);
