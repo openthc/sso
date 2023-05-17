@@ -11,6 +11,9 @@ class Base extends \OpenTHC\Controller\Base
 {
 	protected $data;
 
+	/**
+	 * Constructor
+	 */
 	function __construct(\Slim\Container $c)
 	{
 		parent::__construct($c);
@@ -28,6 +31,23 @@ class Base extends \OpenTHC\Controller\Base
 
 		$this->data = $data;
 
+	}
+
+	/**
+	 * Sends a 400 Response
+	 */
+	protected function send400($RES, $data)
+	{
+		// $type_want
+		$RES = $RES->withBody(new \Slim\Http\RequestBody()); // ->getBody()->rewind();
+		$RES = $RES->withStatus(400);
+		$RES = $RES->write( $this->render('done.php', $data) );
+		return $RES;
+		// if want JSON?
+		// return $RES->withJSON([
+		// 	'data' => null,
+		// 	'meta' => [ 'note' => ' []' ]
+		// ], 400);
 	}
 
 	/**
