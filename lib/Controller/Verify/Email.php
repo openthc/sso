@@ -45,15 +45,10 @@ class Email extends \OpenTHC\SSO\Controller\Verify\Base
 				return $this->emailVerifySend($RES, $act);
 		}
 
-		__exit_text('Invalid Request [CVE-041]', 400);
-
-		// Not Handled
-		// $data = $this->data;
-		// $data['Page']['title'] = 'Error';
-		// $data['body'] = '<div class="alert alert-danger">Invalid Request [CAV-143]</div>';
-
-		// $RES = $RES->write( $this->render('done.php', $data) );
-		// return $RES->withStatus(400);
+		return $this->sendFailure($RES, [
+			'error_code' => 'CVE-041',
+			'fail' => 'Invalid Account',
+		]);
 
 	}
 

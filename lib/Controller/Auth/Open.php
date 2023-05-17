@@ -124,12 +124,10 @@ class Open extends \OpenTHC\SSO\Controller\Base
 			break;
 		}
 
-		$data = $this->data;
-		$data['Page']['title'] = 'Error';
-		$data['fail'] = 'Invalid Request [CAO-095]';
-		$html = $this->render('done.php', $data);
-		$RES = $RES->write($html);
-		return $RES->withStatus(400);
+		return $this->sendFailure($RES, [
+			'error_code' => 'CAO-095',
+			'fail' => 'Invalid Request',
+		]);
 
 	}
 
@@ -255,8 +253,10 @@ class Open extends \OpenTHC\SSO\Controller\Base
 			return $RES->withRedirect('/auth/init?_=' . $act['id']);
 
 		} catch (\Exception $e) {
-			__exit_text($e, 500);
-			return $RES->withRedirect('/auth/shut?e=CAO-243');
+			return $this->sendFailure($RES, [
+				'error_code' => 'CAO-243',
+				'fail' => $e->getMessage(),
+			], 500);
 		}
 	}
 

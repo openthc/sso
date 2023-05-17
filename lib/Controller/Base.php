@@ -34,20 +34,20 @@ class Base extends \OpenTHC\Controller\Base
 	}
 
 	/**
-	 * Sends a 400 Response
+	 * Sends an Failure Response
 	 */
-	protected function send400($RES, $data)
+	protected function sendFailure($RES, $data, $code=400)
 	{
 		// $type_want
-		$RES = $RES->withBody(new \Slim\Http\RequestBody()); // ->getBody()->rewind();
-		$RES = $RES->withStatus(400);
+		$RES = $RES->withBody(new \Slim\Http\RequestBody());
+		$RES = $RES->withStatus($code);
 		$RES = $RES->write( $this->render('done.php', $data) );
 		return $RES;
 		// if want JSON?
 		// return $RES->withJSON([
 		// 	'data' => null,
 		// 	'meta' => [ 'note' => ' []' ]
-		// ], 400);
+		// ], $code);
 	}
 
 	/**

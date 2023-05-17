@@ -24,17 +24,17 @@ class Once extends \OpenTHC\SSO\Controller\Base
 
 		// Token Links
 		if (empty($_GET['_'])) {
-			return $RES->withJSON([
-				'data' => null,
-				'meta' => [ 'note' => 'Invalid Request [CAO-016]' ]
-			], 400);
+			return $this->sendFailure($RES, [
+				'error_code' => 'CAO-016',
+				'fail' => 'Invalid Request',
+			]);
 		}
 
 		if (!preg_match('/^([\w\-]{32,128})$/i', $_GET['_'], $m)) {
-			return $RES->withJSON([
-				'data' => null,
-				'meta' => [ 'note' => 'Invalid Request [CAO-022]' ]
-			], 400);
+			return $this->sendFailure($RES, [
+				'error_code' => 'CAO-022',
+				'fail' => 'Invalid Request',
+			]);
 		}
 
 		// Get Token
@@ -42,12 +42,10 @@ class Once extends \OpenTHC\SSO\Controller\Base
 		if (empty($act)) {
 			$act = new \OpenTHC\Auth_Context_Ticket($this->_container->DBC_AUTH, $_GET['_']);
 			if ( ! $act->isValid()) {
-				$data = [
-					'error_code' => 'CAO-040'
-				];
-				$RES = $RES->withStatus(400);
-				$RES = $RES->write( $this->render('done.php', $data) );
-				return $RES;
+				return $this->sendFailure($RES, [
+					'error_code' => 'CAO-040',
+					'fail' => 'Invalid Request',
+				]);
 			}
 			$act = $act->getMeta();
 		}
@@ -70,15 +68,10 @@ class Once extends \OpenTHC\SSO\Controller\Base
 				return $RES->withJSON($act);
 		}
 
-		$data = $this->data;
-
-		$data['Page']['title'] = 'Error';
-		$data['body'] = '<div class="alert alert-danger">Invalid Request [CAO-061]</div>';
-
-		$RES = $RES->withStatus(400);
-		$RES = $RES->write( $this->render('done.php', $data) );
-
-		return $RES;
+		return $this->sendFailure($RES, [
+			'error_code' => 'CAO-061',
+			'fail' => 'Invalid Request',
+		]);
 
 	}
 
@@ -95,13 +88,10 @@ class Once extends \OpenTHC\SSO\Controller\Base
 		$arg = [ ':c0' => $act_data['contact']['id'] ];
 		$chk = $dbc_auth->fetchOne($sql, $arg);
 		if (empty($chk)) {
-			$data = [
-				'error_code' => 'CAO-094'
-			];
-			$RES = $RES->withStatus(400);
-			$RES = $RES->write( $this->render('done.php', $data) );
-			return $RES;
-			__exit_text('Invalid Account [CAO-079]', 400);
+			return $this->sendFailure($RES, [
+				'error_code' => 'CAO-094',
+				'fail' => 'Invalid Account',
+			]);
 		}
 
 		// Log It (outside of transaction)
@@ -126,6 +116,12 @@ class Once extends \OpenTHC\SSO\Controller\Base
 
 		$dbc_auth->query('COMMIT');
 		$dbc_main->query('COMMIT');
+
+		$RES = $RES->withAttribute('Contact', [
+			'id' => $act_data['contact']['id'],
+			// 'username' => $act_data['contact'],
+			// 'email' =>
+		]);
 
 		// Verify after Create
 		$tok = \OpenTHC\SSO\Auth_Context_Ticket::set($act_data);

@@ -83,7 +83,10 @@ class Company extends \OpenTHC\SSO\Controller\Verify\Base
 
 		}
 
-		__exit_text('Invalid Request [CVC-056]', 400);
+		return $this->sendFailure($RES, [
+			'error_code' => 'CVC-056'
+		]);
+
 	}
 
 }
