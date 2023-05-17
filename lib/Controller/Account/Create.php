@@ -8,6 +8,7 @@
 namespace OpenTHC\SSO\Controller\Account;
 
 use OpenTHC\SSO\CSRF;
+use OpenTHC\SSO\Auth_Context_Ticket;
 
 class Create extends \OpenTHC\SSO\Controller\Base
 {
@@ -104,8 +105,7 @@ class Create extends \OpenTHC\SSO\Controller\Base
 		));
 
 		// Auth Hash Link
-		$act = new Auth_Context_Ticket($dbc_auth);
-		$act->create(array(
+		$tok = Auth_Context_Ticket::set(array(
 			'intent' => 'account-create',
 			'service' => $_GET['service'],
 			'contact' => [
@@ -131,7 +131,7 @@ class Create extends \OpenTHC\SSO\Controller\Base
 		$arg['file'] = 'sso/account-create.tpl';
 		$arg['data']['app_url'] = OPENTHC_SERVICE_ORIGIN;
 		$arg['data']['mail_subject'] = 'Account Confirmation';
-		$arg['data']['auth_context_ticket'] = $act['id'];
+		$arg['data']['auth_context_ticket'] = $tok;
 
 		try {
 
@@ -144,19 +144,17 @@ class Create extends \OpenTHC\SSO\Controller\Base
 					break;
 				default:
 					$ret_args['e'] = 'CAC-217';
-					$ret_args['s'] = 'e';
 					break;
 			}
 
 		} catch (\Exception $e) {
 			// Ignore
 			$ret_args['e'] = 'CAC-190';
-			$ret_args['s'] = 'e';
 		}
 
 		// Test Mode
 		if ('TEST' == getenv('OPENTHC_TEST')) {
-			$ret_args['t'] = $act['id'];
+			$ret_args['t'] = $tok;
 		}
 
 		$RES = $RES->withAttribute('Contact', [
