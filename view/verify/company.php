@@ -60,7 +60,7 @@
 			required
 			tabindex="1"
 			type="text"
-			value="<?= __h($data['company-phone']) ?>">>
+			value="<?= __h($data['company-phone']) ?>">
 	</div>
 
 	<div class="mt-4">
