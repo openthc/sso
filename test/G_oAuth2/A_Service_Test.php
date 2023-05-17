@@ -14,7 +14,7 @@ class A_Service_Test extends \OpenTHC\SSO\Test\Base_Case
 	{
 		$sso_ua = $this->_ua();
 
-		$url = \OpenTHC\Config::get('openthc/app/base');
+		$url = \OpenTHC\Config::get('openthc/app/origin');
 		$this->assertNotEmpty($url);
 
 		$app_ua = new \GuzzleHttp\Client(array(
@@ -44,7 +44,7 @@ class A_Service_Test extends \OpenTHC\SSO\Test\Base_Case
 	{
 		$sso_ua = $this->_ua();
 
-		$url = \OpenTHC\Config::get('openthc/b2b/base');
+		$url = \OpenTHC\Config::get('openthc/b2b/origin');
 		$this->assertNotEmpty($cfg);
 
 		$b2b_ua = new \GuzzleHttp\Client(array(
@@ -70,7 +70,7 @@ class A_Service_Test extends \OpenTHC\SSO\Test\Base_Case
 	{
 		$sso_ua = $this->_ua();
 
-		$url = \OpenTHC\Config::get('openthc/ops/base');
+		$url = \OpenTHC\Config::get('openthc/ops/origin');
 		$ops_ua = new \GuzzleHttp\Client(array(
 			'base_uri' => $url,
 			'allow_redirects' => false,

@@ -47,6 +47,10 @@ $cfg['openthc'] = [
 	'sso' => [
 		'id' => '',
 		'origin' => 'https://sso.openthc.example.com',
+	],
+	'www' => [
+		'id' => '',
+		'origin' => 'https://openthc.example.com',
 	]
 ];
 

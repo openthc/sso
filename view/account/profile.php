@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-$dir_base = rtrim(\OpenTHC\Config::get('openthc/dir/base'), '/');
+$dir_origin = rtrim(\OpenTHC\Config::get('openthc/dir/origin'), '/');
 
 ?>
 
@@ -65,7 +65,7 @@ if ($data['company_list']) {
 			<?php
 			foreach ($data['company_list'] as $c) {
 			?>
-				<h3><a href="<?= sprintf('%s/company/%s', $dir_base, $c['id']) ?>" target="_blank"><?= h($c['name']) ?></a></h3>
+				<h3><a href="<?= sprintf('%s/company/%s', $dir_origin, $c['id']) ?>" target="_blank"><?= h($c['name']) ?></a></h3>
 			<?php
 			}
 			?>

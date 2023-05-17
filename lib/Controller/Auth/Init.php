@@ -156,7 +156,7 @@ SQL;
 
 				// Requested Service ? DEFAULT
 				// if (empty($act_data['service'])) {
-				// 	$cfg = \OpenTHC\Config::get('openthc/app/base');
+				// 	$cfg = \OpenTHC\Config::get('openthc/app/origin');
 				// 	if (!empty($cfg)) {
 				// 		$act_data['service'] = $cfg;
 				// 	}

@@ -61,47 +61,47 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 		// $data['service_list'] = [];
 		// $cfg = \OpenTHC\Config::get('openthc/*');
 
-		$x = \OpenTHC\Config::get('openthc/app/base');
+		$x = \OpenTHC\Config::get('openthc/app/origin');
 		if ($x) {
 			$data['service_list_default'][] = [
-				'link' => sprintf('%s/auth/sso', rtrim($x, '/')),
+				'link' => sprintf('%s/auth/sso', $x),
 				'name' => 'App',
 				'hint' => 'Connect to the primary seed-to-sale application for crop and inventory management'
 			];
 		}
 
-		$x = \OpenTHC\Config::get('openthc/dir/base');
+		$x = \OpenTHC\Config::get('openthc/dir/origin');
 		if ($x) {
 			$data['service_list_default'][] = [
-				'link' => sprintf('%s/auth/open?v=sso', rtrim($x, '/')),
+				'link' => sprintf('%s/auth/open?v=sso', $x),
 				'name' => 'Directory',
 				'hint' => 'Connect to the Directory to update your semi-public contact and company profiles'
 			];
 		}
 
-		$x = \OpenTHC\Config::get('openthc/lab/base');
+		$x = \OpenTHC\Config::get('openthc/lab/origin');
 		if ($x) {
 			$data['service_list_default'][] = [
-				'link' => sprintf('%s/auth/open?v=sso', rtrim($x, '/')),
+				'link' => sprintf('%s/auth/open?v=sso', $x),
 				'name' => 'Laboratory Portal',
 				'hint' => 'Laboratory LIMS and Lab Report management',
 			];
 
 		}
 
-		$x = \OpenTHC\Config::get('openthc/pos/base');
+		$x = \OpenTHC\Config::get('openthc/pos/origin');
 		if ($x) {
 			$data['service_list_default'][] = [
-				'link' => sprintf('%s/auth/open?v=sso', rtrim($x, '/')),
+				'link' => sprintf('%s/auth/open?v=sso', $x),
 				'name' => 'Retail POS',
 				'hint' => 'Connect to the Point of Sale to perform front-of-the-house retail operations',
 			];
 		}
 
-		$x = \OpenTHC\Config::get('openthc/b2b/base');
+		$x = \OpenTHC\Config::get('openthc/b2b/origin');
 		if ($x) {
 			$data['service_list_default'][] = [
-				'link' => sprintf('%s/auth/open?v=sso', rtrim($x, '/')),
+				'link' => sprintf('%s/auth/open?v=sso', $x),
 				'name' => 'B2B Marketplace',
 				'hint' => 'Connect to the B2B Marketplace to connect with vendors and suppliers',
 			];
