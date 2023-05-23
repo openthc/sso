@@ -103,7 +103,7 @@ if (!empty($data['Page']['flash'])) {
 </footer>
 
 <?php
-if (!empty($_ENV['test'])) {
+if ('TEST' == getenv('OPENTHC_TEST')) {
 ?>
 	<div id="alert-test-mode">
 		<div class="alert alert-danger">TEST MODE</div>
