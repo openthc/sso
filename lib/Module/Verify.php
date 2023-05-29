@@ -38,7 +38,5 @@ class Verify extends \OpenTHC\Module\Base
 		$app->get('/license', 'OpenTHC\SSO\Controller\Verify\License')->setName('verify/license');
 		$app->post('/license', 'OpenTHC\SSO\Controller\Verify\License:post');
 
-		$app->get('/done', 'OpenTHC\SSO\Controller\Verify\Done')->setName('verify/done');
-
 	}
 }
