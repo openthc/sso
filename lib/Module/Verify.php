@@ -18,7 +18,7 @@ class Verify extends \OpenTHC\Module\Base
 		$app->get('', 'OpenTHC\SSO\Controller\Verify\Main')->setName('verify/main');
 
 		$app->get('/email', 'OpenTHC\SSO\Controller\Verify\Email')->setName('verify/email');
-		$app->post('/email', 'OpenTHC\SSO\Controller\Verify\Email:post');
+		$app->post('/email', 'OpenTHC\SSO\Controller\Verify\Email:post')->setName('verify/email:post');
 
 		$app->get('/password', 'OpenTHC\SSO\Controller\Account\Password')->setName('verify/password');
 		$app->post('/password', 'OpenTHC\SSO\Controller\Account\Password:post');
@@ -30,13 +30,13 @@ class Verify extends \OpenTHC\Module\Base
 		$app->post('/timezone', 'OpenTHC\SSO\Controller\Verify\Timezone:post');
 
 		$app->get('/phone', 'OpenTHC\SSO\Controller\Verify\Phone')->setName('verify/phone');
-		$app->post('/phone', 'OpenTHC\SSO\Controller\Verify\Phone:post');
+		$app->post('/phone', 'OpenTHC\SSO\Controller\Verify\Phone:post')->setName('verify/phone:post');
 
 		$app->get('/company', 'OpenTHC\SSO\Controller\Verify\Company')->setName('verify/company');
-		$app->post('/company', 'OpenTHC\SSO\Controller\Verify\Company:post');
+		$app->post('/company', 'OpenTHC\SSO\Controller\Verify\Company:post')->setName('verify/company:post');
 
 		$app->get('/license', 'OpenTHC\SSO\Controller\Verify\License')->setName('verify/license');
-		$app->post('/license', 'OpenTHC\SSO\Controller\Verify\License:post');
+		$app->post('/license', 'OpenTHC\SSO\Controller\Verify\License:post')->setName('verify/license:post');
 
 	}
 }
