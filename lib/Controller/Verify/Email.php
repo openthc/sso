@@ -129,27 +129,8 @@ class Email extends \OpenTHC\SSO\Controller\Verify\Base
 			'e' => 'CAV-228'
 		];
 
-		// Send Email
-		$arg = [];
-		$arg['address_target'] = $ARG['contact']['email'];
-		$arg['file'] = 'sso/contact-email-verify.tpl';
-		$arg['data']['app_url'] = OPENTHC_SERVICE_ORIGIN;
-		$arg['data']['mail_subject'] = 'Email Verification';
-		$arg['data']['auth_context_ticket'] = $acs['id'];
-
-		try {
-
-			$ops = new \OpenTHC\Service\OpenTHC('ops');
-			$res = $ops->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
-
-			if (201 == $res['code']) {
-				$ret_args['s'] = 't';
-			}
-
-		} catch (\Exception $e) {
-			$ret_args['e'] = 'CAV-255';
-			$ret_args['s'] = 'f';
-		}
+		$RES = $RES->withAttribute('Auth_Context_Ticket', $act['id']);
+		$RES = $RES->withAttribute('Contact', $ARG['contact']);
 
 		// Test Mode
 		if ('TEST' == getenv('OPENTHC_TEST')) {
