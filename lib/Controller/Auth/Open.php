@@ -293,37 +293,18 @@ class Open extends \OpenTHC\SSO\Controller\Base
 
 		$ret_args = [
 			'e' => 'CAO-100',
-			'l' => '200',
 		];
-		$ret_path = '/done';
-
-		// Send Email
-		$arg = [];
-		$arg['address_target'] = $Contact['username'];
-		$arg['file'] = 'sso/contact-password-reset.tpl';
-		$arg['data']['app_url'] = OPENTHC_SERVICE_ORIGIN;
-		$arg['data']['mail_subject'] = 'Password Reset Request';
-		$arg['data']['auth_context_ticket'] = $act['id'];
-
-		try {
-
-			$cic = new \OpenTHC\Service\OpenTHC('ops');
-			$res = $cic->post('/api/v2018/email/send', [ 'form_params' => $arg ]);
-
-			$ret_args['s'] = 't';
-
-		} catch (\Exception $e) {
-			// Ignore
-			$ret_args['e'] = 'CAO-236';
-			$ret_args['s'] = 'f';
-		}
 
 		// Test Mode
 		if ('TEST' == getenv('OPENTHC_TEST')) {
 			$ret_args['t'] = $act['id'];
 		}
 
-		return $RES->withRedirect($ret_path . '?' . http_build_query($ret_args));
+		$RES = $RES->withAttribute('auth-open-mode', 'password-reset');
+		$RES = $RES->withAttribute('Auth_Context_Ticket', $act['id']);
+		$RES = $RES->withAttribute('Contact', $Contact);
+
+		return $RES->withRedirect('/done?' . http_build_query($ret_args));
 
 	}
 
