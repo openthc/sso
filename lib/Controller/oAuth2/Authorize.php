@@ -25,7 +25,9 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 		}
 
 		// Validate Service
-		$Auth_Service = $dbc->fetchRow('SELECT id, name, code, hash, context_list FROM auth_service WHERE code = ?', array($_GET['client_id']));
+		$sql = 'SELECT id, name, code, hash, context_list FROM auth_service WHERE (id = :c0 OR code = :c0)';
+		$arg = [ ':c0' => $_GET['client_id'] ];
+		$Auth_Service = $dbc->fetchRow($sql, $arg);
 		if (empty($Auth_Service['id'])) {
 			_exit_json(array(
 				'error' => 'invalid_client',
