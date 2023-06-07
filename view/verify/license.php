@@ -14,7 +14,7 @@
 	<h1 class="card-header"><?= $data['Page']['title'] ?></h1>
 	<div class="card-body">
 
-	<p>All accounts in OpenTHC must be linked to a regulatory license.</p>
+	<p style="font-size: 120%;">All accounts in OpenTHC must be linked to a regulatory license.</p>
 	<p>If your region or industry sector does not issue a separate license from a typical business license, you may leave this blank.</p>
 
 	<div class="mt-4">
@@ -88,7 +88,7 @@
 			placeholder="License Phone"
 			tabindex="1"
 			type="text"
-			value="<?= __h($data['license']['email']) ?>"
+			value="<?= __h($data['license']['phone']) ?>"
 		>
 	</div>
 
@@ -102,7 +102,7 @@
 			placeholder="License Email"
 			tabindex="1"
 			type="text"
-			value="<?= __h($data['company']['email']) ?>"
+			value="<?= __h($data['license']['email']) ?>"
 		>
 	</div>
 
@@ -111,7 +111,6 @@
 	<div class="card-footer">
 		<button class="btn btn-primary" name="a" tabindex="1" type="submit" value="license-request">Save <i class="icon icon-arrow-right"></i></button>
 		<button class="btn btn-outline-secondary" id="btn-license-skip" name="a" tabindex="2" type="submit" value="license-skip">Skip <i class="icon icon-arrow-right"></i></button>
-
 	</div>
 
 	</div>
