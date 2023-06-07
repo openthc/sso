@@ -57,6 +57,16 @@ class Create extends \OpenTHC\SSO\Controller\Base
 			$dbc_main->insert('channel', $Channel);
 		}
 		switch ($Channel['stat']) {
+			case 100:
+				$Channel['stat'] = 200;
+				$dbc_main->query('UPDATE channel SET stat = :s1 WHERE id = :ch0', [
+					':s1' => $Channel['stat'],
+					':ch0' => $Channel['id'],
+				]);
+				break;
+			case 200:
+				// OK
+				break;
 			case 400:
 			case 404:
 			case 410:
@@ -68,6 +78,14 @@ class Create extends \OpenTHC\SSO\Controller\Base
 						'note' => 'Invalid Email',
 					]
 				], 400);
+			default:
+				return $RES->withJSON([
+					'data' => $Channel,
+					'meta' => [
+						'code' => 'ACC-085',
+						'note' => 'Invalid Channel',
+					]
+				], 500);
 		}
 
 		$dbc_auth->query('BEGIN');

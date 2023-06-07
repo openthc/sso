@@ -59,6 +59,7 @@ class Search extends \OpenTHC\SSO\Controller\Base
 			$Channel['type'] = 'email';
 			$Channel['stat'] = 100;
 			$dbc_main->insert('channel', $Channel);
+			syslog(LOG_NOTICE, "channel/create {$Channel['id']} {$Contact['email']}");
 		}
 		switch ($Channel['stat']) {
 			case 400:
@@ -74,25 +75,14 @@ class Search extends \OpenTHC\SSO\Controller\Base
 				], 400);
 		}
 
-		// Auth Contact Check
-		$sql = 'SELECT id, username FROM auth_contact WHERE username = :u0';
-		$arg = [ ':u0' => $Contact['email'] ];
-		$chk = $dbc_auth->fetchRow($sql, $arg);
-		if (empty($chk['id'])) {
-			return $RES->withJSON([
-				'data' => null,
-				'meta' => [
-					'code' => 'CAC-085',
-					'note' => 'Not Found',
-				]
-			], 404);
-		}
 
-		// Contact (Legacy)
+		// Main Contact Check (Legacy)
 		$sql = 'SELECT id, email FROM contact WHERE email = :u0';
 		$arg = [ ':u0' => $Contact['email'] ];
 		$chk = $dbc_main->fetchRow($sql, $arg);
 		if ( ! empty($chk['id'])) {
+			// In Main
+			$RES = $RES->withAttribute('Contact_Base', $chk);
 			// Trigger Email Verify?
 			// return $RES->withJSON([
 			// 	'data' => null,
@@ -103,10 +93,29 @@ class Search extends \OpenTHC\SSO\Controller\Base
 			// ], 409);
 		}
 
+
+		// Auth Contact Check
+		$sql = 'SELECT id, flag, stat, username FROM auth_contact WHERE username = :u0';
+		$arg = [ ':u0' => $Contact['email'] ];
+		$chk = $dbc_auth->fetchRow($sql, $arg);
+		if (empty($chk['id'])) {
+			return $RES->withJSON([
+				'data' => $Contact,
+				'meta' => [
+					'code' => 'CAC-085',
+					'note' => 'Not Found',
+				]
+			], 404);
+		}
+
+		$Contact['id'] = $chk['id'];
+		$Contact['flag'] = $chk['flag'];
+		$Contact['stat'] = $chk['stat'];
+
 		return $RES->withJSON([
-			'data' => null,
+			'data' => $Contact,
 			'meta' => []
-		], 404);
+		], 200);
 
 	}
 
