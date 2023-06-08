@@ -9,6 +9,9 @@ namespace OpenTHC\SSO\Controller\oAuth2;
 
 class Profile extends \OpenTHC\SSO\Controller\Base
 {
+	/**
+	 *
+	 */
 	function __invoke($REQ, $RES, $ARG)
 	{
 		$dbc_auth = $this->_container->DBC_AUTH;
@@ -76,6 +79,7 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 			$Profile['Company']['id'] = $res['id'];
 			$Profile['Company']['stat'] = $res['stat'];
 			$Profile['Company']['flag'] = $res['flag'];
+			// $Profile['Company']['guid'] = $res['guid'];
 			$Profile['Company']['name'] = $res['name'];
 		}
 		$RES = $RES->withAttribute('Company', $Profile['Company']);
