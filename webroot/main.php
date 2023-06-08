@@ -53,7 +53,7 @@ $app->group('/account', 'OpenTHC\SSO\Module\Account')->add('OpenTHC\Middleware\S
 $app->group('/auth', function() {
 
 	$this->get('/open', 'OpenTHC\SSO\Controller\Auth\Open')->setName('auth/open');
-	$this->post('/open', 'OpenTHC\SSO\Controller\Auth\Open:post')->setName('auth/open/post');
+	$this->post('/open', 'OpenTHC\SSO\Controller\Auth\Open:post')->setName('auth/open:post');
 
 	$this->get('/once', 'OpenTHC\SSO\Controller\Auth\Once')->setName('auth/once');
 
