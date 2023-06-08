@@ -66,32 +66,35 @@ class Token extends \OpenTHC\SSO\Controller\Base
 			return $this->makeError($RES, 'invalid_client', 'Invalid Client [COT-068]', 401);
 		}
 
-		$Service = $this->_container->DBC_AUTH->fetchRow('SELECT id, name, code, hash FROM auth_service WHERE code = ?', array($_POST['client_id']));
-		if (empty($Service['id'])) {
-			return $this->makeError($RES, 'invalid_client', 'Invalid Client [COT-073]', 401);
-		}
-
 		if (empty($_POST['client_secret'])) {
 			return $this->makeError($RES, 'invalid_client', 'Invalid Client Secret [COT-077]', 401);
-		}
-
-		if ($Service['hash'] != $_POST['client_secret']) {
-			return $this->makeError($RES, 'invalid_client', 'Invalid Client Secret [COT-081]', 401);
-		}
-
-		if (empty($_POST['grant_type'])) {
-			return $this->makeError($RES, 'invalid_grant', 'Invalid Grant Type [COT-085]', 400);
-		}
-
-		if ('authorization_code' != $_POST['grant_type']) {
-			return $this->makeError($RES, 'unsupported_grant_type', 'Invalid Grant Type [COT-089]', 400);
 		}
 
 		if (empty($_POST['code'])) {
 			return $this->makeError($RES, 'invalid_request','Invalid Code [COT-093]', 400);
 		}
 
+		if (empty($_POST['grant_type'])) {
+			return $this->makeError($RES, 'invalid_grant', 'Invalid Grant Type [COT-085]', 400);
+		}
+		if ('authorization_code' != $_POST['grant_type']) {
+			return $this->makeError($RES, 'unsupported_grant_type', 'Invalid Grant Type [COT-089]', 400);
+		}
+
+		// Load & Validate The Client
+		$sql = 'SELECT id, name, code, hash, context_list FROM auth_service WHERE (id = :c0 OR code = :c0)';
+		$arg = [ ':c0' => $_POST['client_id'] ];
+		$Service = $this->_container->DBC_AUTH->fetchRow($sql, $arg);
+		if (empty($Service['id'])) {
+			return $this->makeError($RES, 'invalid_client', 'Invalid Client [COT-073]', 401);
+		}
+
+		if ($Service['hash'] != $_POST['client_secret']) {
+			return $this->makeError($RES, 'invalid_client', 'Invalid Client Secret [COT-081]', 401);
+		}
+
 		return $RES;
+
 	}
 
 	/**
