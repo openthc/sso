@@ -35,7 +35,7 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 		if (empty($auth)) {
 			return $RES->withJSON([
 				'data' => null,
-				'meta' => [ 'detail' => 'Invalid Request [COP-022]' ]
+				'meta' => [ 'note' => 'Invalid Request [COP-022]' ]
 			], 403);
 		}
 
@@ -46,7 +46,7 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 		if (empty($tok)) {
 			return $RES->withJSON([
 				'data' => null,
-				'meta' => ['detail' => 'Invalid Token [COP-030]' ]
+				'meta' => [ 'note' => 'Invalid Token [COP-030]' ]
 			], 400);
 		}
 
@@ -60,7 +60,7 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 		if (empty($Contact['id'])) {
 			return $RES->withJSON([
 				'data' => null,
-				'meta' => ['detail' => 'Invalid Token [COP-033]' ],
+				'meta' => [ 'note' => 'Invalid Token [COP-033]' ],
 			], 400);
 		}
 

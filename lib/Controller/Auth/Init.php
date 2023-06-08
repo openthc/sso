@@ -131,7 +131,7 @@ SQL;
 
 		return $RES->withJSON([
 			'data' => null,
-			'meta' => [ 'detail' => 'Unexpected Server Error [CAI-108] '],
+			'meta' => [ 'note' => 'Unexpected Server Error [CAI-108] '],
 		], 500);
 
 	}
