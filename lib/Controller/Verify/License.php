@@ -41,6 +41,7 @@ class License extends \OpenTHC\SSO\Controller\Verify\Base
 			'name' => ($_POST['company-name'] ?: $act['contact']['email']),
 			'iso3166' => $act['iso3166'],
 	];
+		$_SESSION['verify']['license'] = $LR0;
 
 // $RES = $RES->withAttribute('License', $LR0);
 // syslog(LOG_NOTICE, )
