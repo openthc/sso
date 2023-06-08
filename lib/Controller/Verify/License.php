@@ -19,6 +19,11 @@ class License extends \OpenTHC\SSO\Controller\Verify\Base
 
 		$act = $this->loadTicket();
 
+		$data['license'] = [
+			'email' => $act['contact']['email'],
+			'phone' => $act['contact']['phone'],
+		];
+
 		return $RES->write( $this->render('verify/license.php', $data) );
 
 	}
