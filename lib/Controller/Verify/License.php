@@ -40,13 +40,8 @@ class License extends \OpenTHC\SSO\Controller\Verify\Base
 			'type' => $_POST['license-type'],
 			'name' => ($_POST['company-name'] ?: $act['contact']['email']),
 			'iso3166' => $act['iso3166'],
-	];
+		];
 		$_SESSION['verify']['license'] = $LR0;
-
-// $RES = $RES->withAttribute('License', $LR0);
-// syslog(LOG_NOTICE, )
-
-
 		$_SESSION['verify']['license']['done'] = true;
 
 		return $RES->withRedirect(sprintf('/verify?_=%s', $_GET['_']));
