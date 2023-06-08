@@ -24,7 +24,7 @@
 
 	<div class="mt-4">
 		<label>Contact Name</label>
-		<input autocomplete="off" class="form-control" id="contact-name" name="contact-name" placeholder="- Your Full Name -" required>
+		<input autocomplete="off" autofocus class="form-control" id="contact-name" name="contact-name" placeholder="- Your Full Name -" required>
 	</div>
 
 	<div class="mt-4">
