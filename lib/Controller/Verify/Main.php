@@ -37,7 +37,9 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 
 		return $this->guessNextStep($RES, $act);
 
-		__exit_text('Invalid Request [CVM-032]', 400);
+		return $this->sendFailure($RES, [
+			'error_code' => 'CVM-032'
+		]);
 
 	}
 
@@ -111,17 +113,10 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 		// 	'meta' => json_encode($_SESSION),
 		// ]);
 
-		// // pass back to /auth/init with same token
-		// return $RES->withRedirect(sprintf('/auth/init?_=%s', $tok));
+		$RES = $RES->withAttribute('verify-done', true);
+		$RES = $RES->withAttribute('Contact', $act_data['contact']);
 
-		$ops = new \OpenTHC\Service\OpenTHC('ops');
-		$res = $ops->post('/webhook/openthc', [
-			'action' => 'account-verify-complete',
-			'contact' => $act_data['contact']['id'],
-			'session' => $_SESSION,
-		]);
-
-		return $RES->withRedirect('/verify/done');
+		return $RES->withRedirect('/done?e=CVM-130');
 
 	}
 }
