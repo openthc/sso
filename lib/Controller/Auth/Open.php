@@ -217,9 +217,14 @@ class Open extends \OpenTHC\SSO\Controller\Base
 	{
 		$_SESSION = [];
 
+		$dbc = $this->_container->DBC_AUTH;
+
 		try {
 
-			$key = \OpenTHC\Config::get('openthc/sso/secret');
+			$jwt = \OpenTHC\JWT::decode_only($jwt);
+			$key = $dbc->fetchOne('SELECT hash FROM auth_service WHERE id = :s0', [
+				':s0' => $jwt->body->iss
+			]);
 			$jwt = \OpenTHC\JWT::decode($jwt, $key);
 
 			// $_SESSION['Contact'] = [
@@ -247,7 +252,6 @@ class Open extends \OpenTHC\SSO\Controller\Base
 				]
 			]);
 
-			$dbc = $this->_container->DBC_AUTH;
 			$dbc->insert('auth_context_ticket', $act);
 
 			return $RES->withRedirect('/auth/init?_=' . $act['id']);
