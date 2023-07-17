@@ -165,11 +165,6 @@ class Password extends \OpenTHC\SSO\Controller\Base
 				}
 		}
 
-		// return $RES->withRedirect('/auth/open?' . http_build_query([
-		// 	'e' => 'CAP-080',
-		// 	'service' => $ARG['service'],
-		// ]));
-
 		// Re-Generate Token?
 
 		$arg = http_build_query($arg);
