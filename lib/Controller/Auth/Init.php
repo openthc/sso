@@ -147,6 +147,7 @@ SQL;
 		$act_data['company'] = $Company;
 
 		$tok = \OpenTHC\SSO\Auth_Context_Ticket::set($act_data);
+		$ping = sprintf('%s/auth/once?_=%s', OPENTHC_SERVICE_ORIGIN, $tok);
 
 		// No Return? Load Default
 		$ret = '/account';
@@ -168,8 +169,11 @@ SQL;
 					$ret = sprintf('https://%s/auth/back?ping={PING}', $act_data['service']);
 				}
 
+				if ( ! empty($act_data['return'])) {
+					$ret = $act_data['return'];
+				}
+
 				// Place Ping Back Token
-				$ping = sprintf('%s/auth/once?_=%s', OPENTHC_SERVICE_ORIGIN, $tok);
 				$ret = str_replace('{PING}', $ping, $ret);
 
 				break;

@@ -188,8 +188,14 @@ class Open extends \OpenTHC\SSO\Controller\Base
 				'date-input' => $_POST['date-enabled'],
 				'time-input' => $_POST['time-enabled']
 			],
+			'return' => $_GET['r'],
 			'service' => $_GET['service'],
 		];
+
+		// Detect if SSO MIgrate?
+		if ('sso-migrate' == $_GET['a']) {
+			$tok_data['option'] = 'sso-migrate';
+		}
 
 		// If we have a Prevous Auth-Ticket
 		if ( ! empty($_GET['_'])) {
