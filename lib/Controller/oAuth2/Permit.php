@@ -27,12 +27,16 @@ class Permit extends \OpenTHC\SSO\Controller\Base
 		$_GET = $x;
 
 		// Load & Validate The Client
-		$Auth_Service = $this->_container->DBC_AUTH->fetchRow('SELECT id,name,code,hash FROM auth_service WHERE code = ?', array($_GET['client_id']));
+		$sql = 'SELECT id, name, code, hash, context_list FROM auth_service WHERE (id = :c0 OR code = :c0)';
+		$arg = [
+			':c0' => $_GET['client_id'],
+		];
+		$Auth_Service = $this->_container->DBC_AUTH->fetchRow($sql, $arg);
 		if (empty($Auth_Service['id'])) {
 			_exit_json(array(
 				'error' => 'invalid_client',
 				'error_description' => 'Invalid Client [COA-061]',
-				'error_uri' => 'https://openthc.com/auth/doc',
+				'error_uri' => sprintf('%s/auth/doc', OPENTHC_SERVICE_ORIGIN),
 			), 401);
 		}
 
