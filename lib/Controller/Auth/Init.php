@@ -85,16 +85,21 @@ class Init extends \OpenTHC\SSO\Controller\Base
 SELECT auth_company.id
 , auth_company.name
 , auth_company.cre
+, auth_company_contact.flag
 , auth_company_contact.stat
 , auth_company_contact.created_at
+, (auth_company_contact.flag & :f1::int) AS flag_default
 FROM auth_company
 JOIN auth_company_contact ON auth_company.id = auth_company_contact.company_id
 WHERE auth_company_contact.contact_id = :c0
   AND auth_company_contact.stat IN (100, 200)
-ORDER BY auth_company_contact.stat, auth_company.name ASC
+ORDER BY auth_company_contact.stat, flag_default DESC, auth_company.name ASC
 SQL;
 
-		$arg = [ ':c0' => $Contact['id'] ];
+		$arg = [
+			':c0' => $Contact['id'],
+			':f1' => 0x00000001, // Copied from License::FLAG_DEFAULT
+		];
 		$company_list = $dbc_auth->fetchAll($sql, $arg);
 
 		// Company/Contact Link
