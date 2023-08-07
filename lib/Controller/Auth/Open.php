@@ -80,7 +80,7 @@ class Open extends \OpenTHC\SSO\Controller\Base
 
 		case 'sso-migrate':
 
-			$key = \OpenTHC\Config::get('openthc/app/secret');
+			$key = \OpenTHC\Config::get('openthc/app/sso-migrate-secret');
 			$_GET['t'] = _decrypt($_GET['t'], $key);
 			$act = json_decode($_GET['t']);
 
