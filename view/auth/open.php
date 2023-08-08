@@ -33,13 +33,13 @@
 	</div>
 
 	<div class="card-footer">
-		<div class="row no-gutters">
-			<div class="col-md-6">
+		<div class="d-flex justify-content-between">
+			<div>
 				<button class="btn btn-primary" id="btn-auth-open" name="a" type="submit" value="account-open">Sign In</button>
 			</div>
-			<div class="col-md-6 r">
+			<div>
 				<a class="btn btn-outline-secondary" href="/auth/open?a=password-reset">Forgot Password</a>
-				<!-- <a class="btn btn-outline-secondary" href="/account/create?service=<?= $data['service'] ?>">Create an Account</a> -->
+				<a class="btn btn-outline-secondary" href="/account/create?service=<?= $data['service'] ?>">Create Account</a>
 			</div>
 		</div>
 	</div>

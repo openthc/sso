@@ -90,6 +90,10 @@ class Open extends \OpenTHC\SSO\Controller\Base
 
 		}
 
+		if ( ! empty($_GET['service'])) {
+			$data['service'] = $_GET['service'];
+		}
+
 		// Incoming Parameters
 		if ( ! empty($_GET['_'])) {
 			$act = \OpenTHC\SSO\Auth_Context_Ticket::get($_GET['_']);
