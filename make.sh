@@ -54,18 +54,9 @@ vendor-web)
 	# cp node_modules/htmx.org/dist/htmx.min.js webroot/vendor/htmx/
 
 	# font awesome
-	mkdir -p webroot/vendor/fontawesome/css
+	mkdir -p webroot/vendor/fontawesome/css webroot/vendor/fontawesome/webfonts
 	cp node_modules/@fortawesome/fontawesome-free/css/all.min.css webroot/vendor/fontawesome/css/
-
-	mkdir -p webroot/vendor/fontawesome/webfonts
 	cp node_modules/@fortawesome/fontawesome-free/webfonts/* webroot/vendor/fontawesome/webfonts/
-
-	# mkdir -p webroot/vendor/font-awesome
-	# tar \
-	# 		-zx \
-	# 		--strip-components=1 \
-	# 		-f node_modules/@fortawesome/fontawesome-free/fortawesome-fontawesome-free-6.3.0.tgz \
-	# 		-C webroot/vendor/font-awesome
 
 	;;
 
