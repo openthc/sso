@@ -38,8 +38,10 @@ if ( ! empty($data['error_code'])) {
 			<p>You will soon receive an activation email which will complete the account creation process.</p>
 			HTML;
 			$data['foot'] = <<<HTML
+			<div class="d-flex justify-content-between">
 			<a class="btn btn-primary" href="https://openthc.com/demo" tabindex="1">Browse Demo <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
-			<a class="btn btn-outline-danger" href="https://openthc.com/help" tabindex="2" target="_blank" style="float: right;">Get Help <i class="fas fa-life-ring"></i></a>
+			<a class="btn btn-outline-danger" href="https://openthc.com/help" tabindex="2" target="_blank">Get Help <i class="fas fa-life-ring"></i></a>
+			</div>
 			HTML;
 			break;
 		default:
@@ -57,23 +59,22 @@ if ( ! empty($data['error_code'])) {
 
 		<?php
 		if ($data['fail']) {
-			printf('<div class="alert alert-danger">%s</div>', h($data['fail']));
+			printf('<div class="alert alert-danger">%s</div>', __h($data['fail']));
 		}
 
 		if ($data['warn']) {
-			printf('<div class="alert alert-warning">%s</div>', h($data['warn']));
+			printf('<div class="alert alert-warning">%s</div>', __h($data['warn']));
 		}
 
 		if ($data['info']) {
-			printf('<div class="alert alert-info">%s</div>', h($data['info']));
+			printf('<div class="alert alert-info">%s</div>', __h($data['info']));
 		}
 
 		echo $data['body'];
 
 		// It's the Secret Token
 		if ( ! empty($_GET['t'])) {
-			$sso_origin = OPENTHC_SERVICE_ORIGIN;
-			echo sprintf('<hr><div class="alert alert-warning">Auth: <a href="%s/auth/once?_=%s">SSO/auth/once</a></div>', $sso_origin, $_GET['t']);
+			echo sprintf('<hr><div class="alert alert-warning">Auth: <a href="/auth/once?_=%s">SSO/auth/once</a></div>', rawurlencode($_GET['t']));
 		}
 
 		?>
