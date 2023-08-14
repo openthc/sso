@@ -77,7 +77,7 @@ class Permit extends \OpenTHC\SSO\Controller\Base
 		$ret = _url_assemble($ruri);
 
 		// Configured to hide Confirm Prompt
-		if (getenv('OPENTHC_REDIRECT_FAST')) {
+		if (\OpenTHC\Config::get('sso/redirect-fast')) {
 			return $RES->withRedirect($ret);
 		}
 

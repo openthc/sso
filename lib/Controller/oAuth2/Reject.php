@@ -26,8 +26,6 @@ class Reject extends \OpenTHC\SSO\Controller\Base
 
 		$_GET = $x;
 
-		$_ENV['fast-redirect'] = \OpenTHC\Config::get('app/fast-redirect');
-
 		// Rebuild URL
 		if (empty($uri['query'])) {
 			$uri['query'] = array();
@@ -45,7 +43,7 @@ class Reject extends \OpenTHC\SSO\Controller\Base
 
 		$ret = _url_assemble($uri);
 
-		if ($_ENV['fast-redirect']) {
+		if (\OpenTHC\Config::get('sso/redirect-fast')) {
 			return $RES->withRedirect($ret);
 		}
 

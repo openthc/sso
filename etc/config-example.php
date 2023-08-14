@@ -47,6 +47,8 @@ $cfg['openthc'] = [
 	'sso' => [
 		'id' => '',
 		'origin' => 'https://sso.openthc.example.com',
+		'redirect-fast' => false,
+		'account-create' => '/account/create?service=app.openthc.example.com',
 	],
 	'www' => [
 		'id' => '',
