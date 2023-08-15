@@ -29,11 +29,11 @@ class Create extends \OpenTHC\SSO\Controller\API\Base
 		// new \OpenTHC\SSO\Auth_Contact($dbc, $contact_id);
 
 		if (empty($CP0['id']) || empty($CT0['id'])) {
-			return $this->sendFailure($RES, 'Invalid Company or Contact [AJC-031]');
+			return $this->sendFailure('Invalid Company or Contact [AJC-031]');
 		}
 
 		if ( ! password_verify($password, $CT0['password'])) {
-			return $this->sendFailure($RES, 'Invalid Company or Contact [AJC-036]');
+			return $this->sendFailure('Invalid Company or Contact [AJC-036]');
 		}
 
 		// Create

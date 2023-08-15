@@ -12,23 +12,16 @@ class Base extends \OpenTHC\Controller\Base
 	/**
 	 * Sends an Failure Response
 	 */
-	protected function sendFailure($RES, $note, $code=400)
+	protected function sendFailure($note, $code=400)
 	{
 		// $type_want
+		$RES = new \OpenTHC\HTTP\Response();
 		$RES = $RES->withBody(new \Slim\Http\RequestBody());
 		$RES = $RES->withJSON([
 			'data' => null,
 			'meta' => [ 'note' => $note ]
 		], $code);
 		return $RES;
-	}
-
-	/**
-	 *
-	 */
-	function verifySignature($req, $sig)
-	{
-
 	}
 
 }

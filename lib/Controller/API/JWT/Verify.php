@@ -14,7 +14,8 @@ class Verify extends \OpenTHC\SSO\Controller\API\Base
 	 */
 	function __invoke($REQ, $RES, $ARG)
 	{
-		$jwt0 = $_GET['jwt'];
+		// $jwt0 = $_GET['jwt'];
+		$jwt0 = $_POST['jwt'];
 		// if (!preg_match('/^Bearer jwt:([\w\-\.]+)$/', $_SERVER['HTTP_AUTHORIZATION'], $m)) {
 		// 	_exit_json([
 		// 		'data' => null,
@@ -25,48 +26,33 @@ class Verify extends \OpenTHC\SSO\Controller\API\Base
 
 		$chk1 = \OpenTHC\JWT::decode_only($jwt0);
 		if (empty($chk1)) {
-			return $RES->withJSON([
-				'data' => null,
-				'meta' => [ 'note' => 'Invalid Token [AJV-030] ']
-			], 400);
+			return $this->sendFailure('Invalid Token [AJV-030]');
 		}
 
-		$rdb = \OpenTHC\Service\Redis::factory();
-		$key = $rdb->get(sprintf('/service/%s/sk', $chk1->body->iss));
-		if (empty($key)) {
-			$dbc = $this->_container->DBC_AUTH;
-			$key = $dbc->fetchOne('SELECT hash FROM auth_service WHERE id = :s0', [ ':s0' => $chk1->body->iss ]);
-			$rdb->set(sprintf('/service/%s/sk', $chk1->body->iss), $key, [ 'ex' => 900 ]);
-		}
-		if (empty($key)) {
-			return $RES->withJSON([
-				'data' => null,
-				'meta' => [ 'note' => 'Invalid Service [AJV-043] ']
-			], 400);
+		$key0 = \OpenTHC\Config::get('openthc/sso/origin-sk');
+		if (empty($key0)) {
+			return $this->sendFailure('Invalid Service [AJV-043]');
 		}
 
 		$tok = new \stdClass();
 		try {
-			$tok = \OpenTHC\JWT::verify($jwt0, $key);
+			$tok = \OpenTHC\JWT::verify($jwt0, $key0);
 		} catch (\Exception $e) {
-			return $RES->withJSON([
-				'data' => null,
-				'meta' => [ 'note' => 'Invalid Service [AJV-052] ']
-			], 400);
+			return $this->sendFailure('Invalid Token [AJV-052]');
 		}
 
 		if (empty($tok->sub)) {
-			return $RES->withJSON(['meta' => [ 'note' => 'Invalid Contact [AJV-058]' ]], 400);
+			return $this->sendFailure('Invalid Contact [AJV-058]');
 		}
 
 		$com = $tok->com ?: $tok->company;
 		if (empty($com)) {
-			return $RES->withJSON(['meta' => [ 'note' => 'Invalid Company [AJV-063]' ]], 400);
+			return $this->sendFailure('Invalid Company [AJV-063]');
 		}
 
 		$lic = $tok->lic ?: $tok->license;
-		// if (empty($com)) {
-		// 	return $RES->withJSON(['meta' => [ 'note' => 'Invalid License [AJV-068]' ]], 400);
+		// if (empty($lic)) {
+		// 	return $this->sendFailure('Invalid License [AJV-068]');
 		// }
 
 		// Load the Contact, Company, License which has authorized the service
