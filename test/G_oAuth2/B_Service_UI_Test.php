@@ -14,8 +14,8 @@ class B_Service_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	public static function setUpBeforeClass() : void
 	{
 		parent::setUpBeforeClass();
-		self::$driver->get(sprintf('https://%s/auth/open?_t=%s'
-			, getenv('OPENTHC_TEST_HOST')
+		self::$driver->get(sprintf('%s/auth/open?_t=%s'
+			, getenv('OPENTHC_TEST_ORIGIN')
 			, getenv('OPENTHC_TEST_HASH')
 		));
 
@@ -34,8 +34,8 @@ class B_Service_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	function test_auth_pass_app($url = null)
 	{
 
-		self::$driver->get(sprintf('https://%s/account?_t=%s'
-			, getenv('OPENTHC_TEST_HOST')
+		self::$driver->get(sprintf('%s/account?_t=%s'
+			, getenv('OPENTHC_TEST_ORIGIN')
 			, getenv('OPENTHC_TEST_HASH')
 		));
 

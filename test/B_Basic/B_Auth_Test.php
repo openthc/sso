@@ -24,7 +24,7 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	public function test_home_redirect()
 	{
 		// The Prime Site does a Meta-Refresh
-		self::$driver->get(sprintf('https://%s/', getenv('OPENTHC_TEST_HOST')));
+		self::$driver->get(getenv('OPENTHC_TEST_ORIGIN'));
 		$src = self::$driver->getPageSource();
 		$this->assertMatchesRegularExpression('/<meta http-equiv="refresh".+auth\/open/', $src);
 		sleep(3); // Wait for refresh
@@ -39,7 +39,7 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	 */
 	public function test_auth_open_fail()
 	{
-		self::$driver->get(sprintf('https://%s/auth/open', getenv('OPENTHC_TEST_HOST')));
+		self::$driver->get(sprintf('%s/auth/open', getenv('OPENTHC_TEST_ORIGIN')));
 
 		$element = self::$driver->findElement(WebDriverBy::id('username'));
 		$element->clear();
@@ -64,59 +64,21 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	public function test_auth_wellknown_reset()
 	{
 		//
-		self::$driver->get(sprintf('https://%s/.well-known/change-password', getenv('OPENTHC_TEST_HOST')));
+		self::$driver->get(sprintf('%s/.well-known/change-password', getenv('OPENTHC_TEST_ORIGIN')));
 
 		$url = self::$driver->getCurrentUrl();
-		// var_dump($url);
 		$this->assertStringContainsString('/auth/open?a=password-reset', $url);
-		// $this->assertTrue(true);
-
-	}
-
-	/**
-	 *
-	 */
-	public function x_test_auth_create_account()
-	{
-		// self::$driver->manage()->deleteAllCookies();
-		self::$driver->get(sprintf('https://%s/account/create?_t=%s'
-			, getenv('OPENTHC_TEST_HOST')
-			, getenv('OPENTHC_TEST_HASH')
-		));
-
-		// Should Already Be Populated in Session
-		$element = self::$driver->findElement(WebDriverBy::id('contact-name'));
-		$element->clear();
-		$element->sendKeys(getenv('OPENTHC_TEST_CONTACT'));
-
-		$element = self::$driver->findElement(WebDriverBy::id('contact-email'));
-		$element->clear();
-		$element->sendKeys(self::$username);
-
-		$btn = self::$driver->findElement(WebDriverBy::id('btn-account-create'));
-		$btn->click();
-
-		$url = self::$driver->getCurrentUrl();
-
-		$this->assertStringContainsString('/done?e=CAC-111', $url);
-		$this->assertStringContainsString('Please check your email to confirm your account', self::$driver->getPageSource());
-
-		//
-		$url_info = parse_url($url);
-
-		var_dump($url_info);
-
-		$arg = __parse_str($url_info['query']);
 
 	}
 
 	/**
 	 * Test auth open when contact stat=100
+	 * @todo needs to have the account actually added to test this
 	 */
 	public function x_test_auth_open_verify()
 	{
 		// self::$driver->manage()->deleteAllCookies();
-		self::$driver->get(sprintf('https://%s/auth/open', getenv('OPENTHC_TEST_HOST')));
+		self::$driver->get(sprintf('%s/auth/open', getenv('OPENTHC_TEST_ORIGIN')));
 
 		$element = self::$driver->findElement(WebDriverBy::id('username'));
 		$element->clear();
@@ -142,7 +104,7 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	public function x_test_auth_open_live()
 	{
 		// self::$driver->manage()->deleteAllCookies();
-		self::$driver->get(sprintf('https://%s/auth/open', getenv('OPENTHC_TEST_HOST')));
+		self::$driver->get(sprintf('%s/auth/open', getenv('OPENTHC_TEST_ORIGIN')));
 
 		$element = self::$driver->findElement(WebDriverBy::id('username'));
 		$element->clear();
@@ -168,7 +130,7 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	public function x_test_auth_open_gone()
 	{
 		// self::$driver->manage()->deleteAllCookies();
-		self::$driver->get(sprintf('https://%s/auth/open', getenv('OPENTHC_TEST_HOST')));
+		self::$driver->get(sprintf('%s/auth/open', getenv('OPENTHC_TEST_ORIGIN')));
 
 		$element = self::$driver->findElement(WebDriverBy::id('username'));
 		$element->clear();

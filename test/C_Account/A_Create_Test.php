@@ -11,6 +11,9 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 
 	protected static $username;
 
+	/**
+	 *
+	 */
 	public static function setupBeforeClass(): void
 	{
 		parent::setupBeforeClass();
@@ -51,7 +54,7 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 		// Fails cause we already have an account
 		$done_link = $res->getHeaderLine('location');
 		$this->assertMatchesRegularExpression('/^\/done\?e=CAC\-111/', $done_link);
-		$this->assertMatchesRegularExpression('/^\/done\?e=CAC\-111.+r=/', $done_link); // Has Test Link
+		$this->assertMatchesRegularExpression('/^\/done\?e=CAC\-111.+t=/', $done_link);
 
 		// Get Done Page
 		syslog(LOG_DEBUG, "GET-047 \$done_link = $done_link");
@@ -64,15 +67,14 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 		// It's only provided like this in TEST mode
 		$auth_link = preg_match('/\?(.+)$/', $done_link, $m) ? $m[1] : '';
 		$this->assertNotEmpty($auth_link);
-		$auth_link = __parse_str($auth_link);
-		$this->assertIsArray($auth_link);
-		$this->assertArrayHasKey('r', $auth_link);
-		$auth_link = $auth_link['r'];
+		$args = __parse_str($auth_link);
+		$this->assertIsArray($args);
+		$this->assertArrayHasKey('t', $args);
 
-		syslog(LOG_DEBUG, "GET-062 \$auth_link = $auth_link");
-		$res = $c->get($auth_link);
+		$res = $c->get(sprintf('/auth/once?_=%s', $args['t']));
 		$this->assertValidResponse($res, 302);
 		$link3 = $res->getHeaderLine('location');
+
 		// $this->assertMatchesRegularExpression('/^\/done\?e=CAO\-073/', $link3);
 
 		return $link3;
@@ -268,8 +270,8 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 
 		// Good, Bounce to Phone Again
 		$url1 = $res->getHeaderLine('location');
-		$this->assertMatchesRegularExpression('/^\/verify\/phone\?_=.+&c=.+/', $url1);
-		$phone_code = preg_match('/c=(\w+)/', $url1, $m) ? $m[1] : null;
+		$this->assertMatchesRegularExpression('/^\/verify\/phone\?_=.+&t=.+/', $url1);
+		$phone_code = preg_match('/t=(\w+)/', $url1, $m) ? $m[1] : null;
 		$this->assertNotEmpty($phone_code);
 		$this->assertMatchesRegularExpression('/^\w{6}$/', $phone_code);
 
@@ -293,7 +295,7 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 
 		$this->assertMatchesRegularExpression('/^\/verify\?_=.+/', $url2);
 
-		// // Should be Bouncing us to Password
+		// Should be Bouncing us to Password
 		$res = $c->get($url2);
 		$url3 = $res->getHeaderLine('location');
 
@@ -335,32 +337,51 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 	/**
 	 * @depends test_verify_company
 	 */
-	function test_account_create_done($url)
+	function test_verify_license($url0)
 	{
-		$this->assertNotEmpty($url);
-		$this->assertMatchesRegularExpression('/^\/auth\/init\?_=.+/', $url);
+		$this->assertNotEmpty($url0);
+		$this->assertMatchesRegularExpression('/^\/verify\/license\?_=.+/', $url0);
 
 		$c = $this->_ua();
-		$res = $c->get($url);
+
+		// Get License Page
+		$res = $c->get($url0);
+		$html = $this->assertValidResponse($res);
+		$arg = [
+			'CSRF' => $this->getCSRF($html),
+			'a' => 'license-skip',
+		];
+
+		$res = $c->post($url0, [ 'form_params' => $arg ]);
 		$this->assertValidResponse($res, 302);
 		$url1 = $res->getHeaderLine('location');
-		$this->assertMatchesRegularExpression('/^\/account/', $url1);
+		$this->assertMatchesRegularExpression('/^\/verify\?_=.+/', $url1);
 
+		$res = $c->get($url1);
+		$this->assertValidResponse($res, 302);
+		$url2 = $res->getHeaderLine('location');
 
-	// 	$this->assertStringContainsString('TEST MODE', $html);
-	// 	$this->assertStringContainsString('Set Password', $html);
-	// 	$this->assertStringContainsString('id="password0" type="password" name="p0"', $html);
-	// 	$this->assertStringContainsString('id="password1" type="password" name="p1"', $html);
-	// 	$this->assertStringContainsString('name="a" type="submit" value="update"', $html);
+		return $url2;
 
-	// 	$res = $c->post($url, [ 'form_params' => [
-	// 		'a' => 'update',
-	// 		'p0' => getenv('OPENTHC_TEST_CONTACT_PASSWORD'), // '1TestPass!',
-	// 		'p1' => getenv('OPENTHC_TEST_CONTACT_PASSWORD'), // '1TestPass!',
-	// 	]]);
-	// 	$this->assertValidResponse($res, 302);
-	// 	$url = $res->getHeaderLine('location');
-	// 	$this->assertMatchesRegularExpression('/^\/auth\/open/', $url);
+	}
+
+	/**
+	 * @depends test_verify_license
+	 */
+	function test_account_create_done($url0)
+	{
+		$this->assertNotEmpty($url0);
+
+		$this->assertStringContainsString('/done?e=CVM-130', $url0);
+		// $this->assertMatchesRegularExpression('/^\/auth\/init\?_=.+/', $url0);
+
+		// Sign In and Get aSome Message?
+		$c = $this->_ua();
+		$res = $c->get($url0);
+		$html = $this->assertValidResponse($res, 200);
+
+		$this->assertStringContainsString('Verification Complete', $html);
+		$this->assertStringContainsString('Account Pending Activation', $html);
 
 	}
 
@@ -388,12 +409,12 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 		$this->assertValidResponse($res, 302);
 
 		$url1 = $res->getHeaderLine('location');
-		$this->assertEquals('/done?e=CAC-065', $url1);
+		$this->assertEquals('/done?e=CAC-083', $url1);
 
 		$res = $c->get($url1);
 		$html = $this->assertValidResponse($res);
 		$this->assertStringContainsString('You have already created an account, sign in to that one', $html);
-		// Sign iN Button?
+
 	}
 
 	/**
@@ -456,8 +477,7 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 		]]);
 		$this->assertValidResponse($res, 302);
 		$url = $res->getHeaderLine('location');
-		// $this->assertEquals('/done?e=CAO-100&l=200&s=t', $url); // LIVE
-		$this->assertMatchesRegularExpression('/^\/done\?e=CAO\-100&l=200&r=.+/', $url);
+		$this->assertMatchesRegularExpression('/^\/done\?e=CAO\-100&t=.+/', $url);
 
 		$res = $c->get($url);
 		$html = $this->assertValidResponse($res);
@@ -465,21 +485,16 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 		// @todo Verify Contents of the Done Page
 		$this->assertStringContainsString('Check Your Inbox', $html);
 
-		$url1 = preg_match('/r=(.+)$/', $url, $m) ? $m[1] : '';
+		$url1 = preg_match('/t=(.+)$/', $url, $m) ? $m[1] : '';
 		$url1 = rawurldecode($url1);
 		$this->assertNotEmpty($url1);
 
 		// Follow to Password Reset Page?
-		var_dump($url1);
-		$res = $c->get($url1);
-		$this->assertValidResponse($res, 302);
-		$url2 = $res->getHeaderLine('location');
-		$this->assertMatchesRegularExpression('/\/account\/password\?_=.+/', $url2);
+		// var_dump($url1);
+		$res = $c->get(sprintf('/account/password?_=%s', $url1));
+		$html = $this->assertValidResponse($res, 200);
 
-		$res = $c->get($url2);
-		$html = $this->assertValidResponse($res);
 		$this->assertStringContainsString('Set Password', $html);
-
 
 	}
 

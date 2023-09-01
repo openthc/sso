@@ -1,11 +1,13 @@
 <?php
 /**
  * Base Class for API Testing
+ *
+ * SPDX-License-Identifier: MIT
  */
 
 namespace OpenTHC\SSO\Test;
 
-class Base_Case extends \PHPUnit\Framework\TestCase
+class Base_Case extends \PHPUnit\Framework\TestCase // \OpenTHC\Test\Base_Case
 {
 	protected $_pid = null;
 
@@ -31,7 +33,7 @@ class Base_Case extends \PHPUnit\Framework\TestCase
 		if (empty($c)) {
 
 			$c = new \GuzzleHttp\Client(array(
-				'base_uri' => sprintf('https://%s', getenv('OPENTHC_TEST_HOST')),
+				'base_uri' => getenv('OPENTHC_TEST_ORIGIN'),
 				'allow_redirects' => false,
 				'debug' => $_ENV['debug-http'],
 				'request.options' => array(
@@ -44,9 +46,6 @@ class Base_Case extends \PHPUnit\Framework\TestCase
 				]
 			));
 		}
-
-		// $test_secret = \OpenTHC\Config::get('application_test.secret');
-		// $this->assertNotEmpty($test_secret);
 
 		return $c;
 

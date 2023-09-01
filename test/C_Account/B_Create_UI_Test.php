@@ -15,8 +15,8 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	 */
 	function test_account_create()
 	{
-		self::$driver->get(sprintf('https://%s/account/create?_t=%s'
-			, getenv('OPENTHC_TEST_HOST')
+		self::$driver->get(sprintf('%s/account/create?_t=%s'
+			, getenv('OPENTHC_TEST_ORIGIN')
 			, getenv('OPENTHC_TEST_HASH')
 		));
 
@@ -33,6 +33,8 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 		$url1 = self::$driver->getCurrentUrl();
 		$this->assertMatchesRegularExpression('/\/done\?e=CAC\-0?\d+/', $url1);
 		$this->assertMatchesRegularExpression('/\/done\?e=CAC\-0?\d+.+r=/', $url1); // Has Test Link
+		// $this->assertStringContainsString('/done?e=CAC-111', $url);
+		// $this->assertStringContainsString('Please check your email to confirm your account', self::$driver->getPageSource());
 
 		$url1 = preg_match('/r=(.+)$/', $url1, $m) ? $m[1] : '';
 		$url1 = rawurldecode($url1);
@@ -63,7 +65,7 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	{
 		$url0 = ltrim($url0, '/');
 		$this->assertNotEmpty($url0);
-		self::$driver->get(sprintf('https://%s/%s', getenv('OPENTHC_TEST_HOST'), $url0));
+		self::$driver->get(sprintf('%s/%s', getenv('OPENTHC_TEST_ORIGIN'), $url0));
 
 		$url1 = self::$driver->getCurrentUrl();
 		$this->assertMatchesRegularExpression('/\/verify\/password.+/', $url1);

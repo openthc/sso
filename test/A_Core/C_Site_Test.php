@@ -9,12 +9,12 @@ class C_Site_Test extends \OpenTHC\SSO\Test\Base_Case
 {
 	function test_page_all()
 	{
-		$cfg = getenv('OPENTHC_TEST_HOST');
+		$cfg = getenv('OPENTHC_TEST_ORIGIN');
 		$this->assertIsString($cfg);
 		$this->assertMatchesRegularExpression('/\w+\.\w{2,256}\.\w{2,16}$/', $cfg);
 
 		$ghc = new \GuzzleHttp\Client([
-			'base_uri' => sprintf('https://%s', $cfg),
+			'base_uri' => $cfg,
 			'cookies' => true,
 			'http_errors' => false,
 		]);

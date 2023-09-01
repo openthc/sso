@@ -4,9 +4,11 @@
 #
 
 set -o errexit
+set -o errtrace
 set -o nounset
+set -o pipefail
 
-x=${OPENTHC_TEST_BASE:-}
+x=${OPENTHC_TEST_ORIGIN:-}
 if [ -z "$x" ]
 then
 	echo "You have to define the environment first"
@@ -24,15 +26,27 @@ declare -rx SOURCE_LIST="boot.php bin/ lib/ test/"
 
 mkdir -p "${OUTPUT_BASE}"
 
+action="${1:-}"
+# case "${action}" in
+# phpunit)
+# 	rm -fr ${OUTPUT_BASE}/phpunit.*
+# 	;;
+# esac
 
 #
 # Lint
-bash vendor/openthc/common/test/phplint.sh
+bash -x vendor/openthc/common/test/phplint.sh
 
 
 #
-# PHP-CPD
-bash vendor/openthc/common/test/phpcpd.sh
+# CPD
+# bash vendor/openthc/common/test/cpd.sh
+# ./node_modules/.bin/jscpd \
+# 	--min-lines 2 \
+# 	--max-lines 200 \
+# 	--pattern '**/*.php' \
+# 	--gitignore \
+# 	--output "${OUTPUT_BASE}"
 
 
 #
@@ -42,7 +56,8 @@ bash vendor/openthc/common/test/phpstan.sh
 
 #
 # PHPUnit
-bash vendor/openthc/common/test/phpunit.sh "$@"
+rm -fr ${OUTPUT_BASE}/phpunit.*
+bash -x vendor/openthc/common/test/phpunit.sh "$@"
 
 
 #

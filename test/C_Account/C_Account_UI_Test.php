@@ -19,8 +19,8 @@ class C_Account_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 			$url0 = self::$driver->getCurrentUrl();
 		}
 
-		self::$driver->get(sprintf('https://%s/account?_t=%s'
-			, getenv('OPENTHC_TEST_HOST')
+		self::$driver->get(sprintf('%s/account?_t=%s'
+			, getenv('OPENTHC_TEST_ORIGIN')
 			, getenv('OPENTHC_TEST_HASH')
 		));
 

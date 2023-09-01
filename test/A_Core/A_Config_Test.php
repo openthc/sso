@@ -13,7 +13,7 @@ class A_Config_Test extends \OpenTHC\SSO\Test\Base_Case
 	function test_env()
 	{
 		$env_list = [
-			'OPENTHC_TEST_HOST',
+			'OPENTHC_TEST_ORIGIN',
 			'OPENTHC_TEST_HASH',
 			'OPENTHC_TEST_CONTACT',
 			'OPENTHC_TEST_CONTACT_PASSWORD',
@@ -45,11 +45,12 @@ class A_Config_Test extends \OpenTHC\SSO\Test\Base_Case
 
 			'openthc/sso/id',
 			'openthc/sso/origin',
+			'openthc/sso/origin-sk',
 			'openthc/sso/secret',
 
-			'openthc/www/id',
-			'openthc/www/origin',
-			'openthc/www/secret',
+			// 'openthc/www/id',
+			// 'openthc/www/origin',
+			// 'openthc/www/secret',
 		];
 
 		foreach ($key_list as $key) {

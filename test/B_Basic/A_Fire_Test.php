@@ -73,7 +73,7 @@ class A_Fire_Test extends \OpenTHC\SSO\Test\Base_Case
 	{
 		$c = $this->_ua();
 		$res = $c->get('/auth/once');
-		$res = $this->assertValidResponse($res, 400, 'text/plain');
+		$res = $this->assertValidResponse($res, 400, 'text/html');
 	}
 
 	/**
