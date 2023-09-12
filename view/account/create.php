@@ -41,7 +41,14 @@
 	</div>
 
 	<div class="card-footer">
-		<button class="btn btn-primary" id="btn-account-create" name="a" type="submit" value="contact-next">Create Account <i class="icon icon-arrow-right"></i></button>
+		<div class="d-flex justify-content-between">
+		<div>
+			<button class="btn btn-primary" id="btn-account-create" name="a" type="submit" value="contact-next">Create Account <i class="icon icon-arrow-right"></i></button>
+		</div>
+		<div>
+			<a class="btn btn-outline-secondary" href="/auth/open?service=<?= __h($_GET['service']) ?>">Sign In</a>
+		</div>
+		</div>
 	</div>
 
 	</div>
