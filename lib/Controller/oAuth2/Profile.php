@@ -72,7 +72,7 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 		$Profile['Contact']['flag'] = $Contact['flag'];
 
 		// Auth/Company
-		$sql = 'SELECT id, stat, flag, name FROM auth_company WHERE id = ?';
+		$sql = 'SELECT id, stat, flag, name, iso3166, tz FROM auth_company WHERE id = ?';
 		$arg = [ $tok['meta']['company_id'] ];
 		$res = $dbc_auth->fetchRow($sql, $arg);
 		if (!empty($res['id'])) {
@@ -81,6 +81,8 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 			$Profile['Company']['flag'] = $res['flag'];
 			// $Profile['Company']['guid'] = $res['guid'];
 			$Profile['Company']['name'] = $res['name'];
+			$Profile['Company']['iso3166'] = $res['iso3166'];
+			$Profile['Company']['tz'] = $res['tz'];
 		}
 		$RES = $RES->withAttribute('Company', $Profile['Company']);
 
@@ -95,19 +97,31 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 			$sql = 'SELECT * FROM contact WHERE id = ?';
 			$arg = array($Contact['id']);
 			$res = $dbc_main->fetchRow($sql, $arg);
-			if (!empty($res['id'])) {
+			if ( ! empty($res['id'])) {
 
 				$Profile['Contact']['fullname'] = $res['fullname'];
 
-				if (!empty($res['email'])) {
+				if ( ! empty($res['email'])) {
 					$Profile['Contact']['email'] = $res['email'];
 				}
-				if (!empty($res['phone'])) {
+				if ( ! empty($res['phone'])) {
 					$Profile['Contact']['phone'] = $res['phone'];
 				}
 
 			}
 		}
+
+		// Make a JWT that only SSO Can Decipher
+		$jwt = new \OpenTHC\JWT([
+			'iss' => OPENTHC_SERVICE_ID,
+			'exp' => (time() + 3600),
+			'sub' => $Profile['Contact']['id'],
+			'com' => $Profile['Company']['id'],
+			// Config Options
+			// service' => 'sso',
+			'service-sk' => \OpenTHC\Config::get('openthc/sso/secret'),
+		]);
+		$Profile['jwt'] = $jwt->__toString();
 
 		return $RES->withJSON($Profile);
 

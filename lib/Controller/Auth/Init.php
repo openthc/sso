@@ -80,21 +80,25 @@ class Init extends \OpenTHC\SSO\Controller\Base
 		/**
 		 * Initialize Company Data in $act_data & return
 		 */
+		if (empty($act_data['company']['id'])) {
+			// Prompt for Company
+		}
+
 		// Company List
 		$sql = <<<SQL
-SELECT auth_company.id
-, auth_company.name
-, auth_company.cre
-, auth_company_contact.flag
-, auth_company_contact.stat
-, auth_company_contact.created_at
-, (auth_company_contact.flag & :f1::int) AS flag_default
-FROM auth_company
-JOIN auth_company_contact ON auth_company.id = auth_company_contact.company_id
-WHERE auth_company_contact.contact_id = :c0
-  AND auth_company_contact.stat IN (100, 200)
-ORDER BY auth_company_contact.stat, flag_default DESC, auth_company.name ASC
-SQL;
+		SELECT auth_company.id
+		, auth_company.name
+		, auth_company.cre
+		, auth_company_contact.flag
+		, auth_company_contact.stat
+		, auth_company_contact.created_at
+		, (auth_company_contact.flag & :f1::int) AS flag_default
+		FROM auth_company
+		JOIN auth_company_contact ON auth_company.id = auth_company_contact.company_id
+		WHERE auth_company_contact.contact_id = :c0
+		AND auth_company_contact.stat IN (100, 200)
+		ORDER BY auth_company_contact.stat, flag_default DESC, auth_company.name ASC
+		SQL;
 
 		$arg = [
 			':c0' => $Contact['id'],
