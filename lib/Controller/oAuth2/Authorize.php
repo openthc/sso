@@ -163,7 +163,7 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 		foreach ($scope_ask as $s) {
 			if (!in_array($s, $scope_may, true)) {
 				$html = sprintf('<h1>Access Denied to Context &quot;%s&quot; [COA-151]</h1>', $s);
-				$html.= sprintf('<p>See <a href="%s/doc#COA-151">documentation</p>', OPENTHC_SERVICE_ORIGIN);
+				$html.= '<p>See <a href="https://openthc.org/err#sso/COA-151">documentation</a></p>';
 				$html.= '<p>Or <a href="/auth/shut">sign-out</a> and start over</p>';
 				__exit_html($html, 403);
 			}
