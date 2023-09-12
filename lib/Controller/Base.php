@@ -25,10 +25,6 @@ class Base extends \OpenTHC\Controller\Base
 
 		$data['CSRF'] = \OpenTHC\SSO\CSRF::getToken();
 
-		$data['OpenTHC'] = [];
-		$data['OpenTHC']['cic'] = \OpenTHC\Config::get('openthc/cic');
-		$data['OpenTHC']['dir'] = \OpenTHC\Config::get('openthc/dir');
-
 		$this->data = $data;
 
 	}
