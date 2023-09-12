@@ -56,30 +56,6 @@ $dir_origin = \OpenTHC\Config::get('openthc/dir/origin');
 
 
 <?php
-// Show Company List
-if ($data['company_list']) {
-?>
-	<hr>
-	<div class="card">
-		<h2 class="card-header">Company Connections</h2>
-		<div class="card-body">
-			<?php
-			foreach ($data['company_list'] as $c) {
-			?>
-				<h3><a href="<?= sprintf('%s/company/%s', $dir_origin, $c['id']) ?>" target="_blank"><?= h($c['name']) ?></a></h3>
-			<?php
-			}
-			?>
-		</div>
-		<div class="card-footer">
-			<a class="btn btn-outline-secondary" href="/company/join">Join Another Company</a>
-		</div>
-	</div>
-<?php
-}
-?>
-
-<?php
 // Show Service List
 if ($data['service_list']) {
 ?>
@@ -125,5 +101,31 @@ if ($data['service_list']) {
 <?php
 }
 ?>
+
+
+<?php
+// Show Company List
+if ($data['company_list']) {
+?>
+	<hr>
+	<div class="card">
+		<h2 class="card-header">Company Connections</h2>
+		<div class="card-body">
+			<?php
+			foreach ($data['company_list'] as $c) {
+			?>
+				<h3><a href="<?= sprintf('%s/company/%s', $dir_origin, $c['id']) ?>" target="_blank"><?= h($c['name']) ?></a></h3>
+			<?php
+			}
+			?>
+		</div>
+		<div class="card-footer">
+			<a class="btn btn-outline-secondary" href="/company/join">Join Another Company</a>
+		</div>
+	</div>
+<?php
+}
+?>
+
 
 </div>
