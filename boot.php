@@ -9,7 +9,7 @@
 // declare(strict_types=1);
 
 define('APP_ROOT', __DIR__);
-define('APP_BUILD', '421.07.050');
+define('APP_BUILD', '420.23.244');
 
 error_reporting(E_ALL & ~E_NOTICE);
 
