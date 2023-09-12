@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-$dir_origin = rtrim(\OpenTHC\Config::get('openthc/dir/origin'), '/');
+$dir_origin = \OpenTHC\Config::get('openthc/dir/origin');
 
 ?>
 
@@ -20,7 +20,7 @@ $dir_origin = rtrim(\OpenTHC\Config::get('openthc/dir/origin'), '/');
 	<div class="mt-4">
 		<label>Name</label>
 		<div class="input-group">
-			<input class="form-control" name="contact-name" type="text" value="<?= h($data['Contact_Base']['name']) ?>">
+			<input class="form-control" name="contact-name" type="text" value="<?= __h($data['Contact_Base']['name']) ?>">
 			<button class="btn btn-outline-primary" name="a" value="contact-name-save"><i class="fas fa-save"></i> Save</button>
 		</div>
 	</div>
@@ -28,7 +28,7 @@ $dir_origin = rtrim(\OpenTHC\Config::get('openthc/dir/origin'), '/');
 	<div class="mt-4">
 		<label>Password</label>
 		<div class="input-group">
-			<input class="form-control" readonly type="text" value="<?= h('********') ?>">
+			<input class="form-control" readonly type="text" value="********">
 			<button class="btn btn-outline-secondary" name="a" value="contact-password-update">Change</button>
 		</div>
 	</div>
@@ -38,7 +38,7 @@ $dir_origin = rtrim(\OpenTHC\Config::get('openthc/dir/origin'), '/');
 	<div class="mt-4">
 		<label>Email / Username</label>
 		<div class="input-group">
-			<input class="form-control" name="contact-email" readonly type="email" value="<?= h($data['Contact_Auth']['username']) ?>">
+			<input class="form-control" name="contact-email" readonly type="email" value="<?= __h($data['Contact_Auth']['username']) ?>">
 			<button class="btn btn-outline-secondary" name="a" value="contact-email-update"><i class="fas fa-save"></i> Change</button>
 		</div>
 	</div>
@@ -46,7 +46,7 @@ $dir_origin = rtrim(\OpenTHC\Config::get('openthc/dir/origin'), '/');
 	<div class="mt-4">
 		<label>Phone</label>
 		<div class="input-group">
-			<input class="form-control" name="contact-phone" readonly type="tel" value="<?= h($data['Contact_Base']['phone']) ?>">
+			<input class="form-control" name="contact-phone" readonly type="tel" value="<?= __h($data['Contact_Base']['phone']) ?>">
 			<button class="btn btn-outline-secondary" name="a" value="contact-phone-update">Change</button>
 		</div>
 	</div>
@@ -56,6 +56,7 @@ $dir_origin = rtrim(\OpenTHC\Config::get('openthc/dir/origin'), '/');
 
 
 <?php
+// Show Company List
 if ($data['company_list']) {
 ?>
 	<hr>
@@ -79,6 +80,7 @@ if ($data['company_list']) {
 ?>
 
 <?php
+// Show Service List
 if ($data['service_list']) {
 ?>
 	<hr>
@@ -111,7 +113,7 @@ if ($data['service_list']) {
 				<div class="mb-4">
 					<h3><?= __h($s['name']) ?></h3>
 					<p><?= __h($s['hint']) ?></p>
-					<a class="btn btn-lg btn-outline-primary btn-service-connect" data-service-name="<?= h(strtolower($s['name'])) ?>" href="<?= $s['link'] ?>" target="_blank">Open <?= h($s['name']) ?></a>
+					<a class="btn btn-lg btn-outline-primary btn-service-connect" data-service-name="<?= __h(strtolower($s['name'])) ?>" href="<?= $s['link'] ?>" target="_blank">Open <?= __h($s['name']) ?></a>
 				</div>
 			<?php
 			}
