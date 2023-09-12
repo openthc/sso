@@ -18,8 +18,9 @@ class Commit extends \OpenTHC\SSO\Controller\Base
 	function __invoke($REQ, $RES, $ARG)
 	{
 		$act_data = \OpenTHC\SSO\Auth_Context_Ticket::get($_GET['_']);
-		// var_dump($act_data);
-		// exit;
+		if (empty($act_data)) {
+			throw new \Exception('Invalid Request [CAC-022]');
+		}
 
 		// private function accountCreate($RES, $act_data)
 		$sso = new \OpenTHC\Service\OpenTHC('sso');
@@ -31,7 +32,9 @@ class Commit extends \OpenTHC\SSO\Controller\Base
 		$ret_args = [];
 
 		switch ($res['code']) {
+			case 200:
 			case 201:
+			case 208:
 				$ret_args['e'] = 'CAC-111';
 				break;
 			default:
