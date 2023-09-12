@@ -65,6 +65,10 @@ class Once extends \OpenTHC\SSO\Controller\Base
 				$tok = \OpenTHC\SSO\Auth_Context_Ticket::set($act);
 				return $RES->withRedirect(sprintf('/account/password?_=%s', $tok));
 				break;
+			case 'account-init':
+				$act['intent'] = 'account-open'; // Overwrite?
+				$tok = \OpenTHC\SSO\Auth_Context_Ticket::set($act);
+				return $RES->withRedirect(sprintf('/auth/init?_=%s', $tok));
 			case 'account-open':
 			case 'oauth-migrate':
 				return $RES->withJSON($act);
