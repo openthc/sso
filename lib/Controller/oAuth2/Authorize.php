@@ -99,8 +99,13 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 		if (empty($ruri['scheme'])) {
 			__exit_text('Missing Redirect Scheme [COA-037]', 400);
 		}
-		if ('https' != $ruri['scheme']) {
-			__exit_text('Invalid Redirect Scheme [COA-040]', 400);
+
+		// Only if Require SSL
+		$chk = \OpenTHC\Config::get('openthc/sso/require-ssl');
+		if ($chk) {
+			if ('https' != $ruri['scheme']) {
+				__exit_text('Invalid Redirect Scheme [COA-040]', 400);
+			}
 		}
 
 		if (empty($ruri['host'])) {
