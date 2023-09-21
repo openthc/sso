@@ -141,7 +141,9 @@ class Open extends \OpenTHC\SSO\Controller\Base
 	function openAccount($RES)
 	{
 		$username = strtolower(trim($_POST['username']));
-		$username = \Edoceo\Radix\Filter::email($username);
+		$username = filter_var($username, FILTER_SANITIZE_EMAIL);
+		$username = filter_var($username, FILTER_VALIDATE_EMAIL);
+		// $username = \Edoceo\Radix\Filter::email($username);
 		if (empty($username)) {
 			return $RES->withRedirect('/auth/open?' . http_build_query([
 				'_' => $_GET['_'],
