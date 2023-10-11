@@ -16,6 +16,8 @@ class API extends \OpenTHC\Module\Base
 	{
 		// $a->get('', 'OpenTHC\SSO\Controller\API\Main');
 
+		$a->post('/company/{company_id}/invite', 'OpenTHC\SSO\Controller\API\Company\Invite')->setName('api/company/invite');
+
 		$a->get('/contact', 'OpenTHC\SSO\Controller\API\Contact\Search')->setName('api/contact/search');
 
 		$a->post('/contact', 'OpenTHC\SSO\Controller\API\Contact\Create')->setName('api/contact/create');
