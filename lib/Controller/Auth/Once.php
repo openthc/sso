@@ -53,6 +53,7 @@ class Once extends \OpenTHC\SSO\Controller\Base
 		// Intention Router
 		switch ($act['intent']) {
 			case 'account-create':
+			case 'account-invite':
 				// Make a New Token
 				$tok = \OpenTHC\SSO\Auth_Context_Ticket::set($act);
 				return $RES->withRedirect(sprintf('/account/commit?_=%s', $tok));

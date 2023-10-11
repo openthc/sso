@@ -18,6 +18,14 @@ class License extends \OpenTHC\SSO\Controller\Verify\Base
 		$data['Page']['title'] = 'Verify License';
 
 		$act = $this->loadTicket();
+		switch ($act['intent']) {
+			case 'account-invite':
+				// Skip License on this one
+				$_SESSION['verify']['license'] = [];
+				$_SESSION['verify']['license']['done'] = true;
+				return $RES->withRedirect(sprintf('/verify?_=%s', $_GET['_']));
+				break;
+		}
 
 		$data['license'] = [
 			'email' => $act['contact']['email'],
@@ -33,8 +41,6 @@ class License extends \OpenTHC\SSO\Controller\Verify\Base
 	 */
 	function post($REQ, $RES, $ARG)
 	{
-		var_dump($_POST);
-
 		$LR0 = [
 			'code' => $_POST['license-code'],
 			'type' => $_POST['license-type'],
