@@ -124,6 +124,7 @@ class Password extends \OpenTHC\SSO\Controller\Base
 
 		switch ($ARG['intent']) {
 		case 'account-create':
+		case 'account-invite':
 		case 'password-reset':
 		case 'password-update': // @deprecated?
 			// OK
