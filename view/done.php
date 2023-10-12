@@ -31,6 +31,18 @@ if ( ! empty($data['error_code'])) {
 		case 'CAO-040':
 			$data['fail'] = 'Invalid Request, Token Expired or Invalid';
 			break;
+		case 'CVM-119':
+			$data['Page']['title'] = 'Verification Complete';
+			$data['body'] = <<<HTML
+			<p>Your Account has been Verified and Activated.</p>
+			<p>You may now sign in.</p>
+			HTML;
+			$data['foot'] = <<<HTML
+			<div class="d-flex justify-content-between">
+				<a class="btn btn-primary" href="https://openthc.com/sign-in">Sign In <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+			</div>
+			HTML;
+			break;
 		case 'CVM-130':
 			$data['Page']['title'] = 'Verification Complete';
 			$data['body'] = <<<HTML
