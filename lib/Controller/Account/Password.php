@@ -149,6 +149,7 @@ class Password extends \OpenTHC\SSO\Controller\Base
 		$path = '/account/password';
 		switch ($act['intent']) {
 			case 'account-create':
+			case 'account-invite':
 				$path = '/verify/password';
 				if (empty($err)) {
 					// Success
