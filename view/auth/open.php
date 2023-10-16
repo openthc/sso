@@ -3,6 +3,21 @@
  * SPDX-License-Identifier: MIT
  */
 
+$svc = $data['service'];
+
+$link_pwd = '/auth/open?a=password-reset';
+$link_new = '/account/create';
+// <?= $data['service']->id
+if ( ! empty($svc)) {
+	$link_pwd = '/auth/open?' . http_build_query([
+		'a' => 'password-reset',
+		'service' => $svc->id,
+	]);
+	$link_new = '/account/create?' . http_build_query([
+		'service' => $svc->id,
+	]);
+}
+
 ?>
 
 <form method="post">
@@ -38,8 +53,8 @@
 				<button class="btn btn-primary" id="btn-auth-open" name="a" type="submit" value="account-open">Sign In</button>
 			</div>
 			<div>
-				<a class="btn btn-outline-secondary" href="/auth/open?a=password-reset">Forgot Password</a>
-				<a class="btn btn-outline-secondary" href="/account/create?service=<?= $data['service'] ?>">Create Account</a>
+				<a class="btn btn-outline-secondary" href="<?= $link_pwd ?>">Forgot Password</a>
+				<a class="btn btn-outline-secondary" href="<?= $link_new ?>">Create Account</a>
 			</div>
 		</div>
 	</div>

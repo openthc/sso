@@ -90,8 +90,9 @@ class Open extends \OpenTHC\SSO\Controller\Base
 
 		}
 
+		// Get Service w/Caching
 		if ( ! empty($_GET['service'])) {
-			$data['service'] = $_GET['service'];
+			$data['service'] = $this->loadService($_GET['service']);
 		}
 
 		// Incoming Parameters
@@ -99,8 +100,13 @@ class Open extends \OpenTHC\SSO\Controller\Base
 			$act = \OpenTHC\SSO\Auth_Context_Ticket::get($_GET['_']);
 			// intent == "oauth-authorize"
 			if ( ! empty($act['service']) && ! empty($act['oauth-request'])) {
-				$data['service'] = $act['service'];
-				$data['auth_hint'] = sprintf('<p>Sign in, and then authorize the service (<em>%s</em>) via <a href="https://oauth.net/2/" target="_blank">OAuth2</a></p>', $act['service']);
+				$svc = $this->loadService($act['service']);
+				if ( ! empty($svc)) {
+					$data['auth_hint'] = sprintf('<p>Sign in, and then authorize the service (<em>%s</em>) via <a href="https://oauth.net/2/" target="_blank">OAuth2</a></p>'
+						, $svc->name
+					);
+					$data['serivce'] = $svc;
+				}
 			} else {
 				unset($_GET['_']);
 			}
@@ -321,6 +327,30 @@ class Open extends \OpenTHC\SSO\Controller\Base
 		$RES = $RES->withAttribute('Contact', $Contact);
 
 		return $RES->withRedirect('/done?' . http_build_query($ret_args));
+
+	}
+
+	/**
+	 *
+	 */
+	function loadService($s)
+	{
+		if (preg_match('/^[\w\.]{6,26}$/', $s)) {
+
+			$otc = new \OpenTHC\Cache('sso');
+			$svc = $otc->get(sprintf('service/%s', $s));
+			if (empty($svc)) {
+				$dbc = $this->_container->DBC_AUTH;
+				$svc = $dbc->fetchRow('SELECT id, code, name FROM auth_service WHERE (id = :s0 OR code = :s0)', [
+					':s0' => $s,
+				]);
+				if ( ! empty($svc['id'])) {
+					$otc->set(sprintf('service/%s', $s), $svc);
+				}
+			}
+
+			return $svc;
+		}
 
 	}
 
