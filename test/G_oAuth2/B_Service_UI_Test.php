@@ -19,7 +19,7 @@ class B_Service_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 			, getenv('OPENTHC_TEST_HASH')
 		));
 
-		$username = getenv('OPENTHC_TEST_CONTACT_SUPPLY');
+		$username = getenv('OPENTHC_TEST_CONTACT_USERNAME');
 		$node = self::$driver->findElement(WebDriverBy::id('username'));
 		$node->sendKeys($username);
 
