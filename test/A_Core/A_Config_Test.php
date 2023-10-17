@@ -16,6 +16,7 @@ class A_Config_Test extends \OpenTHC\SSO\Test\Base_Case
 			'OPENTHC_TEST_ORIGIN',
 			'OPENTHC_TEST_HASH',
 			'OPENTHC_TEST_CONTACT',
+			'OPENTHC_TEST_CONTACT_USERNAME',
 			'OPENTHC_TEST_CONTACT_PASSWORD',
 			'OPENTHC_TEST_CONTACT_PHONE',
 			'OPENTHC_TEST_WEBDRIVER_URL',
@@ -43,10 +44,12 @@ class A_Config_Test extends \OpenTHC\SSO\Test\Base_Case
 			'database/main/password',
 			'database/main/database',
 
+			'redis/hostname',
+
 			'openthc/sso/id',
 			'openthc/sso/origin',
-			'openthc/sso/origin-sk',
-			'openthc/sso/secret',
+			// 'openthc/sso/origin-sk',
+			// 'openthc/sso/secret',
 
 			// 'openthc/www/id',
 			// 'openthc/www/origin',
