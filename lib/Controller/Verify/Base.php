@@ -17,12 +17,9 @@ class Base extends \OpenTHC\SSO\Controller\Base
 	{
 		// Load Auth Ticket or DIE
 		$act = \OpenTHC\SSO\Auth_Context_Ticket::get($_GET['_']);
-		// $act = new \OpenTHC\Auth_Context_Ticket($dbc_auth, $_GET['_']);
-		// if ( ! $act->isValid()) {
 		if (empty($act)) {
-			_exit_html_warn('<h1>Invalid Request [CVB-026]</a></h1>', 400);
+			_exit_html_warn('<h1>Invalid Request [CVB-026]</a></h1><p>You will need to <a href="/auth/open">Sign In Again</a></p>', 400);
 		}
-		// $act = $act->getMeta();
 
 		if (empty($act['contact_cache'])) {
 
@@ -30,16 +27,16 @@ class Base extends \OpenTHC\SSO\Controller\Base
 
 			// Load Contact
 			$sql = <<<SQL
-	SELECT auth_contact.id
-	, auth_contact.stat
-	, auth_contact.flag
-	, auth_contact.username
-	, auth_contact.password
-	, auth_contact.iso3166
-	, auth_contact.tz
-	FROM auth_contact
-	WHERE auth_contact.id = :c0
-	SQL;
+			SELECT auth_contact.id
+			, auth_contact.stat
+			, auth_contact.flag
+			, auth_contact.username
+			, auth_contact.password
+			, auth_contact.iso3166
+			, auth_contact.tz
+			FROM auth_contact
+			WHERE auth_contact.id = :c0
+			SQL;
 			$arg = [
 				':c0' => $act['contact']['id']
 			];
