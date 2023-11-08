@@ -218,6 +218,9 @@ class Open extends \OpenTHC\SSO\Controller\Base
 					$tok_data['intent'] = $act_prev['intent'];
 					$tok_data['service'] = $act_prev['service'];
 					$tok_data['oauth-request'] = $act_prev['oauth-request'];
+					break;
+				default:
+					// Ignored?
 			}
 		}
 
