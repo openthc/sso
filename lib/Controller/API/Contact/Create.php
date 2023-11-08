@@ -16,10 +16,14 @@ class Create extends \OpenTHC\SSO\Controller\Base
 	{
 		$Contact = [];
 		$Contact['id'] = _ulid();
-		// $Contact['flag'] = \OpenTHC\Contact::FLAG_EMAIL_GOOD;
-		// $Contact['stat'] = 100;
+		$Contact['stat'] = 102;
 		$Contact['name'] = trim($_POST['name'] ?: $_POST['email']);
-		$Contact['email'] = $_POST['email']; // @deprecated
+		$Contact['email'] = $_POST['email'];
+		$Contact['phone'] = $_POST['phone'];
+
+		if ( ! empty($_POST['email_verify'])) {
+			$Contact['flag'] = \OpenTHC\Contact::FLAG_EMAIL_GOOD;
+		}
 
 		// $dir = new \OpenTHC\Service\OpenTHC('dir');
 		// $res = $dir->get('/api/contact?email=%s', rawurlencode($_POST['email']));
@@ -196,11 +200,6 @@ class Create extends \OpenTHC\SSO\Controller\Base
 		$dbc_main->query('COMMIT');
 
 		$ret_data['id'] = $Contact['id'];
-
-		// Pass Token in ARGS if TEST
-		if ('TEST' == getenv('OPENTHC_TEST')) {
-			$ret_data['t'] = $act['id'];
-		}
 
 		return $RES->withJSON([
 			'data' => $ret_data,

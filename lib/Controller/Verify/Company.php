@@ -50,10 +50,9 @@ class Company extends \OpenTHC\SSO\Controller\Verify\Base
 
 				$CY0 = [
 					'id' => _ulid(),
-					'name' => $_POST['company-name'] ?: $act['contact']['email'],
+					'name' => trim($_POST['company-name'] ?: $act['contact']['email']),
 					'iso3166' => $act['contact']['iso3166'],
 					'tz'=> $act['contact']['tz'],
-					// 'cre_meta' => json_encode($_POST),
 				];
 
 				$dbc->insert('auth_company', $CY0);

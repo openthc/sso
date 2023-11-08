@@ -17,9 +17,11 @@ if ( ! empty($data['error_code'])) {
 		case 'CAC-111':
 			$data['Page']['title'] = 'Account Confirmation';
 			$data['info'] = 'Please check your email to confirm your account.';
-			$data['body'] = '<p>We have just sent you an email, with the next steps.<p><p>You will need to confirm your request through a link in that message and then complete the verification process.</p>';
-			// <p>Maybe you want to read more about regulations?</p>
-			// <a class="btn btn-outline-success" href="https://openthc.com/intro">Introduction to Track and Trace <i class="icon icon-arrow-right"></i></a>
+			$data['body'] = <<<HTML
+			<p>We have just sent you an email, with the next steps.<p>
+			<p>You will need to confirm your request through a link in that message and then complete the verification process.</p>
+			<p>The message will expire in 15 minutes.</p>
+			HTML;
 			break;
 		case 'CAO-100':
 			$data['Page']['title'] = 'Check Your Inbox';
@@ -34,12 +36,12 @@ if ( ! empty($data['error_code'])) {
 		case 'CVM-119':
 			$data['Page']['title'] = 'Verification Complete';
 			$data['body'] = <<<HTML
-			<p>Your Account has been Verified and Activated.</p>
+			<h2 class="alert alert-success">Your Account has been Verified and Activated.</h2>
 			<p>You may now sign in.</p>
 			HTML;
 			$data['foot'] = <<<HTML
 			<div class="d-flex justify-content-between">
-				<a class="btn btn-primary" href="https://openthc.com/sign-in">Sign In <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+				<a class="btn btn-primary" href="/auth/open?service={$data['service']}">Sign In <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
 			</div>
 			HTML;
 			break;
@@ -51,7 +53,7 @@ if ( ! empty($data['error_code'])) {
 			HTML;
 			$data['foot'] = <<<HTML
 			<div class="d-flex justify-content-between">
-			<a class="btn btn-primary" href="https://openthc.com/demo" tabindex="1">Browse Demo <i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+			<a class="btn btn-primary" href="/profile" tabindex="1">View Profile</a>
 			<a class="btn btn-outline-danger" href="https://openthc.com/help" tabindex="2" target="_blank">Get Help <i class="fas fa-life-ring"></i></a>
 			</div>
 			HTML;

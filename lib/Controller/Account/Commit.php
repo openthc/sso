@@ -23,11 +23,19 @@ class Commit extends \OpenTHC\SSO\Controller\Base
 		}
 
 		// private function accountCreate($RES, $act_data)
-		$sso = new \OpenTHC\Service\OpenTHC('sso');
-		$res = $sso->post('/api/contact', [ 'form_params' => [
+		$arg = [
 			'name' => $act_data['account']['contact-name'],
-			'email' => $act_data['account']['contact-email']
-		]]);
+			'email' => $act_data['account']['contact-email'],
+			'phone' => $act_data['account']['contact-phone']
+		];
+		switch ($act_data['intent']) {
+			case 'account-create':
+				$arg['email_verify'] = '1';
+				break;
+		}
+
+		$sso = new \OpenTHC\Service\OpenTHC('sso');
+		$res = $sso->post('/api/contact', [ 'form_params' => $arg ]);
 
 		$ret_args = [];
 

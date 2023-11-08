@@ -122,19 +122,21 @@ class Create extends \OpenTHC\SSO\Controller\Base
 			'account' => $_POST,
 			'ip' => $_SERVER['REMOTE_ADDR'],
 		];
+
 		// Auth Hash Link - Redis
-		// $tok = Auth_Context_Ticket::set($act_data);
+		$tok = Auth_Context_Ticket::set($act_data, 900);
+
 		// Auth Hash Link - PostgreSQL
-		$dbc_auth = $this->_container->DBC_AUTH;
-		$act = new \OpenTHC\Auth_Context_Ticket($dbc_auth);
-		$act->create($act_data);
-		$RES = $RES->withAttribute('Auth_Context_Ticket', $act['id']);
+		// $dbc_auth = $this->_container->DBC_AUTH;
+		// $act = new \OpenTHC\Auth_Context_Ticket($dbc_auth);
+		// $act->create($act_data);
+		// $RES = $RES->withAttribute('Auth_Context_Ticket', $act['id']);
 
 		$ret_args['e'] = 'CAC-111';
 
 		// Test Mode
 		if ('TEST' == getenv('OPENTHC_TEST')) {
-			$ret_args['t'] = $act['id'];
+			$ret_args['t'] = $tok;
 		}
 
 		return $RES->withRedirect('/done?' . http_build_query($ret_args));
