@@ -77,35 +77,6 @@ class Email extends \OpenTHC\SSO\Controller\Verify\Base
 
 		return $RES->withRedirect('/verify?' . http_build_query($_GET));
 
-		// $data = $this->data;
-		// $data['Page']['title'] = 'Email Verification';
-		// $data['info'] = 'Email address has been validated';
-		// if (empty($_SESSION['Contact'])) {
-		// 	$data['foot'] = '<div class="r"><a class="btn btn-outline-primary" href="/auth/open">Sign In <i class="icon icon-arrow-right"></i></a></div>';
-		// } else {
-		// 	$data['foot'] = '<div class="r"><a class="btn btn-outline-primary" href="/auth/init">Continue <i class="icon icon-arrow-right"></i></a></div>';
-		// }
-
-		// // Set Contact Model on Response
-		// $RES = $RES->withAttribute('Contact', [
-		// 	'id' => $ARG['contact']['id'],
-		// 	'username' => $ARG['contact']['username'],
-		// 	'flag' => Contact::FLAG_EMAIL_GOOD,
-		// ]);
-
-		// // @deprecated use ACT, is this even the right spot for it?
-		// // Landed here from Password Reset?
-		// // No prompt, just show verifications
-		// if ('password-reset' == $ARG['source']) {
-		// 	unset($ARG['intent']);
-		// 	unset($ARG['source']);
-		// 	$x = _encrypt(json_encode($ARG), $_SESSION['crypt-key']);
-		// 	return $RES->withRedirect('/account/verify?_=' . $x);
-		// }
-
-		// $html = $this->render('done.php', $data);
-		// return $RES->write($html);
-
 	}
 
 	/**
