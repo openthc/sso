@@ -74,8 +74,6 @@ class Company extends \OpenTHC\SSO\Controller\Verify\Base
 					'meta' => json_encode($_SESSION),
 				]);
 
-				$_SESSION['verify']['company']['done'] = true;
-
 				return $RES->withRedirect(sprintf('/verify?_=%s', $_GET['_']));
 
 				break;

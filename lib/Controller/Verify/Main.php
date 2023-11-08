@@ -21,15 +21,10 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 	{
 		if (empty($_SESSION['verify'])) {
 			$_SESSION['verify'] = [
-				'contact' => [],
-				'email' => [],
-				'password' => [],
-				'iso3166-1' => [],
-				'iso3166-2' => [],
-				'tz' => [],
-				'phone' => [],
+				'phone' => [
+					'done' => true,
+				],
 				'company' => [],
-				'license' => [],
 			];
 		}
 
@@ -86,37 +81,34 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 		}
 
 		// Company
-		if (empty($_SESSION['verify']['company']['done'])) {
-
-			$dbc_auth = $this->_container->DBC_AUTH;
-			$chk = $dbc_auth->fetchOne('SELECT count(id) FROM auth_company_contact WHERE contact_id = :ct0', [
-				':ct0' => $CT0['id'],
-			]);
-
-			if (empty($chk)) {
-				return $RES->withRedirect(sprintf('/verify/company?_=%s', $tok));
-			}
-
-		}
-
-		if (empty($_SESSION['verify']['license'])) {
-			return $RES->withRedirect(sprintf('/verify/license?_=%s', $tok));
+		$dbc_auth = $this->_container->DBC_AUTH;
+		$chk = $dbc_auth->fetchOne('SELECT count(id) FROM auth_company_contact WHERE contact_id = :ct0', [
+			':ct0' => $CT0['id'],
+		]);
+		if (empty($chk)) {
+			return $RES->withRedirect(sprintf('/verify/company?_=%s', $tok));
 		}
 
 		// Update Contact Status
-		// $CT0['stat'] = Contact::STAT_LIVE;
-		// $CT0->save();
+		$dbc = $this->_container->DBC_AUTH;
+		$CT1 = new Auth_Contact($dbc, $act_data['contact']['id']);
+		$CT1['stat'] = Contact::STAT_LIVE;
+		$CT1->save('Account/Contact/Verify');
 
-		// $dbc_auth->insert('log_event', [
-		// 	'contact_id' => $CT0['id'],
-		// 	'code' => 'Contact/Account/Live',
-		// 	'meta' => json_encode($_SESSION),
-		// ]);
+		$dbc->insert('log_event', [
+			'contact_id' => $CT0['id'],
+			'code' => 'Contact/Account/Live',
+			'meta' => json_encode([
+				'Contact' => $CT1,
+				'_SESSION' => $_SESSION,
+			]),
+		]);
 
 		$RES = $RES->withAttribute('verify-done', true);
 		$RES = $RES->withAttribute('Contact', $act_data['contact']);
 
-		return $RES->withRedirect('/done?e=CVM-130');
+		return $RES->withRedirect('/done?e=CVM-119'); // Prompt to Sign-In
+		return $RES->withRedirect('/done?e=CVM-130'); // Prompt to Wait for Activation
 
 	}
 }
