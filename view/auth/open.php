@@ -20,7 +20,11 @@ if ( ! empty($svc)) {
 
 ?>
 
-<form method="post">
+<form method="post" id="auth-open-form">
+
+<input id="js-enabled" name="js-enabled" type="hidden" value="0">
+<input id="date-input-enabled" name="date-input-enabled" type="hidden" value="0">
+<input id="time-input-enabled" name="time-input-enabled" type="hidden" value="0">
 <input name="CSRF" type="hidden" value="<?= $data['CSRF'] ?>">
 
 <div class="auth-wrap">
@@ -37,12 +41,12 @@ if ( ! empty($svc)) {
 
 	<div class="mt-4">
 		<label>Email</label>
-		<input autofocus class="form-control" id="username" inputmode="email" name="username" placeholder="- user@example.com -" type="email" value="<?= h($data['auth_username']) ?>">
+		<input autofocus class="form-control" id="username" inputmode="email" name="username" placeholder="- user@example.com -" required type="email" value="<?= __h($data['auth_username']) ?>">
 	</div>
 
 	<div class="mt-4">
 		<label>Password</label>
-		<input class="form-control" id="password" name="password" type="password" value="<?= h($data['auth_password']) ?>">
+		<input class="form-control" id="password" name="password" required type="password" value="<?= __h($data['auth_password']) ?>">
 	</div>
 
 	</div>
@@ -62,11 +66,6 @@ if ( ! empty($svc)) {
 	</div>
 
 </div>
-<div>
-	<input id="js-enabled" name="js-enabled" type="hidden" value="0">
-	<input id="date-input-enabled" name="date-input-enabled" type="hidden" value="0">
-	<input id="time-input-enabled" name="time-input-enabled" type="hidden" value="0">
-</div>
 </form>
 
 
@@ -82,4 +81,15 @@ document.querySelector('#time-input-enabled').value = (function() {
 	node.type = 'time';
 	return ('time' === node.type)
 })();
+var F = document.querySelector('#auth-open-form');
+if (F) {
+	F.addEventListener('submit', function() {
+		var wrap = F.querySelector('.auth-wrap');
+		wrap.style.backgroudColor = '#11111111';
+		wrap.style.pointerEvents = 'none';
+		wrap.style.opacity = '0.5';
+		var btn = F.querySelector('#btn-auth-open');
+		btn.innerHTML = 'Here we go!';
+	});
+}
 </script>
