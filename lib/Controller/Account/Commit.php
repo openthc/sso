@@ -26,6 +26,7 @@ class Commit extends \OpenTHC\SSO\Controller\Base
 		$arg = [
 			'name' => $act_data['account']['contact-name'],
 			'email' => $act_data['account']['contact-email'],
+			'email_verify' => true,
 			'phone' => $act_data['account']['contact-phone']
 		];
 		switch ($act_data['intent']) {
@@ -34,6 +35,7 @@ class Commit extends \OpenTHC\SSO\Controller\Base
 				break;
 		}
 
+		// $sso = new \OpenTHC\Service('sso');
 		$sso = new \OpenTHC\Service\OpenTHC('sso');
 		$res = $sso->post('/api/contact', [ 'form_params' => $arg ]);
 
