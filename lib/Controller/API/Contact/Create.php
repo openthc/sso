@@ -181,7 +181,7 @@ class Create extends \OpenTHC\SSO\Controller\Base
 		// Should Always Work
 		$dbc_auth->insert('auth_contact', array(
 			'id' => $Contact['id'],
-			// 'flag' => $Contact['flag'],
+			'flag' => $Contact['flag'],
 			// 'stat' => $Contact['stat'],
 			'username' => $Contact['email'],
 			'password' => '',
