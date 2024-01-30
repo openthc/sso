@@ -54,11 +54,13 @@ if ( ! empty($svc)) {
 	<div class="card-footer">
 		<div class="d-flex justify-content-between">
 			<div>
-				<button class="btn btn-primary" id="btn-auth-open" name="a" type="submit" value="account-open">Sign In</button>
+				<button class="btn btn-primary" id="btn-auth-open" name="a" type="submit" value="account-open">
+					Sign In <i class="fa-solid fa-arrow-right-to-bracket"></i>
+				</button>
 			</div>
 			<div>
-				<a class="btn btn-outline-secondary" href="<?= $link_pwd ?>">Forgot Password</a>
-				<a class="btn btn-outline-secondary" href="<?= $link_new ?>">Create Account</a>
+				<a class="btn btn-outline-secondary" href="<?= $link_pwd ?>">Forgot Password <i class="fa-regular fa-circle-question"></i></a>
+				<a class="btn btn-outline-secondary" href="<?= $link_new ?>">Create Account <i class="fa-solid fa-user-plus"></i></a>
 			</div>
 		</div>
 	</div>

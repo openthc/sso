@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
+use OpenTHC\SSO\UI\Icon;
+
 ?>
 
 <form autocomplete="off" method="post">
@@ -34,10 +36,14 @@
 	<div class="card-footer">
 		<div class="d-flex justify-content-between">
 		<div>
-			<button class="btn btn-primary" id="btn-account-create" name="a" type="submit" value="contact-next">Create Account <i class="icon icon-arrow-right"></i></button>
+			<button class="btn btn-primary" id="btn-account-create" name="a" type="submit" value="contact-next">
+				Create Account <i class="fa-solid fa-arrow-right"></i>
+			</button>
 		</div>
 		<div>
-			<a class="btn btn-outline-secondary" href="/auth/open?service=<?= __h($_GET['service']) ?>">Sign In</a>
+			<a class="btn btn-outline-secondary" href="/auth/open?service=<?= __h($_GET['service']) ?>">
+				Sign In <i class="fa-solid fa-arrow-right-to-bracket"></i>
+			</a>
 		</div>
 		</div>
 	</div>
