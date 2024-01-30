@@ -57,9 +57,9 @@ if ( ! empty($svc)) {
 				<button class="btn btn-primary" id="btn-auth-open" name="a" type="submit" value="account-open">
 					Sign In <i class="fa-solid fa-arrow-right-to-bracket"></i>
 				</button>
+				<a class="btn btn-outline-secondary" href="<?= $link_pwd ?>">Forgot Password <i class="fa-regular fa-circle-question"></i></a>
 			</div>
 			<div>
-				<a class="btn btn-outline-secondary" href="<?= $link_pwd ?>">Forgot Password <i class="fa-regular fa-circle-question"></i></a>
 				<a class="btn btn-outline-secondary" href="<?= $link_new ?>">Create Account <i class="fa-solid fa-user-plus"></i></a>
 			</div>
 		</div>
