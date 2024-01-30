@@ -2,23 +2,27 @@
 # OpenTHC .ackrc
 #
 
---break
---color
---heading
---sort-files
-
+--ignore-dir=.bundle/
 --ignore-dir=.cache/
 --ignore-dir=.composer/
 --ignore-dir=.git/
+--ignore-dir=.idea/
 --ignore-dir=.local/
 --ignore-dir=.npm/
+--ignore-dir=.vscode/
+--ignore-dir=doxygen/
 --ignore-dir=node_modules/
+--ignore-dir=output-data/
 --ignore-dir=public/
---ignore-dir=scrape/
+--ignore-dir=source-data/
+--ignore-dir=tmp/
 --ignore-dir=var/
 --ignore-dir=vendor/
+--ignore-dir=webroot/css/
+--ignore-dir=webroot/output/
+--ignore-dir=webroot/pub/
 --ignore-dir=webroot/test-output/
+--ignore-dir=webroot/vendor/
 
 --ignore-file=is:composer.lock
---ignore-file=is:composer.phar
---ignore-file=is:phpcpd.phar
+--ignore-file=is:package-lock.json
