@@ -12,7 +12,7 @@ use Edoceo\Radix\Session;
 
 use\OpenTHC\Contact;
 
-use OpenTHC\SSO\CSRF;
+use OpenTHC\CSRF;
 use OpenTHC\SSO\Auth_Contact;
 
 class Open extends \OpenTHC\SSO\Controller\Base

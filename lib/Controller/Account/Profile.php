@@ -7,7 +7,8 @@
 
 namespace OpenTHC\SSO\Controller\Account;
 
-use OpenTHC\SSO\CSRF;
+use OpenTHC\CSRF;
+use OpenTHC\SSO\Auth_Contact;
 
 class Profile extends \OpenTHC\SSO\Controller\Base
 {
@@ -122,8 +123,18 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 		$dbc_main = $this->_container->DBC_MAIN;
 
 		switch ($_POST['a']) {
+			case 'contact-email-update':
+				return $this->email_update($RES);
+				break;
+			case 'contact-fullname-update':
+				$dbc_main->query('UPDATE contact SET fullname = :n1 WHERE id = :c0', [
+					':c0' => $_SESSION['Contact']['id'],
+					':n1' => trim($_POST['contact-name']),
+				]);
+				break;
 			case 'contact-password-update':
 				// Construct Token and Redirect
+				$tok = \OpenTHC\Auth_Context_Ticket::set();
 				$act = new \OpenTHC\Auth_Context_Ticket($dbc_auth);
 				$tok = $act->create([
 					'intent' => 'password-update',
@@ -148,5 +159,26 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 	function loadCompany()
 	{
 
+	}
+
+	function email_update($RES)
+	{
+		$e = strtolower(trim($_POST['contact-email']));
+		// $e = filter_var();
+		$e = \Edoceo\Radix\Filter::email($e);
+		if (empty($e)) {
+			_exit_html_fail('<h1>Invalid Email [CAP-169]</h1>', 400);
+		}
+
+		$dbc_auth = $this->_container->DBC_AUTH;
+
+		// Find in Channel?
+		// $Ch0 = \Channel::findBy();
+
+		$CT0 = new Auth_Contact($dbc_auth, $_SESSION['Contact']['id']);
+		$CT0['username'] = $e;
+		$CT0->save('Contact/Update by User');
+
+		return $RES->withRedirect('/profile');
 	}
 }

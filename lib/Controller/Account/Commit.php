@@ -7,7 +7,6 @@
 
 namespace OpenTHC\SSO\Controller\Account;
 
-use OpenTHC\SSO\CSRF;
 use OpenTHC\SSO\Auth_Context_Ticket;
 
 class Commit extends \OpenTHC\SSO\Controller\Base

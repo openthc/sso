@@ -7,6 +7,8 @@
 
 namespace OpenTHC\SSO\Controller;
 
+use OpenTHC\CSRF;
+
 class Base extends \OpenTHC\Controller\Base
 {
 	protected $data;
@@ -23,7 +25,7 @@ class Base extends \OpenTHC\Controller\Base
 		$data['Page'] = [];
 		$data['Page']['title'] = 'OpenTHC';
 
-		$data['CSRF'] = \OpenTHC\SSO\CSRF::getToken();
+		$data['CSRF'] = CSRF::getToken();
 
 		$this->data = $data;
 

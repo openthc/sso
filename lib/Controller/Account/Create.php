@@ -7,7 +7,7 @@
 
 namespace OpenTHC\SSO\Controller\Account;
 
-use OpenTHC\SSO\CSRF;
+use OpenTHC\CSRF;
 use OpenTHC\SSO\Auth_Context_Ticket;
 
 class Create extends \OpenTHC\SSO\Controller\Base
