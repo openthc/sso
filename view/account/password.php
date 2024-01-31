@@ -46,7 +46,9 @@
 
 </div>
 <div class="card-footer">
-	<button class="btn btn-outline-primary" disabled id="btn-password-update" name="a" type="submit" value="update">Save <i class="icon icon-arrow-right"></i></button>
+	<button class="btn btn-primary" disabled id="btn-password-update" name="a" type="submit" value="update">
+		Save Password <i class="fa-regular fa-floppy-disk"></i>
+	</button>
 </div>
 </div>
 </div>
@@ -132,7 +134,6 @@ function password_matcher(e)
 	$hint.removeClass('text-success text-warning');
 
 	$btn.prop('disabled', true);
-	$btn.removeClass('btn-primary btn-outline-primary');
 
 	var p0 = $('#password0').val();
 	var p1 = $('#password1').val();
@@ -148,8 +149,6 @@ function password_matcher(e)
 	}
 
 }
-
-// 	$('.password-input').on('blur keyup', dbpie);
 
 $(function() {
 	$('#password0').on('blur change keyup', password_checker);

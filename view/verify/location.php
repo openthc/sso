@@ -5,6 +5,8 @@
  * SPDX-License-Identifier: MIT
  */
 
+use OpenTHC\SSO\UI\Icon;
+
 ?>
 
 <form autocomplete="off" method="post">
@@ -18,21 +20,22 @@
 
 		<div class="mt-4">
 			<label>Country:</label>
-			<select class="form-control" id="contact-iso3166-1" name="contact-iso3166-1">
-			<?php
-			foreach ($data['iso3166_1_list'] as $i => $x) {
-				$sel = ($x['id'] == $data['iso3166_1_pick']['id'] ? ' selected' : '');
-				printf('<option%s value="%s">%s</option>', $sel, $x['id'], $x['name']);
-			}
-			?>
-			</select>
+			<div class="input-group" id="country-select-wrap">
+				<select class="form-control" id="contact-iso3166-1" name="contact-iso3166-1">
+				<?php
+				foreach ($data['iso3166_1_list'] as $i => $x) {
+					$sel = ($x['id'] == $data['iso3166_1_pick']['id'] ? ' selected' : '');
+					printf('<option%s value="%s">%s</option>', $sel, $x['id'], $x['name']);
+				}
+				?>
+				</select>
+			</div>
 		</div>
 
 	</div>
 	<div class="card-footer">
 		<button class="btn btn-primary" id="btn-location-save" name="a" type="submit" value="iso3166-1-save-next">
-			Next
-			<i class="icon icon-arrow-right"></i>
+			Next <?= Icon::icon('next') ?>
 		</button>
 	</div>
 	</div>
@@ -44,7 +47,7 @@
 // Have to feedback to OpenCAGE or something
 const successCallback = (pos) => {
 
-	console.log(pos);
+	// console.log(pos);
 
 	var fd0 = new FormData();
 	fd0.set('a', 'geo-resolve');
@@ -66,14 +69,23 @@ const successCallback = (pos) => {
 			}
 		});
 
+	$('#country-select-sync').remove();
+
 };
 
 const errorCallback = (err) => {
 	console.log(err);
+	$('#country-select-sync').remove();
 };
 
-navigator.geolocation.getCurrentPosition(successCallback, errorCallback, {
-	requestAddress: true
+$(function() {
+
+	$('#country-select-wrap').append('<div class="input-group-text" id="country-select-sync"><i class="fa-solid fa-arrows-rotate"></i></div>');
+
+	navigator.geolocation.getCurrentPosition(successCallback, errorCallback, {
+		requestAddress: true
+	});
+
 });
 
 </script>

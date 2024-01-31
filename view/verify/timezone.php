@@ -1,7 +1,11 @@
 <?php
 /**
+ * Select Timezone
+ *
  * SPDX-License-Identifier: MIT
  */
+
+use OpenTHC\SSO\UI\Icon;
 
 ?>
 
@@ -33,7 +37,7 @@
 				id="btn-timezone-pick"
 				title="Detect Timezone from Browser"
 				type="button">
-				<i class="icon icon-magic-wand"></i> Detect
+				Detect <i class="fa-solid fa-wand-magic-sparkles"></i>
 			</button>
 		</div>
 	</div>
@@ -41,8 +45,7 @@
 </div>
 <div class="card-footer">
 	<button class="btn btn-primary" id="btn-timezone-save" name="a" type="submit" value="timezone-save-next">
-		Next
-		<i class="icon icon-arrow-right"></i>
+		Next <?= Icon::icon('next') ?>
 	</button>
 </div>
 </div>

@@ -1,7 +1,11 @@
 <?php
 /**
+ * Set Company Details
+ *
  * SPDX-License-Identifier: MIT
  */
+
+use OpenTHC\SSO\UI\Icon;
 
 ?>
 
@@ -29,6 +33,21 @@
 			id="company-name"
 			name="company-name"
 			placeholder="Company Name"
+			required
+			tabindex="1"
+			type="text"
+			value="">
+	</div>
+
+	<div class="mt-4">
+		<label>Government ID:</label>
+		<input
+			autocomplete="off"
+			autofocus
+			class="form-control"
+			id="company-guid"
+			name="company-guid"
+			placeholder="Company Government ID"
 			required
 			tabindex="1"
 			type="text"
@@ -78,26 +97,21 @@
 			value="<?= __h($data['company-email']) ?>">
 	</div>
 
-	<div class="mt-4">
-		<label>Government ID:</label>
-		<input
-			autocomplete="off"
-			autofocus
-			class="form-control"
-			id="company-guid"
-			name="company-guid"
-			placeholder="Company Government ID"
-			required
-			tabindex="1"
-			type="text"
-			value="">
-	</div>
-
 </div>
 
 <div class="card-footer">
-	<button class="btn btn-primary" name="a" tabindex="1" type="submit" value="company-save">Save <i class="icon icon-arrow-right"></i></button>
-	<button class="btn btn-outline-secondary" id="btn-company-skip" name="a" tabindex="2" type="submit" value="company-skip">Skip <i class="icon icon-arrow-right"></i></button>
+	<div class="d-flex justify-content-between">
+		<div>
+			<button class="btn btn-primary" name="a" tabindex="1" type="submit" value="company-save">
+				Save <?= Icon::icon('save') ?>
+			</button>
+		</div>
+		<div>
+			<button class="btn btn-outline-secondary" id="btn-company-skip" name="a" tabindex="2" type="submit" value="company-skip">
+				Skip <?= Icon::icon('checkbox') ?>
+			</button>
+		</div>
+	</div>
 </div>
 
 </div>
@@ -116,5 +130,15 @@
 		});
 	});
 
+	<?php
+	$dir_origin = \OpenTHC\Config::get('openthc/dir/origin');
+	if ( ! empty($dir_origin)) {
+	?>
+		$('#company-name').autocomplete({
+			source: '<?= $dir_origin ?>/api/autocomplete/company',
+		});
+	<?php
+	}
+	?>
 })();
 </script>

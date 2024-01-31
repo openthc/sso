@@ -5,6 +5,8 @@
  * SPDX-License-Identifier: MIT
  */
 
+use OpenTHC\SSO\UI\Icon;
+
 ?>
 
 <form autocomplete="off" method="post">
@@ -36,8 +38,7 @@
 	</div>
 	<div class="card-footer">
 		<button class="btn btn-primary" id="btn-location-save" name="a" type="submit" value="iso3166-2-save-next">
-			Next
-			<i class="icon icon-arrow-right"></i>
+			Next <?= Icon::icon('next') ?>
 		</button>
 	</div>
 	</div>

@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
+use OpenTHC\SSO\UI\Icon;
+
 ?>
 
 <form autocomplete="off" method="post">
@@ -27,14 +29,12 @@
 
 </div>
 
-<div class="card-footer r">
+<div class="card-footer">
+	<button class="btn btn-primary" name="a" type="submit" value="verify-email-save">Confirm <?= Icon::icon('next') ?></button>
 	<?php
-	if ($data['verify_email']) {
-		echo '<button class="btn btn-primary" name="a" type="submit" value="verify-email-save">Confirm <i class="icon icon-arrow-right"></i></button>';
-	} else {
+	if (empty($data['verify_email'])) {
 	?>
-		<button class="btn btn-outline-secondary" name="a" type="submit" value="email-verify-send">Resend Confirmation <i class="icon icon-arrow-right"></i></button>
-		<button class="btn btn-primary" name="a" type="submit" value="verify-email-save">Confirm <i class="icon icon-arrow-right"></i></button>
+		<button class="btn btn-outline-secondary" name="a" type="submit" value="email-verify-send">Resend Confirmation <?= Icon::icon('send') ?></button>
 	<?php
 	}
 	?>
