@@ -25,12 +25,12 @@ class Commit extends \OpenTHC\SSO\Controller\Base
 		$arg = [
 			'name' => $act_data['account']['contact-name'],
 			'email' => $act_data['account']['contact-email'],
-			'email_verify' => true,
 			'phone' => $act_data['account']['contact-phone']
 		];
+
 		switch ($act_data['intent']) {
 			case 'account-create':
-				$arg['email_verify'] = '1';
+				$arg['email_verify'] = true;
 				break;
 		}
 
@@ -54,8 +54,6 @@ class Commit extends \OpenTHC\SSO\Controller\Base
 
 		$RES = $RES->withAttribute('Contact', [
 			'id' => $res['data']['id'],
-			// 'username' => $act_data['contact'],
-			// 'email' =>
 		]);
 
 		$act_data['contact'] = $res['data'];
