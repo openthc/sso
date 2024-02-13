@@ -205,9 +205,7 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 		// If no Company, Re-Open and Select Company
 		if (empty($_SESSION['Company']['id'])) {
 
-			$act = [];
-			$act['id'] = _random_hash();
-			$act['meta'] = json_encode([
+			$tok = \OpenTHC\SSO\Auth_Context_Ticket::set([
 				'intent' => 'oauth-authorize',
 				'contact' => $_SESSION['Contact'],
 				'company' => [],
@@ -215,8 +213,7 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 				'oauth-request' => $_GET,
 			]);
 
-			$this->_container->DBC_AUTH->insert('auth_context_ticket', $act);
-			$ret = sprintf('/auth/open?_=%s', $act['id']);
+			$ret = sprintf('/auth/open?_=%s', $tok);
 
 			return $RES->withRedirect($ret);
 		}

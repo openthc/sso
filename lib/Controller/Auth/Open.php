@@ -105,7 +105,7 @@ class Open extends \OpenTHC\SSO\Controller\Base
 					$data['auth_hint'] = sprintf('<p>Sign in, and then authorize the service (<em>%s</em>) via <a href="https://oauth.net/2/" target="_blank">OAuth2</a></p>'
 						, $svc->name
 					);
-					$data['serivce'] = $svc;
+					$data['service'] = $svc;
 				}
 			} else {
 				unset($_GET['_']);
