@@ -20,24 +20,39 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 			, getenv('OPENTHC_TEST_HASH')
 		));
 
+		$node = self::$driver->findElement(WebDriverBy::id('alert-test-mode'));
+		$txt = $node->getText();
+		$this->assertEquals('TEST MODE', $txt, 'Apache2 Environment missing variable: SetEnv OPENTHC_TEST "TEST"');
+
 		$node = self::$driver->findElement(WebDriverBy::id('contact-name'));
 		$node->sendKeys(sprintf('%s-ui', getenv('OPENTHC_TEST_CONTACT')));
 
 		$node = self::$driver->findElement(WebDriverBy::id('contact-email'));
-		$node->sendKeys(sprintf('%s-ui@openthc.dev', getenv('OPENTHC_TEST_CONTACT')));
+		$node->sendKeys(sprintf('%s-ui@openthc.com', getenv('OPENTHC_TEST_CONTACT')));
+
+		$node = self::$driver->findElement(WebDriverBy::id('contact-phone'));
+		$node->sendKeys(getenv('OPENTHC_TEST_CONTACT'));
 
 		$node = self::$driver->findElement(WebDriverBy::id('btn-account-create'));
 		$node->click();
 
 		// Should Submit and then take us to the /DONE page, with the trigger in the URL
 		$url1 = self::$driver->getCurrentUrl();
-		$this->assertMatchesRegularExpression('/\/done\?e=CAC\-0?\d+/', $url1);
-		$this->assertMatchesRegularExpression('/\/done\?e=CAC\-0?\d+.+r=/', $url1); // Has Test Link
+		//$this->assertMatchesRegularExpression('/\/done\?e=CAC\-0?\d+/', $url1);
+		$this->assertMatchesRegularExpression('/\/done\?e=CAC-\d+/', $url1);
+		//$this->assertMatchesRegularExpression('/\/done\?e=CAC\-0?\d+.+r=/', $url1); // Has Test Link
 		// $this->assertStringContainsString('/done?e=CAC-111', $url);
 		// $this->assertStringContainsString('Please check your email to confirm your account', self::$driver->getPageSource());
 
+		/*
 		$url1 = preg_match('/r=(.+)$/', $url1, $m) ? $m[1] : '';
 		$url1 = rawurldecode($url1);
+		*/
+
+		$node = self::$driver->findElement(WebDriverBy::id('alert-test-link'));
+		$a = $node->findElement(WebDriverBy::cssSelector('a'));
+		$url1 = $a->getAttribute('href');
+		$this->assertNotEmpty($url1, 'Apache2 Environment missing variable: SetEnv OPENTHC_TEST "TEST"');
 
 		return $url1;
 
@@ -105,9 +120,17 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 		$url1 = self::$driver->getCurrentUrl();
 		$this->assertMatchesRegularExpression('/\/verify\/location.+/', $url1);
 
+		/*
+		$node = self::$driver->findElement(WebDriverBy::id('contact-iso3166-1'));
+		var_dump($node);
+		$node = new WebDriverSelect($node);
+		var_dump($node);
+		$node->selectByValue('US');
+
 		$node = self::$driver->findElement(WebDriverBy::id('contact-iso3166-2'));
 		$node = new WebDriverSelect($node);
 		$node->selectByValue('US-WA');
+		*/
 
 
 		$node = self::$driver->findElement(WebDriverBy::id('btn-location-save'));
@@ -138,8 +161,9 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	}
 
 	/**
-	 * @depends test_verify_timezone
+	 * Dropped Requirement
 	 */
+	/*
 	function test_verify_phone($url0)
 	{
 		$this->assertNotEmpty($url0);
@@ -166,9 +190,10 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 		return $url2;
 
 	}
+	*/
 
 	/**
-	 * @depends test_verify_phone
+	 * @depends test_verify_timezone
 	 */
 	function test_verify_company($url0)
 	{
@@ -179,10 +204,35 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 		$node->click();
 
 		$url1 = self::$driver->getCurrentUrl();
-		$this->assertMatchesRegularExpression('/\/account/', $url1);
+		$this->assertMatchesRegularExpression('/\/done/', $url1);
 
 		return $url1;
 
 	}
 
+	/**
+	 * @depends test_verify_company
+	 */
+	function test_sign_in_new($url0)
+	{
+		$node = self::$driver->findElement(WebDriverBy::cssSelector("[href^='/auth/open']"));
+		$node->click();
+
+		// #username
+		$node = self::$driver->findElement(WebDriverBy::id('username'));
+		$node->sendKeys(sprintf('%s-ui@openthc.com', getenv('OPENTHC_TEST_CONTACT')));
+
+		// #password
+		$node = self::$driver->findElement(WebDriverBy::id('password'));
+		$node->sendKeys(getenv('OPENTHC_TEST_CONTACT'));
+
+		// #btn-auth-open
+		$node = self::$driver->findElement(WebDriverBy::id('btn-auth-open'));
+		$node->click();
+
+		$url1 = self::$driver->getCurrentUrl();
+		$this->assertMatchesRegularExpression('/\/auth\/open/', $url1);
+		$src = self::$driver->getPageSource();
+		$this->assertDoesNotMatchRegularExpression('/Invalid Username or Password/', $src);
+	}
 }

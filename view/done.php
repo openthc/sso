@@ -88,7 +88,9 @@ if ( ! empty($data['error_code'])) {
 
 		// It's the Secret Token
 		if ( ! empty($_GET['t'])) {
+			echo '<div id="alert-test-link">';
 			echo sprintf('<hr><div class="alert alert-warning">Auth: <a href="/auth/once?_=%s">SSO/auth/once</a></div>', rawurlencode($_GET['t']));
+			echo '</div>';
 		}
 
 		?>
