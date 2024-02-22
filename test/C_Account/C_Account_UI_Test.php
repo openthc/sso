@@ -10,6 +10,27 @@ use Facebook\WebDriver\WebDriverSelect;
 
 class C_Account_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 {
+
+	public static function setUpBeforeClass() : void
+	{
+		parent::setUpBeforeClass();
+
+		self::$driver->get(sprintf('%s/auth/open'
+			, getenv('OPENTHC_TEST_ORIGIN')
+		));
+
+		$node = self::$driver->findElement(WebDriverBy::id('username'));
+		$node->sendKeys(sprintf('%s', $_ENV['OPENTHC_TEST_CONTACT_USERNAME']));
+
+		// #password
+		$node = self::$driver->findElement(WebDriverBy::id('password'));
+		$node->sendKeys($_ENV['OPENTHC_TEST_CONTACT_PASSWORD']);
+
+		// #btn-auth-open
+		$node = self::$driver->findElement(WebDriverBy::id('btn-auth-open'));
+		$node->click();
+	}
+
 	/**
 	 * Change the user Name
 	 */
@@ -34,7 +55,7 @@ class C_Account_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 
 		$node = self::$driver->findElement(WebDriverBy::id('contact-name'));
 		$val1 = $node->getText();
-		$this->assertEqual($val0, $val1);
+		$this->assertEquals($val0, $val1);
 
 		$url1 = self::$driver->getCurrentUrl();
 		return $url1;
@@ -42,18 +63,21 @@ class C_Account_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 
 	/**
 	 * Change the user Email / Username
+	 * @depends test_change_name
 	 */
 	function test_change_email($url0)
 	{}
 
 	/**
 	 * Change the user Phone
+	 * @depends test_change_name
 	 */
 	function test_change_phone($url0)
 	{}
 
 	/**
 	 * Test service connection - App
+	 * @depends test_change_name
 	 */
 	function test_service_app($url0)
 	{
@@ -74,6 +98,7 @@ class C_Account_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 
 	/**
 	 * Test service connection - Directory
+	 * @depends test_change_name
 	 */
 	function test_service_dir($url0)
 	{

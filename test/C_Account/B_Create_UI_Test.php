@@ -10,6 +10,17 @@ use Facebook\WebDriver\WebDriverSelect;
 
 class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 {
+
+	static $username;
+
+	public static function setUpBeforeClass() : void
+	{
+		parent::setUpBeforeClass();
+
+		$_ENV['OPENTHC_TEST_CONTACT'] = 'test+' . _ulid();
+		self::$username = sprintf('%s-ui@openthc.com', $_ENV['OPENTHC_TEST_CONTACT']);
+	}
+
 	/**
 	 *
 	 */
@@ -25,13 +36,13 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 		$this->assertEquals('TEST MODE', $txt, 'Apache2 Environment missing variable: SetEnv OPENTHC_TEST "TEST"');
 
 		$node = self::$driver->findElement(WebDriverBy::id('contact-name'));
-		$node->sendKeys(sprintf('%s-ui', getenv('OPENTHC_TEST_CONTACT')));
+		$node->sendKeys(sprintf('%s-ui', $_ENV['OPENTHC_TEST_CONTACT']));
 
 		$node = self::$driver->findElement(WebDriverBy::id('contact-email'));
-		$node->sendKeys(sprintf('%s-ui@openthc.com', getenv('OPENTHC_TEST_CONTACT')));
+		$node->sendKeys(self::$username);
 
 		$node = self::$driver->findElement(WebDriverBy::id('contact-phone'));
-		$node->sendKeys(getenv('OPENTHC_TEST_CONTACT'));
+		$node->sendKeys($_ENV['OPENTHC_TEST_CONTACT']);
 
 		$node = self::$driver->findElement(WebDriverBy::id('btn-account-create'));
 		$node->click();
@@ -220,18 +231,18 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 
 		// #username
 		$node = self::$driver->findElement(WebDriverBy::id('username'));
-		$node->sendKeys(sprintf('%s-ui@openthc.com', getenv('OPENTHC_TEST_CONTACT')));
+		$node->sendKeys(self::$username);
 
 		// #password
 		$node = self::$driver->findElement(WebDriverBy::id('password'));
-		$node->sendKeys(getenv('OPENTHC_TEST_CONTACT'));
+		$node->sendKeys($_ENV['OPENTHC_TEST_CONTACT_PASSWORD']);
 
 		// #btn-auth-open
 		$node = self::$driver->findElement(WebDriverBy::id('btn-auth-open'));
 		$node->click();
 
 		$url1 = self::$driver->getCurrentUrl();
-		$this->assertMatchesRegularExpression('/\/auth\/open/', $url1);
+		$this->assertMatchesRegularExpression('/\/account/', $url1);
 		$src = self::$driver->getPageSource();
 		$this->assertDoesNotMatchRegularExpression('/Invalid Username or Password/', $src);
 	}

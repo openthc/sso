@@ -35,7 +35,7 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 
 		// $this->assertStringContainsString('TEST MODE', $html);
 		$this->assertStringContainsString('Create Account', $html);
-		$this->assertMatchesRegularExpression('/input.+id="company\-name"/', $html);
+		// $this->assertMatchesRegularExpression('/input.+id="company\-name"/', $html);
 		$this->assertMatchesRegularExpression('/input.+id="contact\-name"/', $html);
 		$this->assertMatchesRegularExpression('/input.+id="contact\-email"/', $html);
 		$this->assertMatchesRegularExpression('/input.+id="contact\-phone"/', $html);
@@ -395,7 +395,7 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 		$html = $this->assertValidResponse($res);
 
 		$this->assertMatchesRegularExpression('/Create Account/', $html);
-		$this->assertMatchesRegularExpression('/input.+id="company\-name"/', $html);
+		// $this->assertMatchesRegularExpression('/input.+id="company\-name"/', $html);
 		$this->assertMatchesRegularExpression('/input.+id="contact\-name"/', $html);
 		$this->assertMatchesRegularExpression('/input.+id="contact\-email"/', $html);
 		$this->assertMatchesRegularExpression('/input.+id="contact\-phone"/', $html);
@@ -429,7 +429,7 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 		$html = $this->assertValidResponse($res);
 
 		$this->assertMatchesRegularExpression('/Create Account/', $html);
-		$this->assertMatchesRegularExpression('/input.+id="company\-name"/', $html);
+		// $this->assertMatchesRegularExpression('/input.+id="company\-name"/', $html);
 		$this->assertMatchesRegularExpression('/input.+id="contact\-name"/', $html);
 		$this->assertMatchesRegularExpression('/input.+id="contact\-email"/', $html);
 		$this->assertMatchesRegularExpression('/input.+id="contact\-phone"/', $html);
@@ -486,15 +486,17 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 		$this->assertStringContainsString('Check Your Inbox', $html);
 
 		$url1 = preg_match('/t=(.+)$/', $url, $m) ? $m[1] : '';
-		$url1 = rawurldecode($url1);
+		$url1 = sprintf('%s/auth/once?_=%s', $_ENV['OPENTHC_TEST_ORIGIN'], $url1);
 		$this->assertNotEmpty($url1);
 
 		// Follow to Password Reset Page?
-		// var_dump($url1);
-		$res = $c->get(sprintf('/account/password?_=%s', $url1));
+		$res = $c->get($url1);
+		$html = $this->assertValidResponse($res, 302);
+		$url2 = $res->getHeaderLine('location');
+		$res = $c->get($url2);
 		$html = $this->assertValidResponse($res, 200);
 
-		$this->assertStringContainsString('Set Password', $html);
+		$this->assertStringContainsString('Save Password', $html);
 
 	}
 

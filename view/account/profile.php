@@ -20,7 +20,7 @@ $dir_origin = \OpenTHC\Config::get('openthc/dir/origin');
 	<div class="mt-4">
 		<label>Name</label>
 		<div class="input-group">
-			<input class="form-control" name="contact-name" type="text" value="<?= __h($data['Contact_Base']['name']) ?>">
+			<input class="form-control" id="contact-name" name="contact-name" type="text" value="<?= __h($data['Contact_Base']['name']) ?>">
 			<button class="btn btn-outline-primary" name="a" value="contact-name-save"><i class="fas fa-save"></i> Save</button>
 		</div>
 	</div>

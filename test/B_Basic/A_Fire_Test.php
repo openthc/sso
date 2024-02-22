@@ -18,7 +18,7 @@ class A_Fire_Test extends \OpenTHC\SSO\Test\Base_Case
 
 		$this->assertMatchesRegularExpression('/input.+name="CSRF"/', $html);
 		$this->assertMatchesRegularExpression('/input.+id="username"/', $html);
-		$this->assertMatchesRegularExpression('/input.+id="password" name="password" type="password"/', $html);
+		$this->assertMatchesRegularExpression('/input.+id="password".+name="password".+type="password"/', $html);
 
 		$res = $c->post('/auth/open', [ 'form_params' => [
 			'CSRF' => $this->getCSRF($html),
