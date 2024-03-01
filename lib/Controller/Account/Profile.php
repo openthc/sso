@@ -20,7 +20,7 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 		$data = $this->data;
 		$data['Page'] = [ 'title' => 'Account' ];
 		if (empty($_SESSION['Contact']['id'])) {
-			_exit_html_fail('<h1>Invalid Session [CAP-017]</h1>', 403);
+			_exit_html_fail('<h1>Invalid Session [CAP-017]</h1><p>Please <a href="/auth/shut">close the session</a> and try again.</p>', 403);
 		}
 
 		$dbc_auth = $this->_container->DBC_AUTH;
@@ -65,7 +65,7 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 		$x = \OpenTHC\Config::get('openthc/app/origin');
 		if ($x) {
 			$data['service_list_default'][] = [
-				'link' => sprintf('%s/auth/sso', $x),
+				'link' => sprintf('%s/auth/open?a=sso', $x),
 				'name' => 'App',
 				'hint' => 'Connect to the primary seed-to-sale application for crop and inventory management'
 			];
@@ -74,7 +74,7 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 		$x = \OpenTHC\Config::get('openthc/dir/origin');
 		if ($x) {
 			$data['service_list_default'][] = [
-				'link' => sprintf('%s/auth/open?v=sso', $x),
+				'link' => sprintf('%s/auth/open', $x),
 				'name' => 'Directory',
 				'hint' => 'Connect to the Directory to update your semi-public contact and company profiles'
 			];
@@ -83,7 +83,7 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 		$x = \OpenTHC\Config::get('openthc/lab/origin');
 		if ($x) {
 			$data['service_list_default'][] = [
-				'link' => sprintf('%s/auth/open?v=sso', $x),
+				'link' => sprintf('%s/auth/open', $x),
 				'name' => 'Laboratory Portal',
 				'hint' => 'Laboratory LIMS and Lab Report management',
 			];
@@ -93,7 +93,7 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 		$x = \OpenTHC\Config::get('openthc/pos/origin');
 		if ($x) {
 			$data['service_list_default'][] = [
-				'link' => sprintf('%s/auth/open?v=sso', $x),
+				'link' => sprintf('%s/auth/open', $x),
 				'name' => 'Retail POS',
 				'hint' => 'Connect to the Point of Sale to perform front-of-the-house retail operations',
 			];
@@ -126,11 +126,13 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 			case 'contact-email-update':
 				return $this->email_update($RES);
 				break;
-			case 'contact-fullname-update':
-				$dbc_main->query('UPDATE contact SET fullname = :n1 WHERE id = :c0', [
+			case 'contact-name-save':
+				$n = trim($_POST['contact-name']);
+				$dbc_main->query('UPDATE contact SET name = :n1 WHERE id = :c0', [
 					':c0' => $_SESSION['Contact']['id'],
-					':n1' => trim($_POST['contact-name']),
+					':n1' => $n,
 				]);
+				$_SESSION['Contact']['name'] = $n;
 				break;
 			case 'contact-password-update':
 				// Construct Token and Redirect
