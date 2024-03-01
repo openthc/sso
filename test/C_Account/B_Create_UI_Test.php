@@ -26,9 +26,8 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	 */
 	function test_account_create()
 	{
-		self::$driver->get(sprintf('%s/account/create?_t=%s'
+		self::$driver->get(sprintf('%s/account/create'
 			, getenv('OPENTHC_TEST_ORIGIN')
-			, getenv('OPENTHC_TEST_HASH')
 		));
 
 		$node = self::$driver->findElement(WebDriverBy::id('alert-test-mode'));

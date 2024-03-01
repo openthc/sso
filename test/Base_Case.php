@@ -41,9 +41,6 @@ class Base_Case extends \PHPUnit\Framework\TestCase // \OpenTHC\Test\Base_Case
 				),
 				'http_errors' => false,
 				'cookies' => true,
-				'headers' => [
-					'openthc-test-mode' => getenv('OPENTHC_TEST_HASH')
-				]
 			));
 		}
 

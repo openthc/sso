@@ -25,11 +25,8 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 	 */
 	function test_account_create()
 	{
-		$test_secret = getenv('OPENTHC_TEST_HASH');
-		$this->assertNotEmpty($test_secret);
-
 		$c = $this->_ua();
-		$res = $c->get('/account/create?_t=' . $test_secret);
+		$res = $c->get('/account/create');
 		$html = $this->assertValidResponse($res);
 		syslog(LOG_DEBUG, "Create");
 

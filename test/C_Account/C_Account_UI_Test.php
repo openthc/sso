@@ -40,9 +40,8 @@ class C_Account_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 			$url0 = self::$driver->getCurrentUrl();
 		}
 
-		self::$driver->get(sprintf('%s/account?_t=%s'
+		self::$driver->get(sprintf('%s/account'
 			, getenv('OPENTHC_TEST_ORIGIN')
-			, getenv('OPENTHC_TEST_HASH')
 		));
 
 		$node = self::$driver->findElement(WebDriverBy::id('contact-name'));

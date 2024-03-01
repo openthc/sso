@@ -14,9 +14,8 @@ class B_Service_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	public static function setUpBeforeClass() : void
 	{
 		parent::setUpBeforeClass();
-		self::$driver->get(sprintf('%s/auth/open?_t=%s'
+		self::$driver->get(sprintf('%s/auth/open'
 			, getenv('OPENTHC_TEST_ORIGIN')
-			, getenv('OPENTHC_TEST_HASH')
 		));
 
 		$username = getenv('OPENTHC_TEST_CONTACT_USERNAME');
@@ -34,9 +33,8 @@ class B_Service_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	function test_auth_pass_app($url = null)
 	{
 
-		self::$driver->get(sprintf('%s/account?_t=%s'
+		self::$driver->get(sprintf('%s/account'
 			, getenv('OPENTHC_TEST_ORIGIN')
-			, getenv('OPENTHC_TEST_HASH')
 		));
 
 		$node = self::$driver->findElement(WebDriverBy::cssSelector('[data-service-name=app]'));

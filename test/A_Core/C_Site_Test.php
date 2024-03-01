@@ -15,6 +15,7 @@ class C_Site_Test extends \OpenTHC\SSO\Test\Base_Case
 
 		$ghc = new \GuzzleHttp\Client([
 			'base_uri' => $cfg,
+			'allow_redirects' => false,
 			'cookies' => true,
 			'http_errors' => false,
 		]);
@@ -23,10 +24,11 @@ class C_Site_Test extends \OpenTHC\SSO\Test\Base_Case
 		$this->assertValidResponse($res);
 
 		$res = $ghc->get('/auth/open');
-		$this->assertValidResponse($res);
+		$res = $this->assertValidResponse($res);
+		$this->assertMatchesRegularExpression('/TEST MODE/', $res);
 
-		// $res = $ghc->get('/.well-known/change-password');
-		// $this->assertValidResponse($res);
+		$res = $ghc->get('/.well-known/change-password');
+		$this->assertValidResponse($res, 302);
 
 		$res = $ghc->get('/auth/open?a=password-reset');
 		$this->assertValidResponse($res);
@@ -39,16 +41,6 @@ class C_Site_Test extends \OpenTHC\SSO\Test\Base_Case
 
 		$res = $ghc->get('/done');
 		$this->assertValidResponse($res);
-
-	}
-
-	function test_site_test_mode()
-	{
-		$sso = $this->_ua();
-		$res = $sso->get(sprintf('/auth/open?_t=%s', getenv('OPENTHC_TEST_HASH')));
-		$res = $this->assertValidResponse($res);
-
-		$this->assertMatchesRegularExpression('/TEST MODE/', $res);
 
 	}
 

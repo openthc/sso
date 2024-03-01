@@ -19,9 +19,8 @@ class R_Password_Reset_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 
 	function test_password_reset()
 	{
-		self::$driver->get(sprintf('%s/auth/open?_t=%s'
+		self::$driver->get(sprintf('%s/auth/open'
 			, getenv('OPENTHC_TEST_ORIGIN')
-			, getenv('OPENTHC_TEST_HASH')
 		));
 
 		$html = self::$driver->getPageSource();
@@ -51,9 +50,8 @@ class R_Password_Reset_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 
 	function test_password_reset_invalid($email = null)
 	{
-		self::$driver->get(sprintf('%s/auth/open?_t=%s'
+		self::$driver->get(sprintf('%s/auth/open'
 			, getenv('OPENTHC_TEST_ORIGIN')
-			, getenv('OPENTHC_TEST_HASH')
 		));
 
 		$html = self::$driver->getPageSource();

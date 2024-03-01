@@ -14,7 +14,6 @@ class A_Config_Test extends \OpenTHC\SSO\Test\Base_Case
 	{
 		$env_list = [
 			'OPENTHC_TEST_ORIGIN',
-			'OPENTHC_TEST_HASH',
 			'OPENTHC_TEST_CONTACT',
 			'OPENTHC_TEST_CONTACT_USERNAME',
 			'OPENTHC_TEST_CONTACT_PASSWORD',
