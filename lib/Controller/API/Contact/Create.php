@@ -107,9 +107,7 @@ class Create extends \OpenTHC\SSO\Controller\Base
 		$chk = $dbc_auth->fetchRow($sql, $arg);
 		if ( ! empty($chk['id'])) {
 			return $RES->withJSON([
-				'data' => [
-					'id' => $chk['id'],
-				],
+				'data' => $chk,
 				'meta' => [
 					'code' => 'CAC-065',
 					'note' => 'Account Exists',
@@ -120,8 +118,9 @@ class Create extends \OpenTHC\SSO\Controller\Base
 		// Contact (Legacy)
 		$sql = 'SELECT id, name, email FROM contact WHERE email = :u0';
 		$arg = [ ':u0' => $Contact['email'] ];
-		$contact_base = $dbc_main->fetchRow($sql, $arg);
-		if ( ! empty($contact_base['id'])) {
+		$chk = $dbc_main->fetchRow($sql, $arg);
+		if ( ! empty($chk['id'])) {
+			$Contact['id'] = $chk['id'];
 			// Trigger Email Verify?
 			// return $RES->withJSON([
 			// 	'data' => null,
@@ -132,26 +131,6 @@ class Create extends \OpenTHC\SSO\Controller\Base
 			// ], 409);
 		}
 
-		// $Contact_Base = [];
-		// if ( ! empty($Contact['id'])) {
-		// 		$sql = 'SELECT id FROM contact WHERE id = :c0'; //  OR email = :u0';
-		// 		$arg = [ ':c0' => $Contact['id'] ];
-		// 		$Contact_Base = $dbc_main->fetchRow($sql, $arg);
-		// }
-		// if (empty($Contact_Base['id'])) {
-		// 		// Try By Email
-		// 		$sql = 'SELECT id FROM contact WHERE email = :u0';
-		// 		$arg = [ ':u0' => $Contact['email'] ];
-		// 		$Contact_Base = $dbc_main->fetchRow($sql, $arg);
-		// }
-		// if (empty($Contact_Base['id'])) {
-		// 		// $Contact_Base = $Contact;
-		// 		// $create_contact_base = true;
-		// 		// Insert?
-		// 		$dbc_main->insert('contact', $Contact);
-		// } else {
-		// 		$Contact['id'] = $Contact_Base['id'];
-		// }
 
 		// Channel -> Contact?
 		// Is this Channel Linked to Any Contacts?
@@ -173,8 +152,6 @@ class Create extends \OpenTHC\SSO\Controller\Base
 		}
 
 		// Return
-		$ret_data = [];
-
 		$dbc_auth->query('BEGIN');
 		$dbc_main->query('BEGIN');
 
@@ -199,10 +176,8 @@ class Create extends \OpenTHC\SSO\Controller\Base
 		$dbc_auth->query('COMMIT');
 		$dbc_main->query('COMMIT');
 
-		$ret_data['id'] = $Contact['id'];
-
 		return $RES->withJSON([
-			'data' => $ret_data,
+			'data' => $Contact,
 			'meta' => [],
 		], 201);
 

@@ -21,22 +21,18 @@ class Commit extends \OpenTHC\SSO\Controller\Base
 			throw new \Exception('Invalid Request [CAC-022]');
 		}
 
-		// private function accountCreate($RES, $act_data)
-		$arg = [
-			'name' => $act_data['account']['contact-name'],
-			'email' => $act_data['account']['contact-email'],
-			'phone' => $act_data['account']['contact-phone']
-		];
+		// Post the Contact to the API
+		$arg_contact = $act_data['contact'];
 
 		switch ($act_data['intent']) {
 			case 'account-create':
-				$arg['email_verify'] = true;
+				$arg_contact['email_verify'] = true;
 				break;
 		}
 
 		// $sso = new \OpenTHC\Service('sso');
 		$sso = new \OpenTHC\Service\OpenTHC('sso');
-		$res = $sso->post('/api/contact', [ 'form_params' => $arg ]);
+		$res = $sso->post('/api/contact', [ 'form_params' => $arg_contact ]);
 
 		$ret_args = [];
 
@@ -57,6 +53,8 @@ class Commit extends \OpenTHC\SSO\Controller\Base
 		]);
 
 		$act_data['contact'] = $res['data'];
+
+		unset($act_data['account']);
 
 		// Verify after Create
 		$tok = \OpenTHC\SSO\Auth_Context_Ticket::set($act_data);
