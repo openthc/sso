@@ -21,6 +21,8 @@
 	},
 	"require-dev": {
 		"behat/behat": "3.13.0",
+		"browserstack/browserstack-local": "^1.1",
+		"fakerphp/faker": "1.23.1",
 		"php-webdriver/webdriver": "1.14.0",
 		"phpstan/phpstan": "1.10.29",
 		"phpunit/phpunit": "9.6.10",
