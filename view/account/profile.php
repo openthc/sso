@@ -34,16 +34,18 @@ use OpenTHC\SSO\UI\Icon;
 		<button class="btn btn-outline-secondary disabled" disabled id="contact-email-update" name="a" value="contact-email-update"><?= Icon::icon('save') ?> Save</button>
 	</div>
 
+	<div class="input-group mb-4">
+		<label class="input-group-text">Password</label>
+		<input class="form-control" readonly type="text" value="********">
+		<button class="btn btn-outline-secondary" name="a" value="contact-password-update">Change</button>
+	</div>
+
 	<div class="input-group">
 		<label class="input-group-text">Phone</label>
 		<input class="form-control" name="contact-phone" readonly type="tel" value="<?= __h($data['Contact_Base']['phone']) ?>">
 		<button class="btn btn-outline-secondary" name="a" value="contact-phone-update">Change</button>
 	</div>
 
-</div>
-<div class="card-footer">
-	<!-- <a class="btn btn-outline-primary" href="/r/directory-profile"><i class="fa-solid fa-arrow-up-right-from-square"></i> Update Profile</a> -->
-	<button class="btn btn-outline-secondary" name="a" value="contact-password-update">Change Password</button>
 </div>
 </div>
 

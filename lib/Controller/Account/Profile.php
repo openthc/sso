@@ -135,15 +135,13 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 				$_SESSION['Contact']['name'] = $n;
 				break;
 			case 'contact-password-update':
-				// Construct Token and Redirect
-				$tok = \OpenTHC\Auth_Context_Ticket::set();
-				$act = new \OpenTHC\Auth_Context_Ticket($dbc_auth);
-				$tok = $act->create([
+				$act = [
 					'intent' => 'password-update',
 					'contact' => [
 						'id' => $_SESSION['Contact']['id']
 					]
-				]);
+				];
+				$tok = \OpenTHC\SSO\Auth_Context_Ticket::set($act);
 				return $RES->withRedirect(sprintf('/account/password?_=%s', $tok));
 				break;
 			case 'contact-phone-update':
