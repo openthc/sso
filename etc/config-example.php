@@ -53,6 +53,7 @@ $cfg['openthc'] = [
 		'origin' => 'https://sso.openthc.example.com',
 		'redirect-fast' => false,
 		'account-create' => '/account/create?service=app.openthc.example.com',
+		// makes the oAuth Clients REQUIRE SSL scheme
 		'require-ssl' => false,
 	],
 	'www' => [
