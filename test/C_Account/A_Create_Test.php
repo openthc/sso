@@ -93,7 +93,7 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 		// $res = $c->post($url, [ 'form_params' => [
 		// 	'a' => 'update',
 		// 	'p0' => ,
-		// 	'p1' => $_ENV['OPENTHC_TEST_CONTACT_PASSWORD'],
+		// 	'p1' => OPENTHC_TEST_CONTACT_PASSWORD,
 		// ]]);
 		// $this->assertValidResponse($res, 302);
 		// $url = $res->getHeaderLine('location');
@@ -154,8 +154,8 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 		$arg = [
 			'CSRF' => $this->getCSRF($html),
 			'a' => 'update',
-			'p0' => $_ENV['OPENTHC_TEST_CONTACT_PASSWORD'],
-			'p1' => $_ENV['OPENTHC_TEST_CONTACT_PASSWORD'],
+			'p0' => OPENTHC_TEST_CONTACT_PASSWORD,
+			'p1' => OPENTHC_TEST_CONTACT_PASSWORD,
 		];
 		$res = $c->post($url0, [ 'form_params' => $arg ]);
 		$this->assertValidResponse($res, 302);
@@ -492,7 +492,7 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 		$this->assertStringContainsString('Check Your Inbox', $html);
 
 		$tok = preg_match('/t=(.+)$/', $url, $m) ? $m[1] : '';
-		$url1 = sprintf('%s/auth/once?_=%s', $_ENV['OPENTHC_TEST_ORIGIN'], $tok);
+		$url1 = sprintf('%s/auth/once?_=%s', OPENTHC_TEST_ORIGIN, $tok);
 		$this->assertNotEmpty($url1);
 
 		// Follow to Password Reset Page?

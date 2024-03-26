@@ -13,13 +13,13 @@ class R_Password_Reset_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	public static function setUpBeforeClass() : void
 	{
 		parent::setUpBeforeClass();
-		self::$username = $_ENV['OPENTHC_TEST_CONTACT_B'];
+		self::$username = OPENTHC_TEST_CONTACT_B;
 	}
 
 	function test_password_reset()
 	{
 		self::$driver->get(sprintf('%s/auth/open'
-			, $_ENV['OPENTHC_TEST_ORIGIN']
+			, OPENTHC_TEST_ORIGIN
 		));
 
 		$html = self::$driver->getPageSource();
@@ -49,7 +49,7 @@ class R_Password_Reset_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	function test_password_reset_invalid($email = null)
 	{
 		self::$driver->get(sprintf('%s/auth/open'
-			, $_ENV['OPENTHC_TEST_ORIGIN']
+			, OPENTHC_TEST_ORIGIN
 		));
 
 		$html = self::$driver->getPageSource();
@@ -60,7 +60,7 @@ class R_Password_Reset_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 
 
 		$element = self::$driver->findElement(WebDriverBy::id('username'));
-		// $element->sendKeys(sprintf('%s@openthc.dev', $_ENV['OPENTHC_TEST_CONTACT']));
+		// $element->sendKeys(sprintf('%s@openthc.dev', OPENTHC_TEST_CONTACT));
 		if (empty($email)) {
 			$recurse = true;
 			$email = sprintf('@openthc.example');

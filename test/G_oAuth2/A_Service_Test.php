@@ -20,7 +20,7 @@ class A_Service_Test extends \OpenTHC\SSO\Test\Base_Case
 		$app_ua = new \GuzzleHttp\Client(array(
 			'base_uri' => $url,
 			'allow_redirects' => false,
-			'debug' => $_ENV['debug-http'],
+			'debug' => DEBUG_HTTP,
 			'request.options' => array(
 				'exceptions' => false,
 			),
@@ -50,7 +50,7 @@ class A_Service_Test extends \OpenTHC\SSO\Test\Base_Case
 		$b2b_ua = new \GuzzleHttp\Client(array(
 			'base_uri' => $url,
 			'allow_redirects' => false,
-			'debug' => $_ENV['debug-http'],
+			'debug' => DEBUG_HTTP,
 			'request.options' => array(
 				'exceptions' => false,
 			),
@@ -74,7 +74,7 @@ class A_Service_Test extends \OpenTHC\SSO\Test\Base_Case
 		$ops_ua = new \GuzzleHttp\Client(array(
 			'base_uri' => $url,
 			'allow_redirects' => false,
-			// 'debug' => $_ENV['debug-http'],
+			// 'debug' => DEBUG_HTTP,
 			'request.options' => array(
 				'exceptions' => false,
 			),
@@ -105,8 +105,8 @@ class A_Service_Test extends \OpenTHC\SSO\Test\Base_Case
 		$arg = [
 			'CSRF' => $this->getCSRF($html),
 			'a' => 'account-open',
-			'username' => $_ENV['OPENTHC_TEST_CONTACT_A'],
-			'password' => $_ENV['OPENTHC_TEST_CONTACT_PASSWORD'],
+			'username' => OPENTHC_TEST_CONTACT_A,
+			'password' => OPENTHC_TEST_CONTACT_PASSWORD,
 		];
 		$res = $sso_ua->post($l, [ 'form_params' => $arg ]);
 		$this->assertValidResponse($res, 302);

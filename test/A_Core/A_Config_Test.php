@@ -23,7 +23,7 @@ class A_Config_Test extends \OpenTHC\SSO\Test\Base_Case
 		];
 
 		foreach ($env_list as $x) {
-			$this->assertNotEmpty(getenv($x), sprintf('Environment "%s" missing', $x));
+			$this->assertNotEmpty(constant($x), sprintf('Constant "%s" missing', $x));
 		}
 
 	}

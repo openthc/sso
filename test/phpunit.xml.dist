@@ -26,23 +26,23 @@
 	<coverage />
 
 	<php>
-		<env name="debug-http" value="false" />
+		<const name="DEBUG_HTTP" value="false" />
 
 		<!--
 			Put the URL of your SSO Instance Here
 			eg: https://sso.openthc.example.com
 		 -->
-		<env name="OPENTHC_TEST_ORIGIN" value="" />
+		<const name="OPENTHC_TEST_ORIGIN" value="" />
 
-		<env name="OPENTHC_TEST_CONTACT_A" value="test+a@openthc.example" />
-		<env name="OPENTHC_TEST_CONTACT_B" value="test+b@openthc.example" />
-		<env name="OPENTHC_TEST_CONTACT_C" value="test+c@openthc.example" />
+		<const name="OPENTHC_TEST_CONTACT_A" value="test+a@openthc.example" />
+		<const name="OPENTHC_TEST_CONTACT_B" value="test+b@openthc.example" />
+		<const name="OPENTHC_TEST_CONTACT_C" value="test+c@openthc.example" />
 
-		<env name="OPENTHC_TEST_CONTACT_PASSWORD" value="password" />
+		<const name="OPENTHC_TEST_CONTACT_PASSWORD" value="password" />
 
-		<env name="OPENTHC_TEST_CONTACT_PHONE" value="+18559769333" />
+		<const name="OPENTHC_TEST_CONTACT_PHONE" value="+18559769333" />
 
-		<env name="OPENTHC_TEST_WEBDRIVER_URL" value="" />
+		<const name="OPENTHC_TEST_WEBDRIVER_URL" value="" />
 
 	</php>
 

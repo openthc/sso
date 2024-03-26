@@ -15,14 +15,14 @@ class B_Service_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	{
 		parent::setUpBeforeClass();
 		self::$driver->get(sprintf('%s/auth/open'
-			, $_ENV['OPENTHC_TEST_ORIGIN']
+			, OPENTHC_TEST_ORIGIN
 		));
 
-		$username = $_ENV['OPENTHC_TEST_CONTACT_A'];
+		$username = OPENTHC_TEST_CONTACT_A;
 		$node = self::$driver->findElement(WebDriverBy::id('username'));
 		$node->sendKeys($username);
 
-		$password = $_ENV['OPENTHC_TEST_CONTACT_PASSWORD'];
+		$password = OPENTHC_TEST_CONTACT_PASSWORD;
 		$node = self::$driver->findElement(WebDriverBy::id('password'));
 		$node->sendKeys($password);
 
@@ -34,7 +34,7 @@ class B_Service_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	{
 
 		self::$driver->get(sprintf('%s/account'
-			, $_ENV['OPENTHC_TEST_ORIGIN']
+			, OPENTHC_TEST_ORIGIN
 		));
 
 		$node = self::$driver->findElement(WebDriverBy::cssSelector('[data-service-name=app]'));

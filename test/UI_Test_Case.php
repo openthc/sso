@@ -40,7 +40,7 @@ class UI_Test_Case extends \OpenTHC\SSO\Test\Base_Case
 		// https://www.browserstack.com/docs/automate/selenium/change-device-orientation
 		// $caps['deviceOrientation']
 
-		self::$driver = RemoteWebDriver::create($_ENV['OPENTHC_TEST_WEBDRIVER_URL'], $caps);
+		self::$driver = RemoteWebDriver::create(OPENTHC_TEST_WEBDRIVER_URL, $caps);
 		self::$driver->manage()->window()->maximize();
 	}
 
@@ -59,7 +59,7 @@ class UI_Test_Case extends \OpenTHC\SSO\Test\Base_Case
 
 		if ('FAILED' == self::$stat) {
 
-			$url = $_ENV['OPENTHC_TEST_WEBDRIVER_URL'];
+			$url = OPENTHC_TEST_WEBDRIVER_URL;
 			$url = parse_url($url);
 			// var_dump($url);
 

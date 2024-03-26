@@ -25,7 +25,7 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	function test_account_create()
 	{
 		self::$driver->get(sprintf('%s/account/create'
-			, $_ENV['OPENTHC_TEST_ORIGIN']
+			, OPENTHC_TEST_ORIGIN
 		));
 
 		$node = self::$driver->findElement(WebDriverBy::id('alert-test-mode'));
@@ -39,7 +39,7 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 		$node->sendKeys(self::$username);
 
 		$node = self::$driver->findElement(WebDriverBy::id('contact-phone'));
-		$node->sendKeys($_ENV['OPENTHC_TEST_CONTACT_PHONE']);
+		$node->sendKeys(OPENTHC_TEST_CONTACT_PHONE);
 
 		$node = self::$driver->findElement(WebDriverBy::id('btn-account-create'));
 		$node->click();
@@ -88,16 +88,16 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	{
 		$url0 = ltrim($url0, '/');
 		$this->assertNotEmpty($url0);
-		self::$driver->get(sprintf('%s/%s', $_ENV['OPENTHC_TEST_ORIGIN'], $url0));
+		self::$driver->get(sprintf('%s/%s', OPENTHC_TEST_ORIGIN, $url0));
 
 		$url1 = self::$driver->getCurrentUrl();
 		$this->assertMatchesRegularExpression('/\/verify\/password.+/', $url1);
 
 		$node = self::$driver->findElement(WebDriverBy::id('password0'));
-		$node->sendKeys($_ENV['OPENTHC_TEST_CONTACT_PASSWORD']);
+		$node->sendKeys(OPENTHC_TEST_CONTACT_PASSWORD);
 
 		$node = self::$driver->findElement(WebDriverBy::id('password1'));
-		$node->sendKeys($_ENV['OPENTHC_TEST_CONTACT_PASSWORD']);
+		$node->sendKeys(OPENTHC_TEST_CONTACT_PASSWORD);
 
 		$node = self::$driver->findElement(WebDriverBy::id('btn-password-update'));
 		$node->click();
@@ -232,7 +232,7 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 
 		// #password
 		$node = self::$driver->findElement(WebDriverBy::id('password'));
-		$node->sendKeys($_ENV['OPENTHC_TEST_CONTACT_PASSWORD']);
+		$node->sendKeys(OPENTHC_TEST_CONTACT_PASSWORD);
 
 		// #btn-auth-open
 		$node = self::$driver->findElement(WebDriverBy::id('btn-auth-open'));
