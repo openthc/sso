@@ -14,16 +14,16 @@ class A_Config_Test extends \OpenTHC\SSO\Test\Base_Case
 	{
 		$env_list = [
 			'OPENTHC_TEST_ORIGIN',
-			'OPENTHC_TEST_CONTACT',
-			'OPENTHC_TEST_CONTACT_USERNAME',
+			'OPENTHC_TEST_CONTACT_A',
+			'OPENTHC_TEST_CONTACT_B',
+			'OPENTHC_TEST_CONTACT_C',
 			'OPENTHC_TEST_CONTACT_PASSWORD',
-			'OPENTHC_TEST_CONTACT_PHONE',
+			// 'OPENTHC_TEST_CONTACT_PHONE',
 			'OPENTHC_TEST_WEBDRIVER_URL',
 		];
 
 		foreach ($env_list as $x) {
-			$v = getenv($x);
-			$this->assertNotEmpty($v, sprintf('Environment "%s" missing', $x));
+			$this->assertNotEmpty(getenv($x), sprintf('Environment "%s" missing', $x));
 		}
 
 	}

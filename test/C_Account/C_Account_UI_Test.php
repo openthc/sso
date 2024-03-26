@@ -16,11 +16,11 @@ class C_Account_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 		parent::setUpBeforeClass();
 
 		self::$driver->get(sprintf('%s/auth/open'
-			, getenv('OPENTHC_TEST_ORIGIN')
+			, $_ENV['OPENTHC_TEST_ORIGIN']
 		));
 
 		$node = self::$driver->findElement(WebDriverBy::id('username'));
-		$node->sendKeys(sprintf('%s', $_ENV['OPENTHC_TEST_CONTACT_USERNAME']));
+		$node->sendKeys($_ENV['OPENTHC_TEST_CONTACT_A']);
 
 		// #password
 		$node = self::$driver->findElement(WebDriverBy::id('password'));
@@ -41,7 +41,7 @@ class C_Account_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 		}
 
 		self::$driver->get(sprintf('%s/account'
-			, getenv('OPENTHC_TEST_ORIGIN')
+			, $_ENV['OPENTHC_TEST_ORIGIN']
 		));
 
 		$node = self::$driver->findElement(WebDriverBy::id('contact-name'));

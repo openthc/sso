@@ -17,27 +17,22 @@ use \Facebook\WebDriver\Remote\RemoteWebDriver;
 class UI_Test_Case extends \OpenTHC\SSO\Test\Base_Case
 {
 	protected static $driver;
-	// protected static $bs_local;
+
+	protected static string $stat = 'FAILED';
 
 	public static function setUpBeforeClass() : void
 	{
-		$url = getenv('OPENTHC_TEST_WEBDRIVER_URL');
+		$caps = [];
+		$caps['project'] = 'SSO';
+		$caps['build'] = APP_BUILD;
+		$caps['name'] = sprintf('PHPUnit %s', strftime('%Y-%m-%d %H:%M:%S'));
 
-		$caps['capabilities'] = [];
-		$caps['capabilities']['project'] = 'SSO';
-		$caps['capabilities']['build'] = '420.21.235';
-		$caps['capabilities']['name'] = sprintf('PHPUnit Test Case: %s', strftime('%Y-%m-%d %H:%M:%S'));
-
-		$os_list = [ 'os x', 'windows' ];
 		$wb_list = [ 'chrome', 'edge', 'firefox' ]; //, 'safari' ];
 
-		// $caps['build'] = APP_BUILD;
-		$caps['capabilities']['os'] = 'Windows';
-		// $caps['capabilities']['os_version'] = 'latest';
-		$caps['capabilities']['browser'] = $wb_list[ array_rand($wb_list) ];
-		// $caps['capabilities']['browser_version'] = 'latest';
-
-		$caps['capabilities']['resolution'] = '1280x1024';
+		$caps['os'] = 'Windows';
+		// $caps['os_version'] = 'latest';
+		$caps['browser'] = $wb_list[ array_rand($wb_list) ];
+		// $caps['browser_version'] = 'latest';
 
 		// https://www.browserstack.com/docs/automate/selenium/change-screen-resolution#Selenium_4_W3C
 		// $caps['resolution'] = '1280x1024';
@@ -45,21 +40,56 @@ class UI_Test_Case extends \OpenTHC\SSO\Test\Base_Case
 		// https://www.browserstack.com/docs/automate/selenium/change-device-orientation
 		// $caps['deviceOrientation']
 
-		$caps['bstack:options'] = [
-			'os' => $os_list[ array_rand($os_list) ],
-			// 'osVersion' => '',
-			'projectName' => 'SSO',
-			'buildName' => sprintf('v%s', APP_BUILD),
-			'sessionName' => sprintf('TEST RUN %d', getmypid())
-		];
-
-		self::$driver = RemoteWebDriver::create($url, $caps);
+		self::$driver = RemoteWebDriver::create($_ENV['OPENTHC_TEST_WEBDRIVER_URL'], $caps);
 		self::$driver->manage()->window()->maximize();
 	}
 
+	function tearDown() : void
+	{
+		if (self::$stat != 'FAILED') {
+			self::$stat = ($this->hasFailed() ? 'FAILED' : 'PASSED');
+		}
+	}
+
+
 	public static function tearDownAfterClass() : void
 	{
+		$sid = self::$driver->getSessionId();
+		// echo "\nDONE SESSION ID: {$sid}\n";
+
+		if ('FAILED' == self::$stat) {
+
+			$url = $_ENV['OPENTHC_TEST_WEBDRIVER_URL'];
+			$url = parse_url($url);
+			// var_dump($url);
+
+			$cfg = [];
+			$cfg['username'] = $url['user'];
+			$cfg['password'] = $url['pass'];
+
+			$url = sprintf('https://api.browserstack.com/automate/sessions/%s.json', $sid);
+			$req = __curl_init($url);
+			curl_setopt($req, CURLOPT_USERPWD, sprintf('%s:%s', $cfg['username'], $cfg['password']));
+			curl_setopt($req, CURLOPT_CUSTOMREQUEST, 'PUT');
+			curl_setopt($req, CURLOPT_POSTFIELDS, json_encode([
+				'status' => 'failed', // 'completed' is another option?
+				'reason' => 'UNKNOWN'
+			]));
+			curl_setopt($req, CURLOPT_HTTPHEADER, [
+				'content-type: application/json'
+			]);
+			$res = curl_exec($req);
+			$res = json_decode($res, true);
+			var_dump($res);
+
+			// echo '<pre>';
+			// echo json_encode($res, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+			// echo '</pre>';
+		}
+
+		sleep(2);
+
 		self::$driver->quit();
-		// if(self::$bs_local) self::$bs_local->stop();
+
 	}
 }

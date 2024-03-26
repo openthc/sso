@@ -15,14 +15,14 @@ class B_Service_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	{
 		parent::setUpBeforeClass();
 		self::$driver->get(sprintf('%s/auth/open'
-			, getenv('OPENTHC_TEST_ORIGIN')
+			, $_ENV['OPENTHC_TEST_ORIGIN']
 		));
 
-		$username = getenv('OPENTHC_TEST_CONTACT_USERNAME');
+		$username = $_ENV['OPENTHC_TEST_CONTACT_A'];
 		$node = self::$driver->findElement(WebDriverBy::id('username'));
 		$node->sendKeys($username);
 
-		$password = getenv('OPENTHC_TEST_CONTACT_PASSWORD');
+		$password = $_ENV['OPENTHC_TEST_CONTACT_PASSWORD'];
 		$node = self::$driver->findElement(WebDriverBy::id('password'));
 		$node->sendKeys($password);
 
@@ -34,7 +34,7 @@ class B_Service_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	{
 
 		self::$driver->get(sprintf('%s/account'
-			, getenv('OPENTHC_TEST_ORIGIN')
+			, $_ENV['OPENTHC_TEST_ORIGIN']
 		));
 
 		$node = self::$driver->findElement(WebDriverBy::cssSelector('[data-service-name=app]'));
@@ -67,11 +67,14 @@ class B_Service_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 
 	function test_auth_pass_b2b()
 	{
+		$window_handles = self::$driver->getWindowHandles();
+		$sso_tab = $window_handles[0];
+		self::$driver->switchTo()->window($sso_tab);
+
 		$node = self::$driver->findElement(WebDriverBy::cssSelector('[data-service-name="b2b marketplace"]'));
 		$node->click();
 
 		$window_handles = self::$driver->getWindowHandles();
-		$sso_tab = $window_handles[0];
 		$b2b_tab = $window_handles[ array_key_last($window_handles) ];
 		self::$driver->switchTo()->window($b2b_tab);
 

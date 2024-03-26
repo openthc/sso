@@ -33,7 +33,7 @@ class Base_Case extends \PHPUnit\Framework\TestCase // \OpenTHC\Test\Base_Case
 		if (empty($c)) {
 
 			$c = new \GuzzleHttp\Client(array(
-				'base_uri' => getenv('OPENTHC_TEST_ORIGIN'),
+				'base_uri' => $_ENV['OPENTHC_TEST_ORIGIN'],
 				'allow_redirects' => false,
 				'debug' => $_ENV['debug-http'],
 				'request.options' => array(

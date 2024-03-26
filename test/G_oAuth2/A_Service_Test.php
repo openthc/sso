@@ -94,7 +94,7 @@ class A_Service_Test extends \OpenTHC\SSO\Test\Base_Case
 		$res = $sso_ua->get($l);
 		$this->assertValidResponse($res, 302);
 		$l = $res->getHeaderLine('location');
-		$this->assertMatchesRegularExpression('/https:\/\/sso.openthc.+auth\/open\?_=[\w\-]+/', $l);
+		$this->assertMatchesRegularExpression('/auth\/open\?_=[\w\-]+/', $l);
 
 
 		// Get the Open Page
@@ -105,8 +105,8 @@ class A_Service_Test extends \OpenTHC\SSO\Test\Base_Case
 		$arg = [
 			'CSRF' => $this->getCSRF($html),
 			'a' => 'account-open',
-			'username' => sprintf('%s@openthc.dev', getenv('OPENTHC_TEST_CONTACT')),
-			'password' => getenv('OPENTHC_TEST_CONTACT_PASSWORD'),
+			'username' => $_ENV['OPENTHC_TEST_CONTACT_A'],
+			'password' => $_ENV['OPENTHC_TEST_CONTACT_PASSWORD'],
 		];
 		$res = $sso_ua->post($l, [ 'form_params' => $arg ]);
 		$this->assertValidResponse($res, 302);

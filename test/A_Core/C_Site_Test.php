@@ -9,7 +9,7 @@ class C_Site_Test extends \OpenTHC\SSO\Test\Base_Case
 {
 	function test_page_all()
 	{
-		$cfg = getenv('OPENTHC_TEST_ORIGIN');
+		$cfg = $_ENV['OPENTHC_TEST_ORIGIN'];
 		$this->assertIsString($cfg);
 		$this->assertMatchesRegularExpression('/\w+\.\w{2,256}\.\w{2,16}$/', $cfg);
 

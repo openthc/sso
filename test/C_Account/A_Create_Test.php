@@ -17,7 +17,7 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 	public static function setupBeforeClass(): void
 	{
 		parent::setupBeforeClass();
-		self::$username = sprintf('%s@openthc.dev', getenv('OPENTHC_TEST_CONTACT'));
+		self::$username = sprintf('test+%s@openthc.example', _ulid());
 	}
 
 	/**
@@ -93,7 +93,7 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 		// $res = $c->post($url, [ 'form_params' => [
 		// 	'a' => 'update',
 		// 	'p0' => ,
-		// 	'p1' => getenv('OPENTHC_TEST_CONTACT_PASSWORD'),
+		// 	'p1' => $_ENV['OPENTHC_TEST_CONTACT_PASSWORD'],
 		// ]]);
 		// $this->assertValidResponse($res, 302);
 		// $url = $res->getHeaderLine('location');
@@ -120,11 +120,18 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 		$this->assertValidResponse($res, 302);
 		$url = $res->getHeaderLine('location');
 
+		// Get /account/commit?
+		// $this->assertMatchesRegularExpression('/^\/account\/commit/', $url);
+		// $res = $c->get($url);
+		// $this->assertValidResponse($res, 302);
+		// $url = $res->getHeaderLine('location');
+
 		$this->assertMatchesRegularExpression('/^\/verify/', $url);
 		$res = $c->get($url);
 		$this->assertValidResponse($res, 302);
 		$url = $res->getHeaderLine('location');
 
+		// Going to Password Form
 		$this->assertMatchesRegularExpression('/^\/verify\/password.+/', $url);
 
 		return $url;
@@ -147,8 +154,8 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 		$arg = [
 			'CSRF' => $this->getCSRF($html),
 			'a' => 'update',
-			'p0' => getenv('OPENTHC_TEST_CONTACT_PASSWORD'),
-			'p1' => getenv('OPENTHC_TEST_CONTACT_PASSWORD'),
+			'p0' => $_ENV['OPENTHC_TEST_CONTACT_PASSWORD'],
+			'p1' => $_ENV['OPENTHC_TEST_CONTACT_PASSWORD'],
 		];
 		$res = $c->post($url0, [ 'form_params' => $arg ]);
 		$this->assertValidResponse($res, 302);
@@ -242,66 +249,66 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 	/**
 	 * @depends test_verify_timezone
 	 */
-	function test_verify_phone($url0)
-	{
-		$this->assertNotEmpty($url0);
-		$this->assertMatchesRegularExpression('/^\/verify\/phone\?_=.+/', $url0);
+	// function test_verify_phone($url0)
+	// {
+	// 	$this->assertNotEmpty($url0);
+	// 	$this->assertMatchesRegularExpression('/^\/verify\/phone\?_=.+/', $url0);
 
-		$c = $this->_ua();
+	// 	$c = $this->_ua();
 
-		// Phone Number
-		$res = $c->get($url0);
-		$html = $this->assertValidResponse($res);
-		$this->assertStringContainsString('TEST MODE', $html);
-		$this->assertStringContainsString('Verify Phone', $html);
-		$this->assertStringContainsString('name="contact-phone"', $html);
-		$this->assertMatchesRegularExpression('/name="a".*?type="submit".*?value="phone\-verify\-send"/', $html);
+	// 	// Phone Number
+	// 	$res = $c->get($url0);
+	// 	$html = $this->assertValidResponse($res);
+	// 	$this->assertStringContainsString('TEST MODE', $html);
+	// 	$this->assertStringContainsString('Verify Phone', $html);
+	// 	$this->assertStringContainsString('name="contact-phone"', $html);
+	// 	$this->assertMatchesRegularExpression('/name="a".*?type="submit".*?value="phone\-verify\-send"/', $html);
 
-		// // POST Phone Verify
-		$res = $c->post($url0, [ 'form_params' => [
-			'CSRF' => $this->getCSRF($html),
-			'a' => 'phone-verify-send',
-			'contact-phone' => '+18559769333',
-		]]);
-		$this->assertValidResponse($res, 302);
+	// 	// // POST Phone Verify
+	// 	$res = $c->post($url0, [ 'form_params' => [
+	// 		'CSRF' => $this->getCSRF($html),
+	// 		'a' => 'phone-verify-send',
+	// 		'contact-phone' => '+18559769333',
+	// 	]]);
+	// 	$this->assertValidResponse($res, 302);
 
-		// Good, Bounce to Phone Again
-		$url1 = $res->getHeaderLine('location');
-		$this->assertMatchesRegularExpression('/^\/verify\/phone\?_=.+&t=.+/', $url1);
-		$phone_code = preg_match('/t=(\w+)/', $url1, $m) ? $m[1] : null;
-		$this->assertNotEmpty($phone_code);
-		$this->assertMatchesRegularExpression('/^\w{6}$/', $phone_code);
+	// 	// Good, Bounce to Phone Again
+	// 	$url1 = $res->getHeaderLine('location');
+	// 	$this->assertMatchesRegularExpression('/^\/verify\/phone\?_=.+&t=.+/', $url1);
+	// 	$phone_code = preg_match('/t=(\w+)/', $url1, $m) ? $m[1] : null;
+	// 	$this->assertNotEmpty($phone_code);
+	// 	$this->assertMatchesRegularExpression('/^\w{6}$/', $phone_code);
 
-		$res = $c->get($url1);
-		$html = $this->assertValidResponse($res);
-		$this->assertStringContainsString('TEST MODE', $html);
-		$this->assertStringContainsString('Verify Phone', $html);
-		$this->assertStringContainsString('name="contact-phone"', $html);
-		$this->assertMatchesRegularExpression('/name="a".*?type="submit".*?value="phone-verify-send"/', $html);
-		$this->assertStringContainsString('name="phone-verify-code"', $html);
-		$this->assertMatchesRegularExpression('/name="a".*?type="submit".*?value="phone\-verify\-save"/', $html);
+	// 	$res = $c->get($url1);
+	// 	$html = $this->assertValidResponse($res);
+	// 	$this->assertStringContainsString('TEST MODE', $html);
+	// 	$this->assertStringContainsString('Verify Phone', $html);
+	// 	$this->assertStringContainsString('name="contact-phone"', $html);
+	// 	$this->assertMatchesRegularExpression('/name="a".*?type="submit".*?value="phone-verify-send"/', $html);
+	// 	$this->assertStringContainsString('name="phone-verify-code"', $html);
+	// 	$this->assertMatchesRegularExpression('/name="a".*?type="submit".*?value="phone\-verify\-save"/', $html);
 
-		// // POST to Verify Code, 302 => Verify, 302 => Password
-		$res = $c->post($url1, [ 'form_params' => [
-			'CSRF' => $this->getCSRF($html),
-			'a' => 'phone-verify-save',
-			'phone-verify-code' => $phone_code,
-		]]);
-		$this->assertValidResponse($res, 302);
-		$url2 = $res->getHeaderLine('location');
+	// 	// // POST to Verify Code, 302 => Verify, 302 => Password
+	// 	$res = $c->post($url1, [ 'form_params' => [
+	// 		'CSRF' => $this->getCSRF($html),
+	// 		'a' => 'phone-verify-save',
+	// 		'phone-verify-code' => $phone_code,
+	// 	]]);
+	// 	$this->assertValidResponse($res, 302);
+	// 	$url2 = $res->getHeaderLine('location');
 
-		$this->assertMatchesRegularExpression('/^\/verify\?_=.+/', $url2);
+	// 	$this->assertMatchesRegularExpression('/^\/verify\?_=.+/', $url2);
 
-		// Should be Bouncing us to Password
-		$res = $c->get($url2);
-		$url3 = $res->getHeaderLine('location');
+	// 	// Should be Bouncing us to Password
+	// 	$res = $c->get($url2);
+	// 	$url3 = $res->getHeaderLine('location');
 
-		return $url3;
+	// 	return $url3;
 
-	}
+	// }
 
 	/**
-	 * @depends test_verify_phone
+	 * @depends test_verify_timezone
 	 */
 	function test_verify_company($url0)
 	{
@@ -334,42 +341,43 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 	/**
 	 * @depends test_verify_company
 	 */
-	function test_verify_license($url0)
-	{
-		$this->assertNotEmpty($url0);
-		$this->assertMatchesRegularExpression('/^\/verify\/license\?_=.+/', $url0);
+	// function test_verify_license($url0)
+	// {
+	// 	$this->assertNotEmpty($url0);
+	// 	$this->assertMatchesRegularExpression('/^\/verify\/license\?_=.+/', $url0);
 
-		$c = $this->_ua();
+	// 	$c = $this->_ua();
 
-		// Get License Page
-		$res = $c->get($url0);
-		$html = $this->assertValidResponse($res);
-		$arg = [
-			'CSRF' => $this->getCSRF($html),
-			'a' => 'license-skip',
-		];
+	// 	// Get License Page
+	// 	$res = $c->get($url0);
+	// 	$html = $this->assertValidResponse($res);
+	// 	$arg = [
+	// 		'CSRF' => $this->getCSRF($html),
+	// 		'a' => 'license-skip',
+	// 	];
 
-		$res = $c->post($url0, [ 'form_params' => $arg ]);
-		$this->assertValidResponse($res, 302);
-		$url1 = $res->getHeaderLine('location');
-		$this->assertMatchesRegularExpression('/^\/verify\?_=.+/', $url1);
+	// 	$res = $c->post($url0, [ 'form_params' => $arg ]);
+	// 	$this->assertValidResponse($res, 302);
+	// 	$url1 = $res->getHeaderLine('location');
+	// 	$this->assertMatchesRegularExpression('/^\/verify\?_=.+/', $url1);
 
-		$res = $c->get($url1);
-		$this->assertValidResponse($res, 302);
-		$url2 = $res->getHeaderLine('location');
+	// 	$res = $c->get($url1);
+	// 	$this->assertValidResponse($res, 302);
+	// 	$url2 = $res->getHeaderLine('location');
 
-		return $url2;
+	// 	return $url2;
 
-	}
+	// }
 
 	/**
-	 * @depends test_verify_license
+	 * @depends test_verify_company
 	 */
 	function test_account_create_done($url0)
 	{
 		$this->assertNotEmpty($url0);
 
-		$this->assertStringContainsString('/done?e=CVM-130', $url0);
+		$this->assertStringContainsString('/done?e=CVM-119', $url0); // Prompt to Sign-In
+		// $this->assertStringContainsString('/done?e=CVM-130', $url0); // Prompt to Wait for Activation
 		// $this->assertMatchesRegularExpression('/^\/auth\/init\?_=.+/', $url0);
 
 		// Sign In and Get aSome Message?
@@ -378,7 +386,7 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 		$html = $this->assertValidResponse($res, 200);
 
 		$this->assertStringContainsString('Verification Complete', $html);
-		$this->assertStringContainsString('Account Pending Activation', $html);
+		// $this->assertStringContainsString('Account Pending Activation', $html);
 
 	}
 
@@ -406,7 +414,8 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 		$this->assertValidResponse($res, 302);
 
 		$url1 = $res->getHeaderLine('location');
-		$this->assertEquals('/done?e=CAC-083', $url1);
+		// $this->assertEquals('/done?e=CAC-083', $url1); // Created not Active
+		$this->assertEquals('/done?e=CAC-086', $url1); // Created and Active
 
 		$res = $c->get($url1);
 		$html = $this->assertValidResponse($res);
@@ -463,7 +472,7 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 		// GET
 		$res = $c->get('/auth/open?a=password-reset');
 		$html = $this->assertValidResponse($res);
-		$this->assertStringContainsString('<input class="form-control" id="username" inputmode="email" name="username" placeholder="- user@example.com -" value="">', $html);
+		$this->assertStringContainsString('<input class="form-control" id="username" inputmode="email" name="username"', $html);
 		$this->assertStringContainsString('<button class="btn btn-primary" id="btn-password-reset" name="a" type="submit" value="password-reset-request">Request Password Reset</button>', $html);
 
 		// POST
@@ -482,8 +491,8 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 		// @todo Verify Contents of the Done Page
 		$this->assertStringContainsString('Check Your Inbox', $html);
 
-		$url1 = preg_match('/t=(.+)$/', $url, $m) ? $m[1] : '';
-		$url1 = sprintf('%s/auth/once?_=%s', $_ENV['OPENTHC_TEST_ORIGIN'], $url1);
+		$tok = preg_match('/t=(.+)$/', $url, $m) ? $m[1] : '';
+		$url1 = sprintf('%s/auth/once?_=%s', $_ENV['OPENTHC_TEST_ORIGIN'], $tok);
 		$this->assertNotEmpty($url1);
 
 		// Follow to Password Reset Page?

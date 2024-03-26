@@ -15,7 +15,7 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	public static function setupBeforeClass(): void
 	{
 		parent::setupBeforeClass();
-		self::$username = sprintf('%s@openthc.dev', getenv('OPENTHC_TEST_CONTACT'));
+		self::$username = $_ENV['OPENTHC_TEST_CONTACT_A'];
 	}
 
 	/**
@@ -24,7 +24,7 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	public function test_home_redirect()
 	{
 		// The Prime Site does a Meta-Refresh
-		self::$driver->get(getenv('OPENTHC_TEST_ORIGIN'));
+		self::$driver->get($_ENV['OPENTHC_TEST_ORIGIN']);
 		$src = self::$driver->getPageSource();
 		$this->assertMatchesRegularExpression('/<meta http-equiv="refresh".+auth\/open/', $src);
 		sleep(3); // Wait for refresh
@@ -35,19 +35,19 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	}
 
 	/**
-	 *
+	 * Test Test Bad Account, Bad Password
 	 */
-	public function test_auth_open_fail()
+	public function test_auth_open_fail_username()
 	{
-		self::$driver->get(sprintf('%s/auth/open', getenv('OPENTHC_TEST_ORIGIN')));
+		self::$driver->get(sprintf('%s/auth/open', $_ENV['OPENTHC_TEST_ORIGIN']));
 
 		$element = self::$driver->findElement(WebDriverBy::id('username'));
 		$element->clear();
-		$element->sendKeys(self::$username);
+		$element->sendKeys(sprintf('invalid-%s@openthc.example', _ulid()));
 
 		$element = self::$driver->findElement(WebDriverBy::id('password'));
 		$element->clear();
-		$element->sendKeys(getenv('OPENTHC_TEST_CONTACT_PASSWORD'));
+		$element->sendKeys('WRONG_PASSWORD');
 
 		$btn = self::$driver->findElement(WebDriverBy::id('btn-auth-open'));
 		$btn->click();
@@ -59,12 +59,36 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	}
 
 	/**
+	 * Test Test Good Account, Bad Password
+	 */
+	public function test_auth_open_fail_password()
+	{
+		self::$driver->get(sprintf('%s/auth/open', $_ENV['OPENTHC_TEST_ORIGIN']));
+
+		$element = self::$driver->findElement(WebDriverBy::id('username'));
+		$element->clear();
+		$element->sendKeys('test+a@openthc.example');
+
+		$element = self::$driver->findElement(WebDriverBy::id('password'));
+		$element->clear();
+		$element->sendKeys('WRONG_PASSWORD');
+
+		$btn = self::$driver->findElement(WebDriverBy::id('btn-auth-open'));
+		$btn->click();
+
+		$url = self::$driver->getCurrentUrl();
+		$this->assertStringContainsString('/auth/open?e=CAO-153', $url);
+		$this->assertStringContainsString('Invalid Username or Password', self::$driver->getPageSource());
+
+	}
+
+	/**
 	 *
 	 */
 	public function test_auth_wellknown_reset()
 	{
 		//
-		self::$driver->get(sprintf('%s/.well-known/change-password', getenv('OPENTHC_TEST_ORIGIN')));
+		self::$driver->get(sprintf('%s/.well-known/change-password', $_ENV['OPENTHC_TEST_ORIGIN']));
 
 		$url = self::$driver->getCurrentUrl();
 		$this->assertStringContainsString('/auth/open?a=password-reset', $url);
@@ -78,7 +102,7 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	public function x_test_auth_open_verify()
 	{
 		// self::$driver->manage()->deleteAllCookies();
-		self::$driver->get(sprintf('%s/auth/open', getenv('OPENTHC_TEST_ORIGIN')));
+		self::$driver->get(sprintf('%s/auth/open', $_ENV['OPENTHC_TEST_ORIGIN']));
 
 		$element = self::$driver->findElement(WebDriverBy::id('username'));
 		$element->clear();
@@ -86,7 +110,7 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 
 		$element = self::$driver->findElement(WebDriverBy::id('password'));
 		$element->clear();
-		$element->sendKeys(getenv('OPENTHC_TEST_CONTACT_PASSWORD'));
+		$element->sendKeys($_ENV['OPENTHC_TEST_CONTACT_PASSWORD']);
 
 		$btn = self::$driver->findElement(WebDriverBy::id('btn-auth-open'));
 		$btn->click();
@@ -104,7 +128,7 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	public function x_test_auth_open_live()
 	{
 		// self::$driver->manage()->deleteAllCookies();
-		self::$driver->get(sprintf('%s/auth/open', getenv('OPENTHC_TEST_ORIGIN')));
+		self::$driver->get(sprintf('%s/auth/open', $_ENV['OPENTHC_TEST_ORIGIN']));
 
 		$element = self::$driver->findElement(WebDriverBy::id('username'));
 		$element->clear();
@@ -112,7 +136,7 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 
 		$element = self::$driver->findElement(WebDriverBy::id('password'));
 		$element->clear();
-		$element->sendKeys(getenv('OPENTHC_TEST_CONTACT_PASSWORD'));
+		$element->sendKeys($_ENV['OPENTHC_TEST_CONTACT_PASSWORD']);
 
 		$btn = self::$driver->findElement(WebDriverBy::id('btn-auth-open'));
 		$btn->click();
@@ -130,7 +154,7 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	public function x_test_auth_open_gone()
 	{
 		// self::$driver->manage()->deleteAllCookies();
-		self::$driver->get(sprintf('%s/auth/open', getenv('OPENTHC_TEST_ORIGIN')));
+		self::$driver->get(sprintf('%s/auth/open', $_ENV['OPENTHC_TEST_ORIGIN']));
 
 		$element = self::$driver->findElement(WebDriverBy::id('username'));
 		$element->clear();
@@ -138,7 +162,7 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 
 		$element = self::$driver->findElement(WebDriverBy::id('password'));
 		$element->clear();
-		$element->sendKeys(getenv('OPENTHC_TEST_CONTACT_PASSWORD'));
+		$element->sendKeys($_ENV['OPENTHC_TEST_CONTACT_PASSWORD']);
 
 		$btn = self::$driver->findElement(WebDriverBy::id('btn-auth-open'));
 		$btn->click();

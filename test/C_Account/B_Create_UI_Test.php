@@ -16,9 +16,7 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	public static function setUpBeforeClass() : void
 	{
 		parent::setUpBeforeClass();
-
-		$_ENV['OPENTHC_TEST_CONTACT'] = 'test+' . _ulid();
-		self::$username = sprintf('%s-ui@openthc.com', $_ENV['OPENTHC_TEST_CONTACT']);
+		self::$username = sprintf('%s-ui@openthc.example', _ulid());
 	}
 
 	/**
@@ -27,7 +25,7 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	function test_account_create()
 	{
 		self::$driver->get(sprintf('%s/account/create'
-			, getenv('OPENTHC_TEST_ORIGIN')
+			, $_ENV['OPENTHC_TEST_ORIGIN']
 		));
 
 		$node = self::$driver->findElement(WebDriverBy::id('alert-test-mode'));
@@ -35,13 +33,13 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 		$this->assertEquals('TEST MODE', $txt, 'Apache2 Environment missing variable: SetEnv OPENTHC_TEST "TEST"');
 
 		$node = self::$driver->findElement(WebDriverBy::id('contact-name'));
-		$node->sendKeys(sprintf('%s-ui', $_ENV['OPENTHC_TEST_CONTACT']));
+		$node->sendKeys(self::$username);
 
 		$node = self::$driver->findElement(WebDriverBy::id('contact-email'));
 		$node->sendKeys(self::$username);
 
 		$node = self::$driver->findElement(WebDriverBy::id('contact-phone'));
-		$node->sendKeys($_ENV['OPENTHC_TEST_CONTACT']);
+		$node->sendKeys($_ENV['OPENTHC_TEST_CONTACT_PHONE']);
 
 		$node = self::$driver->findElement(WebDriverBy::id('btn-account-create'));
 		$node->click();
@@ -90,16 +88,16 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	{
 		$url0 = ltrim($url0, '/');
 		$this->assertNotEmpty($url0);
-		self::$driver->get(sprintf('%s/%s', getenv('OPENTHC_TEST_ORIGIN'), $url0));
+		self::$driver->get(sprintf('%s/%s', $_ENV['OPENTHC_TEST_ORIGIN'], $url0));
 
 		$url1 = self::$driver->getCurrentUrl();
 		$this->assertMatchesRegularExpression('/\/verify\/password.+/', $url1);
 
 		$node = self::$driver->findElement(WebDriverBy::id('password0'));
-		$node->sendKeys(getenv('OPENTHC_TEST_CONTACT_PASSWORD'));
+		$node->sendKeys($_ENV['OPENTHC_TEST_CONTACT_PASSWORD']);
 
 		$node = self::$driver->findElement(WebDriverBy::id('password1'));
-		$node->sendKeys(getenv('OPENTHC_TEST_CONTACT_PASSWORD'));
+		$node->sendKeys($_ENV['OPENTHC_TEST_CONTACT_PASSWORD']);
 
 		$node = self::$driver->findElement(WebDriverBy::id('btn-password-update'));
 		$node->click();
