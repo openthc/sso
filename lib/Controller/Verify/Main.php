@@ -71,6 +71,7 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 		}
 
 		// Phone
+		/*
 		if (empty($_SESSION['verify']['phone']['done'])) {
 			if ($CT0->hasFlag(Contact::FLAG_PHONE_WANT)) {
 				return $RES->withRedirect(sprintf('/verify/phone?_=%s', $tok));
@@ -79,6 +80,7 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 				return $RES->withRedirect(sprintf('/verify/phone?_=%s', $tok));
 			}
 		}
+		*/
 
 		// Company
 		$dbc_auth = $this->_container->DBC_AUTH;
@@ -87,6 +89,22 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 		]);
 		if (empty($chk)) {
 			return $RES->withRedirect(sprintf('/verify/company?_=%s', $tok));
+		}
+
+		switch ($act_data['intent']) {
+			case 'account-invite':
+				// Company Lookup?
+				$dbc_auth->query('UPDATE auth_contact SET flag = (flag | :f1::int), stat = 200 WHERE id = :ct0', [
+					':f1' => 3,
+					':ct0' => $CT0['id'],
+				]);
+
+				$RES = $RES->withAttribute('verify-done', true);
+				$RES = $RES->withAttribute('Contact', $act_data['contact']);
+
+				return $RES->withRedirect('/done?e=CVM-119');
+
+				break;
 		}
 
 		// Update Contact Status

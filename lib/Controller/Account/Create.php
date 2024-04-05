@@ -119,6 +119,7 @@ class Create extends \OpenTHC\SSO\Controller\Base
 		$act_data = [
 			'intent' => 'account-create',
 			'service' => $_GET['service'],
+			// @note There is disagreement on whether or not to include a cleaned-up contact object here with context from the 'account' object
 			'account' => $_POST,
 			'ip' => $_SERVER['REMOTE_ADDR'],
 		];

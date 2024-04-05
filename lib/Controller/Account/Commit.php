@@ -23,6 +23,13 @@ class Commit extends \OpenTHC\SSO\Controller\Base
 
 		// Post the Contact to the API
 		$arg_contact = $act_data['contact'];
+		if (empty($arg_contact)) {
+			$arg_contact = [
+				'email' => $act_data['account']['contact-email'],
+				'name' => $act_data['account']['contact-name'],
+				'phone' => $act_data['account']['contact-phone'],
+			];
+		}
 
 		switch ($act_data['intent']) {
 			case 'account-create':
@@ -52,7 +59,8 @@ class Commit extends \OpenTHC\SSO\Controller\Base
 			'id' => $res['data']['id'],
 		]);
 
-		$act_data['contact'] = $res['data'];
+		// @note
+		$act_data['contact'] = $res['data']['contact'];
 
 		unset($act_data['account']);
 

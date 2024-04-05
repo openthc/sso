@@ -165,6 +165,7 @@ class Create extends \OpenTHC\SSO\Controller\Base
 		));
 
 		// Commit Channel
+		// @note There is diagreement on whether to insert directly or check existance first and then insert PK only
 		$dbc_main->insert('contact', $Contact);
 
 		// Channel Linkage
@@ -177,7 +178,10 @@ class Create extends \OpenTHC\SSO\Controller\Base
 		$dbc_main->query('COMMIT');
 
 		return $RES->withJSON([
-			'data' => $Contact,
+			// @note There is disagreement whether this should be `'data'=>$Contact` or `'data'=>[ 'contact'=>$Contact ]`
+			'data' => [
+				'contact' => $Contact,
+			],
 			'meta' => [],
 		], 201);
 
