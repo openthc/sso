@@ -10,6 +10,7 @@ if ( ! empty($data['error_code'])) {
 	switch ($data['error_code']) {
 		case 'CAC-065':
 		case 'CAC-083':
+		case 'CAC-086':
 			$data['Page']['title'] = 'Account Exists';
 			$data['warn'] = 'You have already created an account, sign in to that one';
 			$data['foot'] = '<div class="r"><a class="btn btn-outline-primary" href="/auth/open">Sign In <i class="icon icon-arrow-right"></i></a></div>';
