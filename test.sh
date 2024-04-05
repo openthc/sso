@@ -52,6 +52,7 @@ bash vendor/openthc/common/test/phpstan.sh
 rm -fr ${OUTPUT_BASE}/phpunit.*
 bash -x vendor/openthc/common/test/phpunit.sh "$@"
 
+php vendor/openthc/common/test/phpunit-xml2html.php "webroot/test-output/phpunit.xml" "webroot/test-output/phpunit.html"
 
 #
 # Final Output

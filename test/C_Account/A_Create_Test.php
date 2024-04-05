@@ -392,6 +392,7 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base_Case
 
 	/**
 	 * Duplicate Email should be Rejected
+	 * @note Implicitly dependant on the Email Verification step
 	 */
 	function test_account_create_dupe_email()
 	{
