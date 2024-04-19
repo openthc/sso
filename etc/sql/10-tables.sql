@@ -7,7 +7,7 @@
 --
 
 CREATE TABLE auth_company (
-	id character varying(26) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
+	id character varying(26) NOT NULL PRIMARY KEY,
 	stat integer DEFAULT 100 NOT NULL,
 	flag integer DEFAULT 0 NOT NULL,
 	created_at timestamp without time zone DEFAULT now() NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE auth_company_contact (
 --
 
 CREATE TABLE auth_contact (
-	id character varying(26) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
+	id character varying(26) NOT NULL PRIMARY KEY,
 	stat integer DEFAULT 100 NOT NULL,
 	flag integer DEFAULT 0 NOT NULL,
 	created_at timestamp with time zone DEFAULT now() NOT NULL,
