@@ -473,16 +473,16 @@
         },
         {
             "name": "giggsey/locale",
-            "version": "2.5",
+            "version": "2.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/giggsey/Locale.git",
-                "reference": "e6d4540109a01dd2bc7334cdc842d6a6a67cf239"
+                "reference": "37874fa473131247c348059fb7b8985efc18b5ea"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/giggsey/Locale/zipball/e6d4540109a01dd2bc7334cdc842d6a6a67cf239",
-                "reference": "e6d4540109a01dd2bc7334cdc842d6a6a67cf239",
+                "url": "https://api.github.com/repos/giggsey/Locale/zipball/37874fa473131247c348059fb7b8985efc18b5ea",
+                "reference": "37874fa473131247c348059fb7b8985efc18b5ea",
                 "shasum": ""
             },
             "require": {
@@ -521,9 +521,9 @@
             "description": "Locale functions required by libphonenumber-for-php",
             "support": {
                 "issues": "https://github.com/giggsey/Locale/issues",
-                "source": "https://github.com/giggsey/Locale/tree/2.5"
+                "source": "https://github.com/giggsey/Locale/tree/2.6"
             },
-            "time": "2023-11-01T17:19:48+00:00"
+            "time": "2024-04-18T19:31:19+00:00"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -899,7 +899,7 @@
             "version": "v1.11.1",
             "source": {
                 "type": "git",
-                "url": "git@github.com:maxmind/MaxMind-DB-Reader-php.git",
+                "url": "https://github.com/maxmind/MaxMind-DB-Reader-php.git",
                 "reference": "1e66f73ffcf25e17c7a910a1317e9720a95497c7"
             },
             "dist": {
@@ -953,6 +953,10 @@
                 "geolocation",
                 "maxmind"
             ],
+            "support": {
+                "issues": "https://github.com/maxmind/MaxMind-DB-Reader-php/issues",
+                "source": "https://github.com/maxmind/MaxMind-DB-Reader-php/tree/v1.11.1"
+            },
             "time": "2023-12-02T00:09:23+00:00"
         },
         {
@@ -1062,12 +1066,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/openthc/common.git",
-                "reference": "78779b612294a9594155e71453d26c22ebce44ed"
+                "reference": "beca877a36c6bc95da2d9312c642e01f55ef5789"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/openthc/common/zipball/78779b612294a9594155e71453d26c22ebce44ed",
-                "reference": "78779b612294a9594155e71453d26c22ebce44ed",
+                "url": "https://api.github.com/repos/openthc/common/zipball/beca877a36c6bc95da2d9312c642e01f55ef5789",
+                "reference": "beca877a36c6bc95da2d9312c642e01f55ef5789",
                 "shasum": ""
             },
             "require": {
@@ -1090,11 +1094,10 @@
                 "twig/twig": "2.15.6"
             },
             "require-dev": {
-                "behat/behat": "3.12.0",
-                "php-webdriver/webdriver": "1.14.0",
-                "phpmd/phpmd": "2.13.0",
-                "phpstan/phpstan": "1.10.5",
-                "phpunit/phpunit": "9.6.17"
+                "php-webdriver/webdriver": "1.15.1",
+                "phpmd/phpmd": "2.15.0",
+                "phpstan/phpstan": "1.10.66",
+                "phpunit/phpunit": "9.6.18"
             },
             "default-branch": true,
             "type": "library",
@@ -1121,7 +1124,7 @@
                 "issues": "https://github.com/openthc/common/issues",
                 "source": "https://github.com/openthc/common/tree/master"
             },
-            "time": "2024-04-02T23:13:47+00:00"
+            "time": "2024-04-14T21:08:28+00:00"
         },
         {
             "name": "paragonie/random_compat",
