@@ -126,6 +126,7 @@ class Create extends \OpenTHC\SSO\Controller\Base
 
 		// Auth Hash Link - Redis
 		$tok = Auth_Context_Ticket::set($act_data, 900);
+		$RES = $RES->withAttribute('Auth_Context_Ticket', $tok);
 
 		// Auth Hash Link - PostgreSQL
 		// $dbc_auth = $this->_container->DBC_AUTH;
