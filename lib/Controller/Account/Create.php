@@ -137,7 +137,7 @@ class Create extends \OpenTHC\SSO\Controller\Base
 		$ret_args['e'] = 'CAC-111';
 
 		// Test Mode
-		if ('TEST' == getenv('OPENTHC_TEST')) {
+		if (is_test_mode()) {
 			$ret_args['t'] = $tok;
 		}
 

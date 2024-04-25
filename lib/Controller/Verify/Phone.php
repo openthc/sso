@@ -156,7 +156,7 @@ class Phone extends \OpenTHC\SSO\Controller\Verify\Base
 		$RES = $RES->withAttribute('mode', 'phone-verify-send');
 
 		// Test Mode
-		if ('TEST' == getenv('OPENTHC_TEST')) {
+		if (is_test_mode()) {
 			$ret_args['t'] = $_SESSION['verify']['phone']['code'];
 		}
 

@@ -104,7 +104,7 @@ class Email extends \OpenTHC\SSO\Controller\Verify\Base
 		$RES = $RES->withAttribute('Contact', $ARG['contact']);
 
 		// Test Mode
-		if ('TEST' == getenv('OPENTHC_TEST')) {
+		if (is_test_mode()) {
 			$ret_args['t'] = $acs['id'];
 		}
 
