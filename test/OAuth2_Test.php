@@ -35,46 +35,67 @@ class OAuth2_Test extends Base_Case
 
 		// Assertions - Initial Request
 		$this->assertValidResponse($res, 302);
+
+		// Redirection to /auth/open
 		$l0 = $res->getHeaders();
 		$l0 = $l0['Location'][0];
-		$x = parse_url($l0);
-		$x = parse_str($x['query'], $state);
-		
+		$x0 = parse_url($l0);
+		$x0 = parse_str($x0['query'], $state);
+		$this->assertMatchesRegularExpression('/\/auth\/open\?_=.+/', $l0);
+
+		// Assertions against /auth/open
+		// $l0 is the URL with our context token
 		$res = $this->_ua()->get($l0);
 		$this->assertValidResponse($res, 200);
 
-		// $this->assertContains('title="Authorize"', $this->raw); // Check for authorization prompt title
-
-		// Simulate User Approval (Mock user clicking "Authorize")
-		//  (In reality, user would interact with the authorization prompt)
-
-		// Confirmation Request (POST) - Simulate form submission with CSRF token
+		// Sign-in with test credentials
 		$csrf = $this->getCSRF($this->raw);
-		$res = $this->_ua()->get('/oauth2/permit', [
-			'query' => [
+		$res = $this->_ua()->post($l0, [
+			'form_params' => [
 				'CSRF' => $csrf,
-				'auth-commit' => 'true', // Simulate remembering authorization
-				// Other form fields from the authorization prompt (replace with actual values)
-				'client_id' => $clientId,
-				'redirect_uri' => $redirectUri,
-				'scope' => $scopes,
-				'state' => $state['_'],
-				'_' => $state['_'],
+				'username' => OPENTHC_TEST_CONTACT_A,
+				'password' => OPENTHC_TEST_CONTACT_PASSWORD,
+				'a' => 'account-open',
 			],
 		]);
+		$this->assertValidResponse($res, 302);
 
-		// Assertions - Confirmation Request (Permit)
-		// var_dump($res);
-		$this->assertValidResponse($res, 302); // Redirect expected
+		// Redirection to /auth/init
+		$l1 = $res->getHeaders();
+		$l1 = $l1['Location'][0];
+		$x1 = parse_url($l1);
+		$x1 = parse_str($x1['query'], $state1);
+		$this->assertMatchesRegularExpression('/\/auth\/init\?_=.+/', $l1);
 
-		// Follow the Redirect (manually for testing purposes)
-		$location = $res->getHeaderLine('Location');
-		$redirect_parts = parse_url($location);
+		// Assertions against /auth/init
+		// $l1 is the URL with our new(?) context token
+		$res = $this->_ua()->get($l1);
+		$this->assertValidResponse($res, 302);
 
-		// Assertions - Redirect URI
-		$this->assertEquals('https', $redirect_parts['scheme']);
-		$this->assertEquals($redirectUri, $redirect_parts['path']);
-		$this->assertArrayHasKey('code', $redirect_parts['query']); // Authorization code expected in query string
-		$this->assertArrayHasKey('state', $redirect_parts['query']); // State value should be preserved
+		// Redirection to /oauth2/authorize
+		$l2 = $res->getHeaders();
+		$l2 = $l2['Location'][0];
+		$x2 = parse_url($l2);
+		$x2 = parse_str($x2['query'], $state2);
+		$this->assertMatchesRegularExpression('/\/oauth2\/authorize\?.+/', $l2);
+
+		// OAuth Permit
+		$res = $this->_ua()->get($l2);
+		$this->assertValidResponse($res, 200);
+		$this->assertMatchesRegularExpression('/<title>Authorize<\/title>/', $this->raw); // Check for authorization prompt title
+		preg_match('/href=\"(\/oauth2\/permit\?_=.+)\"/', $this->raw, $match);
+		$l3 = $match[1];
+		$this->assertMatchesRegularExpression('/\/oauth2\/permit\?_=.+/', $l3);
+
+		$res = $this->_ua()->get($l3);
+		$this->assertValidResponse($res, 200);
+
+		// OAuth Permit Continues to Service
+		preg_match('/id=\"oauth2-permit-continue\" href=\"(.*)\"/', $this->raw, $match);
+		$l4 = $match[1];
+		$this->assertMatchesRegularExpression('/\/auth\/back\?.+/', $l4);
+		$res = $this->_ua()->get($l4);
+		$this->assertValidResponse($res, 200);
+
 	}
 }
