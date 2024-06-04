@@ -7,7 +7,7 @@
 
 namespace OpenTHC\SSO\Test;
 
-class Base_Case extends \PHPUnit\Framework\TestCase // \OpenTHC\Test\Base_Case
+class Base_Case extends \OpenTHC\Test\Base // \PHPUnit\Framework\TestCase
 {
 	protected $_pid = null;
 
@@ -30,6 +30,18 @@ class Base_Case extends \PHPUnit\Framework\TestCase // \OpenTHC\Test\Base_Case
 	{
 		static $c;
 
+		// Set Cookies
+		$jar = new \GuzzleHttp\Cookie\CookieJar();
+		$obj = new \GuzzleHttp\Cookie\SetCookie([
+			'Domain' => parse_url(OPENTHC_TEST_ORIGIN, PHP_URL_HOST), // $this->httpClient->getConfig('base_uri')->getHost(),
+			'Name' => 'openthc-test',
+			'Value' => \OpenTHC\Config::get('openthc/sso/test/sk'),
+			'Secure' => true,
+			'HttpOnly' => true,
+		]);
+		$jar->setCookie($obj);
+
+
 		if (empty($c)) {
 
 			$c = new \GuzzleHttp\Client(array(
@@ -40,12 +52,22 @@ class Base_Case extends \PHPUnit\Framework\TestCase // \OpenTHC\Test\Base_Case
 					'exceptions' => false,
 				),
 				'http_errors' => false,
-				'cookies' => true,
+				'cookies' => $jar,
 			));
 		}
 
 		return $c;
 
+	}
+
+	protected function _dbc()
+	{
+		static $dbc;
+		if (empty($dbc)) {
+			$cfg = \OpenTHC\Config::get('database/auth');
+			$dsn = sprintf('pgsql:application_name=openthc-sso;host=%s;dbname=%s', $cfg['hostname'], $cfg['database']);
+			return new \Edoceo\Radix\DB\SQL($dsn, $cfg['username'], $cfg['password']);
+		}
 	}
 
 	/**
