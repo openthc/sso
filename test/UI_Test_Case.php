@@ -40,8 +40,17 @@ class UI_Test_Case extends \OpenTHC\SSO\Test\Base_Case
 		// https://www.browserstack.com/docs/automate/selenium/change-device-orientation
 		// $caps['deviceOrientation']
 
+		// Visit site before setting cookie for easy domain registration in the cookie
 		self::$driver = RemoteWebDriver::create(OPENTHC_TEST_WEBDRIVER_URL, $caps);
 		self::$driver->manage()->window()->maximize();
+		self::$driver->get(OPENTHC_TEST_ORIGIN);
+		self::$driver->manage()->addCookie([
+			'name' => 'openthc-test',
+			'value' => \OpenTHC\Config::get('openthc/sso/test/sk'),
+			'Secure' => true,
+			'HttpOnly' => true,
+		]);
+
 	}
 
 	function tearDown() : void
