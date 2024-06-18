@@ -55,6 +55,12 @@ class UI_Test_Case extends \OpenTHC\SSO\Test\Base_Case
 	public static function tearDownAfterClass() : void
 	{
 		$sid = self::$driver->getSessionId();
+		$url = OPENTHC_TEST_WEBDRIVER_URL;
+		$url = parse_url($url);
+		$cfg = [];
+		$cfg['username'] = $url['user'];
+		$cfg['password'] = $url['pass'];
+
 		// echo "\nDONE SESSION ID: {$sid}\n";
 
 		if ('FAILED' == self::$stat) {
@@ -90,6 +96,33 @@ class UI_Test_Case extends \OpenTHC\SSO\Test\Base_Case
 		sleep(2);
 
 		self::$driver->quit();
+
+		// Get session details
+		// https://www.browserstack.com/docs/automate/api-reference/selenium/session#get-session-logs
+		$url = sprintf('https://api.browserstack.com/automate/sessions/%s.json', $sid);
+		$req = __curl_init($url);
+		curl_setopt($req, CURLOPT_USERPWD, sprintf('%s:%s', $cfg['username'], $cfg['password']));
+		curl_setopt($req, CURLOPT_HTTPHEADER, [
+			'content-type: application/json'
+		]);
+		$res = curl_exec($req);
+		print_r($res);
+		$res = json_decode($res, true);
+
+		$video_url = $res['automation_session']['video_url'];
+		$req = __curl_init($video_url);
+		curl_setopt($req, CURLOPT_USERPWD, sprintf('%s:%s', $cfg['username'], $cfg['password']));
+		$buf = curl_exec($req);
+		$inf = curl_getinfo($req);
+
+		$fname = sprintf('browserstack_%s_%s.mp4', APP_BUILD, $sid);
+		$fname = sprintf('%s/webroot/test-output/%s', APP_ROOT, $fname);
+		// The video may not be available at this point
+		if (404 == $inf['http_code']) {
+			$buf = json_encode($res); // Promote the session details
+			$fname = $fname . '.json';
+		}
+		file_put_contents($fname, $buf);
 
 	}
 }
