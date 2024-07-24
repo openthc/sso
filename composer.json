@@ -18,14 +18,14 @@
 		"edoceo/radix": "2021.0.0",
 		"geoip2/geoip2": "2.13.0",
 		"league/oauth2-client": "2.7.0",
-		"openthc/common": "dev-master"
+		"openthc/common": "dev-main"
 	},
 	"require-dev": {
 		"browserstack/browserstack-local": "^1.1",
 		"fakerphp/faker": "1.23.1",
 		"php-webdriver/webdriver": "1.15.1",
-		"phpstan/phpstan": "1.10.66",
-		"phpunit/phpunit": "9.6.18",
+		"phpstan/phpstan": "1.11.8",
+		"phpunit/phpunit": "9.6.20",
 		"phpunit/phpunit-selenium": "9.0.1"
 	}
 }
