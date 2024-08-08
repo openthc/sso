@@ -21,7 +21,8 @@ use OpenTHC\SSO\UI\Icon;
 		<div class="mt-4">
 			<label>Country:</label>
 			<div class="input-group" id="country-select-wrap">
-				<select class="form-control" id="contact-iso3166-1" name="contact-iso3166-1">
+				<select class="form-select" id="contact-iso3166-1" name="contact-iso3166-1">
+				<option value="">- Select Country -</option>
 				<?php
 				foreach ($data['iso3166_1_list'] as $i => $x) {
 					$sel = ($x['id'] == $data['iso3166_1_pick']['id'] ? ' selected' : '');
@@ -60,7 +61,12 @@ const successCallback = (pos) => {
 	};
 
 	fetch('', arg)
-		.then((res) => res.json())
+		.then(function(res) {
+			setTimeout(function() {
+				$('#country-select-sync').remove();
+			}, 1234);
+			return res.json();
+		})
 		.then(function(res) {
 			// console.log(res);
 			if (res.data.iso3166_1) {
@@ -68,8 +74,6 @@ const successCallback = (pos) => {
 				node.value = res.data.iso3166_1.id;
 			}
 		});
-
-	$('#country-select-sync').remove();
 
 };
 

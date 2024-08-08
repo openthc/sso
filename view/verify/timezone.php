@@ -21,7 +21,7 @@ use OpenTHC\SSO\UI\Icon;
 	<div class="mt-4">
 		<label>Time Zone:</labeL>
 		<div class="input-group">
-			<select class="form-control" id="contact-timezone" name="contact-timezone">
+			<select class="form-select" id="contact-timezone" name="contact-timezone">
 			<?php
 				foreach ($data['time_zone_list'] as $tz) {
 					$sel = ($tz == $data['time_zone_pick'] ? ' selected' : '');

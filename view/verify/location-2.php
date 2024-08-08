@@ -25,7 +25,7 @@ use OpenTHC\SSO\UI\Icon;
 
 		<div class="mt-4">
 			<label>Region:</label>
-			<select class="form-control" id="contact-iso3166-2" name="contact-iso3166-2">
+			<select class="form-select" id="contact-iso3166-2" name="contact-iso3166-2">
 			<?php
 			foreach ($data['iso3166_2_list'] as $i => $x) {
 				$sel = ($x['id'] == $data['iso3166_2_pick']['id'] ? ' selected' : '');
