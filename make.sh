@@ -37,11 +37,6 @@ vendor-web)
 	cp node_modules/jquery/dist/jquery.min.js webroot/vendor/jquery/
 	cp node_modules/jquery/dist/jquery.min.map webroot/vendor/jquery/
 
-	# jquery-ui
-	mkdir -p webroot/vendor/jquery-ui/
-	cp node_modules/jquery-ui/dist/jquery-ui.min.js webroot/vendor/jquery-ui/
-	cp node_modules/jquery-ui/dist/themes/base/jquery-ui.min.css webroot/vendor/jquery-ui/
-
 	# bootstrap
 	mkdir -p webroot/vendor/bootstrap/
 	cp node_modules/bootstrap/dist/css/bootstrap.min.css           webroot/vendor/bootstrap/
