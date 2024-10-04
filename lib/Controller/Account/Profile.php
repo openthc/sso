@@ -18,7 +18,7 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 	function __invoke($REQ, $RES, $ARG)
 	{
 		$data = $this->data;
-		$data['Page'] = [ 'title' => 'Account' ];
+		$data['Page'] = [ 'title' => 'Profile' ];
 		if (empty($_SESSION['Contact']['id'])) {
 			_exit_html_fail('<h1>Invalid Session [CAP-017]</h1><p>Please <a href="/auth/shut">close the session</a> and try again.</p>', 403);
 		}
@@ -40,10 +40,17 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 		$data['Contact_Base'] = $C1;
 
 		// Company List
-		$res = $dbc_auth->fetchAll('SELECT id, name FROM auth_company WHERE id IN (SELECT company_id FROM auth_company_contact WHERE contact_id = :ct0)', [
+		$res = $dbc_auth->fetchAll('SELECT id, name, stat, dsn FROM auth_company WHERE id IN (SELECT company_id FROM auth_company_contact WHERE contact_id = :ct0)', [
 			':ct0' => $_SESSION['Contact']['id'],
 		]);
 		$data['company_list'] = $res;
+
+		$company_good = false;
+		foreach ($res as $rec) {
+			if (($rec['stat'] == 200) && ( ! empty($rec['dsn']))) {
+				$company_good = true;
+			}
+		}
 
 		// Active Service List
 		// $res = $dbc_auth->fetchAll('SELECT id, name FROM auth_company WHERE id IN (SELECT company_id FROM auth_company_contact WHERE contact_id = :ct0)', [
@@ -51,49 +58,30 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 		// ]);
 		// $data['service_list'] = $res;
 
-		$data['service_list_default'] = [];
-
-		// $svc_list = \OpenTHC\Config::get('openthc');
-		// var_dump($svc_list);
-
-		// $service_list = $dbc_auth->fetchAll('SELECT id, name FROM auth_service ORDER BY name');
-		// $data['service_list'] = $service_list;
-
-		// $data['service_list'] = [];
-		// $cfg = \OpenTHC\Config::get('openthc/*');
-
-		$x = \OpenTHC\Config::get('openthc/app/origin');
-		if ($x) {
-			$data['service_list_default'][] = [
-				'link' => sprintf('%s/auth/open?a=sso', $x),
-				'name' => 'App',
-				'hint' => 'Connect to the primary seed-to-sale application for crop and inventory management'
-			];
-		}
+		$data['service_list'] = [];
 
 		$x = \OpenTHC\Config::get('openthc/dir/origin');
 		if ($x) {
-			$data['service_list_default'][] = [
-				'link' => sprintf('%s/auth/open', $x),
+			$data['service_list'][] = [
+				'link' => '/service/connect/dir',
 				'name' => 'Directory',
 				'hint' => 'Connect to the Directory to update your semi-public contact and company profiles'
 			];
 		}
 
-		$x = \OpenTHC\Config::get('openthc/lab/origin');
+		$x = \OpenTHC\Config::get('openthc/app/origin');
 		if ($x) {
-			$data['service_list_default'][] = [
-				'link' => sprintf('%s/auth/open', $x),
-				'name' => 'Laboratory Portal',
-				'hint' => 'Laboratory LIMS and Lab Report management',
+			$data['service_list'][] = [
+				'link' => '/service/connect/app', // sprintf('%s/auth/open?a=sso', $x),
+				'name' => 'App',
+				'hint' => 'Connect to the primary seed-to-sale application for crop and inventory management'
 			];
-
 		}
 
 		$x = \OpenTHC\Config::get('openthc/pos/origin');
 		if ($x) {
-			$data['service_list_default'][] = [
-				'link' => sprintf('%s/auth/open', $x),
+			$data['service_list'][] = [
+				'link' => '/service/connect/pos',
 				'name' => 'Retail POS',
 				'hint' => 'Connect to the Point of Sale to perform front-of-the-house retail operations',
 			];
@@ -101,8 +89,8 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 
 		$x = \OpenTHC\Config::get('openthc/b2b/origin');
 		if ($x) {
-			$data['service_list_default'][] = [
-				'link' => sprintf('%s/auth/open?v=sso', $x),
+			$data['service_list'][] = [
+				'link' => '/service/connect/b2b',
 				'name' => 'B2B Marketplace',
 				'hint' => 'Connect to the B2B Marketplace to connect with vendors and suppliers',
 			];
