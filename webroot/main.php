@@ -46,8 +46,10 @@ $con['response'] = function() {
 // API Stuff
 $app->group('/api', 'OpenTHC\SSO\Module\API');
 
-// Account
+// Account v0
 $app->group('/account', 'OpenTHC\SSO\Module\Account')->add('OpenTHC\Middleware\Session');
+// Profile v1
+$app->group('/profile', 'OpenTHC\SSO\Module\Account')->add('OpenTHC\Middleware\Session');
 
 // Authentication Routes
 $app->group('/auth', function() {
@@ -93,6 +95,14 @@ $app->group('/company', function() {
 	// $this->post('/create', 'OpenTHC\SSO\Controller\Account\Company:post');
 
 	$this->get('/join', 'OpenTHC\SSO\Controller\Company\Join');
+
+})->add('OpenTHC\Middleware\Session');
+
+
+// Service
+$app->group('/service', function() {
+
+	$this->get('/connect/{svc}', 'OpenTHC\SSO\Controller\Service\Connect');
 
 })->add('OpenTHC\Middleware\Session');
 

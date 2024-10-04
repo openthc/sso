@@ -61,37 +61,27 @@ if ($data['service_list']) {
 	<div class="card">
 		<h2 class="card-header">Service Connections</h2>
 		<div class="card-body">
+			<div class="container">
 			<?php
 			foreach ($data['service_list'] as $s) {
 			?>
-				<h3><a href="<?= $s['link'] ?>" target="_blank"><?= h($s['name']) ?></a></h3>
-			<?php
-			}
-			?>
-		</div>
-	</div>
-<?php
-} elseif ($data['service_list_default']) {
-?>
-	<hr>
-	<div class="card">
-		<h2 class="card-header">Service Connections</h2>
-		<div class="card-body">
-			<?php
-			foreach ($data['service_list_default'] as $s) {
-			?>
-				<div class="mb-4">
-					<h3><?= __h($s['name']) ?></h3>
-					<p><?= __h($s['hint']) ?></p>
-					<a class="btn btn-lg btn-outline-primary btn-service-connect"
-						data-service-name="<?= __h(strtolower($s['name'])) ?>"
-						href="<?= $s['link'] ?>" target="_blank">
-							Open <?= __h($s['name']) ?> <?= Icon::icon('link-out') ?>
-					</a>
+				<div class="row">
+					<div class="col-md-8">
+						<h3><?= __h($s['name']) ?></h3>
+						<p><?= __h($s['hint']) ?></p>
+					</div>
+					<div class="col-md-4">
+						<a class="btn btn-lg btn-outline-primary btn-service-connect w-100"
+							data-service-name="<?= __h(strtolower($s['name'])) ?>"
+							href="<?= $s['link'] ?>" target="_blank">
+								Open <?= __h($s['name']) ?> <?= Icon::icon('link-out') ?>
+						</a>
+					</div>
 				</div>
 			<?php
 			}
 			?>
+			</div>
 		</div>
 	</div>
 
