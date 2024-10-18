@@ -53,7 +53,9 @@ CREATE TABLE auth_contact (
 	deleted_at timestamp with time zone,
 	session_at timestamp with time zone,
 	username character varying(256) NOT NULL,
-	password character varying(256)
+	password character varying(256),
+	iso3166 character varying(8),
+	tz character varying(64)
 );
 
 
@@ -64,6 +66,15 @@ CREATE TABLE auth_context (
 	code varchar(256),
 	name varchar(256)
 );
+
+
+CREATE TABLE public.auth_context_ticket (
+	id character varying(64) NOT NULL,
+	created_at timestamp with time zone DEFAULT now() NOT NULL,
+	expires_at timestamp with time zone DEFAULT (now() + '01:00:00'::interval) NOT NULL,
+	meta jsonb
+);
+
 
 CREATE TABLE auth_service (
 	id varchar(26) NOT NULL DEFAULT ulid_create() PRIMARY KEY,
@@ -90,6 +101,19 @@ CREATE TABLE auth_service_contact (
 	expires_at timestamp with time zone default (now() + '365 days'::interval) not null
 );
 
+
+CREATE TABLE auth_service_keypair (
+	id varchar(26) not null,
+	service_id varchar(26) not null,
+	stat int not null default 0,
+	created_at timestamp with time zone not null default now(),
+	updated_at timestamp with time zone,
+	deleted_at timestamp with time zone,
+	expires_at timestamp with time zone,
+	pk text,
+	sk text,
+	flag jsonb
+);
 
 --
 -- Name: iso3166; Type: TABLE; Schema: public;
