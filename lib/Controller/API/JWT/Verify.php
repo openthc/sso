@@ -29,7 +29,7 @@ class Verify extends \OpenTHC\SSO\Controller\API\Base
 			return $this->sendFailure('Invalid Token [AJV-030]');
 		}
 
-		$key0 = \OpenTHC\Config::get('openthc/sso/origin-sk');
+		$key0 = \OpenTHC\Config::get('openthc/sso/secret');
 		if (empty($key0)) {
 			return $this->sendFailure('Invalid Service [AJV-043]');
 		}

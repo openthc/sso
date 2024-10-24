@@ -47,12 +47,13 @@ class A_Config_Test extends \OpenTHC\SSO\Test\Base_Case
 
 			'openthc/sso/id',
 			'openthc/sso/origin',
-			// 'openthc/sso/origin-sk',
-			// 'openthc/sso/secret',
+			'openthc/sso/public',
+			'openthc/sso/secret',
 
 			// 'openthc/www/id',
 			// 'openthc/www/origin',
 			// 'openthc/www/secret',
+			'openthc/sso/test/sk',
 		];
 
 		foreach ($key_list as $key) {
