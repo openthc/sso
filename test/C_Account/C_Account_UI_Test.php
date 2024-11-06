@@ -15,19 +15,19 @@ class C_Account_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	{
 		parent::setUpBeforeClass();
 
-		self::$driver->get(sprintf('%s/auth/open'
+		self::$wd->get(sprintf('%s/auth/open'
 			, OPENTHC_TEST_ORIGIN
 		));
 
-		$node = self::$driver->findElement(WebDriverBy::id('username'));
+		$node = self::$wd->findElement(WebDriverBy::id('username'));
 		$node->sendKeys(OPENTHC_TEST_CONTACT_A);
 
 		// #password
-		$node = self::$driver->findElement(WebDriverBy::id('password'));
+		$node = self::$wd->findElement(WebDriverBy::id('password'));
 		$node->sendKeys(OPENTHC_TEST_CONTACT_PASSWORD);
 
 		// #btn-auth-open
-		$node = self::$driver->findElement(WebDriverBy::id('btn-auth-open'));
+		$node = self::$wd->findElement(WebDriverBy::id('btn-auth-open'));
 		$node->click();
 	}
 
@@ -37,26 +37,27 @@ class C_Account_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	function test_change_name($url0 = null)
 	{
 		if (empty($url0)) {
-			$url0 = self::$driver->getCurrentUrl();
+			$url0 = self::$wd->getCurrentUrl();
 		}
+		// var_dump($url0);
 
-		self::$driver->get(sprintf('%s/account'
+		self::$wd->get(sprintf('%s/account'
 			, OPENTHC_TEST_ORIGIN
 		));
 
-		$node = self::$driver->findElement(WebDriverBy::id('contact-name'));
+		$node = self::$wd->findElement(WebDriverBy::id('contact-name'));
 		$val0 = $node->getText();
 		$val0 = $val0 . '_';
 		$node->sendKeys($val0);
 
-		$node = self::$driver->findElement(WebDriverBy::cssSelector('button[value=contact-name-save]'));
+		$node = self::$wd->findElement(WebDriverBy::cssSelector('button[value=contact-name-save]'));
 		$node->click();
 
-		$node = self::$driver->findElement(WebDriverBy::id('contact-name'));
+		$node = self::$wd->findElement(WebDriverBy::id('contact-name'));
 		$val1 = $node->getText();
 		$this->assertEquals($val0, $val1);
 
-		$url1 = self::$driver->getCurrentUrl();
+		$url1 = self::$wd->getCurrentUrl();
 		return $url1;
 	}
 
@@ -80,18 +81,18 @@ class C_Account_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	 */
 	function test_service_app($url0)
 	{
-		$node = self::$driver->findElement(WebDriverBy::cssSelector('a[data-service-name=app]'));
+		$node = self::$wd->findElement(WebDriverBy::cssSelector('a[data-service-name=app]'));
 		$node->click();
 
-		$node = self::$driver->findElement(WebDriverBy::id('oauth2-authorize-permit'));
+		$node = self::$wd->findElement(WebDriverBy::id('oauth2-authorize-permit'));
 		$node->click();
 
-		$node = self::$driver->findElement(WebDriverBy::id('oauth2-permit-continue'));
+		$node = self::$wd->findElement(WebDriverBy::id('oauth2-permit-continue'));
 		$node->click();
 
-		$this->assertMatchesRegularExpression('/Dashboard :: \w+/', self::$driver->getTitle());
+		$this->assertMatchesRegularExpression('/Dashboard :: \w+/', self::$wd->getTitle());
 
-		$url1 = self::$driver->getCurrentUrl();
+		$url1 = self::$wd->getCurrentUrl();
 		return $url1;
 	}
 
@@ -101,17 +102,17 @@ class C_Account_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	 */
 	function test_service_dir($url0)
 	{
-		$node = self::$driver->findElement(WebDriverBy::cssSelector('a[data-service-name=directory]'));
+		$node = self::$wd->findElement(WebDriverBy::cssSelector('a[data-service-name=directory]'));
 		$node->click();
 
-		$node = self::$driver->findElement(WebDriverBy::id('oauth2-authorize-permit'));
+		$node = self::$wd->findElement(WebDriverBy::id('oauth2-authorize-permit'));
 		$node->click();
 
-		$node = self::$driver->findElement(WebDriverBy::id('oauth2-permit-continue'));
+		$node = self::$wd->findElement(WebDriverBy::id('oauth2-permit-continue'));
 		$node->click();
 
-		$this->assertMatchesRegularExpression('/Cannabis Company Directory/', self::$driver->getTitle());
+		$this->assertMatchesRegularExpression('/Cannabis Company Directory/', self::$wd->getTitle());
 
-		$url1 = self::$driver->getCurrentUrl();
+		$url1 = self::$wd->getCurrentUrl();
 		return $url1;}
 }

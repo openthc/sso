@@ -14,37 +14,20 @@ namespace OpenTHC\SSO\Test;
 
 use \Facebook\WebDriver\Remote\RemoteWebDriver;
 
-class UI_Test_Case extends \OpenTHC\SSO\Test\Base_Case
+class UI_Test_Case extends \OpenTHC\Test\BaseBrowser  // \OpenTHC\SSO\Test\Base_Case
 {
-	protected static $driver;
-
-	protected static string $stat = 'FAILED';
-
 	public static function setUpBeforeClass() : void
 	{
-		$caps = [];
-		$caps['project'] = 'SSO';
-		$caps['build'] = APP_BUILD;
-		$caps['name'] = sprintf('PHPUnit %s', strftime('%Y-%m-%d %H:%M:%S'));
+		self::$cfg = [];
+		self::$cfg['project'] = 'SSO';
+		self::$cfg['build'] = APP_BUILD;
+		self::$cfg['name'] = sprintf('PHPUnit %s', strftime('%Y-%m-%d %H:%M:%S'));
 
-		$wb_list = [ 'chrome', 'edge', 'firefox' ]; //, 'safari' ];
-
-		$caps['os'] = 'Windows';
-		// $caps['os_version'] = 'latest';
-		$caps['browser'] = $wb_list[ array_rand($wb_list) ];
-		// $caps['browser_version'] = 'latest';
-
-		// https://www.browserstack.com/docs/automate/selenium/change-screen-resolution#Selenium_4_W3C
-		// $caps['resolution'] = '1280x1024';
-
-		// https://www.browserstack.com/docs/automate/selenium/change-device-orientation
-		// $caps['deviceOrientation']
+		parent::setUpBeforeClass();
 
 		// Visit site before setting cookie for easy domain registration in the cookie
-		self::$driver = RemoteWebDriver::create(OPENTHC_TEST_WEBDRIVER_URL, $caps);
-		self::$driver->manage()->window()->maximize();
-		self::$driver->get(OPENTHC_TEST_ORIGIN);
-		self::$driver->manage()->addCookie([
+		self::$wd->get(OPENTHC_TEST_ORIGIN);
+		self::$wd->manage()->addCookie([
 			'name' => 'openthc-test',
 			'value' => \OpenTHC\Config::get('openthc/sso/test/sk'),
 			'Secure' => true,
@@ -60,10 +43,57 @@ class UI_Test_Case extends \OpenTHC\SSO\Test\Base_Case
 		}
 	}
 
-
 	public static function tearDownAfterClass() : void
 	{
-		$sid = self::$driver->getSessionId();
+		self::tearDownAfterClass_LambdaTest();
+
+		// Let Screen-Capture get a few frames of last state
+		sleep(2);
+
+		self::$wd->quit();
+
+	}
+
+	public static function tearDownAfterClass_LambdaTest() : void
+	{
+		// if ('FAILED' == self::$stat) {
+
+		// "passed","failed","skipped", "ignored", "unknown", "error"
+		self::$wd->executeScript("lambda-status=ignored");
+
+		return;
+
+		$sid = self::$wd->getSessionId();
+		$url = OPENTHC_TEST_WEBDRIVER_URL;
+		$url = parse_url($url);
+		$cfg = [];
+		$cfg['username'] = $url['user'];
+		$cfg['password'] = $url['pass'];
+
+		$url = sprintf('https://api.lambdatest.com/automation/api/v1/sessions/%s', $sid);
+		$req = __curl_init($url);
+		curl_setopt($req, CURLOPT_USERPWD, sprintf('%s:%s', $cfg['username'], $cfg['password']));
+		curl_setopt($req, CURLOPT_CUSTOMREQUEST, 'PATCH');
+		curl_setopt($req, CURLOPT_POSTFIELDS, json_encode([
+			// 'name' => ''
+			'status_ind' => 'failed', // 'completed' is another option?
+			'reason' => 'UNKNOWN'
+			// 'custom_data' => [ 'more' => 'data' ],
+			// 'tags' => [ 'tag1', 'tagN' ]
+		]));
+		curl_setopt($req, CURLOPT_HTTPHEADER, [
+			'accept: application/json',
+			'content-type: application/json'
+		]);
+		$res = curl_exec($req);
+		$inf = curl_getinfo($req);
+		$res = json_decode($res, true);
+		var_dump($res);
+	}
+
+	public static function tearDownAfterClass_BrowserStack() : void
+	{
+		$sid = self::$wd->getSessionId();
 		$url = OPENTHC_TEST_WEBDRIVER_URL;
 		$url = parse_url($url);
 		$cfg = [];
@@ -102,9 +132,10 @@ class UI_Test_Case extends \OpenTHC\SSO\Test\Base_Case
 			// echo '</pre>';
 		}
 
+		// Let Screen-Capture get a few frames of last state
 		sleep(2);
 
-		self::$driver->quit();
+		self::$wd->quit();
 
 		// Get session details
 		// https://www.browserstack.com/docs/automate/api-reference/selenium/session#get-session-logs
