@@ -7,23 +7,21 @@
 	xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd"
 	backupGlobals="false"
 	backupStaticAttributes="false"
-	bootstrap="boot.php"
+	bootstrap="../boot.php"
 	cacheResult="false"
-	colors="true"
+	colors="false"
 	convertErrorsToExceptions="true"
 	convertNoticesToExceptions="true"
 	convertWarningsToExceptions="true"
 	processIsolation="false"
-	timeoutForSmallTests="4"
-	timeoutForMediumTests="16"
-	timeoutForLargeTests="32"
-	verbose="false"
 	stopOnError="true"
 	stopOnFailure="true"
 	stopOnRisky="true"
+	timeoutForSmallTests="2"
+	timeoutForMediumTests="8"
+	timeoutForLargeTests="32"
+	verbose="false"
 	>
-
-	<coverage />
 
 	<php>
 		<const name="DEBUG_HTTP" value="false" />
@@ -32,19 +30,21 @@
 			Put the URL of your SSO Instance Here
 			eg: https://sso.openthc.example.com
 		 -->
-		<const name="OPENTHC_TEST_ORIGIN" value="" />
+		<const name="OPENTHC_TEST_ORIGIN" value="https://sso.openthc.example.com" />
 
-		<const name="OPENTHC_TEST_CONTACT_A" value="test+a@openthc.example" />
-		<const name="OPENTHC_TEST_CONTACT_B" value="test+b@openthc.example" />
-		<const name="OPENTHC_TEST_CONTACT_C" value="test+c@openthc.example" />
+		<const name="OPENTHC_TEST_CONTACT_A" value="test+a@openthc.example.com" />
+		<const name="OPENTHC_TEST_CONTACT_B" value="test+b@openthc.example.com" />
+		<const name="OPENTHC_TEST_CONTACT_C" value="test+c@openthc.example.com" />
 
-		<const name="OPENTHC_TEST_CONTACT_PASSWORD" value="password" />
+		<const name="OPENTHC_TEST_CONTACT_PASSWORD" value="passweed" />
 
 		<const name="OPENTHC_TEST_CONTACT_PHONE" value="+18559769333" />
 
 		<const name="OPENTHC_TEST_WEBDRIVER_URL" value="" />
 
 	</php>
+
+	<coverage />
 
 	<testsuites>
 		<testsuite name="All">
