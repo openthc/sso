@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2305043561f4b8b26e1045d36a197553",
+    "content-hash": "6a06778b6eb8889622c57d7178197ad9",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -948,29 +948,27 @@
         },
         {
             "name": "maxmind-db/reader",
-            "version": "v1.11.1",
+            "version": "v1.12.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/maxmind/MaxMind-DB-Reader-php.git",
-                "reference": "1e66f73ffcf25e17c7a910a1317e9720a95497c7"
+                "reference": "5b2d7a721dedfaef9dc20822c5fe7d26f9f8eb90"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/maxmind/MaxMind-DB-Reader-php/zipball/1e66f73ffcf25e17c7a910a1317e9720a95497c7",
-                "reference": "1e66f73ffcf25e17c7a910a1317e9720a95497c7",
+                "url": "https://api.github.com/repos/maxmind/MaxMind-DB-Reader-php/zipball/5b2d7a721dedfaef9dc20822c5fe7d26f9f8eb90",
+                "reference": "5b2d7a721dedfaef9dc20822c5fe7d26f9f8eb90",
                 "shasum": ""
             },
             "require": {
                 "php": ">=7.2"
             },
             "conflict": {
-                "ext-maxminddb": "<1.11.1,>=2.0.0"
+                "ext-maxminddb": "<1.11.1 || >=2.0.0"
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "3.*",
-                "php-coveralls/php-coveralls": "^2.1",
                 "phpstan/phpstan": "*",
-                "phpunit/phpcov": ">=6.0.0",
                 "phpunit/phpunit": ">=8.0.0,<10.0.0",
                 "squizlabs/php_codesniffer": "3.*"
             },
@@ -1007,9 +1005,9 @@
             ],
             "support": {
                 "issues": "https://github.com/maxmind/MaxMind-DB-Reader-php/issues",
-                "source": "https://github.com/maxmind/MaxMind-DB-Reader-php/tree/v1.11.1"
+                "source": "https://github.com/maxmind/MaxMind-DB-Reader-php/tree/v1.12.0"
             },
-            "time": "2023-12-02T00:09:23+00:00"
+            "time": "2024-11-14T22:43:47+00:00"
         },
         {
             "name": "maxmind/web-service-common",
@@ -1118,12 +1116,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/openthc/common.git",
-                "reference": "522e6596c3a0dc50607691eaaf3cc5c5633eaea1"
+                "reference": "5ba6dbe5cb32501fb4a146f335fbc96b2e59e7ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/openthc/common/zipball/522e6596c3a0dc50607691eaaf3cc5c5633eaea1",
-                "reference": "522e6596c3a0dc50607691eaaf3cc5c5633eaea1",
+                "url": "https://api.github.com/repos/openthc/common/zipball/5ba6dbe5cb32501fb4a146f335fbc96b2e59e7ed",
+                "reference": "5ba6dbe5cb32501fb4a146f335fbc96b2e59e7ed",
                 "shasum": ""
             },
             "require": {
@@ -1141,6 +1139,7 @@
                 "geoip2/geoip2": "2.13.0",
                 "giggsey/libphonenumber-for-php": "8.13.45",
                 "guzzlehttp/guzzle": "6.5.8",
+                "league/oauth2-client": "2.7.0",
                 "php": ">=7.3.0",
                 "slim/slim": "3.12.5",
                 "swaggest/json-schema": "0.12.42"
@@ -1176,7 +1175,7 @@
                 "issues": "https://github.com/openthc/common/issues",
                 "source": "https://github.com/openthc/common/tree/main"
             },
-            "time": "2024-11-04T14:28:47+00:00"
+            "time": "2024-11-15T18:36:55+00:00"
         },
         {
             "name": "paragonie/random_compat",
@@ -1902,54 +1901,6 @@
     ],
     "packages-dev": [
         {
-            "name": "browserstack/browserstack-local",
-            "version": "v1.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/browserstack/browserstack-local-php.git",
-                "reference": "491c6e31960ce8111d2cb70cb84d03e73f270dbb"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/browserstack/browserstack-local-php/zipball/491c6e31960ce8111d2cb70cb84d03e73f270dbb",
-                "reference": "491c6e31960ce8111d2cb70cb84d03e73f270dbb",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.19"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "4.6.*"
-            },
-            "suggest": {
-                "phpdocumentor/phpdocumentor": "2.*"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-4": {
-                    "BrowserStack\\": "lib/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "PHP bindings for BrowserStack Local",
-            "homepage": "https://github.com/browserstack/browserstack-local-php",
-            "keywords": [
-                "BrowserStack",
-                "browserstacklocal",
-                "local",
-                "php",
-                "selenium"
-            ],
-            "support": {
-                "issues": "https://github.com/browserstack/browserstack-local-php/issues",
-                "source": "https://github.com/browserstack/browserstack-local-php"
-            },
-            "time": "2016-09-19T13:39:06+00:00"
-        },
-        {
             "name": "doctrine/instantiator",
             "version": "1.5.0",
             "source": {
@@ -2084,16 +2035,16 @@
         },
         {
             "name": "myclabs/deep-copy",
-            "version": "1.12.0",
+            "version": "1.12.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/myclabs/DeepCopy.git",
-                "reference": "3a6b9a42cd8f8771bd4295d13e1423fa7f3d942c"
+                "reference": "123267b2c49fbf30d78a7b2d333f6be754b94845"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/3a6b9a42cd8f8771bd4295d13e1423fa7f3d942c",
-                "reference": "3a6b9a42cd8f8771bd4295d13e1423fa7f3d942c",
+                "url": "https://api.github.com/repos/myclabs/DeepCopy/zipball/123267b2c49fbf30d78a7b2d333f6be754b94845",
+                "reference": "123267b2c49fbf30d78a7b2d333f6be754b94845",
                 "shasum": ""
             },
             "require": {
@@ -2132,7 +2083,7 @@
             ],
             "support": {
                 "issues": "https://github.com/myclabs/DeepCopy/issues",
-                "source": "https://github.com/myclabs/DeepCopy/tree/1.12.0"
+                "source": "https://github.com/myclabs/DeepCopy/tree/1.12.1"
             },
             "funding": [
                 {
@@ -2140,7 +2091,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-06-12T14:39:25+00:00"
+            "time": "2024-11-08T17:47:46+00:00"
         },
         {
             "name": "nikic/php-parser",
@@ -4054,16 +4005,16 @@
         },
         {
             "name": "symfony/process",
-            "version": "v5.4.45",
+            "version": "v5.4.47",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "95f3f19d0f8f06e4253c66a0828ddb69f8b8ede4"
+                "reference": "5d1662fb32ebc94f17ddb8d635454a776066733d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/95f3f19d0f8f06e4253c66a0828ddb69f8b8ede4",
-                "reference": "95f3f19d0f8f06e4253c66a0828ddb69f8b8ede4",
+                "url": "https://api.github.com/repos/symfony/process/zipball/5d1662fb32ebc94f17ddb8d635454a776066733d",
+                "reference": "5d1662fb32ebc94f17ddb8d635454a776066733d",
                 "shasum": ""
             },
             "require": {
@@ -4096,7 +4047,7 @@
             "description": "Executes commands in sub-processes",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/process/tree/v5.4.45"
+                "source": "https://github.com/symfony/process/tree/v5.4.47"
             },
             "funding": [
                 {
@@ -4112,7 +4063,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2024-09-25T14:11:13+00:00"
+            "time": "2024-11-06T11:36:42+00:00"
         },
         {
             "name": "theseer/tokenizer",
