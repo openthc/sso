@@ -24,32 +24,48 @@
 	>
 
 	<php>
-		<const name="DEBUG_HTTP" value="false" />
 
-		<!--
-			Put the URL of your SSO Instance Here
-			eg: https://sso.openthc.example.com
-		 -->
-		<const name="OPENTHC_TEST_ORIGIN" value="https://sso.openthc.example.com" />
+		<!-- PHPUnit populates $_ENV with these -->
+		<!-- And one can overwrite these values from standard process environment vars -->
 
-		<const name="OPENTHC_TEST_CONTACT_A" value="test+a@openthc.example.com" />
-		<const name="OPENTHC_TEST_CONTACT_B" value="test+b@openthc.example.com" />
-		<const name="OPENTHC_TEST_CONTACT_C" value="test+c@openthc.example.com" />
+		<!-- URL of SSO Instance Here -->
+		<env name="OPENTHC_TEST_ORIGIN" value="https://sso.openthc.example.com" />
+		<env name="OPENTHC_TEST_HTTP_DEBUG" value="" />
+		<env name="OPENTHC_TEST_WEBDRIVER_URL" value="" />
 
-		<const name="OPENTHC_TEST_CONTACT_PASSWORD" value="passweed" />
+		<env name="OPENTHC_TEST_CONTACT_0" value="root@openthc.example.com" />
+		<!-- A fully Configured Contact & 1 Company -->
+		<env name="OPENTHC_TEST_CONTACT_A" value="test+supply@openthc.example.com" />
+		<!-- A fully Configured Contact & 1 Company -->
+		<env name="OPENTHC_TEST_CONTACT_B" value="test+retail@openthc.example.com" />
+		<!-- A fully Configured Contact & 3 Company -->
+		<env name="OPENTHC_TEST_CONTACT_C" value="test@openthc.example.com" />
+		<env name="OPENTHC_TEST_CONTACT_C_COMPANY_A" value="010TEST0100CYESZPFQ94RCVY7" />
+		<!-- <env name="OPENTHC_TEST_CONTACT_C_COMPANY_A" value="010TEST0000CYWQCHMQQPCWF7B" /> -->
 
-		<const name="OPENTHC_TEST_CONTACT_PHONE" value="+18559769333" />
+		<env name="OPENTHC_TEST_CONTACT_PASSWORD" value="passweed" />
 
-		<const name="OPENTHC_TEST_WEBDRIVER_URL" value="" />
+		<env name="OPENTHC_TEST_CONTACT_PHONE" value="+18559769333" />
+
+		<!-- <const name="OPENTHC_TEST_SERVICE_A" value="010PENTHCX0000SVC000000B2B" /> -->
+		<!-- <const name="OPENTHC_TEST_SERVICE_A_ORIGIN" value="https://b2b.openthc.dev" /> -->
+		<!-- <const name="OPENTHC_TEST_SERVICE_A" value="" /> -->
 
 	</php>
 
-	<coverage />
-
 	<testsuites>
 		<testsuite name="All">
-			<directory>.</directory>
+			<directory>Unit</directory>
+			<directory>A_Core</directory>
+			<directory>B_Basic</directory>
+			<directory>C_Account</directory>
+			<directory>D_Verify</directory>
+			<directory>G_oAuth2</directory>
+			<!-- <directory>.</directory> -->
 		</testsuite>
 	</testsuites>
+
+	<!-- XDEBUG_MODE=coverage (environment variable) or xdebug.mode=coverage (PHP configuration setting) has to be set -->
+	<coverage />
 
 </phpunit>

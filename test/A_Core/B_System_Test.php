@@ -1,10 +1,11 @@
 <?php
 /**
+ * SPDX-License-Identifier: MIT
  */
 
 namespace OpenTHC\SSO\Test\A_Core;
 
-class B_System_Test extends \OpenTHC\SSO\Test\Base_Case
+class B_System_Test extends \OpenTHC\SSO\Test\Base
 {
 	function test_extensions()
 	{

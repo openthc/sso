@@ -7,7 +7,7 @@
 
 namespace OpenTHC\SSO\Test;
 
-class Base_Case extends \OpenTHC\Test\Base // \PHPUnit\Framework\TestCase
+class Base extends \OpenTHC\Test\Base
 {
 	protected $_pid = null;
 
@@ -33,7 +33,7 @@ class Base_Case extends \OpenTHC\Test\Base // \PHPUnit\Framework\TestCase
 		// Set Cookies
 		$jar = new \GuzzleHttp\Cookie\CookieJar();
 		$obj = new \GuzzleHttp\Cookie\SetCookie([
-			'Domain' => parse_url(OPENTHC_TEST_ORIGIN, PHP_URL_HOST), // $this->httpClient->getConfig('base_uri')->getHost(),
+			'Domain' => parse_url($_ENV['OPENTHC_TEST_ORIGIN'], PHP_URL_HOST),
 			'Name' => 'openthc-test',
 			'Value' => \OpenTHC\Config::get('openthc/sso/test/sk'),
 			'Secure' => true,
@@ -41,13 +41,12 @@ class Base_Case extends \OpenTHC\Test\Base // \PHPUnit\Framework\TestCase
 		]);
 		$jar->setCookie($obj);
 
-
 		if (empty($c)) {
 
 			$c = new \GuzzleHttp\Client(array(
-				'base_uri' => OPENTHC_TEST_ORIGIN,
+				'base_uri' => $_ENV['OPENTHC_TEST_ORIGIN'],
 				'allow_redirects' => false,
-				'debug' => DEBUG_HTTP,
+				'debug' => $_ENV['OPENTHC_TEST_HTTP_DEBUG'],
 				'request.options' => array(
 					'exceptions' => false,
 				),
@@ -68,34 +67,6 @@ class Base_Case extends \OpenTHC\Test\Base // \PHPUnit\Framework\TestCase
 			$dsn = sprintf('pgsql:application_name=openthc-sso;host=%s;dbname=%s', $cfg['hostname'], $cfg['database']);
 			return new \Edoceo\Radix\DB\SQL($dsn, $cfg['username'], $cfg['password']);
 		}
-	}
-
-	/**
-	 *
-	 */
-	function assertValidResponse($res, $code=200, $type_expect='text/html', $dump=null)
-	{
-		$this->raw = $res->getBody()->getContents();
-
-		$hrc = $res->getStatusCode();
-
-		if (empty($dump)) {
-			if ($code != $hrc) {
-				$dump = "HTTP $hrc != $code";
-			}
-		}
-
-		if (!empty($dump)) {
-			echo "\n<<< $dump <<< $hrc <<<\n{$this->raw}\n###\n";
-		}
-
-		$this->assertEquals($code, $res->getStatusCode());
-		$type_actual = $res->getHeaderLine('content-type');
-		$type_actual = strtok($type_actual, ';');
-		$this->assertEquals($type_expect, $type_actual);
-
-		return $this->raw;
-
 	}
 
 	/**

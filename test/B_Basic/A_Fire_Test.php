@@ -1,12 +1,16 @@
 <?php
 /**
  * Test the Authentication Pages
+ *
+ * SPDX-License-Identifier: MIT
  */
 
 namespace OpenTHC\SSO\Test\B_Basic;
 
-class A_Fire_Test extends \OpenTHC\SSO\Test\Base_Case
+class A_Fire_Test extends \OpenTHC\SSO\Test\Base
 {
+	protected $type_expect = 'text/html';
+
 	/**
 	 *
 	 */
@@ -73,7 +77,7 @@ class A_Fire_Test extends \OpenTHC\SSO\Test\Base_Case
 	{
 		$c = $this->_ua();
 		$res = $c->get('/auth/once');
-		$res = $this->assertValidResponse($res, 400, 'text/html');
+		$res = $this->assertValidResponse($res, 400);
 	}
 
 	/**
@@ -93,7 +97,7 @@ class A_Fire_Test extends \OpenTHC\SSO\Test\Base_Case
 	{
 		$c = $this->_ua();
 		$res = $c->get('/auth/init');
-		$res = $this->assertValidResponse($res, 400, 'text/html');
+		$res = $this->assertValidResponse($res, 400);
 	}
 
 	/**

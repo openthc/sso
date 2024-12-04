@@ -1,6 +1,8 @@
 <?php
 /**
  * Account Create Testing - UI
+ *
+ * SPDX-License-Identifier: MIT
  */
 
 namespace OpenTHC\SSO\Test\C_Account;
@@ -8,7 +10,7 @@ namespace OpenTHC\SSO\Test\C_Account;
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverSelect;
 
-class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
+class B_Create_UI_Test extends \OpenTHC\SSO\Test\Browser\Base
 {
 
 	static $username;
@@ -16,7 +18,7 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	public static function setUpBeforeClass() : void
 	{
 		parent::setUpBeforeClass();
-		self::$username = sprintf('%s-ui@openthc.example', _ulid());
+		self::$username = strtolower(sprintf('test+%s-ui@openthc.example', _ulid()));
 	}
 
 	/**
@@ -25,23 +27,23 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	function test_account_create()
 	{
 		self::$wd->get(sprintf('%s/account/create'
-			, OPENTHC_TEST_ORIGIN
+			, $_ENV['OPENTHC_TEST_ORIGIN']
 		));
 
-		$node = self::$wd->findElement(WebDriverBy::id('alert-test-mode'));
+		$node = $this->findElement('#alert-test-mode');
 		$txt = $node->getText();
 		$this->assertEquals('TEST MODE', $txt, 'Apache2 Environment missing variable: SetEnv OPENTHC_TEST "TEST"');
 
-		$node = self::$wd->findElement(WebDriverBy::id('contact-name'));
+		$node = $this->findElement('#contact-name');
 		$node->sendKeys(self::$username);
 
-		$node = self::$wd->findElement(WebDriverBy::id('contact-email'));
+		$node = $this->findElement('#contact-email');
 		$node->sendKeys(self::$username);
 
-		$node = self::$wd->findElement(WebDriverBy::id('contact-phone'));
-		$node->sendKeys(OPENTHC_TEST_CONTACT_PHONE);
+		$node = $this->findElement('#contact-phone');
+		$node->sendKeys($_ENV['OPENTHC_TEST_CONTACT_PHONE']);
 
-		$node = self::$wd->findElement(WebDriverBy::id('btn-account-create'));
+		$node = $this->findElement('#btn-account-create');
 		$node->click();
 
 		// Should Submit and then take us to the /DONE page, with the trigger in the URL
@@ -57,7 +59,7 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 		$url1 = rawurldecode($url1);
 		*/
 
-		$node = self::$wd->findElement(WebDriverBy::id('alert-test-link'));
+		$node = $this->findElement('#alert-test-link');
 		$a = $node->findElement(WebDriverBy::cssSelector('a'));
 		$url1 = $a->getAttribute('href');
 		$this->assertNotEmpty($url1, 'Apache2 Environment missing variable: SetEnv OPENTHC_TEST "TEST"');
@@ -67,17 +69,17 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 		// $this->assertStringContainsString('Account Confirmed', self::$wd->getPageSource());
 		// $this->assertStringContainsString('Next, you will need to set a password', self::$wd->getPageSource());
 
-		// $element = self::$wd->findElement(WebDriverBy::linkText("Set Password"));
+		// $element = $this->findElement(WebDriverBy::linkText("Set Password"));
 		// $element->click();
 
-		// $element = self::$wd->findElement(WebDriverBy::name("password"));
+		// $element = $this->findElement(WebDriverBy::name("password"));
 		// $element->sendKeys($this->password);
-		// $element = self::$wd->findElement(WebDriverBy::name("password-repeat"));
+		// $element = $this->findElement(WebDriverBy::name("password-repeat"));
 		// $element->sendKeys($this->password);
 
 		// $element->submit();
 
-		// $element = self::$wd->findElement(WebDriverBy::linkText("Welcome!"));
+		// $element = $this->findElement(WebDriverBy::linkText("Welcome!"));
 
 	}
 
@@ -88,18 +90,18 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	{
 		$url0 = ltrim($url0, '/');
 		$this->assertNotEmpty($url0);
-		self::$wd->get(sprintf('%s/%s', OPENTHC_TEST_ORIGIN, $url0));
+		self::$wd->get(sprintf('%s/%s', $_ENV['OPENTHC_TEST_ORIGIN'], $url0));
 
 		$url1 = self::$wd->getCurrentUrl();
 		$this->assertMatchesRegularExpression('/\/verify\/password.+/', $url1);
 
-		$node = self::$wd->findElement(WebDriverBy::id('password0'));
-		$node->sendKeys(OPENTHC_TEST_CONTACT_PASSWORD);
+		$node = $this->findElement('#password0');
+		$node->sendKeys($_ENV['OPENTHC_TEST_CONTACT_PASSWORD']);
 
-		$node = self::$wd->findElement(WebDriverBy::id('password1'));
-		$node->sendKeys(OPENTHC_TEST_CONTACT_PASSWORD);
+		$node = $this->findElement('#password1');
+		$node->sendKeys($_ENV['OPENTHC_TEST_CONTACT_PASSWORD']);
 
-		$node = self::$wd->findElement(WebDriverBy::id('btn-password-update'));
+		$node = $this->findElement('#btn-password-update');
 		$node->click();
 
 		// Bounces
@@ -121,11 +123,11 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 		// $this->assertStringContainsString('TEST MODE', $html);
 		// $this->assertStringContainsString('Verify Profile Location', $html);
 
-		$e = self::$wd->findElement(WebDriverBy::id('country-select-wrap'));
+		$e = $this->findElement('#contact-iso3166-1');
 		$select = new \Facebook\WebDriver\WebDriverSelect($e);
-		$select->selectByValue('usa');
+		$select->selectByValue('US');
 
-		$node = self::$wd->findElement(WebDriverBy::id('btn-location-save'));
+		$node = $this->findElement('#btn-location-save');
 		$node->click();
 
 		// Bounces
@@ -133,19 +135,19 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 		$this->assertMatchesRegularExpression('/\/verify\/location.+/', $url1);
 
 		/*
-		$node = self::$wd->findElement(WebDriverBy::id('contact-iso3166-1'));
+		$node = $this->findElement('#contact-iso3166-1');
 		var_dump($node);
 		$node = new WebDriverSelect($node);
 		var_dump($node);
 		$node->selectByValue('US');
 
-		$node = self::$wd->findElement(WebDriverBy::id('contact-iso3166-2'));
+		$node = $this->findElement('#contact-iso3166-2');
 		$node = new WebDriverSelect($node);
 		$node->selectByValue('US-WA');
 		*/
 
 
-		$node = self::$wd->findElement(WebDriverBy::id('btn-location-save'));
+		$node = $this->findElement('#btn-location-save');
 		$node->click();
 
 		$url2 = self::$wd->getCurrentUrl();
@@ -162,8 +164,12 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 		$this->assertNotEmpty($url0);
 		$this->assertMatchesRegularExpression('/\/verify\/timezone\?_=.+/', $url0);
 
+		$node = $this->findElement('#contact-timezone');
+		$node = new \Facebook\WebDriver\WebDriverSelect($node);
+		$node->selectByValue('America/New_York');
+
 		// Time Zone
-		$node = self::$wd->findElement(WebDriverBy::id('btn-timezone-save'));
+		$node = $this->findElement('#btn-timezone-save');
 		$node->click();
 
 		$url1 = self::$wd->getCurrentUrl();
@@ -181,20 +187,20 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 		$this->assertNotEmpty($url0);
 		$this->assertMatchesRegularExpression('/\/verify\/phone\?_=.+/', $url0);
 
-		$node = self::$wd->findElement(WebDriverBy::id('contact-phone'));
+		$node = $this->findElement('#contact-phone');
 		$node->sendKeys('+12125551212');
 
-		$node = self::$wd->findElement(WebDriverBy::id('btn-contact-phone-verify-send'));
+		$node = $this->findElement('#btn-contact-phone-verify-send');
 		$node->click();
 
 		$url1 = self::$wd->getCurrentUrl();
 		$this->assertMatchesRegularExpression('/\/verify\/phone\?_=.+c=\w{6}/', $url1);
 		$code = preg_match('/c=(\w+)/', $url1, $m) ? $m[1] : '';
 
-		$node = self::$wd->findElement(WebDriverBy::id('phone-verify-code'));
+		$node = $this->findElement('#phone-verify-code');
 		$node->sendKeys($code);
 
-		$node = self::$wd->findElement(WebDriverBy::id('btn-contact-phone-verify-save'));
+		$node = $this->findElement('#btn-contact-phone-verify-save');
 		$node->click();
 
 		$url2 = self::$wd->getCurrentUrl();
@@ -212,7 +218,7 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 		$this->assertNotEmpty($url0);
 		$this->assertMatchesRegularExpression('/\/verify\/company\?_=.+/', $url0);
 
-		$node = self::$wd->findElement(WebDriverBy::id('btn-company-skip'));
+		$node = $this->findElement('#btn-company-skip');
 		$node->click();
 
 		$url1 = self::$wd->getCurrentUrl();
@@ -227,19 +233,20 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\UI_Test_Case
 	 */
 	function test_sign_in_new($url0)
 	{
-		$node = self::$wd->findElement(WebDriverBy::cssSelector("[href^='/auth/open']"));
+		$node = $this->findElement(WebDriverBy::cssSelector("[href^='/auth/open']"));
 		$node->click();
 
 		// #username
-		$node = self::$wd->findElement(WebDriverBy::id('username'));
-		$node->sendKeys(self::$username);
+		$node = $this->findElement('#username');
+		$v = $node->getAttribute('value');
+		$this->assertEquals($v, self::$username);
 
 		// #password
-		$node = self::$wd->findElement(WebDriverBy::id('password'));
-		$node->sendKeys(OPENTHC_TEST_CONTACT_PASSWORD);
+		$node = $this->findElement('#password');
+		$node->sendKeys($_ENV['OPENTHC_TEST_CONTACT_PASSWORD']);
 
 		// #btn-auth-open
-		$node = self::$wd->findElement(WebDriverBy::id('btn-auth-open'));
+		$node = $this->findElement('#btn-auth-open');
 		$node->click();
 
 		$url1 = self::$wd->getCurrentUrl();

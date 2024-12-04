@@ -28,6 +28,10 @@ if ( ! empty($data['error_code'])) {
 			$data['Page']['title'] = 'Invalid Request [CAO-100]';
 			$data['body'] = '<div class="alert alert-danger">The email address or username provided was not found or is locked.</div><hr><p>Contact <em><a href="mailto:help@openthc.com">help@openthc.com</a></em> if you need additional assistance</p>';
 			break;
+		case 'CAO-200':
+			$data['Page']['title'] = 'Check Your Inbox';
+			$data['body'] = '<p>If the email address submitted was valid and has an account then an email should arrive shortly with password reset instructions.</p><p>Check your mailbox (or SPAM folder) for this message and follow the steps indicated.</p><hr><p>Contact <em><a href="mailto:help@openthc.com">help@openthc.com</a></em> if you need additional assistance</p>';
+			break;
 		case 'CVB-030':
 			$data['fail'] = 'Invalid Request';
 			break;

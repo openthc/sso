@@ -302,7 +302,7 @@ class Open extends \OpenTHC\SSO\Controller\Base
 		$dbc_auth = $this->_container->DBC_AUTH;
 		$Contact = $dbc_auth->fetchRow('SELECT id, username FROM auth_contact WHERE username = :u0', [ ':u0' => $username ]);
 		if (empty($Contact)) {
-			return $RES->withRedirect('/done?e=CAO-100&l=173');
+			return $RES->withRedirect('/done?e=CAO-100');
 		}
 
 		$_SESSION['auth-open-email'] = $username;
@@ -313,11 +313,12 @@ class Open extends \OpenTHC\SSO\Controller\Base
 		$act['meta'] = json_encode(array(
 			'intent' => 'password-reset',
 			'contact' => $Contact,
+			'ip' => $_SERVER['REMOTE_ADDR'],
 		));
 		$dbc_auth->insert('auth_context_ticket', $act);
 
 		$ret_args = [
-			'e' => 'CAO-100',
+			'e' => 'CAO-200',
 		];
 
 		// Test Mode
@@ -325,9 +326,16 @@ class Open extends \OpenTHC\SSO\Controller\Base
 			$ret_args['t'] = $act['id'];
 		}
 
-		$RES = $RES->withAttribute('auth-open-mode', 'password-reset');
-		$RES = $RES->withAttribute('Auth_Context_Ticket', $act['id']);
-		$RES = $RES->withAttribute('Contact', $Contact);
+		// Emit Webhook
+		\OpenTHC\SSO\Facade\Webhook::emit('CONTACT/AUTH/RESET', [
+			'auth' => [
+				'token' => $act['id'],
+			],
+			'contact' => [
+				'id' => $Contact['id'],
+				'username' => $Contact['username'],
+			]
+		]);
 
 		return $RES->withRedirect('/done?' . http_build_query($ret_args));
 

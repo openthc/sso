@@ -1,24 +1,23 @@
 <?php
 /**
- * Base Class for API Testing
+ * Test the Pages
+ *
+ * SPDX-License-Identifier: MIT
  */
 
 namespace OpenTHC\SSO\Test\A_Core;
 
-class C_Site_Test extends \OpenTHC\SSO\Test\Base_Case
+class C_Site_Test extends \OpenTHC\SSO\Test\Base
 {
+	protected $type_expect = 'text/html';
+
 	function test_page_all()
 	{
-		$cfg = OPENTHC_TEST_ORIGIN;
+		$cfg = $_ENV['OPENTHC_TEST_ORIGIN'];
 		$this->assertIsString($cfg);
 		$this->assertMatchesRegularExpression('/\w+\.\w{2,256}\.\w{2,16}$/', $cfg);
 
-		$ghc = new \GuzzleHttp\Client([
-			'base_uri' => $cfg,
-			'allow_redirects' => false,
-			'cookies' => true,
-			'http_errors' => false,
-		]);
+		$ghc = $this->_ua();
 
 		$res = $ghc->get('/');
 		$this->assertValidResponse($res);
