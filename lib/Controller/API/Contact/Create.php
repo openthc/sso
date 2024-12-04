@@ -16,6 +16,7 @@ class Create extends \OpenTHC\SSO\Controller\Base
 	{
 		$Contact = [];
 		$Contact['id'] = _ulid();
+		$Contact['flag'] = 0;
 		$Contact['stat'] = 102;
 		$Contact['name'] = trim($_POST['name'] ?: $_POST['email']);
 		$Contact['email'] = $_POST['email'];
@@ -43,7 +44,10 @@ class Create extends \OpenTHC\SSO\Controller\Base
 		// $Contact['email'] = \Edoceo\Radix\Filter::email($Contact['email']); // does DNS lookup
 		if (empty($Contact['email'])) {
 			return $RES->withJSON([
-				'data' => $_POST['email'],
+				'data' => [
+					'_POST' => $_POST,
+					'Contact' => $Contact,
+				],
 				'meta' => [
 					'code' => 'CAC-035',
 					'note' => 'Invalid Email'
@@ -178,9 +182,9 @@ class Create extends \OpenTHC\SSO\Controller\Base
 		$dbc_main->query('COMMIT');
 
 		return $RES->withJSON([
-			// @note There is disagreement whether this should be `'data'=>$Contact` or `'data'=>[ 'contact'=>$Contact ]`
 			'data' => [
-				'contact' => $Contact,
+				'id' => $Contact['id'],
+				'username' => $Contact['username'],
 			],
 			'meta' => [],
 		], 201);

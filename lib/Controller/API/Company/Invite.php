@@ -28,27 +28,33 @@ class Invite extends \OpenTHC\SSO\Controller\Base
 
 
 		// Create a Contact
-		$old_post = $_POST;
-
-		$_POST['email'] = $old_post['email'];
+		$_POST['name'] = $_POST['contact']['name'];
+		$_POST['email'] = $_POST['contact']['email'];
+		$_POST['phone'] = $_POST['contact']['phone'];
+		// unset($_POST['contact']);
 
 		$subC = new \OpenTHC\SSO\Controller\API\Contact\Create($this->_container);
 		$resX = $subC->__invoke($REQ, $RES, $ARG);
-		switch ($RES->getStatusCode()) {
-			case 200:
-			case 409: //
-				// OK
-				break;
-			default:
-				return $resX;
-		}
+		// switch ($resX->getStatusCode()) {
+		// 	case 200:
+		// 	case 409: //
+		// 		// OK
+		// 		break;
+		// 	default:
+		// 		return $resX;
+		// }
 
 		$res = $resX->getBody();
 		$res->rewind();
 		$res = $res->getContents();
+
 		$res = json_decode($res, true);
 
 		$Contact = $res['data'];
+		// @todo Bug on Response Body, see the Contact\Create controller
+		if ( ! empty($Contact['contact'])) {
+			$Contact = $Contact['contact'];
+		}
 
 		// Auth Company<=>Contact Linkage
 		$sql = <<<SQL
@@ -80,10 +86,10 @@ class Invite extends \OpenTHC\SSO\Controller\Base
 			'intent' => 'account-invite',
 			'service' => $_SERVER['OPENTHC_SERVICE_ID'],
 			'contact' => [
-				'id' => $C0['id'],
-				'name' => $C0['name'],
-				'email' => $C0['email'],
-				'phone' => $C0['phone'],
+				'id' => $Contact['id'],
+				'name' => $Contact['name'],
+				'email' => $Contact['email'],
+				'phone' => $Contact['phone'],
 			],
 			'company' => [
 				'id' => $Company['id'],
@@ -91,9 +97,13 @@ class Invite extends \OpenTHC\SSO\Controller\Base
 		]);
 		$dbc_auth->insert('auth_context_ticket', $act);
 
+		$RES = $RES->withAttribute('Company', $Company);
+		$RES = $RES->withAttribute('Contact', $Contact);
+		$RES = $RES->withAttribute('Auth_Context_Ticket', $act);
+
 		return $RES->withJSON([
 			'data' => [
-				'contact' => $Contact['id'],
+				'contact' => $Contact,
 			],
 			'meta' => [],
 		]);

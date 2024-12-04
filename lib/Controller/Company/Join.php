@@ -12,9 +12,19 @@ class Join extends \OpenTHC\SSO\Controller\Base
 	/**
 	 *
 	 */
-	function __invoke($REQ, $RES, $ARG)
-	{
-		_exit_html_fail('<h1>Not Implemented</h1>', 501);
+	function __invoke($REQ, $RES, $ARG) {
+
+		$data = $this->data;
+		$data['Page'] = [];
+		$data['Page']['title'] = 'Company :: Join';
+
+		return $RES->write( $this->render('company/join.php', $data) );
+
+	}
+
+	function post($REQ, $RES, $ARG) {
+
+
 	}
 
 }
