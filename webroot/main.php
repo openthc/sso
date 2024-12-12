@@ -111,6 +111,14 @@ $app->group('/service', function() {
 $app->group('/verify', 'OpenTHC\SSO\Module\Verify')->add('OpenTHC\Middleware\Session');
 
 
+// Notification
+$app->group('/notify', function ($grp) {
+		$grp->get('[/{notify_id}]', 'OpenTHC\SSO\Controller\Notify')->setName('notify');
+		$grp->post('[/{notify_id}]', 'OpenTHC\SSO\Controller\Notify:post')->setName('notify:post');
+})
+	->add('OpenTHC\Middleware\Session')
+;
+
 // the Done/Stop Page
 $app->get('/done', 'OpenTHC\SSO\Controller\Done')->setName('done')
 	->add('OpenTHC\Middleware\Session');;

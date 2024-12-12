@@ -160,6 +160,7 @@ class Init extends \OpenTHC\SSO\Controller\Base
 
 		// No Return? Load Default
 		$ret = '/account';
+		$ret = \OpenTHC\SSO\Controller\Notify::make_url($ret); // Default gets Notification redirection
 		switch ($act_data['intent']) {
 			case 'account-create':
 			case 'account-open':
@@ -189,6 +190,9 @@ class Init extends \OpenTHC\SSO\Controller\Base
 
 			case 'oauth-authorize':
 				$ret = '/oauth2/authorize?' . http_build_query($act_data['oauth-request']);
+
+				// Notification redirection
+				$ret = \OpenTHC\SSO\Controller\Notify::make_url($ret);
 				break;
 			default:
 				_exit_html_warn('<h1>Invalid Request [CAI-188]</h1>', 400);
