@@ -122,6 +122,13 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 			]),
 		]);
 
+		$x = $CT1->toArray();
+		unset($x['password']);
+		$this->_container->RDB->publish('openthc/sso/account/verify/done', json_encode([
+			'Contact' => $x,
+			'Company' => $_SESSION['verify']['company'],
+		]));
+
 		$RES = $RES->withAttribute('verify-done', true);
 		$RES = $RES->withAttribute('Contact', $act_data['contact']);
 

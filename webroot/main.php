@@ -35,6 +35,9 @@ $con['DBC_MAIN'] = function() {
 	$dsn = sprintf('pgsql:application_name=openthc-sso;host=%s;dbname=%s', $cfg['hostname'], $cfg['database']);
 	return new \Edoceo\Radix\DB\SQL($dsn, $cfg['username'], $cfg['password']);
 };
+$con['RDB'] = function() {
+	return \OpenTHC\Service\Redis::factory();
+};
 
 // Custom Response Object
 $con['response'] = function() {

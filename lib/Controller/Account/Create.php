@@ -141,6 +141,13 @@ class Create extends \OpenTHC\SSO\Controller\Base
 			$ret_args['t'] = $tok;
 		}
 
+		$x = $RES->getAttribute('Contact');
+		unset($x['password']);
+		$this->_container->RDB->publish('openthc/sso/account/create', json_encode([
+			'Contact' => $x,
+			'token' => $tok,
+		]));
+
 		return $RES->withRedirect('/done?' . http_build_query($ret_args));
 
 	}
