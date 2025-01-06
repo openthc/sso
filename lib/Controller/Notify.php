@@ -53,7 +53,7 @@ class Notify extends \OpenTHC\SSO\Controller\Base
 
 		$contact_id = $_SESSION['Contact']['id'];
 		$company_id = $_SESSION['Company']['id'];
-		$redis = \OpenTHC\Service\Redis::factory();
+		$redis = $this->_container->RDB;
 		$key = sprintf('notify-%s-company-%s-contact-%s', $notify_id, $company_id, $contact_id);
 		if ($redis->exists($key)) {
 			return $RES->withRedirect($next_url);
@@ -80,7 +80,7 @@ class Notify extends \OpenTHC\SSO\Controller\Base
 		$contact_id = $_SESSION['Contact']['id'];
 		$company_id = $_SESSION['Company']['id'];
 		$notify_id = $_POST['notify_id'];
-		$redis = \OpenTHC\Service\Redis::factory();
+		$redis = $this->_container->RDB;
 		$key = sprintf('%s-company-%s-contact-%s', $notify_id, $company_id, $contact_id);
 		$redis->set($key, true);
 

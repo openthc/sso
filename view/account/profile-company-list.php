@@ -24,7 +24,7 @@ if (empty($data['company_list'])) {
 	foreach ($data['company_list'] as $c) {
 	?>
 		<h3><a href="<?= sprintf('%s/company/%s', $dir_origin, $c['id']) ?>" target="_blank"><?= h($c['name']) ?></a></h3>
-		<p>Verify? <a href="https://dir.openthc.dev/company/<?= $c['id'] ?>/verify">Verify Company on DIR</a></p>
+		<p>Verify? <a href="https://<?= $dir_origin ?>/company/<?= $c['id'] ?>/verify">Verify Company on DIR</a></p>
 	<?php
 		if (empty($c['dsn'])) {
 			echo '<div class="alert alert-warning">This Company Profile is not active yet</div>';
