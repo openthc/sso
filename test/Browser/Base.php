@@ -29,4 +29,19 @@ class Base extends \OpenTHC\Test\BaseBrowser
 
 	}
 
+	public static function _dbc($dsn)
+	{
+		switch ($dsn) {
+		case 'auth':
+			$cfg = \OpenTHC\Config::get('database/auth');
+			break;
+
+		case 'main':
+		default:
+			$cfg = \OpenTHC\Config::get('database/main');
+			break;
+		}
+		$dsn = sprintf('pgsql:application_name=openthc-sso;host=%s;dbname=%s', $cfg['hostname'], $cfg['database']);
+		return new \Edoceo\Radix\DB\SQL($dsn, $cfg['username'], $cfg['password']);
+	}
 }
