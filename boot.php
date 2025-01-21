@@ -11,7 +11,7 @@
 define('APP_ROOT', __DIR__);
 define('APP_BUILD', '420.23.244');
 
-error_reporting(E_ALL & ~E_NOTICE);
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_NOTICE & ~E_STRICT & ~E_WARNING);
 
 openlog('openthc-sso', LOG_ODELAY|LOG_PID, LOG_LOCAL0);
 
