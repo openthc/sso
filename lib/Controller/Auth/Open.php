@@ -10,7 +10,7 @@ namespace OpenTHC\SSO\Controller\Auth;
 use Edoceo\Radix\Filter;
 use Edoceo\Radix\Session;
 
-use\OpenTHC\Contact;
+use OpenTHC\Contact;
 
 use OpenTHC\CSRF;
 use OpenTHC\SSO\Auth_Contact;
