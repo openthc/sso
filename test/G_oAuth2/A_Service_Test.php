@@ -122,6 +122,12 @@ class A_Service_Test extends \OpenTHC\SSO\Test\Base
 		$this->assertValidResponse($res, 302);
 		$url = $res->getHeaderLine('location');
 
+		// GET /notify
+		$this->assertMatchesRegularExpression('/^\/notify\?r=.+/', $url);
+		$res = $sso_ua->get($url);
+		$this->assertValidResponse($res, 302);
+		$url = $res->getHeaderLine('location');
+
 		// GET /oauth2/authorize
 		$res = $sso_ua->get($url);
 		$this->assertValidResponse($res);
