@@ -28,7 +28,7 @@ foreach ($data['company_list'] as $Company) {
 				<h2><?= h($Company['name']) ?></h2>
 			</div>
 			<div class="card-footer">
-				<button class="btn <?= $css0 ?>" type="submit" name="company_id" value="<?= $Company['id'] ?>">Open Company Account</button>
+				<button class="btn <?= $css0 ?>" id="btn-company-<?= $Company['id'] ?>" type="submit" name="company_id" value="<?= $Company['id'] ?>">Open Company Account</button>
 			</div>
 		</div>
 
