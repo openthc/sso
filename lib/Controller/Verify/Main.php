@@ -93,7 +93,8 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 
 		switch ($act_data['intent']) {
 			case 'account-invite':
-				// Company Lookup?
+
+				// Update Contact Status
 				$dbc_auth->query('UPDATE auth_contact SET flag = (flag | :f1::int), stat = 200 WHERE id = :ct0', [
 					':f1' => 3,
 					':ct0' => $CT0['id'],
@@ -101,6 +102,8 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 
 				$RES = $RES->withAttribute('verify-done', true);
 				$RES = $RES->withAttribute('Contact', $act_data['contact']);
+
+				$_SESSION['auth-open-email'] = $act_data['contact']['username'];
 
 				return $RES->withRedirect('/done?e=CVM-119');
 
@@ -126,11 +129,14 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 		unset($x['password']);
 		$this->_container->RDB->publish('openthc/sso/account/verify/done', json_encode([
 			'Contact' => $x,
-			'Company' => $_SESSION['verify']['company'],
+			'_SESSION' => $_SESSION,
 		]));
 
 		$RES = $RES->withAttribute('verify-done', true);
 		$RES = $RES->withAttribute('Contact', $act_data['contact']);
+
+		$_SESSION['auth-open-email'] = $act_data['contact']['username'];
+		// Carry the Context Forward Too (Service)
 
 		return $RES->withRedirect('/done?e=CVM-119'); // Prompt to Sign-In
 		return $RES->withRedirect('/done?e=CVM-130'); // Prompt to Wait for Activation
