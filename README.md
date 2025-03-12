@@ -65,3 +65,19 @@ If you want to use SMS for two-factor authentication you will need to configure 
 The service is enabled for use with U2F such as RSA Secure ID and Solokeys.
 
 * https://webauthn.me/introduction
+
+
+## Flow Diagram
+
+
+```mermaid
+flowchart TD
+    Service[Service?] -->|Auth| SSO{SSO}
+    SSO -->Sign_In
+    SSO -->Sign_Up
+    Sign_In --> /Notify
+    /Notify --> |All Told| SSO
+    Sign_Up --> /Verify
+    /Verify --> /Notify
+    SSO --> |Back/Profile| Service
+```
