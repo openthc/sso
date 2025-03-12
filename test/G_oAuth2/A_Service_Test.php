@@ -130,6 +130,10 @@ class A_Service_Test extends \OpenTHC\SSO\Test\Base
 
 		// GET /oauth2/authorize
 		$res = $sso_ua->get($url);
+		$this->assertValidResponse($res, 302);
+
+		// Legacy Steps for oAuth2 Authorization and Permit
+		/*
 		$this->assertValidResponse($res);
 		// file_put_contents(APP_ROOT . '/test_auth_pass.html', $this->raw);
 
@@ -153,8 +157,17 @@ class A_Service_Test extends \OpenTHC\SSO\Test\Base
 		// var_dump($link_continue);
 		$this->assertNotEmpty($link_continue);
 		$this->assertMatchesRegularExpression('/https:.+\/auth\/back\?code=.+state=.+/', $link_continue);
+		*/
+
+		// GET /oauth2/permit
+		$permit_link = $res->getHeaderLine('location');
+		$this->assertNotEmpty($permit_link);
+		$res = $sso_ua->get($permit_link);
 
 		// OPS /auth/back
+		$link_continue = $res->getHeaderLine('location');
+		$this->assertNotEmpty($link_continue);
+		$this->assertMatchesRegularExpression('/\/auth\/back\?code=.+state=.+/', $link_continue);
 		$res = $ops_ua->get($link_continue);
 		$this->assertValidResponse($res, 302);
 		$url1 = $res->getHeaderLine('location');

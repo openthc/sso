@@ -76,6 +76,10 @@ class Permit extends \OpenTHC\SSO\Controller\Base
 
 		$ret = _url_assemble($ruri);
 
+		// Always push through Permit UX
+		return $RES->withRedirect($ret);
+
+		/*
 		// Configured to hide Confirm Prompt
 		if (\OpenTHC\Config::get('sso/redirect-fast')) {
 			return $RES->withRedirect($ret);
@@ -89,6 +93,7 @@ class Permit extends \OpenTHC\SSO\Controller\Base
 		$data['return_url'] = $ret;
 
 		return $RES->write( $this->render('oauth2/permit.php', $data) );
+		*/
 
 	}
 

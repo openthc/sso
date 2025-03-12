@@ -56,6 +56,9 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 		$_GET['auth-commit'] = true;
 		$link_crypt_save = _encrypt(json_encode($_GET), $_SESSION['crypt-key']);
 
+		// Always push through Authorize UX
+		return $RES->withRedirect('/oauth2/permit?_=' . $link_crypt);
+
 		$data = [];
 		$data['Page'] = [ 'title' => 'Authorize' ];
 		$data['Contact'] = $_SESSION['Contact'];
