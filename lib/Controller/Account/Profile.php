@@ -40,17 +40,53 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 		$data['Contact_Base'] = $C1;
 
 		// Company List
-		$res = $dbc_auth->fetchAll('SELECT id, name, stat, dsn FROM auth_company WHERE id IN (SELECT company_id FROM auth_company_contact WHERE contact_id = :ct0)', [
+		$sql = <<<SQL
+		SELECT id
+			, name AS auth_name
+			, stat AS auth_stat
+			, guid
+			, iso3166
+			, tz
+			, cre
+			, length(dsn) AS dsn
+		FROM auth_company
+		WHERE id IN (
+			SELECT company_id
+			FROM auth_company_contact
+			WHERE contact_id = :ct0
+		)
+		ORDER BY id
+		SQL;
+		$data['company_list'] = $dbc_auth->fetchAll($sql, [
 			':ct0' => $_SESSION['Contact']['id'],
 		]);
-		$data['company_list'] = $res;
 
-		$company_good = false;
-		foreach ($res as $rec) {
-			if (($rec['stat'] == 200) && ( ! empty($rec['dsn']))) {
-				$company_good = true;
+		foreach ($data['company_list'] as $idx => $Company0) {
+			$sql = <<<SQL
+			SELECT id
+				, name AS main_name
+				, stat AS main_stat
+				, flag AS main_flag
+				-- , guid
+				-- , cre AS main_cre
+				-- , iso3166
+				-- , tz
+			FROM company
+			WHERE id = :c0
+			SQL;
+			$Company1 = $dbc_main->fetchRow($sql, [ ':c0' => $Company0['id'] ]);
+			// Somethign
+			if ( ! empty($Company1['id'])) {
+				$data['company_list'][$idx] = array_merge($Company0, $Company1);
 			}
 		}
+
+		// $company_good = false;
+		// foreach ($data['company_list'] as $rec) {
+		// 	if (($rec['stat'] == 200) && ( ! empty($rec['dsn']))) {
+		// 		$company_good = true;
+		// 	}
+		// }
 
 		// Active Service List
 		// $res = $dbc_auth->fetchAll('SELECT id, name FROM auth_company WHERE id IN (SELECT company_id FROM auth_company_contact WHERE contact_id = :ct0)', [

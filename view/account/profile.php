@@ -52,8 +52,6 @@ use OpenTHC\SSO\UI\Icon;
 </form>
 
 <?php
-require_once(__DIR__ . '/profile-company-list.php');
-
 // Show Service List
 if ($data['service_list']) {
 ?>
@@ -87,6 +85,10 @@ if ($data['service_list']) {
 
 <?php
 }
+?>
+
+<?php
+require_once(__DIR__ . '/profile-company-list.php');
 ?>
 
 </div>
