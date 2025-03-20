@@ -78,6 +78,25 @@ class Open extends \OpenTHC\SSO\Controller\Base
 
 			break;
 
+		case 'switch-company':
+
+			$Contact = $_SESSION['Contact'];
+			$Company = $_SESSION['Company'];
+
+			$act_data = [
+				'intent' => 'account-open',
+				'contact' => $Contact,
+				'company' => $Company,
+				'return' => $_GET['r'],
+				'service' => $_GET['service'],
+			];
+
+			$tok = \OpenTHC\SSO\Auth_Context_Ticket::set($act_data);
+
+			return $RES->withRedirect(sprintf('/auth/init?_=%s', $tok));
+
+			break;
+
 		case 'sso-migrate':
 
 			$key = \OpenTHC\Config::get('openthc/app/sso-migrate-secret');
