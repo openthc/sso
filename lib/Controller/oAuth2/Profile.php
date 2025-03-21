@@ -86,6 +86,17 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 		}
 		$RES = $RES->withAttribute('Company', $Profile['Company']);
 
+		// Auth/Company List
+		$sql = <<<SQL
+		SELECT id
+		FROM auth_company
+		WHERE id IN (SELECT company_id FROM auth_company_contact WHERE contact_id = :ct0)
+		SQL;
+		$arg = [];
+		$arg[':ct0'] = $Profile['Contact']['id'];
+		$res = $dbc_auth->fetchAll($sql, $arg);
+		$Profile['company_list'] = $res;
+
 		// Scope
 		$Profile['scope'] = explode(' ', $tok['meta']['scope']);
 
