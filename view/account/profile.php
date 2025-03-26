@@ -65,7 +65,15 @@ if ($data['service_list']) {
 			?>
 				<div class="row">
 					<div class="col-md-8">
-						<h3><?= __h($s['name']) ?></h3>
+						<h3>
+							<?php
+							if ( ! empty($s['icon'])) {
+								echo $s['icon'];
+								echo ' ';
+							}
+							echo __h($s['name']);
+							?>
+						</h3>
 						<p><?= __h($s['hint']) ?></p>
 					</div>
 					<div class="col-md-4">
