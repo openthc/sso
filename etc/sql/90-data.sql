@@ -24,19 +24,3 @@ INSERT INTO auth_service (company_id, name, code, hash) VALUES ('018NY6XC00C0MPA
 INSERT INTO auth_service (company_id, name, code, hash) VALUES ('018NY6XC00C0MPANY000000000', 'app.openthc.local', 'app.openthc.local', 'app.openthc.local-secret');
 INSERT INTO auth_service (company_id, name, code, hash) VALUES ('018NY6XC00C0MPANY000000000', 'lab.openthc.local', 'lab.openthc.local', 'lab.openthc.local-secret');
 INSERT INTO auth_service (company_id, name, code, hash) VALUES ('018NY6XC00C0MPANY000000000', 'pos.openthc.local', 'pos.openthc.local', 'pos.openthc.local-secret');
-
-
-INSERT INTO acl_object_action (obj, act) VALUES ('company', 'search');
-INSERT INTO acl_object_action (obj, act) VALUES ('company', 'create');
-INSERT INTO acl_object_action (obj, act) VALUES ('company', 'update');
-INSERT INTO acl_object_action (obj, act) VALUES ('company', 'delete');
-
-INSERT INTO acl_object_action (obj, act) VALUES ('contact', 'search');
-INSERT INTO acl_object_action (obj, act) VALUES ('contact', 'create');
-INSERT INTO acl_object_action (obj, act) VALUES ('contact', 'update');
-INSERT INTO acl_object_action (obj, act) VALUES ('contact', 'delete');
-
-INSERT INTO acl_object_action (obj, act) VALUES ('license', 'search');
-INSERT INTO acl_object_action (obj, act) VALUES ('license', 'create');
-INSERT INTO acl_object_action (obj, act) VALUES ('license', 'update');
-INSERT INTO acl_object_action (obj, act) VALUES ('license', 'delete');
