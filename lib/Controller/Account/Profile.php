@@ -100,16 +100,29 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 		if ($x) {
 			$data['service_list'][] = [
 				'link' => '/service/connect/dir',
+				'icon' => '<i class="fa-regular fa-address-book"></i>',
 				'name' => 'Directory',
 				'hint' => 'Connect to the Directory to update your semi-public contact and company profiles'
 			];
 		}
+
+		$x = \OpenTHC\Config::get('openthc/chat/origin');
+		if ($x) {
+			$data['service_list'][] = [
+				'link' => '/service/connect/chat',
+				'icon' => '<i class="fa-regular fa-comments"></i>',
+				'name' => 'Chat',
+				'hint' => 'Private Real-Time Industry Chat'
+			];
+		}
+
 
 		$x = \OpenTHC\Config::get('openthc/app/origin');
 		if ($x) {
 			$data['service_list'][] = [
 				'link' => '/service/connect/app', // sprintf('%s/auth/open?a=sso', $x),
 				'name' => 'App',
+				'icon' => '<i class="fa-solid fa-cannabis text-success"></i>',
 				'hint' => 'Connect to the primary seed-to-sale application for crop and inventory management'
 			];
 		}
@@ -119,6 +132,7 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 			$data['service_list'][] = [
 				'link' => '/service/connect/pos',
 				'name' => 'Retail POS',
+				'icon' => '<i class="fa-solid fa-cash-register"></i>',
 				'hint' => 'Connect to the Point of Sale to perform front-of-the-house retail operations',
 			];
 		}
@@ -128,6 +142,7 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 			$data['service_list'][] = [
 				'link' => '/service/connect/b2b',
 				'name' => 'B2B Marketplace',
+				'icon' => '<i class="fa-solid fa-truck-ramp-box text-primary"></i>',
 				'hint' => 'Connect to the B2B Marketplace to connect with vendors and suppliers',
 			];
 		}
