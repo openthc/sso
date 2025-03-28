@@ -2,6 +2,19 @@
 -- PostgreSQL database dump
 --
 
+\c openthc_auth
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET search_path TO public;
+SET check_function_bodies = false;
+SET xmloption = content;
+SET client_min_messages = warning;
+SET row_security = off;
+
 --
 -- Name: auth_company; Type: TABLE; Schema: public;
 --
@@ -19,6 +32,8 @@ CREATE TABLE auth_company (
 	cre_meta jsonb
 );
 
+ALTER TABLE public.auth_company OWNER TO openthc_auth;
+
 
 -- Company Relationships
 CREATE TABLE auth_company_company (
@@ -26,6 +41,7 @@ CREATE TABLE auth_company_company (
 	company_id_child character varying(26) NOT NULL
 );
 
+ALTER TABLE public.auth_company_company OWNER TO openthc_auth;
 
 CREATE TABLE auth_company_contact (
 	id character varying(26) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
@@ -39,6 +55,7 @@ CREATE TABLE auth_company_contact (
 	session_at timestamp with time zone
 );
 
+ALTER TABLE public.auth_company_contact OWNER TO openthc_auth;
 
 --
 -- Name: auth_contact; Type: TABLE; Schema: public;
@@ -58,6 +75,7 @@ CREATE TABLE auth_contact (
 	tz character varying(64)
 );
 
+ALTER TABLE public.auth_contact OWNER TO openthc_auth;
 
 CREATE TABLE auth_context (
 	id varchar(26) not null default ulid_create() primary key,
@@ -67,6 +85,8 @@ CREATE TABLE auth_context (
 	name varchar(256)
 );
 
+ALTER TABLE public.auth_context OWNER TO openthc_auth;
+
 
 CREATE TABLE public.auth_context_ticket (
 	id character varying(64) NOT NULL,
@@ -74,7 +94,7 @@ CREATE TABLE public.auth_context_ticket (
 	expires_at timestamp with time zone DEFAULT (now() + '01:00:00'::interval) NOT NULL,
 	meta jsonb
 );
-
+ALTER TABLE public.auth_context_ticket OWNER TO openthc_auth;
 
 CREATE TABLE auth_service (
 	id varchar(26) NOT NULL DEFAULT ulid_create() PRIMARY KEY,
@@ -89,6 +109,7 @@ CREATE TABLE auth_service (
 	name varchar(256),
 	context_list text
 );
+ALTER TABLE public.auth_service OWNER TO openthc_auth;
 
 --
 -- Name: auth_service_contact; Type: TABLE; Schema: public;
@@ -100,7 +121,7 @@ CREATE TABLE auth_service_contact (
 	created_at timestamp with time zone default now() not null,
 	expires_at timestamp with time zone default (now() + '365 days'::interval) not null
 );
-
+ALTER TABLE public.auth_service_contact OWNER TO openthc_auth;
 
 CREATE TABLE auth_service_keypair (
 	id varchar(26) not null,
@@ -114,6 +135,7 @@ CREATE TABLE auth_service_keypair (
 	sk text,
 	flag jsonb
 );
+ALTER TABLE public.auth_service_keypair OWNER TO openthc_auth;
 
 --
 -- Name: iso3166; Type: TABLE; Schema: public;
@@ -127,7 +149,7 @@ CREATE TABLE iso3166 (
 	name text,
 	meta jsonb
 );
-
+ALTER TABLE public.iso3166 OWNER TO openthc_auth;
 
 --
 -- Name: log_delta; Type: TABLE; Schema: public;
@@ -142,7 +164,7 @@ CREATE TABLE log_delta (
 	v0 jsonb,
 	v1 jsonb
 );
-
+ALTER TABLE public.log_delta OWNER TO openthc_auth;
 
 --
 -- Name: log_event; Type: TABLE; Schema: public;
@@ -157,7 +179,7 @@ CREATE TABLE log_event (
 	link character varying(256),
 	meta jsonb
 );
-
+ALTER TABLE public.log_event OWNER TO openthc_auth;
 
 -- CREATE TABLE company (
 -- 	id character varying(26) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
@@ -178,7 +200,7 @@ CREATE TABLE acl_service_object_action (
 	obj character varying(256) not null,
 	act character varying(256) not null
 );
-
+ALTER TABLE public.acl_service_object_action OWNER TO openthc_auth;
 
 CREATE TABLE acl_company_contact_service_object_action (
 	id character varying(26) DEFAULT ulid_create() NOT NULL PRIMARY KEY,
@@ -189,3 +211,4 @@ CREATE TABLE acl_company_contact_service_object_action (
 	act character varying(256),
 	eft character varying(8)
 );
+ALTER TABLE public.acl_company_contact_service_object_action OWNER TO openthc_auth;
