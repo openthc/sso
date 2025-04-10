@@ -1,25 +1,29 @@
-#!/usr/bin/php
+#!/usr/bin/env php
 <?php
 /**
- * SSO Test Runner
+ * OpenTHC SSO Test Runner
  *
  * SPDX-License-Identifier: MIT
  */
 
-namespace OpenTHC\SSO\Test;
-
 require_once(dirname(__DIR__) . '/boot.php');
 
+// Default Option
 if (empty($_SERVER['argv'][1])) {
-	$_SERVER['argv'][1] = 'all';
+	$_SERVER['argv'][1] = 'phpunit';
+	$_SERVER['argc'] = count($_SERVER['argv']);
 }
 
 
+// Command Line
 $doc = <<<DOC
 OpenTHC SSO Test Runner
 
 Usage:
-	test --filter=X
+	test <command> [options]
+	test phpunit
+	test phpstan
+	test phplint
 
 Options:
 	--filter=FILTER
@@ -29,53 +33,50 @@ DOC;
 
 $res = \Docopt::handle($doc, [
 	'exit' => false,
-	'help' => true,
 	'optionsFirst' => true,
 ]);
-$arg = $res->args;
-// var_dump($arg);
-// if ('all' == $arg['<command>']) {
-	$arg['phplint'] = false;
-	$arg['phpstan'] = false;
-	$arg['phpunit'] = true;
-// } else {
-// 	$cmd = $arg['<command>'];
-// 	$arg[$cmd] = true;
-// 	unset($arg['<command>']);
-// }
-// var_dump($arg);
-// exit;
+var_dump($res);
+$cli_args = $res->args;
+var_dump($cli_args);
+if ('all' == $cli_args['<command>']) {
+	$cli_args['phplint'] = true;
+	$cli_args['phpstan'] = true;
+	$cli_args['phpunit'] = true;
+} else {
+	$cmd = $cli_args['<command>'];
+	$cli_args[$cmd] = true;
+	unset($cli_args['<command>']);
+}
+var_dump($cli_args);
 
-$dt0 = new \DateTime();
 
-define('OPENTHC_TEST_OUTPUT_BASE', \OpenTHC\Test\Helper::output_path_init());
-// define('OPENTHC_TEST_OUTPUT_BASE', '/opt/openthc/sso/webroot/output/test-report');
+// Test Config
+$cfg = [];
+$cfg['base'] = APP_ROOT;
+$cfg['site'] = 'sso';
+
+$test_helper = new \OpenTHC\Test\Helper($cfg);
+$cfg['output'] = $test_helper->output_path;
+
 
 // PHPLint
-if ($arg['phplint']) {
-	$tc = new \OpenTHC\Test\Facade\PHPLint([
-		'output' => OPENTHC_TEST_OUTPUT_BASE
-	]);
+if ($cli_args['phplint']) {
+	$tc = new \OpenTHC\Test\Facade\PHPLint($cfg);
 	$res = $tc->execute();
 	var_dump($res);
 }
 
 
 // PHPStan
-if ($arg['phpstan']) {
-	$tc = new \OpenTHC\Test\Facade\PHPStan([
-		'output' => OPENTHC_TEST_OUTPUT_BASE
-	]);
+if ($cli_args['phpstan']) {
+	$tc = new \OpenTHC\Test\Facade\PHPStan($cfg);
 	$res = $tc->execute();
 	var_dump($res);
 }
 
 
 // PHPUnit
-if ($arg['phpunit']) {
-	$cfg = [
-		'output' => OPENTHC_TEST_OUTPUT_BASE
-	];
+if ($cli_args['phpunit']) {
 	// Pick Config File
 	$cfg_file_list = [];
 	$cfg_file_list[] = sprintf('%s/phpunit.xml', __DIR__);
@@ -87,21 +88,16 @@ if ($arg['phpunit']) {
 		}
 	}
 	// Filter?
-	if ( ! empty($arg['--filter'])) {
+	if ( ! empty($cli_args['--filter'])) {
 		$cfg['--filter'] = $arg['--filter'];
 	}
+	$cfg['--testsuite'] = 'Sign-Up-Sign-In';
 	$tc = new \OpenTHC\Test\Facade\PHPUnit($cfg);
 	$res = $tc->execute();
 	var_dump($res);
 }
 
 
-// Done
-\OpenTHC\Test\Helper::index_create($html);
-
-
-// Output Information
-$origin = \OpenTHC\Config::get('openthc/sso/origin');
-$output = str_replace(sprintf('%s/webroot/', APP_ROOT), '', OPENTHC_TEST_OUTPUT_BASE);
-
-echo "TEST COMPLETE\n  $origin/$output\n";
+// Output
+$res = $test_helper->index_create($res['data']);
+echo "TEST COMPLETE\n  $res\n";
