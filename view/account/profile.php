@@ -3,9 +3,13 @@
  * SPDX-License-Identifier: MIT
  */
 
+use OpenTHC\SSO\UI\Icon;
+
 $dir_origin = \OpenTHC\Config::get('openthc/dir/origin');
 
-use OpenTHC\SSO\UI\Icon;
+$contact_update_link = sprintf('%s/auth/open?%s', $dir_origin, http_build_query([
+	'r' => sprintf('/contact/%s', $data['Contact_Base']['id'])
+]));
 
 ?>
 
@@ -46,6 +50,9 @@ use OpenTHC\SSO\UI\Icon;
 		<button class="btn btn-outline-secondary" name="a" value="contact-phone-update">Change</button>
 	</div>
 
+</div>
+<div class="card-footer">
+	<a class="btn btn-primary" href="<?= $contact_update_link ?>" target="_blank">Update Profile on Directory</a>
 </div>
 </div>
 
