@@ -131,6 +131,10 @@ class Open extends \OpenTHC\SSO\Controller\Base
 			}
 		}
 
+		if (empty($data['auth_username'])) {
+			$data['auth_username'] = $this->getEmailCookie();
+		}
+
 		$RES = $RES->write( $this->render('auth/open.php', $data) );
 
 		return $RES;
@@ -175,7 +179,7 @@ class Open extends \OpenTHC\SSO\Controller\Base
 				'e' => 'CAO-049'
 			]));
 		}
-		$_SESSION['auth-open-email'] = $username;
+		$this->setEmailCookie($username);
 
 		$password = trim($_POST['password']);
 		if (empty($password) || (strlen($password) < 8) || (strlen($password) > 60)) {
@@ -239,7 +243,8 @@ class Open extends \OpenTHC\SSO\Controller\Base
 					$tok_data['oauth-request'] = $act_prev['oauth-request'];
 					break;
 				default:
-					// Ignored?
+					// Ignored
+					break;
 			}
 		}
 
@@ -381,6 +386,47 @@ class Open extends \OpenTHC\SSO\Controller\Base
 
 			return $svc;
 		}
+
+	}
+
+	/**
+	 *
+	 */
+	function getEmailCookie()
+	{
+		$pk = \OpenTHC\Config::get('openthc/sso/public');
+		$sk = \OpenTHC\Config::get('openthc/sso/secret');
+
+		$val = $_COOKIE['email'];
+		$val = \OpenTHC\Sodium::b64decode($val);
+		$val = \OpenTHC\Sodium::decrypt($val, $sk, $pk);
+
+		return $val;
+
+	}
+
+	/**
+	 *
+	 */
+	function setEmailCookie($e)
+	{
+		$_SESSION['auth-open-email'] = $e;
+
+		$pk = \OpenTHC\Config::get('openthc/sso/public');
+		$sk = \OpenTHC\Config::get('openthc/sso/secret');
+
+		$val = \OpenTHC\Sodium::encrypt($e, $sk, $pk);
+		$val = \OpenTHC\Sodium::b64encode($val);
+
+		$arg = [];
+		$arg['expires'] = strtotime('+30 days');
+		$arg['path'] = '/auth';
+		// $arg['domain'];
+		$arg['secure'] = true;
+		$arg['httponly'] = true;
+		$arg['samesite'] = 'lax';
+
+		setcookie('email', $val, $arg);
 
 	}
 
