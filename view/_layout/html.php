@@ -9,9 +9,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="initial-scale=1, user-scalable=yes">
 <meta name="application-name" content="OpenTHC">
+<link href="/vendor/fontawesome/css/all.min.css" rel="stylesheet">
 <link href="/vendor/jquery/jquery-ui.min.css" rel="stylesheet">
 <link href="/vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
-<link href="/vendor/fontawesome/css/all.min.css" rel="stylesheet">
 <style>
 body {
 	display: flex;
@@ -109,9 +109,9 @@ if (is_test_mode()) {
 }
 ?>
 
-<script src="/vendor/jquery/jquery.min.js" crossorigin="anonymous"></script>
-<script src="/vendor/jquery/jquery-ui.min.js" crossorigin="anonymous"></script>
-<script src="/vendor/bootstrap/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+<script src="/vendor/jquery/jquery.min.js"></script>
+<script src="/vendor/jquery/jquery-ui.min.js"></script>
+<script src="/vendor/bootstrap/bootstrap.bundle.min.js"></script>
 <?= $this->foot_script ?>
 </body>
 </html>
