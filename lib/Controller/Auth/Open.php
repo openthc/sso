@@ -397,9 +397,11 @@ class Open extends \OpenTHC\SSO\Controller\Base
 		$pk = \OpenTHC\Config::get('openthc/sso/public');
 		$sk = \OpenTHC\Config::get('openthc/sso/secret');
 
-		$val = $_COOKIE['email'];
-		$val = \OpenTHC\Sodium::b64decode($val);
-		$val = \OpenTHC\Sodium::decrypt($val, $sk, $pk);
+		if ( ! empty($_COOKIE['email'])) {
+			$val = $_COOKIE['email'];
+			$val = \OpenTHC\Sodium::b64decode($val);
+			$val = \OpenTHC\Sodium::decrypt($val, $sk, $pk);
+		}
 
 		return $val;
 
