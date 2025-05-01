@@ -109,11 +109,8 @@ class Init extends \OpenTHC\SSO\Controller\Base
 		// Company/Contact Link
 		switch (count($company_list)) {
 			case 0:
-				// return $RES->withRedirect(sprintf('/verify?_=%s', $_GET['_']));
-				_exit_html_fail('<h1>Unexpected Session State [CAI-051]</h1><p>You may want to <a href="/auth/shut">close your session</a> and try again.</p><p>If the issue continues, contact support</p>', 500);
-				break;
 			case 1:
-				$Company = $company_list[0];
+				$Company = $company_list[0] ?: null;
 				return $this->_create_ticket_and_redirect($RES, $act_data, $Contact, $Company);
 				break;
 			default:
