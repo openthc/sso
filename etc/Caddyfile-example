@@ -1,0 +1,38 @@
+#
+# OpenTHC SSO Caddyfile
+#
+
+sso.openthc.example.com {
+
+	root * /opt/openthc/sso/webroot/
+	log
+	encode
+	import common404
+	file_server
+
+	redir /.well-known/change-password /auth/open?a=password-reset 302
+
+	# Static only for /output
+	handle_path /output/* {
+		root * /opt/openthc/sso/webroot/output/
+	}
+
+	# Static only for /vendor
+	handle_path /vendor/* {
+		root * /opt/openthc/sso/webroot/vendor/
+		# import common404
+		# file_server
+	}
+
+	# PHP Everything Else
+	handle_path /* {
+		php_fastcgi unix//run/php/php7.4-fpm.sock {
+			try_files {path} {path}/index.php /main.php
+		}
+	}
+
+	handle_errors {
+		respond "{err.status_code} {err.status_text}"
+	}
+
+}
