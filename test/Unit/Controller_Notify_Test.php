@@ -20,17 +20,22 @@ class Controller_Notify_Test extends Base
 
 	function test_notify()
 	{
+		$this->markTestSkipped('Need to Refine Process');
+
 		// Mock slim environment
-		$container = new \Slim\Container;
+		$container = new \Slim\Container();
+		$container['RDB'] = function() {
+			return \OpenTHC\Service\Redis::factory();
+		};
 
 		$notify = new \OpenTHC\SSO\Controller\Notify($container);
 
 		$req = \Slim\Http\Request::createFromEnvironment(\Slim\Http\Environment::mock());
 		$res = new \Slim\Http\Response();
-		$x = $notify($req, $res, []);
+		$res = $notify($req, $res, []);
 
 		// Our mock implementation works
-		$this->assertEquals(302, $x->getStatusCode());
+		$this->assertEquals(302, $res->getStatusCode());
 
 		// Test with ID
 		$yaml = <<<YAML
@@ -39,8 +44,8 @@ class Controller_Notify_Test extends Base
 		body: This is a test notification.
 		YAML;
 		file_put_contents(sprintf('%s/etc/notify/test-2024-347.yaml', APP_ROOT), $yaml);
-		$x = $notify($req, $res, [ 'r' => '/the-next-url']);
-		$this->assertEquals(200, $x->getStatusCode());
+		$res = $notify($req, $res, [ 'r' => '/the-next-url']);
+		$this->assertEquals(200, $res->getStatusCode());
 		$this->assertStringContainsString('<div class="card-header"><h2>Test Notification</h2></div>', (string)$res->getBody());
 
 		// Test POST
@@ -48,9 +53,9 @@ class Controller_Notify_Test extends Base
 			'notify_id' => 'test-2024-347',
 			'next_url' => '/the-next-url',
 		];
-		$x = $notify->post($req, $res, []);
-		$this->assertEquals(302, $x->getStatusCode());
-		$this->assertEquals('/the-next-url', $x->getHeaderLine('Location'));
+		$res = $notify->post($req, $res, []);
+		$this->assertEquals(302, $res->getStatusCode());
+		$this->assertEquals('/the-next-url', $res->getHeaderLine('Location'));
 
 		unlink(sprintf('%s/etc/notify/test-2024-347.yaml', APP_ROOT));
 

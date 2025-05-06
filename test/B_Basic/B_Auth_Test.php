@@ -34,7 +34,7 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\Browser\Base
 		sleep(3); // Wait for refresh
 
 		$url = self::$wd->getCurrentUrl();
-		$this->assertMatchesRegularExpression('/auth\/open/', $url);
+		$this->assertMatchesRegularExpression('/sso\.openthc/', $url);
 
 	}
 

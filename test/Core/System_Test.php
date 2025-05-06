@@ -3,9 +3,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-namespace OpenTHC\SSO\Test\A_Core;
+namespace OpenTHC\SSO\Test\Core;
 
-class B_System_Test extends \OpenTHC\SSO\Test\Base
+class System_Test extends \OpenTHC\SSO\Test\Base
 {
 	function test_extensions()
 	{

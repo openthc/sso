@@ -5,9 +5,9 @@
  * SPDX-License-Identifier: MIT
  */
 
-namespace OpenTHC\SSO\Test\A_Core;
+namespace OpenTHC\SSO\Test\Core;
 
-class A_Config_Test extends \OpenTHC\SSO\Test\Base
+class Config_Test extends \OpenTHC\SSO\Test\Base
 {
 	/**
 	 * ack -o 'getenv\(.+\)'  test | cut -d':' -f2|sort |uniq -c | sort -nr

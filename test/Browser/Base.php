@@ -14,7 +14,7 @@ class Base extends \OpenTHC\Test\BaseBrowser
 		self::$cfg = [];
 		self::$cfg['project'] = 'SSO';
 		self::$cfg['build'] = APP_BUILD;
-		self::$cfg['name'] = sprintf('%s v%s @ %s', self::$cfg['project'], self::$cfg['build'], strftime('%Y-%m-%d %H:%M'));
+		self::$cfg['name'] = sprintf('%s v%s @ %s', self::$cfg['project'], self::$cfg['build'], strftime('%m-%d %H:%M'));
 
 		parent::setUpBeforeClass();
 

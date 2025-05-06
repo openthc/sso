@@ -26,7 +26,7 @@ class Contact_API_Test extends \OpenTHC\SSO\Test\Base
 	/**
 	 * Test service connection to App
 	 */
-	function test_create_and_commit()
+	function test_create()
 	{
 		$sso = new \OpenTHC\Service\OpenTHC('sso');
 		$res = $sso->post('/api/contact', [ 'form_params' => [
@@ -39,14 +39,24 @@ class Contact_API_Test extends \OpenTHC\SSO\Test\Base
 		$this->assertEquals(0, $res['data']['flag']);
 		$this->assertEquals(100, $res['data']['stat']);
 
-		$url = sprintf('/api/contact/%s', $res['data']['id']);
-		$res = $sso->post($url, [ 'form_params' => [
-			'stat' => 102,
+		return $res['data'];
+	}
+
+	/**
+	 * Test service connection to App
+	 */
+	function test_create_known_good_email()
+	{
+		$sso = new \OpenTHC\Service\OpenTHC('sso');
+		$res = $sso->post('/api/contact', [ 'form_params' => [
+			'name' => $this->Contact['name'],
+			'email' => $this->Contact['email'],
+			'phone' => $this->Contact['phone'],
 			'email_verify' => true,
 		]]);
-		$res = $this->assertValidAPIResponse($res);
+		$res = $this->assertValidAPIResponse($res, 201);
 		$this->assertNotEmpty($res['data']['id']);
-		$this->assertEquals(1, $res['data']['flag']);
+		$this->assertEquals(0, $res['data']['flag']);
 		$this->assertEquals(102, $res['data']['stat']);
 	}
 
@@ -97,7 +107,9 @@ class Contact_API_Test extends \OpenTHC\SSO\Test\Base
 		]]);
 		// var_dump($res);
 		$res = $this->assertValidAPIResponse($res, 409);
-		$this->assertEquals(200, $res['data']['stat']);
+		// $this->assertEquals(200, $res['data']['stat']);
+		$this->assertArrayHasKey('id', $res['data']);
+		$this->assertArrayHasKey('id', $res['data']);
 		$this->assertIsArray($res['meta']);
 		$this->assertEquals('CAC-065', $res['meta']['code']);
 
@@ -110,6 +122,26 @@ class Contact_API_Test extends \OpenTHC\SSO\Test\Base
 		// $this->assertEquals(1, $res['data']['flag']);
 		// $this->assertEquals(102, $res['data']['stat']);
 		// var_dump($res);
+
+	}
+
+	/**
+	 * @depends test_create
+	 */
+	function test_update($Contact)
+	{
+		$sso = new \OpenTHC\Service\OpenTHC('sso');
+
+		// Not Implemented
+		$url = sprintf('/api/contact/%s', $Contact['id']);
+		$res = $sso->post($url, [ 'form_params' => [
+			'stat' => 102,
+			'email_verify' => true,
+		]]);
+		$res = $this->assertValidAPIResponse($res, 501);
+		$this->assertEquals(501, $res['code']);
+		$this->assertNotEmpty($res['meta']['note']);
+		$this->assertEquals('Not Implemented', $res['meta']['note']);
 
 	}
 

@@ -54,14 +54,24 @@
 	</php>
 
 	<testsuites>
+		<!-- First one runs by default -->
 		<testsuite name="All">
+			<directory>Core</directory>
 			<directory>Unit</directory>
-			<directory>A_Core</directory>
 			<directory>B_Basic</directory>
 			<directory>C_Account</directory>
 			<directory>D_Verify</directory>
 			<directory>G_oAuth2</directory>
 			<!-- <directory>.</directory> -->
+		</testsuite>
+		<testsuite name="Sign-Up-Sign-In">
+			<file>G_oAuth2/A_Service_Test.php</file>
+			<file>G_oAuth2/B_Service_UI_Test.php</file>
+			<file>B_Basic/B_Auth_Test.php</file>
+			<file>C_Account/A_Create_Test.php</file>
+			<!-- <file>C_Account/B_Create_UI_Test.php</file> -->
+			<file>C_Account/C_Account_UI_Test.php</file>
+			<file>C_Account/Create_Contact_Exists_Test.php</file>
 		</testsuite>
 	</testsuites>
 

@@ -91,7 +91,6 @@ if ($cli_args['phpunit']) {
 	if ( ! empty($cli_args['--filter'])) {
 		$cfg['--filter'] = $arg['--filter'];
 	}
-	$cfg['--testsuite'] = 'Sign-Up-Sign-In';
 	$tc = new \OpenTHC\Test\Facade\PHPUnit($cfg);
 	$res = $tc->execute();
 	var_dump($res);
