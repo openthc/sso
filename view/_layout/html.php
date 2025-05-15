@@ -9,6 +9,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="initial-scale=1, user-scalable=yes">
 <meta name="application-name" content="OpenTHC">
+
+<link rel="preload" href="/vendor/fontawesome/css/all.min.css" as="style">
+<link rel="preload" href="/vendor/jquery/jquery-ui.min.css" as="style">
+<link rel="preload" href="/vendor/bootstrap/bootstrap.min.css" as="style">
+<link rel="preload" href="/vendor/jquery/jquery.min.js" as="script">
+<link rel="preload" href="/vendor/jquery/jquery-ui.min.js" as="script">
+<link rel="preload" href="/vendor/bootstrap/bootstrap.bundle.min.js" as="script">
+
 <link href="/vendor/fontawesome/css/all.min.css" rel="stylesheet">
 <link href="/vendor/jquery/jquery-ui.min.css" rel="stylesheet">
 <link href="/vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
