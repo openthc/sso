@@ -5,6 +5,12 @@
  * SPDX-License-Identifier: MIT
  */
 
+$dir_origin = \OpenTHC\Config::get('openthc/dir/origin');
+
+$company_search_link = sprintf('%s/auth/open?%s', $dir_origin, http_build_query([
+	'r' => '/search'
+]));
+
 ?>
 
 <hr>
@@ -18,6 +24,15 @@
 if (empty($data['company_list'])) {
 ?>
 	<div class="alert alert-warning">You are not connected to any Company profiles</div>
+	<div class="container">
+		<div class="col-md-8 mx-auto">
+			<p>In the OpenTHC Universe some actions, such as App and POS require an active Company profile.</p>
+			<p>The Company profile is the container for one or more License configurations.</p>
+			<p>You can <a href="<?= $company_search_link ?>" target="_blank">search the Directory</a> for your Company and request to join.  If you don't have a company profile you should create one.</p>
+			<p>If the Company profile is unclaimed the process to verify is simple.</p>
+			<p>If the Company profile is already claimed, they should perhaps invite you or we would need to begin a <em>re-claim</em> process.</p>
+		</div>
+	</div>
 <?php
 } else {
 	foreach ($data['company_list'] as $Company) {
@@ -61,7 +76,7 @@ if (empty($data['company_list'])) {
 			if ( ! empty($Company['tz'])) {
 				echo '<div><i class="fa-regular fa-clock text-success"></i></div>';
 			} else {
-				echo '<div><i class="fa-regular fa-clock text-danger"></i></div>';
+				echo '<div title="Needs Timezone Configured"><i class="fa-regular fa-clock text-danger"></i></div>';
 			}
 
 			echo '<div>';
@@ -118,11 +133,9 @@ if (empty($data['company_list'])) {
 }
 ?>
 </div>
-
-<!--
 <div class="card-footer">
-	<a class="btn btn-primary" href="/company/join">Join Another Company</a>
+	<a class="btn btn-primary" href="/auth/open?a=switch-company">Switch Active Company</a>
+	<a class="btn btn-secondary" href="/company/join">Join Another Company</a>
 </div>
--->
 
 </div>
