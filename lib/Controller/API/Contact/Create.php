@@ -17,13 +17,14 @@ class Create extends \OpenTHC\SSO\Controller\Base
 		$Contact = [];
 		$Contact['id'] = _ulid();
 		$Contact['flag'] = 0;
-		$Contact['stat'] = 102;
+		$Contact['stat'] = 100;
 		$Contact['name'] = trim($_POST['name'] ?: $_POST['email']);
 		$Contact['email'] = $_POST['email'];
 		$Contact['phone'] = $_POST['phone'];
 
 		if ( ! empty($_POST['email_verify'])) {
 			$Contact['flag'] = \OpenTHC\Contact::FLAG_EMAIL_GOOD;
+			$Contact['stat'] = 102;
 		}
 
 		// $dir = new \OpenTHC\Service\OpenTHC('dir');
@@ -184,7 +185,9 @@ class Create extends \OpenTHC\SSO\Controller\Base
 		return $RES->withJSON([
 			'data' => [
 				'id' => $Contact['id'],
-				'username' => $Contact['username'],
+				'username' => $Contact['email'],
+				'stat' => $Contact['stat'],
+				// 'flag' => $Contact['flag'],
 			],
 			'meta' => [],
 		], 201);
