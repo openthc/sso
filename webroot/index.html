@@ -2,71 +2,39 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" name="viewport">
-<meta http-equiv="refresh" content="1; url=/auth/open">
-<title>Loading...</title>
+<meta http-equiv="cache-control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="refresh" content="3; url=/auth/open">
+<meta name="viewport" content="initial-scale=1, width=device-width">
+<title>SSO || OpenTHC</title>
 <style>
-* {
-	box-sizing: border-box;
-	margin: 0;
-	padding: 0;
-}
 body {
-	background: #343a40;
-	color:#f0f0f0;
+	background: #202020;
+	color: #f0f0f0;
 	font-family: sans-serif;
-	font-size: 1.1rem;
-	margin: 0;
+	font-size: 2rem;
+	text-align: center;
+}
+a {
+	color: #069420;
+}
+#img-wrap {
+	margin: 8vh auto;
 	padding: 0;
 }
-main {
-	display: flex;
-	align-items: center;
-}
-main div {
-	padding: 1rem 0 0 1rem;
-}
-footer {
-	bottom: 0;
-	font-family: monospace;
-	padding: 0.50rem;
-	position: fixed;
+#img-wrap img {
+	height: 256px;
+	width: 256px;
 }
 </style>
 </head>
 <body>
 
-	<main>
-	<div>
-		<img alt="OpenTHC Icon" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAC4jAAAuIwF4pT92AAAE4UlEQVRYw8WXW2xUVRSGv7Vn2gKxCF6ipAW0mHgBbVR6TiECUuSQGInhYjNAEAqiQUnQ8OADzxLjE30hRhFa0wqhECOiiYMBNQVnpkBsECHGUAgMhdICFUrb6ZmzfOgM6WU6M5QS99O57L3+f63177XXFoY5wpHgw8BioEOEH60S58Zw7JhsJx4/cSgJTDgSrAZOAl8Atar8GY4Et/UhlzUByeAltuX0PoeDhQgrgE8z2NwEfGNbzuV7JpAg8QBQB5QC47J0rA34HVhkW46bNYGGhoOUlMxPAj8LvA9sSLNes3BiiyrVpbbzN0Ao/BOl9oKhIxBpODhNVbcBJcCoNIZPAOuBHOAr4Ok0czuBkKq+U2ovOJsyAuFI8HFgF/BqGkM9wHGBTZblHB2QKgf4BHgR8KWx8T2w2racawN3wSsZwKuBl23LmWFZztFIH6UnxBpMRG068F0aOwuBqakisBjYN2DyLSAELLct5+pd1YmGgxNRrQZsYMyA37Nsy6nPVAcuArZtOfNty7l6N3s7fOxn7JL5F2zLKQPmAK3DKURdBnMu+ZKsB9kMe/prfV/PJ7Rzb5Xwfg3zP5GRVKBHEuG63+Mv4FQ/AqZ2DbblNNuW8wTwcUI0OSMImgtcBnnXtpyptuVcm3xgFgB+AG/FDkxNRbEf+ce2nM9CkWCVqs42MiLgcWCtovWlltP21JH5+fGYW9g09/Dp/rmoXbMU1TqUdX6P2tiqnZ0jGfcpv8zN93yyRoxsVdd7o2nO4R8GasBDBIx86frljKmpWAFgvl0/bNCCxsUAFNWXvae55rT4ZCsCKN5gEWq/tZMQqTE1FXu52TUl+dG/c1VG0Cd/nXvnOe/mjWeKjszbj5HPgYIBp+gAArdjKTaLLMEnZ0xNRR2AW1Hdu+jr1SnBJx6YSdOcwxTum5FbVF8WxMgphIWDRNHR03HHqTuU3LiKpzBYeX5ElpraNS6eLsKNH/TerupKRSAnP2/Mk/Vlr4uRuiEbCFfxetQbRIBu9zKj4pDnH2qtDyP7yfVHTM1aRzTeHl9Z1Zvj38oEo+MQc1iE4nQp8rpcvFtu9+AUGGnRfzs7stCWBd72+Moq/MHeZuns7EMKZi8ZwFUVtzXWJn5pTtkRSWX5HxgplvFjQDIUAc9b7q2s2pVQ+XqMbEtbeONK96VO8DQSDYTsoer/OjxFW26inW76jk/M5j5i3TAksKfE23voOncLPAVYkvIwkspydOOeBuBNfAY6utBrHWhnT+poCONNzepHio7OexRhfKpjzm2PEYvexr0eQ/wGYF40ELpYsLs0fVsuleUlwA5gGqqQ40fy88DXL2BXUIonFzblS45pRBJdj4DG4vS0dqMxL0n+JFAeDYTOZOwHkpHQjXueB2YicgM3jl6/jbZ3gmqqpl4QUE/pudxJrLkL7VEQuQC8FA2EXogGQmf6ep7xYiJb30I/rEuS2g4sAh7CU3hwFJLrv4IxxZMLzo7FJ41eR3y029aVrCOtQE00EPoIoGCXTXRZeHg3oz6EJiCyGfgABXxyBSPFBRPOj9Y4jbg6NlHnt6ho5aVAuGVEL6eINOvGPRuA5xAa8XQUrofXrR5x9SEcU5gUXRbaLF5uS9Zm76qP6tUHUlmem+j/T0547LxPkKlAKBoIxSfsLqU5EMra5n9rjuwHDvgo6gAAAABJRU5ErkJggg==">
-	</div>
-	<div>
-		<h1> Loading...</h1>
-	</div>
-</main>
+<div id="img-wrap">
+	<img alt="OpenTHC Icon" src="https://openthc.com/img/icon.png">
+</div>
 
-<footer></footer>
-
-<script>
-var usp = new URLSearchParams(window.location.search);
-if (usp.has('h')) {
-	var h = document.querySelector('h1');
-	if (h) {
-		h.innerText = usp.get('h');
-	}
-}
-if (usp.has('r')) {
-
-	var r = usp.get('r');
-
-	var f = document.querySelector('footer');
-	if (f) {
-		f.innerText = `Sending you to: ${r}`;
-	}
-
-	window.location = r;
-}
-</script>
+<h1>SSO</h1>
+<h2><a autofocus href="/auth/open">/auth/open</a></h2>
 
 </body>
 </html>
