@@ -83,13 +83,14 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 		*/
 
 		// Company
-		$dbc_auth = $this->_container->DBC_AUTH;
-		$chk = $dbc_auth->fetchOne('SELECT count(id) FROM auth_company_contact WHERE contact_id = :ct0', [
-			':ct0' => $CT0['id'],
-		]);
-		if (empty($chk)) {
-			return $RES->withRedirect(sprintf('/verify/company?_=%s', $tok));
-		}
+		// Not Required at the Moment
+		// $dbc_auth = $this->_container->DBC_AUTH;
+		// $chk = $dbc_auth->fetchOne('SELECT count(id) FROM auth_company_contact WHERE contact_id = :ct0', [
+		// 	':ct0' => $CT0['id'],
+		// ]);
+		// if (empty($chk)) {
+		// 	return $RES->withRedirect(sprintf('/verify/company?_=%s', $tok));
+		// }
 
 		switch ($act_data['intent']) {
 			case 'account-invite':
@@ -127,7 +128,8 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 
 		$x = $CT1->toArray();
 		unset($x['password']);
-		$this->_container->RDB->publish('openthc/sso/account/verify/done', json_encode([
+		$this->_container->RDB->publish('sso', json_encode([
+			'event' => 'account/verify/done',
 			'Contact' => $x,
 			'_SESSION' => $_SESSION,
 		]));
@@ -136,7 +138,6 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 		$RES = $RES->withAttribute('Contact', $act_data['contact']);
 
 		$_SESSION['auth-open-email'] = $act_data['contact']['username'];
-		// Carry the Context Forward Too (Service)
 
 		return $RES->withRedirect('/done?e=CVM-119'); // Prompt to Sign-In
 		return $RES->withRedirect('/done?e=CVM-130'); // Prompt to Wait for Activation

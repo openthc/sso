@@ -44,10 +44,7 @@ class Base extends \OpenTHC\SSO\Controller\Base
 			// Inflate this onto the ACT
 			$CT0 = $dbc_auth->fetchRow($sql, $arg);
 			if (empty($CT0['id'])) {
-				// __exit_text([
-				// 	'act' => $act,
-				// ], 400);
-				_exit_html_fail('<h1>Invalid Request [CAV-037]</h1>', 400);
+				throw new \Exception('Invalid Request [CAV-037]', 400);
 			}
 
 			$CT1 = $this->_container->DBC_MAIN->fetchRow('SELECT id, email, phone FROM contact WHERE id = :c0', $arg);

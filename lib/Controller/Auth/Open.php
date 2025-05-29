@@ -116,13 +116,21 @@ class Open extends \OpenTHC\SSO\Controller\Base
 
 		// Incoming Parameters
 		if ( ! empty($_GET['_'])) {
+
 			$act = \OpenTHC\SSO\Auth_Context_Ticket::get($_GET['_']);
+			if (empty($act)) {
+				$data = [];
+				$data['error_code'] = 'CAO-103';
+				$data['fail'] = 'Invalid Context Ticket; Expired?';
+				return $this->sendFailure($RES, $data, 400);
+			}
+
 			// intent == "oauth-authorize"
 			if ( ! empty($act['service']) && ! empty($act['oauth-request'])) {
 				$svc = $this->loadService($act['service']);
 				if ( ! empty($svc)) {
 					$data['auth_hint'] = sprintf('<p>Sign in, and then authorize the service (<em>%s</em>) via <a href="https://oauth.net/2/" target="_blank">OAuth2</a></p>'
-						, $svc->name
+						, $svc['name']
 					);
 					$data['service'] = $svc;
 				}
@@ -372,17 +380,15 @@ class Open extends \OpenTHC\SSO\Controller\Base
 	{
 		if (preg_match('/^[\w\.]{6,26}$/', $s)) {
 
-			$otc = new \OpenTHC\Cache('sso');
-			$svc = $otc->get(sprintf('service/%s', $s));
-			if (empty($svc)) {
-				$dbc = $this->_container->DBC_AUTH;
-				$svc = $dbc->fetchRow('SELECT id, code, name FROM auth_service WHERE (id = :s0 OR code = :s0)', [
-					':s0' => $s,
-				]);
-				if ( ! empty($svc['id'])) {
-					$otc->set(sprintf('service/%s', $s), $svc);
-				}
-			}
+			$dbc = $this->_container->DBC_AUTH;
+			$sql = <<<SQL
+			SELECT id, code, name
+			FROM auth_service
+			WHERE (id = :s0 OR code = :s0)
+			SQL;
+			$svc = $dbc->fetchRow($sql, [
+				':s0' => $s,
+			]);
 
 			return $svc;
 		}

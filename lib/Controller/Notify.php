@@ -88,4 +88,3 @@ class Notify extends \OpenTHC\SSO\Controller\Base
 
 	}
 }
-
