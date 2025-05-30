@@ -35,6 +35,9 @@ if (empty($data['company_list'])) {
 	</div>
 <?php
 } else {
+
+	echo '<table class="table">';
+
 	foreach ($data['company_list'] as $Company) {
 
 		if ($Company['id'] == $_SESSION['Company']['id']) {
@@ -45,8 +48,8 @@ if (empty($data['company_list'])) {
 		$link_verify = sprintf('%s/company/%s/verify', $dir_origin, $Company['id']);
 		// <!-- <p>Verify? <a href="$link_verify">Verify Company on DIR</a></p> -->
 	?>
-		<div class="d-flex justify-content-between">
-			<div>
+		<tr>
+			<td>
 				<h3>
 					<a href="<?= $Company['link'] ?>" target="_blank"><?= __h($Company['main_name']) ?></a>
 					<?php
@@ -55,8 +58,8 @@ if (empty($data['company_list'])) {
 					}
 					?>
 				</h3>
-			</div>
-			<div>
+			</td>
+			<td>
 			<?php
 			if (empty($Company['guid'])) {
 				echo 'Needs ID';
@@ -64,25 +67,36 @@ if (empty($data['company_list'])) {
 				printf('<code>%s</code>', __h($Company['guid']));
 			}
 			?>
-			</div>
-			<?php
-			// Necessary Datas
-			if ( ! empty($Company['iso3166'])) {
-				echo '<div><i class="fa-solid fa-map-location-dot text-success"></i></div>';
-			} else {
-				echo '<div><i class="fa-solid fa-map-location-dot text-danger"></i></div>';
-			}
+			</td>
 
+			<td>
+			<?php
+			// Necessary Data
+			if ( ! empty($Company['iso3166'])) {
+				echo '<i class="fa-solid fa-map-location-dot text-success"></i>';
+			} else {
+				echo '<i class="fa-solid fa-map-location-dot text-danger"></i>';
+			}
+			?>
+			</td>
+			<td>
+			<?php
 			if ( ! empty($Company['tz'])) {
-				echo '<div><i class="fa-regular fa-clock text-success"></i></div>';
+				echo '<i class="fa-regular fa-clock text-success"></i>';
 			} else {
 				echo '<div title="Needs Timezone Configured"><i class="fa-regular fa-clock text-danger"></i></div>';
 			}
+			?>
+			</td>
 
-			echo '<div>';
+			<?php
+			echo '<td>';
 			switch ($Company['main_stat']) {
 			case 100:
 				printf('<a href="%s" target="_blank" title="Verify Company">New</a>', $link_verify);
+				break;
+			case 102:
+				printf('<a href="%s" target="_blank" title="Verify Company">Pending</a>', $link_verify);
 				break;
 			case 200:
 				printf('<a href="%s" target="_blank" title="Verify Company">Active/Unverified</a>', $link_verify);
@@ -94,11 +108,11 @@ if (empty($data['company_list'])) {
 				echo '<span class="text-danger">Closed</span>';
 				break;
 			default:
-				echo $Company['main_stat'];
+				printf('<code>%s</code>', $Company['main_stat']);
 			}
-			echo '</div>';
+			echo '</td>';
 
-			echo '<div>';
+			echo '<td>';
 			switch ($Company['auth_stat']) {
 			case 100:
 				echo 'Auth:Pending';
@@ -109,33 +123,45 @@ if (empty($data['company_list'])) {
 			case 402:
 				echo 'Auth:Payment';
 				break;
+			default:
+				printf('<code>%s</code>', $Company['auth_stat']);
 			}
-			echo '</div>';
+			echo '</td>';
 
 			// Link to app/onboard/cre to configure this
 			// Needs to pass the selected Company context too
+			echo '<td>';
 			if ( ! empty($Company['cre'])) {
 				echo '<div><i class="fa-solid fa-cloud-arrow-up text-success"></i></div>';
 			} else {
 				echo '<div><i class="fa-solid fa-cloud-arrow-down text-danger"></i></div>';
 			}
+			echo '</td>';
 
+			echo '<td>';
 			if ( ! empty($Company['dsn'])) {
 				echo '<div><i class="fa-solid fa-database text-primary" title="Have Database"></i></div>';
 				// 	echo '<div class="alert alert-warning">This Company Profile is not active yet</div>';
 			}
-
+			echo '</td>';
 			?>
-		</div>
+		</tr>
 		<!-- <div><pre><?php var_dump($Company); ?></pre> -->
 	<?php
 	}
+	echo '</table>';
 }
 ?>
 </div>
 <div class="card-footer">
-	<a class="btn btn-primary" href="/auth/open?a=switch-company">Switch Active Company</a>
-	<a class="btn btn-secondary" href="/company/join">Join Another Company</a>
+<?php
+if ( ! empty($data['company_list'])) {
+?>
+	<!-- <a class="btn btn-primary" href="/auth/open?a=switch-company">Switch Active Company</a> -->
+<?php
+}
+?>
+	<a class="btn btn-secondary" href="/company/join">Join Company</a>
 </div>
 
 </div>
