@@ -128,12 +128,18 @@ class Open extends \OpenTHC\SSO\Controller\Base
 			// intent == "oauth-authorize"
 			if ( ! empty($act['service']) && ! empty($act['oauth-request'])) {
 				$svc = $this->loadService($act['service']);
-				if ( ! empty($svc)) {
-					$data['auth_hint'] = sprintf('<p>Sign in, and then authorize the service (<em>%s</em>) via <a href="https://oauth.net/2/" target="_blank">OAuth2</a></p>'
-						, $svc['name']
-					);
-					$data['service'] = $svc;
+				if (empty($svc)) {
+					$data = [];
+					$data['error_code'] = 'CAO-106';
+					$data['fail'] = 'The indicated Service is not valid';
+					return $this->sendFailure($RES, $data, 400);
 				}
+
+				$data['auth_hint'] = sprintf('<p>Sign in, and then authorize the service (<em>%s</em>) via <a href="https://oauth.net/2/" target="_blank">OAuth2</a></p>'
+					, $svc['name']
+				);
+				$data['service'] = $svc;
+
 			} else {
 				unset($_GET['_']);
 			}
