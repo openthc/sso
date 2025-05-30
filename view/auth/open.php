@@ -55,12 +55,16 @@ if ( ! empty($svc)) {
 		<div class="d-flex justify-content-between">
 			<div>
 				<button class="btn btn-primary" id="btn-auth-open" name="a" type="submit" value="account-open">
-					Sign In <i class="fa-solid fa-arrow-right-to-bracket"></i>
+					<i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In
 				</button>
-				<a class="btn btn-outline-secondary" href="<?= $link_pwd ?>">Forgot Password <i class="fa-regular fa-circle-question"></i></a>
+				<a class="btn btn-outline-secondary" href="<?= $link_pwd ?>">
+					<i class="fa-regular fa-circle-question"></i> Forgot Password
+				</a>
 			</div>
 			<div>
-				<a class="btn btn-outline-secondary" href="<?= $link_new ?>">Create Account <i class="fa-solid fa-user-plus"></i></a>
+				<a class="btn btn-outline-secondary" href="<?= $link_new ?>">
+					<i class="fa-solid fa-user-plus"></i> Create Account
+				</a>
 			</div>
 		</div>
 	</div>

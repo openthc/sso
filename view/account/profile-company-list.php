@@ -161,7 +161,9 @@ if ( ! empty($data['company_list'])) {
 <?php
 }
 ?>
-	<a class="btn btn-secondary" href="/company/join">Join Company</a>
+	<a class="btn btn-secondary" href="/company/join">
+		<i class="fa-solid fa-building-user"></i> Join Company
+	</a>
 </div>
 
 </div>

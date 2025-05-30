@@ -59,6 +59,11 @@ $contact_update_link = sprintf('%s/auth/open?%s', $dir_origin, http_build_query(
 </form>
 
 <?php
+require_once(__DIR__ . '/profile-company-list.php');
+?>
+
+
+<?php
 // Show Service List
 if ($data['service_list']) {
 ?>
@@ -100,10 +105,6 @@ if ($data['service_list']) {
 
 <?php
 }
-?>
-
-<?php
-require_once(__DIR__ . '/profile-company-list.php');
 ?>
 
 </div>
