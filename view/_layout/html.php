@@ -2,9 +2,12 @@
 /**
  * SPDX-License-Identifier: MIT
  */
+
+use Edoceo\Radix\Session;
+
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="initial-scale=1, user-scalable=yes">
@@ -68,7 +71,7 @@ footer a {
 	text-align: center;
 }
 </style>
-<title><?= $data['Page']['title'] ?: 'SSO' ?></title>
+<title><?= $data['Page']['title'] ?: 'SSO' ?> || OpenTHC</title>
 </head>
 <body>
 
@@ -92,6 +95,21 @@ kW46bNYGGhoOUlMxPAj8LvA9sSLNes3BiiyrVpbbzN0Ao/BOl9oKhIxBpODhNVbcBJcCoNIZPAOuBHOA
 </nav>
 
 <?php
+$x = Session::flash();
+if ( ! empty($x)) {
+	$x = str_replace('<div class="good">', '<div class="alert alert-success alert-dismissible" role="alert">', $x);
+	$x = str_replace('<div class="info">', '<div class="alert alert-info alert-dismissible" role="alert">', $x);
+	$x = str_replace('<div class="warn">', '<div class="alert alert-warning alert-dismissible" role="alert">', $x);
+	$x = str_replace('<div class="fail">', '<div class="alert alert-danger alert-dismissible" role="alert">', $x);
+
+	// Add Close Button before Closing DIV
+	$x = str_replace('</div>', '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button></div>', $x);
+
+	echo '<div class="radix-flash">';
+	echo $x;
+	echo '</div>';
+}
+
 if (!empty($data['Page']['flash'])) {
 ?>
 	<div class="container mt-4">
