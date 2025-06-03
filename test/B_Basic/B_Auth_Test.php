@@ -27,6 +27,10 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\Browser\Base
 	 */
 	public function test_home_redirect()
 	{
+		if (empty(self::$wd)) {
+			$this->markTestSkipped('No Webdriver');
+		}
+
 		// The Prime Site does a Meta-Refresh
 		self::$wd->get($_ENV['OPENTHC_TEST_ORIGIN']);
 		$src = self::$wd->getPageSource();
@@ -34,7 +38,7 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\Browser\Base
 		sleep(3); // Wait for refresh
 
 		$url = self::$wd->getCurrentUrl();
-		$this->assertMatchesRegularExpression('/sso\.openthc/', $url);
+		$this->assertMatchesRegularExpression('/sso.+\/auth\/open/', $url);
 
 	}
 
@@ -43,6 +47,10 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\Browser\Base
 	 */
 	public function test_auth_open_success_one_company()
 	{
+		if (empty(self::$wd)) {
+			$this->markTestSkipped('No Webdriver');
+		}
+
 		// self::$wd->manage()->deleteAllCookies();
 		self::$wd->get(sprintf('%s/auth/open', $_ENV['OPENTHC_TEST_ORIGIN']));
 
@@ -66,6 +74,10 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\Browser\Base
 
 	public function test_auth_open_success_pick_company()
 	{
+		if (empty(self::$wd)) {
+			$this->markTestSkipped('No Webdriver');
+		}
+
 		// self::$wd->manage()->deleteAllCookies();
 		self::$wd->get(sprintf('%s/auth/open', $_ENV['OPENTHC_TEST_ORIGIN']));
 
@@ -97,6 +109,10 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\Browser\Base
 	 */
 	public function test_auth_open_fail_username()
 	{
+		if (empty(self::$wd)) {
+			$this->markTestSkipped('No Webdriver');
+		}
+
 		self::$wd->get(sprintf('%s/auth/open', $_ENV['OPENTHC_TEST_ORIGIN']));
 
 		$element = $this->findElement('#username');
@@ -121,6 +137,10 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\Browser\Base
 	 */
 	public function test_auth_open_fail_password()
 	{
+		if (empty(self::$wd)) {
+			$this->markTestSkipped('No Webdriver');
+		}
+
 		self::$wd->get(sprintf('%s/auth/open', $_ENV['OPENTHC_TEST_ORIGIN']));
 
 		$element = $this->findElement('#username');
@@ -145,6 +165,10 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\Browser\Base
 	 */
 	public function test_auth_wellknown_reset()
 	{
+		if (empty(self::$wd)) {
+			$this->markTestSkipped('No Webdriver');
+		}
+
 		//
 		self::$wd->get(sprintf('%s/.well-known/change-password', $_ENV['OPENTHC_TEST_ORIGIN']));
 
@@ -159,6 +183,10 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\Browser\Base
 	 */
 	public function x_test_auth_open_verify()
 	{
+		if (empty(self::$wd)) {
+			$this->markTestSkipped('No Webdriver');
+		}
+
 		$host = parse_url($_ENV['OPENTHC_TEST_ORIGIN'], PHP_URL_HOST);
 
 		$Contact = [];
@@ -199,6 +227,10 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\Browser\Base
 	 */
 	public function x_test_auth_open_gone()
 	{
+		if (empty(self::$wd)) {
+			$this->markTestSkipped('No Webdriver');
+		}
+
 		// self::$wd->manage()->deleteAllCookies();
 		self::$wd->get(sprintf('%s/auth/open', $_ENV['OPENTHC_TEST_ORIGIN']));
 

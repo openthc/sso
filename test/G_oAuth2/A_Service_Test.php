@@ -35,8 +35,8 @@ class A_Service_Test extends \OpenTHC\SSO\Test\Base
 		// Get a Service Page
 		$res = $app_ua->get('/auth/open');
 		$this->assertValidResponse($res, 302);
-		// $url = $res->getHeaderLine('location');
-		// var_dump($url);
+		$url = $res->getHeaderLine('location');
+		var_dump($url);
 		// $this->assertNotEmpty($url);
 		// $this->assertMatchesRegularExpression('/https:\/\/sso.openthc.+authorize.+scope.+state.+client_id/', $l);
 	}
@@ -65,6 +65,8 @@ class A_Service_Test extends \OpenTHC\SSO\Test\Base
 		// Get a Service Page
 		$res = $b2b_ua->get('/auth/open');
 		$this->assertValidResponse($res, 302);
+		$url = $res->getHeaderLine('location');
+		var_dump($url);
 	}
 
 	/**

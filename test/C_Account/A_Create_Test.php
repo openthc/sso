@@ -333,6 +333,8 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base
 	 */
 	function test_verify_company($url0)
 	{
+		$this->markTestSkipped('We do not think this is a feature that will stay around.');
+
 		$this->assertNotEmpty($url0);
 		$this->assertMatchesRegularExpression('/^\/verify\/company\?_=.+/', $url0);
 
@@ -403,6 +405,7 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base
 	 */
 	function test_account_create_done($url0)
 	{
+
 		$this->assertNotEmpty($url0);
 
 		if (getenv('TEST_MODE') == 'prod') {

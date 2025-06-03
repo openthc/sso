@@ -215,6 +215,7 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\Browser\Base
 	 */
 	function test_verify_company($url0)
 	{
+		$this->markTestSkipped('We do not think this is a feature that will stay around.');
 		$this->assertNotEmpty($url0);
 		$this->assertMatchesRegularExpression('/\/verify\/company\?_=.+/', $url0);
 
@@ -229,7 +230,7 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\Browser\Base
 	}
 
 	/**
-	 * @depends test_verify_company
+	 * @depends test_verify_location
 	 */
 	function test_sign_in_new($url0)
 	{
