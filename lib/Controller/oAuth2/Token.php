@@ -123,7 +123,7 @@ class Token extends \OpenTHC\SSO\Controller\Base
 		}
 
 		if ($tok['client_id'] != $_POST['client_id']) {
-			return $this->makeError('access_denied', 'Invalid Token Data [COT-122]', 401);
+			return $this->makeError($RES, 'access_denied', 'Invalid Token Data [COT-122]', 401);
 		}
 
 		if (empty($tok['scope'])) {
