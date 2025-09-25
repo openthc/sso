@@ -20,7 +20,7 @@ fi
 
 #
 # Uses Enviroment to Create App
-# /opt/openthc/app/init.php
+/opt/openthc/sso/init.php
 
 # Start Regular Way
 exec /usr/sbin/apache2 -DFOREGROUND

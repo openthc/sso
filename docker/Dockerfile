@@ -5,34 +5,30 @@
 FROM openthc/web:latest
 
 #
+# Environment
+ENV OPENTHC_SERVER_NAME="sso.docker.openthc.org"
+
+#
 # Install
+# RUN git clone https://github.com/openthc/sso.git /opt/openthc/sso \
 COPY ./ /opt/openthc/sso
 RUN cd /opt/openthc/sso \
 	&& /opt/openthc/sso/make.sh
 
-
 #
-# Copy
+# Configure
 COPY ./docker/apache2.conf  /etc/apache2/sites-enabled/000-default.conf
+COPY ./docker/xdebug.ini    /etc/php/7.4/mods-available/xdebug.ini
 COPY ./docker/init.sh       /init.sh
-# COPY ./docker/rootfs/cre-openthc.yaml /opt/openthc/app/etc/cre/openthc.yaml
-# COPY ./docker/rootfs/first-run.php    /openthc-config-init.php
-# COPY ./docker/rootfs/xdebug.ini /etc/php/7.4/mods-available/xdebug.ini
-
-
-#
-# Ports
-EXPOSE 80
-
 
 #
 # Volumes
 VOLUME [ "/opt/openthc/gfs" ]
 
+#
+# Ports
+EXPOSE 80
 
 #
-# Environment
-ENV OPENTHC_SERVER_NAME="sso.docker.openthc.me"
-
-
+# Go!
 ENTRYPOINT [ "/init.sh" ]
