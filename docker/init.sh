@@ -1,5 +1,6 @@
 #!/bin/bash
 #
+# OpenTHC SSO Docker Init
 #
 
 set -o errexit
@@ -7,7 +8,6 @@ set -o errtrace
 set -o nounset
 set -o pipefail
 
-# printenv | sort
 
 #
 # PHP Debugger
@@ -18,9 +18,29 @@ then
 	phpenmod xdebug
 fi
 
-#
-# Uses Enviroment to Create App
-/opt/openthc/sso/init.php
 
-# Start Regular Way
+#
+# Uses Environment to Create App
+/opt/openthc/sso/docker/init.php
+
+# stat /opt/openthc/sso/etc/config.php
+
+# echo "CONFIG";
+# cat /opt/openthc/sso/etc/config.php
+# echo "###"
+
+# php -l /opt/openthc/sso/etc/config.php
+
+#
+# Unsets All OpenTHC Environment Variables
+# Except for OPENTHC_SERVICE and OPENTHC_SERVER_NAME
+for var in $(env | cut -d= -f1 | grep OPENTHC | grep -v OPENTHC_SER)
+do
+	# echo "unset $var"
+	unset "$var"
+done
+
+
+#
+# Start Apache
 exec /usr/sbin/apache2 -DFOREGROUND
