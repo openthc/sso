@@ -6,7 +6,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-namespace OpenTHC\SSO\Controller;
+namespace OpenTHC\SSO\Test\Unit;
 
 use OpenTHC\SSO\Test\Base;
 
@@ -20,7 +20,7 @@ class Controller_Notify_Test extends Base
 
 	function test_notify()
 	{
-		$this->markTestSkipped('Need to Refine Process');
+		$this->markTestSkipped('Not Working at the Moment, Need to Refine Process');
 
 		// Mock slim environment
 		$container = new \Slim\Container();
@@ -47,6 +47,11 @@ class Controller_Notify_Test extends Base
 		$res = $notify($req, $res, [ 'r' => '/the-next-url']);
 		$this->assertEquals(200, $res->getStatusCode());
 		$this->assertStringContainsString('<div class="card-header"><h2>Test Notification</h2></div>', (string)$res->getBody());
+		$x = $notify($req, $res, [ 'r' => '/the-next-url']);
+		echo $x->getBody()->getContents();
+		// $this->assertValidResponse($x, 200);
+		// $this->assertEquals(200, $x->getStatusCode());
+		// $this->assertStringContainsString('<div class="card-header"><h2>Test Notification</h2></div>', (string)$res->getBody());
 
 		// Test POST
 		$_POST = [
