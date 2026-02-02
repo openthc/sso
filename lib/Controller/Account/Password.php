@@ -43,9 +43,8 @@ class Password extends \OpenTHC\SSO\Controller\Base
 			}
 		}
 
-		$RES->getBody()->write( $this->render('account/password.php', $data) );
-
-		return $RES;
+		// $RES->getBody()->write( $this->render('account/password.php', $data) );
+		return $RES->getBody()->write( $this->render('account/password.php', $data) );
 
 	}
 
