@@ -2,26 +2,25 @@
 	"name": "openthc/sso",
 	"description": "OpenTHC Single Sign On Server",
 	"license": "GPL-3.0-only",
-	"version": "420.25.084",
+	"version": "420.26.033",
 	"autoload": {
 		"psr-4": {
 			"OpenTHC\\SSO\\": "./lib",
-			"OpenTHC\\SSO\\Test\\": "./test",
-			"Custom\\": "./Custom"
+			"OpenTHC\\SSO\\Test\\": "./test"
 		},
 		"exclude-from-classmap": [
 			"vendor/erusev/parsedown-extra/test"
 		]
 	},
 	"require": {
-		"geoip2/geoip2": "2.13.0",
-		"openthc/common": "dev-main"
+		"geoip2/geoip2": "3.3.0",
+		"openthc/common": "dev-debian-13",
+		"php-di/php-di": "7.1.1"
 	},
 	"require-dev": {
 		"fakerphp/faker": "1.24.1",
 		"php-webdriver/webdriver": "1.15.2",
-		"phpstan/phpstan": "2.1.11",
-		"phpunit/phpunit": "9.6.22",
-		"phpunit/phpunit-selenium": "9.0.1"
+		"phpstan/phpstan": "2.1.38",
+		"phpunit/phpunit": "12.5.8"
 	}
 }

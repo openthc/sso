@@ -42,7 +42,7 @@ class Notify extends \OpenTHC\SSO\Controller\Base
 		if (empty($notify_id)) {
 			$file_list = glob(sprintf('%s/etc/notify/*.yaml', APP_ROOT));
 			if (empty($file_list)) {
-				return $RES->withRedirect($next_url);
+				return $this->redirect($next_url);
 			}
 
 			// This scheme shows them the latest/newest/last yaml file. If older ones exist, we ignore them
@@ -56,7 +56,7 @@ class Notify extends \OpenTHC\SSO\Controller\Base
 		$redis = $this->_container->RDB;
 		$key = sprintf('notify-%s-company-%s-contact-%s', $notify_id, $company_id, $contact_id);
 		if ($redis->exists($key)) {
-			return $RES->withRedirect($next_url);
+			return $this->redirect($next_url);
 		}
 
 		$yaml = file_get_contents($yaml_file);
@@ -84,7 +84,7 @@ class Notify extends \OpenTHC\SSO\Controller\Base
 		$key = sprintf('%s-company-%s-contact-%s', $notify_id, $company_id, $contact_id);
 		$redis->set($key, true);
 
-		return $RES->withRedirect($_POST['next_url']);
+		return $this->redirect($_POST['next_url']);
 
 	}
 }

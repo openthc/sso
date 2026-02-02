@@ -19,9 +19,8 @@ RUN cd /opt/openthc/sso \
 
 #
 # Configure
-COPY ./docker/apache2.conf  /etc/apache2/sites-enabled/000-default.conf
 COPY ./docker/Caddyfile     /etc/caddy/Caddyfile
-COPY ./docker/xdebug.ini    /etc/php/7.4/mods-available/xdebug.ini
+# COPY ./docker/xdebug.ini    /etc/php/7.4/mods-available/xdebug.ini
 COPY ./docker/init.sh       /init.sh
 COPY ./docker/init.php      /opt/openthc/sso/docker/init.php
 

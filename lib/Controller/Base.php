@@ -7,18 +7,23 @@
 
 namespace OpenTHC\SSO\Controller;
 
+use Psr\Container\ContainerInterface;
+
 use OpenTHC\CSRF;
 
 class Base extends \OpenTHC\Controller\Base
 {
+	protected $dic;
+
 	protected $data;
 
 	/**
 	 * Constructor
 	 */
-	function __construct(\Slim\Container $c)
+	function __construct(ContainerInterface $dic)
 	{
-		parent::__construct($c);
+		$this->dic = $dic;
+		// parent::__construct($c);
 
 		$data = [];
 		$data['Site'] = [];
@@ -29,6 +34,12 @@ class Base extends \OpenTHC\Controller\Base
 
 		$this->data = $data;
 
+	}
+
+	protected function redirect($path, $code=302)
+	{
+		$RES = new \GuzzleHttp\Psr7\Response($code);
+		return $RES->withHeader('Location', $path);
 	}
 
 	/**

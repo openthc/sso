@@ -35,7 +35,7 @@ class Init extends \OpenTHC\SSO\Controller\Base
 		// Load Location
 		$this->loadGeoIP();
 
-		$dbc_auth = $this->_container->DBC_AUTH;
+		$dbc_auth = $this->dic->get('DBC_AUTH');
 
 		// Check Intent
 		switch ($act_data['intent']) {
@@ -55,7 +55,7 @@ class Init extends \OpenTHC\SSO\Controller\Base
 		// Contact Status Switch
 		switch ($Contact['stat']) {
 			case Contact::STAT_INIT:
-				return $RES->withRedirect(sprintf('/verify?_=%s', $_GET['_']));
+				return $this->redirect(sprintf('/verify?_=%s', $_GET['_']));
 				break;
 			case Contact::STAT_LIVE:
 				// OK
@@ -75,7 +75,7 @@ class Init extends \OpenTHC\SSO\Controller\Base
 	 */
 	protected function account_init($RES, $act_data, $Contact)
 	{
-		$dbc_auth = $this->_container->DBC_AUTH;
+		$dbc_auth = $this->dic->get('DBC_AUTH');
 
 		/**
 		 * Initialize Company Data in $act_data & return
@@ -145,7 +145,7 @@ class Init extends \OpenTHC\SSO\Controller\Base
 	/**
 	 * @return \OpenTHC\SSO\Response ready to be redirected
 	 */
-	protected function _create_ticket_and_redirect($RES, $act_data, $Contact, $Company) : \OpenTHC\SSO\Response
+	protected function _create_ticket_and_redirect($RES, $act_data, $Contact, $Company)
 	{
 		$_SESSION['Contact'] = $Contact;
 		$_SESSION['Company'] = $Company;
@@ -195,7 +195,7 @@ class Init extends \OpenTHC\SSO\Controller\Base
 				_exit_html_warn('<h1>Invalid Request [CAI-188]</h1>', 400);
 		}
 
-		return $RES->withRedirect($ret);
+		return $this->redirect($ret);
 
 	}
 
@@ -204,10 +204,13 @@ class Init extends \OpenTHC\SSO\Controller\Base
 	 */
 	protected function contact_inflate($Contact)
 	{
+		$dbc_auth = $this->dic->get('DBC_AUTH');
+		$dbc_main = $this->dic->get('DBC_MAIN');
+
 		// Auth/Contact
 		$sql = 'SELECT id, username, password, stat, flag, iso3166, tz FROM auth_contact WHERE id = :pk';
 		$arg = [ ':pk' => $Contact['id'] ];
-		$CT0 = $this->_container->DBC_AUTH->fetchRow($sql, $arg);
+		$CT0 = $dbc_auth->fetchRow($sql, $arg);
 		if (empty($CT0['id'])) {
 			_exit_html_fail('<h1>Unexpected Session State [CAI-047]</h1><p>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support.</p>', 500);
 		}
@@ -215,7 +218,7 @@ class Init extends \OpenTHC\SSO\Controller\Base
 		// Base/Contact
 		$sql = 'SELECT id, name AS fullname, phone, email FROM contact WHERE id = :pk';
 		$arg = [ ':pk' => $Contact['id'] ];
-		$CT1 = $this->_container->DBC_MAIN->fetchRow($sql, $arg);
+		$CT1 = $dbc_main->fetchRow($sql, $arg);
 		if (empty($CT1['id'])) {
 			_exit_html_fail('<h1>Unexpected Session State [CAI-058]</h1><p>You should <a href="/auth/shut">close your session</a> and try again<br>If the issue continues, contact support.</p>', 500);
 		}

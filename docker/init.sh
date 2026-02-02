@@ -43,4 +43,8 @@ done
 
 #
 # Start Apache
-exec /usr/sbin/apache2 -DFOREGROUND
+# exec /usr/sbin/apache2 -DFOREGROUND
+
+/etc/init.d/php8.4-fpm start
+
+exec caddy run --config /etc/caddy/Caddyfile --adapter caddyfile

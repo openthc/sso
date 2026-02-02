@@ -7,6 +7,8 @@
 
 namespace OpenTHC\SSO\Controller\Auth;
 
+use Psr\Container\ContainerInterface;
+
 use Edoceo\Radix\Filter;
 use Edoceo\Radix\Session;
 
@@ -149,7 +151,7 @@ class Open extends \OpenTHC\SSO\Controller\Base
 			$data['auth_username'] = $this->getEmailCookie();
 		}
 
-		$RES = $RES->write( $this->render('auth/open.php', $data) );
+		$RES->getBody()->write( $this->render('auth/open.php', $data) );
 
 		return $RES;
 
@@ -188,7 +190,7 @@ class Open extends \OpenTHC\SSO\Controller\Base
 		$username = filter_var($username, FILTER_VALIDATE_EMAIL);
 		// $username = \Edoceo\Radix\Filter::email($username);
 		if (empty($username)) {
-			return $RES->withRedirect('/auth/open?' . http_build_query([
+			return $this->redirect('/auth/open?' . http_build_query([
 				'_' => $_GET['_'],
 				'e' => 'CAO-049'
 			]));
@@ -197,27 +199,27 @@ class Open extends \OpenTHC\SSO\Controller\Base
 
 		$password = trim($_POST['password']);
 		if (empty($password) || (strlen($password) < 8) || (strlen($password) > 60)) {
-			return $RES->withRedirect('/auth/open?' . http_build_query([
+			return $this->redirect('/auth/open?' . http_build_query([
 				'_' => $_GET['_'],
 				'e' => 'CAO-069'
 			]));
 		}
 
 		// Find Contact
-		$dbc = $this->_container->DBC_AUTH;
+		$dbc = $this->dic->get('DBC_AUTH');
 		$sql = 'SELECT id, flag, stat, username, password FROM auth_contact WHERE username = :u0';
 		$arg = [ ':u0' => $username ];
 		$Contact = $dbc->fetchRow($sql, $arg);
 
 		if (empty($Contact['id'])) {
-			return $RES->withRedirect('/auth/open?' . http_build_query([
+			return $this->redirect('/auth/open?' . http_build_query([
 				'_' => $_GET['_'],
 				'e' => 'CAO-093'
 			]));
 		}
 
 		if ( ! password_verify($password, $Contact['password'])) {
-			return $RES->withRedirect('/auth/open?' . http_build_query([
+			return $this->redirect('/auth/open?' . http_build_query([
 				'_' => $_GET['_'],
 				'e' => 'CAO-153'
 			]));
@@ -264,7 +266,7 @@ class Open extends \OpenTHC\SSO\Controller\Base
 
 		$tok = \OpenTHC\SSO\Auth_Context_Ticket::set($tok_data);
 
-		return $RES->withRedirect(sprintf('/auth/init?_=%s', $tok));
+		return $this->redirect(sprintf('/auth/init?_=%s', $tok));
 
 	}
 
@@ -300,7 +302,7 @@ class Open extends \OpenTHC\SSO\Controller\Base
 
 			// would like init to work from it's own JWT?
 			// or it works from just a minimally populated session?
-			// return $RES->withRedirect('/auth/init');
+			// return $this->redirect('/auth/init');
 
 			$act = [];
 			$act['id'] = _random_hash();
@@ -313,7 +315,7 @@ class Open extends \OpenTHC\SSO\Controller\Base
 
 			$dbc->insert('auth_context_ticket', $act);
 
-			return $RES->withRedirect('/auth/init?_=' . $act['id']);
+			return $this->redirect('/auth/init?_=' . $act['id']);
 
 		} catch (\Exception $e) {
 			return $this->sendFailure($RES, [
@@ -334,13 +336,13 @@ class Open extends \OpenTHC\SSO\Controller\Base
 		$username = strtolower(trim($_POST['username']));
 		$username = \Edoceo\Radix\Filter::email($username);
 		if (empty($username)) {
-			return $RES->withRedirect('/auth/open?a=password-reset&e=CAO-049');
+			return $this->redirect('/auth/open?a=password-reset&e=CAO-049');
 		}
 
 		$dbc_auth = $this->_container->DBC_AUTH;
 		$Contact = $dbc_auth->fetchRow('SELECT id, username FROM auth_contact WHERE username = :u0', [ ':u0' => $username ]);
 		if (empty($Contact)) {
-			return $RES->withRedirect('/done?e=CAO-100');
+			return $this->redirect('/done?e=CAO-100');
 		}
 
 		$_SESSION['auth-open-email'] = $username;
@@ -375,7 +377,7 @@ class Open extends \OpenTHC\SSO\Controller\Base
 			]
 		]);
 
-		return $RES->withRedirect('/done?' . http_build_query($ret_args));
+		return $this->redirect('/done?' . http_build_query($ret_args));
 
 	}
 

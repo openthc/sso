@@ -42,23 +42,18 @@ http:// {
 
 	redir /.well-known/change-password /auth/open?a=password-reset 302
 
-	# Static only for /output
-	handle_path /output/* {
-		root * /opt/openthc/sso/webroot/output/
+	@static_paths {
+		path /css/* /img/* /js/* /output/* /pub/* /vendor/*
 	}
 
-	# Static only for /vendor
-	handle_path /vendor/* {
-		root * /opt/openthc/sso/webroot/vendor/
-		# import common404
-		# file_server
+	handle @static_paths {
+		file_server
 	}
 
 	# PHP Everything Else
-	handle_path /* {
-		php_fastcgi unix//run/php/php7.4-fpm.sock {
-			try_files {path} {path}/index.php /main.php
-		}
+	handle {
+		try_files {path} {path}/index.html {path}/index.php /main.php
+		php_fastcgi unix//run/php/php8.4-fpm.sock
 	}
 
 	handle_errors {
