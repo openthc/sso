@@ -42,6 +42,13 @@ $errorMiddleware->setDefaultErrorHandler(function (
 		return $response->withHeader('content-type', 'text/plain');
 });
 
+$cfg = [];
+// $cfg['debug'] = true;
+
+$dic = new \DI\Container();
+\Slim\Factory\AppFactory::setContainer($dic);
+
+$app = \Slim\Factory\AppFactory::create();
 
 // Database Connections
 $dic->set('DBC_AUTH', function() {
@@ -97,6 +104,22 @@ $app->post('/profile', 'OpenTHC\SSO\Controller\Account\Profile:post')->add('Open
 
 // Account
 $app->group('/account', function($g) {
+
+	// $g->get('', 'OpenTHC\SSO\Controller\API\Main');
+
+	$g->post('/company/{company_id}/invite', 'OpenTHC\SSO\Controller\API\Company\Invite')->setName('api/company/invite');
+
+	$g->get('/contact', 'OpenTHC\SSO\Controller\API\Contact\Search')->setName('api/contact/search');
+
+	$g->post('/contact', 'OpenTHC\SSO\Controller\API\Contact\Create')->setName('api/contact/create');
+	$g->post('/contact/{id}', 'OpenTHC\SSO\Controller\API\Contact\Update');
+
+	$g->post('/jwt/create', 'OpenTHC\SSO\Controller\API\JWT\Create');
+	$g->post('/jwt/verify', 'OpenTHC\SSO\Controller\API\JWT\Verify');
+});
+
+// Profile v1
+$app->group('/profile', function($g) {
 
 	$g->get('', 'OpenTHC\SSO\Controller\Account\Profile');
 	$g->post('', 'OpenTHC\SSO\Controller\Account\Profile:post');

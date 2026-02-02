@@ -7,6 +7,8 @@
 
 namespace OpenTHC\SSO\Controller\Auth;
 
+use Psr\Container\ContainerInterface;
+
 use Edoceo\Radix\Filter;
 use Edoceo\Radix\Session;
 
