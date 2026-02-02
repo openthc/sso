@@ -50,7 +50,7 @@ class Base extends \OpenTHC\Controller\Base
 		// $type_want
 		$RES = $RES->withBody(new \Slim\Http\RequestBody());
 		$RES = $RES->withStatus($code);
-		$RES = $RES->write( $this->render('done.php', $data) );
+		$RES = $RES->getBody()->write( $this->render('done.php', $data) );
 		return $RES;
 		// if want JSON?
 		// return $RES->withJSON([

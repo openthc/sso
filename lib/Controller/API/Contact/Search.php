@@ -35,15 +35,15 @@ class Search extends \OpenTHC\SSO\Controller\Base
 
 		// $e3 = \Edoceo\Radix\Filter::email($e1);
 		// if (empty($e)) {
-		// 	return $RES->withRedirect('/account/create?e=CAC-035');
+		// 	return $this->redirect('/account/create?e=CAC-035');
 		// }
 
 		// $Contact['name'] = trim($_POST['name']);
 		$Contact['username'] = $Contact['email'];
 
 		// Do Database Things
-		$dbc_auth = $this->_container->DBC_AUTH;
-		$dbc_main = $this->_container->DBC_MAIN;
+		$dbc_auth = $this->dic->get('DBC_AUTH');
+		$dbc_main = $this->dic->get('DBC_MAIN');
 
 		// Channel
 		$sql = 'SELECT id, stat, type, data FROM channel WHERE type = :t0 AND data = :e0';

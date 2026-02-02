@@ -7,8 +7,6 @@
 
 namespace OpenTHC\SSO\Controller\Auth;
 
-use Psr\Container\ContainerInterface;
-
 use Edoceo\Radix\Filter;
 use Edoceo\Radix\Session;
 
@@ -76,7 +74,9 @@ class Open extends \OpenTHC\SSO\Controller\Base
 			$cfg = \OpenTHC\Config::get('google');
 			$data['Google']['recaptcha_public'] = $cfg['recaptcha-public'];
 
-			return $RES->write( $this->render('auth/once-password-reset.php', $data) );
+			$RES->getBody()->write( $this->render('auth/once-password-reset.php', $data) );
+
+			return $RES;
 
 			break;
 
@@ -95,7 +95,7 @@ class Open extends \OpenTHC\SSO\Controller\Base
 
 			$tok = \OpenTHC\SSO\Auth_Context_Ticket::set($act_data);
 
-			return $RES->withRedirect(sprintf('/auth/init?_=%s', $tok));
+			return $this->redirect(sprintf('/auth/init?_=%s', $tok));
 
 			break;
 
@@ -278,12 +278,12 @@ class Open extends \OpenTHC\SSO\Controller\Base
 	{
 		$_SESSION = [];
 
-		$dbc = $this->_container->DBC_AUTH;
+		$dbc_auth = $this->dic->get('DBC_AUTH');
 
 		try {
 
 			$jwt = \OpenTHC\JWT::decode_only($jwt);
-			$key = $dbc->fetchOne('SELECT hash FROM auth_service WHERE id = :s0', [
+			$key = $dbc_auth->fetchOne('SELECT hash FROM auth_service WHERE id = :s0', [
 				':s0' => $jwt->body->iss
 			]);
 			$jwt = \OpenTHC\JWT::decode($jwt, $key);
@@ -313,7 +313,7 @@ class Open extends \OpenTHC\SSO\Controller\Base
 				]
 			]);
 
-			$dbc->insert('auth_context_ticket', $act);
+			$dbc_auth->insert('auth_context_ticket', $act);
 
 			return $this->redirect('/auth/init?_=' . $act['id']);
 
@@ -339,7 +339,7 @@ class Open extends \OpenTHC\SSO\Controller\Base
 			return $this->redirect('/auth/open?a=password-reset&e=CAO-049');
 		}
 
-		$dbc_auth = $this->_container->DBC_AUTH;
+		$dbc_auth = $this->dic->get('DBC_AUTH');
 		$Contact = $dbc_auth->fetchRow('SELECT id, username FROM auth_contact WHERE username = :u0', [ ':u0' => $username ]);
 		if (empty($Contact)) {
 			return $this->redirect('/done?e=CAO-100');
@@ -388,13 +388,13 @@ class Open extends \OpenTHC\SSO\Controller\Base
 	{
 		if (preg_match('/^[\w\.]{6,26}$/', $s)) {
 
-			$dbc = $this->_container->DBC_AUTH;
+			$dbc_auth = $this->dic->get('DBC_AUTH');
 			$sql = <<<SQL
 			SELECT id, code, name
 			FROM auth_service
 			WHERE (id = :s0 OR code = :s0)
 			SQL;
-			$svc = $dbc->fetchRow($sql, [
+			$svc = $dbc_auth->fetchRow($sql, [
 				':s0' => $s,
 			]);
 

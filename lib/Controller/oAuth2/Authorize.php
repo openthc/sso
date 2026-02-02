@@ -16,7 +16,7 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 	{
 		$this->verifyRequest();
 
-		$dbc = $this->_container->DBC_AUTH;
+		$dbc_auth = $this->dic->get('DBC_AUTH');
 
 		// Good Session?
 		$RES = $this->verifySession($RES);
@@ -27,7 +27,7 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 		// Validate Service
 		$sql = 'SELECT id, name, code, hash, context_list FROM auth_service WHERE (id = :c0 OR code = :c0)';
 		$arg = [ ':c0' => $_GET['client_id'] ];
-		$Auth_Service = $dbc->fetchRow($sql, $arg);
+		$Auth_Service = $dbc_auth->fetchRow($sql, $arg);
 		if (empty($Auth_Service['id'])) {
 			_exit_json(array(
 				'error' => 'invalid_client',
@@ -47,9 +47,9 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 		// Did you already Authorize this Application?
 		$sql = 'SELECT count(service_id) FROM auth_service_contact WHERE service_id = ? AND contact_id = ? AND expires_at > now()';
 		$arg = array($Auth_Service['id'], $_SESSION['Contact']['id']);
-		$chk = $dbc->fetchOne($sql, $arg);
+		$chk = $dbc_auth->fetchOne($sql, $arg);
 		if ( ! empty($chk)) {
-			return $RES->withRedirect('/oauth2/permit?a=fast&_=' . $link_crypt);
+			return $this->redirect('/oauth2/permit?a=fast&_=' . $link_crypt);
 		}
 
 		// Permit & Remember
@@ -57,7 +57,7 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 		$link_crypt_save = _encrypt(json_encode($_GET), $_SESSION['crypt-key']);
 
 		// Always push through Authorize UX
-		return $RES->withRedirect('/oauth2/permit?_=' . $link_crypt);
+		return $this->redirect('/oauth2/permit?_=' . $link_crypt);
 
 		$data = [];
 		$data['Page'] = [ 'title' => 'Authorize' ];
@@ -68,7 +68,7 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 		$data['link_crypt'] = $link_crypt;
 		$data['link_crypt_save'] = $link_crypt_save;
 
-		return $RES->write( $this->render('oauth2/authorize.php', $data) );
+		return $RES->getBody()->write( $this->render('oauth2/authorize.php', $data) );
 
 	}
 
@@ -129,7 +129,9 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 	 */
 	function verifyScope() : array
 	{
-		$res = $this->_container->DBC_AUTH->fetchAll('SELECT code FROM auth_context');
+		$dbc_auth = $this->dic->get('DBC_AUTH');
+
+		$res = $dbc_auth->fetchAll('SELECT code FROM auth_context');
 		$scope_list_all = array_reduce($res, function($ret, $cur) {
 			$ret[] = $cur['code'];
 			return $ret;
@@ -201,7 +203,7 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 
 			$ret = sprintf('/auth/open?_=%s', $tok);
 
-			return $RES->withRedirect($ret);
+			return $this->redirect($ret);
 
 		}
 
@@ -218,7 +220,7 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 
 			$ret = sprintf('/auth/open?_=%s', $tok);
 
-			return $RES->withRedirect($ret);
+			return $this->redirect($ret);
 		}
 
 		return $RES;

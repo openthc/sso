@@ -130,7 +130,7 @@ class Init extends \OpenTHC\SSO\Controller\Base
 				$data['Page']['title'] = 'Select Company';
 				$data['company_list'] = $company_list;
 
-				$RES = $RES->write( $this->render('auth/init.php', $data) );
+				$RES = $RES->getBody()->write( $this->render('auth/init.php', $data) );
 				return $RES->withStatus(300);
 
 		}

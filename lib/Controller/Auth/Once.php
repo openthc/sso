@@ -40,7 +40,8 @@ class Once extends \OpenTHC\SSO\Controller\Base
 		// Get Token
 		$act = \OpenTHC\SSO\Auth_Context_Ticket::get($_GET['_']);
 		if (empty($act)) {
-			$act = new \OpenTHC\Auth_Context_Ticket($this->_container->DBC_AUTH, $_GET['_']);
+			$dbc_auth = $this->dic->get('DBC_AUTH');
+			$act = new \OpenTHC\Auth_Context_Ticket($dbc_auth, $_GET['_']);
 			if ( ! $act->isValid()) {
 				return $this->sendFailure($RES, [
 					'error_code' => 'CAO-040',
@@ -56,20 +57,20 @@ class Once extends \OpenTHC\SSO\Controller\Base
 			case 'account-invite':
 				// Make a New Token
 				$tok = \OpenTHC\SSO\Auth_Context_Ticket::set($act);
-				return $RES->withRedirect(sprintf('/account/commit?_=%s', $tok));
+				return $this->redirect(sprintf('/account/commit?_=%s', $tok));
 				break;
 			case 'email-verify':
 				$tok = \OpenTHC\SSO\Auth_Context_Ticket::set($act);
-				return $RES->withRedirect(sprintf('/verify/email?_=%s', $tok));
+				return $this->redirect(sprintf('/verify/email?_=%s', $tok));
 				break;
 			case 'password-reset':
 				$tok = \OpenTHC\SSO\Auth_Context_Ticket::set($act);
-				return $RES->withRedirect(sprintf('/account/password?_=%s', $tok));
+				return $this->redirect(sprintf('/account/password?_=%s', $tok));
 				break;
 			case 'account-init':
 				$act['intent'] = 'account-open'; // Overwrite?
 				$tok = \OpenTHC\SSO\Auth_Context_Ticket::set($act);
-				return $RES->withRedirect(sprintf('/auth/init?_=%s', $tok));
+				return $this->redirect(sprintf('/auth/init?_=%s', $tok));
 			case 'account-open':
 			case 'oauth-migrate':
 				return $RES->withJSON($act);

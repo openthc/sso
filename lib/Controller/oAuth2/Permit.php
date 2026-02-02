@@ -26,12 +26,14 @@ class Permit extends \OpenTHC\SSO\Controller\Base
 
 		$_GET = $x;
 
+		$dbc_auth = $this->dic->get('DBC_AUTH');
+
 		// Load & Validate The Client
 		$sql = 'SELECT id, name, code, hash, context_list FROM auth_service WHERE (id = :c0 OR code = :c0)';
 		$arg = [
 			':c0' => $_GET['client_id'],
 		];
-		$Auth_Service = $this->_container->DBC_AUTH->fetchRow($sql, $arg);
+		$Auth_Service = $dbc_auth->fetchRow($sql, $arg);
 		if (empty($Auth_Service['id'])) {
 			_exit_json(array(
 				'error' => 'invalid_client',
@@ -56,7 +58,7 @@ class Permit extends \OpenTHC\SSO\Controller\Base
 			$data,
 			strftime('%Y-%m-%d %H:%M:%S', $_SERVER['REQUEST_TIME'] + 300),
 		);
-		$this->_container->DBC_AUTH->query($sql, $arg);
+		$dbc_auth->query($sql, $arg);
 
 		$this->_permit_and_save($Auth_Service);
 
@@ -77,12 +79,12 @@ class Permit extends \OpenTHC\SSO\Controller\Base
 		$ret = _url_assemble($ruri);
 
 		// Always push through Permit UX
-		return $RES->withRedirect($ret);
+		return $this->redirect($ret);
 
 		/*
 		// Configured to hide Confirm Prompt
 		if (\OpenTHC\Config::get('sso/redirect-fast')) {
-			return $RES->withRedirect($ret);
+			return $this->redirect($ret);
 		}
 
 		$data = [];
@@ -92,7 +94,7 @@ class Permit extends \OpenTHC\SSO\Controller\Base
 		$data['Service'] = $Auth_Service;
 		$data['return_url'] = $ret;
 
-		return $RES->write( $this->render('oauth2/permit.php', $data) );
+		return $RES->getBody()->write( $this->render('oauth2/permit.php', $data) );
 		*/
 
 	}
@@ -104,13 +106,16 @@ class Permit extends \OpenTHC\SSO\Controller\Base
 	{
 		// Remember this application authorization
 		if (!empty($_GET['auth-commit'])) {
+
+			$dbc_auth = $this->dic->get('DBC_AUTH');
+
 			$sql = 'INSERT INTO auth_service_contact (service_id, contact_id) VALUES (:a, :u)';
 			$arg = array(
 				':a' => $Auth_Service['id'],
 				':u' => $_SESSION['Contact']['id'],
 				// 'expires_at'
 			);
-			$res = $this->_container->DBC_AUTH->query($sql, $arg);
+			$res = $dbc_auth->query($sql, $arg);
 		}
 	}
 }

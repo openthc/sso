@@ -14,8 +14,8 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 	 */
 	function __invoke($REQ, $RES, $ARG)
 	{
-		$dbc_auth = $this->_container->DBC_AUTH;
-		$dbc_main = $this->_container->DBC_MAIN;
+		$dbc_auth = $this->dic->get('DBC_AUTH');
+		$dbc_main = $this->dic->get('DBC_MAIN');
 
 		$Profile = array(
 			'scope' => [],

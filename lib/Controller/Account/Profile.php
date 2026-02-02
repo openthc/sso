@@ -23,9 +23,8 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 			_exit_html_fail('<h1>Invalid Session [CAP-017]</h1><p>Please <a href="/auth/shut">close the session</a> and try again.</p>', 403);
 		}
 
-		$dbc_auth = $this->_container->DBC_AUTH;
-		$dbc_main = $this->_container->DBC_MAIN;
-
+		$dbc_auth = $this->dic->get('DBC_AUTH');
+		$dbc_main = $this->dic->get('DBC_MAIN');
 
 		$C0 = $dbc_auth->fetchRow('SELECT * FROM auth_contact WHERE id = :ct0', [ ':ct0' => $_SESSION['Contact']['id'] ]);
 		if (empty($C0['id'])) {
@@ -44,10 +43,10 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 		SELECT id
 			, name AS auth_name
 			, stat AS auth_stat
-			, guid
-			, iso3166
-			, tz
-			, cre
+			-- , guid
+			-- , iso3166
+			-- , tz
+			-- , cre
 			, length(dsn) AS dsn
 		FROM auth_company
 		WHERE id IN (
@@ -147,7 +146,9 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 			];
 		}
 
-		return $RES->write( $this->render('account/profile.php', $data) );
+		$RES->getBody()->write( $this->render('account/profile.php', $data) );
+
+		return $RES;
 
 	}
 
@@ -158,8 +159,8 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 	{
 		CSRF::verify($_POST['CSRF']);
 
-		$dbc_auth = $this->_container->DBC_AUTH;
-		$dbc_main = $this->_container->DBC_MAIN;
+		$dbc_auth = $this->dic->get('DBC_AUTH');
+		$dbc_main = $this->dic->get('DBC_MAIN');
 
 		switch ($_POST['a']) {
 			case 'contact-email-update':
@@ -181,7 +182,7 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 					]
 				];
 				$tok = \OpenTHC\SSO\Auth_Context_Ticket::set($act);
-				return $RES->withRedirect(sprintf('/account/password?_=%s', $tok));
+				return $this->redirect(sprintf('/account/password?_=%s', $tok));
 				break;
 			case 'contact-phone-update':
 				$dbc_main->query('UPDATE contact SET phone = :p1 WHERE id = :c0', [
@@ -191,7 +192,7 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 				break;
 		}
 
-		return $RES->withRedirect('/account');
+		return $this->redirect('/account');
 
 	}
 
@@ -209,7 +210,7 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 			_exit_html_fail('<h1>Invalid Email [CAP-169]</h1>', 400);
 		}
 
-		$dbc_auth = $this->_container->DBC_AUTH;
+		$dbc_auth = $this->dic->get('DBC_AUTH');
 
 		// Find in Channel?
 		// $Ch0 = \Channel::findBy();
@@ -218,6 +219,6 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 		$CT0['username'] = $e;
 		$CT0->save('Contact/Update by User');
 
-		return $RES->withRedirect('/profile');
+		return $this->redirect('/profile');
 	}
 }

@@ -49,47 +49,48 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 
 		// Verify Email
 		if ( ! $CT0->hasFlag(Contact::FLAG_EMAIL_GOOD)) {
-			return $RES->withRedirect(sprintf('/verify/email?_=%s', $tok));
+			return $this->redirect(sprintf('/verify/email?_=%s', $tok));
 		}
 		if ($CT0->hasFlag(Contact::FLAG_EMAIL_WANT)) {
-			return $RES->withRedirect(sprintf('/verify/email?_=%s', $tok));
+			return $this->redirect(sprintf('/verify/email?_=%s', $tok));
 		}
 
 		// Verify Password
 		if (empty($CT0['password'])) {
-			return $RES->withRedirect(sprintf('/verify/password?_=%s', $tok));
+			return $this->redirect(sprintf('/verify/password?_=%s', $tok));
 		}
 
 		// Verify Location
 		if (empty($CT0['iso3166'])) {
-			return $RES->withRedirect(sprintf('/verify/location?_=%s', $tok));
+			return $this->redirect(sprintf('/verify/location?_=%s', $tok));
 		}
 
 		// Timezone
 		if (empty($CT0['tz'])) {
-			return $RES->withRedirect(sprintf('/verify/timezone?_=%s', $tok));
+			return $this->redirect(sprintf('/verify/timezone?_=%s', $tok));
 		}
 
 		// Phone
 		/*
 		if (empty($_SESSION['verify']['phone']['done'])) {
 			if ($CT0->hasFlag(Contact::FLAG_PHONE_WANT)) {
-				return $RES->withRedirect(sprintf('/verify/phone?_=%s', $tok));
+				return $this->redirect(sprintf('/verify/phone?_=%s', $tok));
 			}
 			if ( ! $CT0->hasFlag(Contact::FLAG_PHONE_GOOD)) {
-				return $RES->withRedirect(sprintf('/verify/phone?_=%s', $tok));
+				return $this->redirect(sprintf('/verify/phone?_=%s', $tok));
 			}
 		}
 		*/
 
+		$dbc_auth = $this->dic->get('DBC_AUTH');
+
 		// Company
 		// Not Required at the Moment
-		// $dbc_auth = $this->_container->DBC_AUTH;
 		// $chk = $dbc_auth->fetchOne('SELECT count(id) FROM auth_company_contact WHERE contact_id = :ct0', [
 		// 	':ct0' => $CT0['id'],
 		// ]);
 		// if (empty($chk)) {
-		// 	return $RES->withRedirect(sprintf('/verify/company?_=%s', $tok));
+		// 	return $this->redirect(sprintf('/verify/company?_=%s', $tok));
 		// }
 
 		switch ($act_data['intent']) {
@@ -106,18 +107,17 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 
 				$_SESSION['auth-open-email'] = $act_data['contact']['username'];
 
-				return $RES->withRedirect('/done?e=CVM-119');
+				return $this->redirect('/done?e=CVM-119');
 
 				break;
 		}
 
 		// Update Contact Status
-		$dbc = $this->_container->DBC_AUTH;
-		$CT1 = new Auth_Contact($dbc, $act_data['contact']['id']);
+		$CT1 = new Auth_Contact($dbc_auth, $act_data['contact']['id']);
 		$CT1['stat'] = Contact::STAT_LIVE;
 		$CT1->save('Account/Contact/Verify');
 
-		$dbc->insert('log_event', [
+		$dbc_auth->insert('log_event', [
 			'contact_id' => $CT0['id'],
 			'code' => 'Contact/Account/Live',
 			'meta' => json_encode([
@@ -139,8 +139,8 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 
 		$_SESSION['auth-open-email'] = $act_data['contact']['username'];
 
-		return $RES->withRedirect('/done?e=CVM-119'); // Prompt to Sign-In
-		return $RES->withRedirect('/done?e=CVM-130'); // Prompt to Wait for Activation
+		return $this->redirect('/done?e=CVM-119'); // Prompt to Sign-In
+		return $this->redirect('/done?e=CVM-130'); // Prompt to Wait for Activation
 
 	}
 }

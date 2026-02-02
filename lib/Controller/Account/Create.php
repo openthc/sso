@@ -38,7 +38,7 @@ class Create extends \OpenTHC\SSO\Controller\Base
 		$cfg = \OpenTHC\Config::get('google');
 		$data['Google']['recaptcha_public'] = $cfg['recaptcha-public'];
 
-		return $RES->write( $this->render('account/create.php', $data) );
+		return $RES->getBody()->write( $this->render('account/create.php', $data) );
 	}
 
 	/**
@@ -49,7 +49,7 @@ class Create extends \OpenTHC\SSO\Controller\Base
 		// _check_recaptcha();
 		$chk = CSRF::verify($_POST['CSRF']);
 		if (empty($chk)) {
-			return $RES->withRedirect('/account/create?e=CAC-049');
+			return $this->redirect('/account/create?e=CAC-049');
 		}
 
 		switch ($_POST['a']) {
@@ -92,18 +92,18 @@ class Create extends \OpenTHC\SSO\Controller\Base
 						break;
 
 				}
-				return $RES->withRedirect('/done?' . http_build_query($ret_args));
+				return $this->redirect('/done?' . http_build_query($ret_args));
 				break;
 			case 400:
 				// Not Allowed?
-				return $RES->withRedirect('/account/create?e=CAC-035');
+				return $this->redirect('/account/create?e=CAC-035');
 			case 404:
 				// Excellent
 				break;
 			case 410:
 				// Not Allowed?
 				$ret_args['e'] = 'CAC-091';
-				return $RES->withRedirect('/done?' . http_build_query($ret_args));
+				return $this->redirect('/done?' . http_build_query($ret_args));
 				break;
 			default:
 				throw new \Exception('Invalid Response [CAC-089]');
@@ -129,7 +129,7 @@ class Create extends \OpenTHC\SSO\Controller\Base
 		$RES = $RES->withAttribute('Auth_Context_Ticket', $tok);
 
 		// Auth Hash Link - PostgreSQL
-		// $dbc_auth = $this->_container->DBC_AUTH;
+		// $dbc_auth = $this->dic->get('DBC_AUTH');
 		// $act = new \OpenTHC\Auth_Context_Ticket($dbc_auth);
 		// $act->create($act_data);
 		// $RES = $RES->withAttribute('Auth_Context_Ticket', $act['id']);
@@ -148,7 +148,7 @@ class Create extends \OpenTHC\SSO\Controller\Base
 			'token' => $tok,
 		]));
 
-		return $RES->withRedirect('/done?' . http_build_query($ret_args));
+		return $this->redirect('/done?' . http_build_query($ret_args));
 
 	}
 }

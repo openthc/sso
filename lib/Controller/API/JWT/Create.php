@@ -21,11 +21,11 @@ class Create extends \OpenTHC\SSO\Controller\API\Base
 		$password = $_POST['contact']['password'];
 
 		// Verify it All
-		$dbc = $this->_container->DBC_AUTH;
+		$dbc_auth = $this->dic->get('DBC_AUTH');
 
 		// $CP0 = new \OpenTHC\Company($dbc, $company);
-		$CP0 = $dbc->fetchRow('SELECT id FROM auth_company WHERE id = :cp0', [ ':cp0' => $company_id ]);
-		$CT0 = $dbc->fetchRow('SELECT id, password FROM auth_contact WHERE id = :ct0', [ ':ct0' => $contact_id ]);
+		$CP0 = $dbc_auth->fetchRow('SELECT id FROM auth_company WHERE id = :cp0', [ ':cp0' => $company_id ]);
+		$CT0 = $dbc_auth->fetchRow('SELECT id, password FROM auth_contact WHERE id = :ct0', [ ':ct0' => $contact_id ]);
 		// new \OpenTHC\SSO\Auth_Contact($dbc, $contact_id);
 
 		if (empty($CP0['id']) || empty($CT0['id'])) {

@@ -20,7 +20,9 @@ class Join extends \OpenTHC\SSO\Controller\Base
 		$data['Page'] = [];
 		$data['Page']['title'] = 'Company / Join';
 
-		return $RES->write( $this->render('company/join.php', $data) );
+		$RES->getBody()->write( $this->render('company/join.php', $data) );
+
+		return $RES;
 
 	}
 
@@ -37,11 +39,11 @@ class Join extends \OpenTHC\SSO\Controller\Base
 
 		if (empty($_POST['company-name']) && empty($_POST['company-id'])) {
 			Session::flash('fail', 'Invalid Request, Try Again [CCJ-036]');
-			return $RES->withRedirect('/company/join');
+			return $this->redirect('/company/join');
 		}
 
-		$dbc_auth = $this->_container->DBC_AUTH;
-		$dbc_main = $this->_container->DBC_MAIN;
+		$dbc_auth = $this->dic->get('DBC_AUTH');
+		$dbc_main = $this->dic->get('DBC_MAIN');
 
 		$Company0 = [];
 		$Company1 = [];
@@ -67,7 +69,7 @@ class Join extends \OpenTHC\SSO\Controller\Base
 		if ( ! empty($Company0['id']) && ! empty($Company1['id'])) {
 			Session::flash('warn', 'This Company profile already exists [CCJ-068]');
 			Session::flash('warn', 'Join a different company, or ask this company to invite you');
-			return $RES->withRedirect('/company/join');
+			return $this->redirect('/company/join');
 		}
 
 		// Existing in Main and Missing Auth
@@ -90,7 +92,7 @@ class Join extends \OpenTHC\SSO\Controller\Base
 
 			Session::flash('info', 'Request to Join Company has been submitted');
 
-			return $RES->withRedirect('/profile');
+			return $this->redirect('/profile');
 		}
 
 		// New Request
@@ -118,11 +120,11 @@ class Join extends \OpenTHC\SSO\Controller\Base
 
 			Session::flash('info', 'Request to Join Company has been submitted');
 
-			return $RES->withRedirect('/profile');
+			return $this->redirect('/profile');
 
 		}
 
-		return $RES->withRedirect('/done?e=CCJ-030');
+		return $this->redirect('/done?e=CCJ-030');
 
 	}
 

@@ -31,16 +31,16 @@ class Location extends \OpenTHC\SSO\Controller\Verify\Base
 		// Pick Top Level ISO
 		if (empty($_SESSION['iso3166_1_pick'])) {
 			$data['iso3166_1_list'] = $this->_load_iso3166_list();
-			return $RES->write( $this->render('verify/location.php', $data) );
+			return $RES->getBody()->write( $this->render('verify/location.php', $data) );
 		}
 
 		// Pick Second Level ISO
 		if (empty($_SESSION['iso3166_2_pick'])) {
 			$data['iso3166_2_list'] = $this->_load_iso3166_2_list($_SESSION['iso3166_1_pick']['id']);
-			return $RES->write( $this->render('verify/location-2.php', $data) );
+			return $RES->getBody()->write( $this->render('verify/location-2.php', $data) );
 		}
 
-		return $RES->withRedirect(sprintf('/verify?_=%s', $_GET['_']));
+		return $this->redirect(sprintf('/verify?_=%s', $_GET['_']));
 
 	}
 
@@ -70,7 +70,7 @@ class Location extends \OpenTHC\SSO\Controller\Verify\Base
 
 				$_SESSION['iso3166_1_pick'] = $iso3166_1_pick;
 
-				return $RES->withRedirect(sprintf('/verify/location?_=%s', $_GET['_']));
+				return $this->redirect(sprintf('/verify/location?_=%s', $_GET['_']));
 
 				break;
 
@@ -91,22 +91,23 @@ class Location extends \OpenTHC\SSO\Controller\Verify\Base
 
 				$_SESSION['iso3166_2_pick'] = $iso3166_2_pick;
 
-				$dbc = $this->_container->DBC_AUTH;
+				$dbc_auth = $this->dic->get('DBC_AUTH');
+
 				$sql = 'UPDATE auth_contact SET flag = flag | :f1::int, iso3166 = :iso, tz = :tz WHERE id = :ct0';
 				$sql = 'UPDATE auth_contact SET iso3166 = :iso WHERE id = :ct0';
-				$dbc->query($sql, [
+				$dbc_auth->query($sql, [
 					':ct0' => $act['contact']['id'],
 					':iso' => $iso3166_2_pick['id'],
 				]);
 
-				$dbc->insert('log_event', [
+				$dbc_auth->insert('log_event', [
 					'contact_id' => $act['contact']['id'],
 					'code' => 'Contact/Location/Update',
 					'meta' => json_encode($_SESSION),
 				]);
 
 				// Back to main to see what happens
-				return $RES->withRedirect(sprintf('/verify?_=%s', $_GET['_']));
+				return $this->redirect(sprintf('/verify?_=%s', $_GET['_']));
 		}
 
 		__exit_text('Invalid Request [CVL-124]', 400);
@@ -166,14 +167,14 @@ class Location extends \OpenTHC\SSO\Controller\Verify\Base
 	 */
 	private function _load_iso3166_list()
 	{
-		$dbc = $this->_container->DBC_AUTH;
-		$res = $dbc->fetchAll("SELECT id, code2, code3, name FROM iso3166 WHERE type = 'Country' ORDER BY name");
+		$dbc_auth = $this->dic->get('DBC_AUTH');
+		$res = $dbc_auth->fetchAll("SELECT id, code2, code3, name FROM iso3166 WHERE type = 'Country' ORDER BY name");
 		return $res;
 	}
 
 	private function _load_iso3166_2_list($iso3166_1_pick=null)
 	{
-		$dbc = $this->_container->DBC_AUTH;
+		$dbc_auth = $this->dic->get('DBC_AUTH');
 
 		$sql = "SELECT id, code2, code3, name FROM iso3166 WHERE type != 'Country' ORDER BY name";
 		$arg = [];
@@ -184,7 +185,7 @@ class Location extends \OpenTHC\SSO\Controller\Verify\Base
 			$arg = [ ':c2' => $iso3166_1_pick ];
 		}
 
-		$res = $dbc->fetchAll($sql, $arg);
+		$res = $dbc_auth->fetchAll($sql, $arg);
 
 		return $res;
 

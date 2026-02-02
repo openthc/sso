@@ -15,7 +15,7 @@ class Invite extends \OpenTHC\SSO\Controller\Base
 	function __invoke($REQ, $RES, $ARG)
 	{
 		// Link Company & Contact
-		$dbc_auth = $this->_container->DBC_AUTH;
+		$dbc_auth = $this->dic->get('DBC_AUTH');
 
 		// $Company = new \OpenTHC\Company($dbc_auth, $ARG['company_id']);
 		$Company = $dbc_auth->fetchRow('SELECT id, name FROM auth_company WHERE id = :cy0', [ ':cy0' => $ARG['company_id'] ]);
@@ -70,7 +70,7 @@ class Invite extends \OpenTHC\SSO\Controller\Base
 		$chk = $dbc_auth->query($sql, $arg);
 
 		// Open Company<=>Contact Linkage
-		$dbc_main = $this->_container->DBC_MAIN;
+		$dbc_main = $this->dic->get('DBC_MAIN');
 		$sql = <<<SQL
 		INSERT INTO company_contact (company_id, contact_id)
 		VALUES (:cy0, :ct0)

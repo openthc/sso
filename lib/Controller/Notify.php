@@ -69,7 +69,7 @@ class Notify extends \OpenTHC\SSO\Controller\Base
 		$data['body'] = $yaml['body'];
 		$data['next_url'] = $next_url;
 
-		return $RES->write( $this->render('notify.php', $data) );
+		return $RES->getBody()->write( $this->render('notify.php', $data) );
 	}
 
 	/**

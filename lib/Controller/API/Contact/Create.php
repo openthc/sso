@@ -56,8 +56,8 @@ class Create extends \OpenTHC\SSO\Controller\Base
 			], 400);
 		}
 
-		$dbc_auth = $this->_container->DBC_AUTH;
-		$dbc_main = $this->_container->DBC_MAIN;
+		$dbc_auth = $this->dic->get('DBC_AUTH');
+		$dbc_main = $this->dic->get('DBC_MAIN');
 
 		// Channel
 		$sql = 'SELECT id, stat, type, data FROM channel WHERE type = :t0 AND data = :e0';

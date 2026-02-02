@@ -10,6 +10,7 @@ namespace OpenTHC\SSO\Controller\oAuth2;
 class Token extends \OpenTHC\SSO\Controller\Base
 {
 	private $_cfg;
+
 	private $_auth_token;
 
 	/**
@@ -41,9 +42,11 @@ class Token extends \OpenTHC\SSO\Controller\Base
 
 		$hash = _random_hash();
 
+		$dbc_auth = $this->dic->get('DBC_AUTH');
+
 		$sql = 'INSERT INTO auth_context_ticket (id, meta) VALUES (?, ?)';
 		$arg = array($hash, $data);
-		$this->_container->DBC_AUTH->query($sql, $arg);
+		$dbc_auth->query($sql, $arg);
 
 		// Generate Data Response
 		$ret = [];
@@ -81,10 +84,12 @@ class Token extends \OpenTHC\SSO\Controller\Base
 			return $this->makeError($RES, 'unsupported_grant_type', 'Invalid Grant Type [COT-089]', 400);
 		}
 
+		$dbc_auth = $this->dic->get('DBC_AUTH');
+
 		// Load & Validate The Client
 		$sql = 'SELECT id, name, code, hash, context_list FROM auth_service WHERE (id = :c0 OR code = :c0)';
 		$arg = [ ':c0' => $_POST['client_id'] ];
-		$Service = $this->_container->DBC_AUTH->fetchRow($sql, $arg);
+		$Service = $dbc_auth->fetchRow($sql, $arg);
 		if (empty($Service['id'])) {
 			return $this->makeError($RES, 'invalid_client', 'Invalid Client [COT-073]', 401);
 		}
@@ -102,7 +107,7 @@ class Token extends \OpenTHC\SSO\Controller\Base
 	 */
 	function _load_auth_code($RES)
 	{
-		$dbc_auth = $this->_container->DBC_AUTH;
+		$dbc_auth = $this->dic->get('DBC_AUTH');
 
 		$sql = 'SELECT * FROM auth_context_ticket WHERE id = ?';
 		$arg = array($_POST['code']);

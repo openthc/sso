@@ -26,7 +26,7 @@ class Email extends \OpenTHC\SSO\Controller\Verify\Base
 
 		$data['verify_email'] = (0 == ($data['Contact']['flag'] & Contact::FLAG_EMAIL_GOOD));
 
-		return $RES->write( $this->render('verify/email.php', $data) );
+		return $RES->getBody()->write( $this->render('verify/email.php', $data) );
 
 	}
 
@@ -57,7 +57,7 @@ class Email extends \OpenTHC\SSO\Controller\Verify\Base
 	 */
 	function emailVerifyConfirm($RES, $contact_id)
 	{
-		$dbc = $this->_container->DBC_AUTH;
+		$dbc_auth = $this->dic->get('DBC_AUTH');
 
 		// Set Flag
 		$sql = 'UPDATE auth_contact SET flag = flag | :f1 WHERE id = :pk';
@@ -65,7 +65,7 @@ class Email extends \OpenTHC\SSO\Controller\Verify\Base
 			':pk' => $contact_id,
 			':f1' => Contact::FLAG_EMAIL_GOOD,
 		];
-		$dbc->query($sql, $arg);
+		$dbc_auth->query($sql, $arg);
 
 		// Del Flag
 		$sql = 'UPDATE auth_contact SET flag = flag & ~:f0::int WHERE id = :pk';
@@ -73,9 +73,9 @@ class Email extends \OpenTHC\SSO\Controller\Verify\Base
 			':pk' => $contact_id,
 			':f0' => Contact::FLAG_EMAIL_WANT,
 		];
-		$dbc->query($sql, $arg);
+		$dbc_auth->query($sql, $arg);
 
-		return $RES->withRedirect('/verify?' . http_build_query($_GET));
+		return $this->redirect('/verify?' . http_build_query($_GET));
 
 	}
 
@@ -84,7 +84,7 @@ class Email extends \OpenTHC\SSO\Controller\Verify\Base
 	 */
 	function emailVerifySend($RES, $ARG)
 	{
-		$dbc = $this->_container->DBC_AUTH;
+		$dbc_auth = $this->dic->get('DBC_AUTH');
 
 		$acs = [];
 		$acs['id'] = _random_hash();
@@ -92,7 +92,7 @@ class Email extends \OpenTHC\SSO\Controller\Verify\Base
 			'intent' => 'email-verify',
 			'contact' => $ARG['contact'],
 		]);
-		$dbc->insert('auth_context_ticket', $acs);
+		$dbc_auth->insert('auth_context_ticket', $acs);
 
 		// Return/Redirect
 		$ret_path = '/done';
@@ -108,7 +108,7 @@ class Email extends \OpenTHC\SSO\Controller\Verify\Base
 			$ret_args['t'] = $acs['id'];
 		}
 
-		return $RES->withRedirect($ret_path . '?' . http_build_query($ret_args));
+		return $this->redirect($ret_path . '?' . http_build_query($ret_args));
 
 	}
 

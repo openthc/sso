@@ -21,7 +21,7 @@ class Company extends \OpenTHC\SSO\Controller\Verify\Base
 		$data['company-email'] = $act['contact']['email'];
 		$data['company-phone'] = $act['contact']['phone'];
 
-		return $RES->write( $this->render('verify/company.php', $data) );
+		return $RES->getBody()->write( $this->render('verify/company.php', $data) );
 
 	}
 
@@ -31,7 +31,7 @@ class Company extends \OpenTHC\SSO\Controller\Verify\Base
 	function post($REQ, $RES, $ARG)
 	{
 		$act = $this->loadTicket();
-		$dbc = $this->_container->DBC_AUTH;
+		$dbc_auth = $this->dic->get('DBC_AUTH');
 		switch ($_POST['a']) {
 			case 'company-save':
 
@@ -55,10 +55,10 @@ class Company extends \OpenTHC\SSO\Controller\Verify\Base
 					'tz'=> $act['contact']['tz'],
 				];
 
-				$dbc->insert('auth_company', $CY0);
+				$dbc_auth->insert('auth_company', $CY0);
 
 				// Link To Company
-				$dbc->insert('auth_company_contact', [
+				$dbc_auth->insert('auth_company_contact', [
 					'company_id' => $CY0['id'],
 					'contact_id' => $act['contact']['id'],
 				]);
@@ -68,13 +68,13 @@ class Company extends \OpenTHC\SSO\Controller\Verify\Base
 				$RES = $RES->withAttribute('Contact', $act['contact']);
 
 				// syslog(LOG_NOTICE, )
-				$dbc->insert('log_event', [
+				$dbc_auth->insert('log_event', [
 					'contact_id' => $act['contact']['id'],
 					'code' => 'Verify/Company/Create',
 					'meta' => json_encode($_SESSION),
 				]);
 
-				return $RES->withRedirect(sprintf('/verify?_=%s', $_GET['_']));
+				return $this->redirect(sprintf('/verify?_=%s', $_GET['_']));
 
 				break;
 

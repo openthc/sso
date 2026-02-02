@@ -43,7 +43,7 @@ class Phone extends \OpenTHC\SSO\Controller\Verify\Base
 
 		}
 
-		return $RES->write( $this->render('verify/phone.php', $data) );
+		return $RES->getBody()->write( $this->render('verify/phone.php', $data) );
 
 	}
 
@@ -69,7 +69,7 @@ class Phone extends \OpenTHC\SSO\Controller\Verify\Base
 						// Fake Something?
 						$_SESSION['verify']['phone']['done'] = true;
 
-						return $RES->withRedirect(sprintf('/verify?_=%s', $_GET['_']));
+						return $this->redirect(sprintf('/verify?_=%s', $_GET['_']));
 
 					}
 				}
@@ -95,22 +95,24 @@ class Phone extends \OpenTHC\SSO\Controller\Verify\Base
 			unset($_SESSION['verify']['phone']['code']);
 			unset($_SESSION['verify']['phone']['warn']);
 
-			return $RES->withRedirect('/verify/phone?' . http_build_query([
+			return $this->redirect('/verify/phone?' . http_build_query([
 				'_' => $_GET['_'],
 				'e' => 'CAV-205'
 			]));
 
 		}
 
+		$dbc_auth = $this->dic->get('DBC_AUTH');
+		$dbc_main = $this->dic->get('DBC_MAIN');
+
 		// Update Phone on Base Contact
-		$C0 = new Contact($this->_container->DBC_MAIN, $ARG['contact']['id']);
+		$C0 = new Contact($dbc_main, $ARG['contact']['id']);
 		$C0['stat'] = Contact::STAT_LIVE;
 		$C0['phone'] = $_SESSION['verify']['phone']['e164'];
 		$C0->setFlag(Contact::FLAG_PHONE_GOOD);
 		$C0->delFlag(Contact::FLAG_PHONE_WANT);
 		$C0->save();
 
-		$dbc_auth = $this->_container->DBC_AUTH;
 		// Set Flag on Auth Contact
 		$sql = 'UPDATE auth_contact SET flag = flag | :f1 WHERE id = :pk';
 		$arg = [
@@ -131,7 +133,7 @@ class Phone extends \OpenTHC\SSO\Controller\Verify\Base
 
 		$_SESSION['verify']['phone']['done'] = true;
 
-		return $RES->withRedirect(sprintf('/verify?_=%s', $_GET['_']));
+		return $this->redirect(sprintf('/verify?_=%s', $_GET['_']));
 
 	}
 
@@ -160,7 +162,7 @@ class Phone extends \OpenTHC\SSO\Controller\Verify\Base
 			$ret_args['t'] = $_SESSION['verify']['phone']['code'];
 		}
 
-		return $RES->withRedirect('/verify/phone?' . http_build_query($ret_args));
+		return $this->redirect('/verify/phone?' . http_build_query($ret_args));
 
 	}
 

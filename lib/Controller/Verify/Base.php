@@ -23,7 +23,8 @@ class Base extends \OpenTHC\SSO\Controller\Base
 
 		if (empty($act['contact_cache'])) {
 
-			$dbc_auth = $this->_container->DBC_AUTH;
+			$dbc_auth = $this->dic->get('DBC_AUTH');
+			$dbc_main = $this->dic->get('DBC_MAIN');
 
 			// Load Contact
 			$sql = <<<SQL
@@ -47,7 +48,7 @@ class Base extends \OpenTHC\SSO\Controller\Base
 				throw new \Exception('Invalid Request [CAV-037]', 400);
 			}
 
-			$CT1 = $this->_container->DBC_MAIN->fetchRow('SELECT id, email, phone FROM contact WHERE id = :c0', $arg);
+			$CT1 = $dbc_main->fetchRow('SELECT id, email, phone FROM contact WHERE id = :c0', $arg);
 			if (empty($CT1['id'])) {
 				_exit_html_fail('<h1>Invalid Request [CAV-040]</h1>', 400);
 			}

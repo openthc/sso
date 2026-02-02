@@ -27,7 +27,7 @@ class Timezone extends \OpenTHC\SSO\Controller\Verify\Base
 
 		$data['time_zone_pick'] = $_SESSION['tz'];
 
-		return $RES->write( $this->render('verify/timezone.php', $data) );
+		return $RES->getBody()->write( $this->render('verify/timezone.php', $data) );
 
 	}
 
@@ -43,20 +43,21 @@ class Timezone extends \OpenTHC\SSO\Controller\Verify\Base
 			__exit_text('Invalid Timezone [CVT-030]', 400);
 		}
 
-		$dbc = $this->_container->DBC_AUTH;
+		$dbc_auth = $this->dic->get('DBC_AUTH');
+
 		$sql = 'UPDATE auth_contact SET tz = :tz1 WHERE id = :ct0';
-		$dbc->query($sql, [
+		$dbc_auth->query($sql, [
 			':ct0' => $act['contact']['id'],
 			':tz1' => $time_zone_pick,
 		]);
 
-		$dbc->insert('log_event', [
+		$dbc_auth->insert('log_event', [
 			'contact_id' => $ARG['contact']['id'],
 			'code' => 'Contact/Timezone/Update',
 			'meta' => json_encode($_SESSION),
 		]);
 
-		return $RES->withRedirect(sprintf('/verify?_=%s', $_GET['_']));
+		return $this->redirect(sprintf('/verify?_=%s', $_GET['_']));
 
 	}
 

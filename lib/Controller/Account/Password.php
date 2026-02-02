@@ -43,7 +43,7 @@ class Password extends \OpenTHC\SSO\Controller\Base
 			}
 		}
 
-		return $RES->write( $this->render('account/password.php', $data) );
+		return $RES->getBody()->write( $this->render('account/password.php', $data) );
 
 	}
 
@@ -78,7 +78,7 @@ class Password extends \OpenTHC\SSO\Controller\Base
 				return $this->redirect($RES, $ARG, 'CAP-062');
 			}
 
-			$dbc_auth = $this->_container->DBC_AUTH;
+			$dbc_auth = $this->dic->get('DBC_AUTH');
 
 			$arg = [];
 			$arg[':c0'] = $ARG['contact']['id'];
@@ -173,7 +173,7 @@ class Password extends \OpenTHC\SSO\Controller\Base
 
 		$url = sprintf('%s?%s', $path, $arg);
 
-		return $RES->withRedirect($url);
+		return $this->redirect($url);
 
 	}
 }

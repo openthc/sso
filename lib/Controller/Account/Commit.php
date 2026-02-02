@@ -66,7 +66,7 @@ class Commit extends \OpenTHC\SSO\Controller\Base
 
 		// Verify after Create
 		$tok = \OpenTHC\SSO\Auth_Context_Ticket::set($act_data);
-		return $RES->withRedirect(sprintf('/verify?_=%s', $tok));
+		return $this->redirect(sprintf('/verify?_=%s', $tok));
 
 	}
 
