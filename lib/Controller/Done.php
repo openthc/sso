@@ -36,12 +36,14 @@ class Done extends \OpenTHC\SSO\Controller\Base
 					$data['Page']['title'] = 'Email Verification';
 					$data['body'] = '<div class="alert alert-danger">Email Verification Send Failure [CAV-255]</div><p>Please contact support</p>';
 					break;
-					// return $RES->getBody()->write( $this->render('done-x.php', $data) );
-					// $data['body'] =
+					// $RES->getBody()->write( $this->render('done-x.php', $data) );
+					// return $RES;
 			}
 		}
 
-		return $RES->getBody()->write( $this->render('done.php', $data) );
+		$RES->getBody()->write( $this->render('done.php', $data) );
+
+		return $RES;
 
 	}
 }

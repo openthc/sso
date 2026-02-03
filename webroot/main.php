@@ -45,11 +45,6 @@ $errorMiddleware->setDefaultErrorHandler(function (
 $cfg = [];
 // $cfg['debug'] = true;
 
-$dic = new \DI\Container();
-\Slim\Factory\AppFactory::setContainer($dic);
-
-$app = \Slim\Factory\AppFactory::create();
-
 // Database Connections
 $dic->set('DBC_AUTH', function() {
 	$cfg = \OpenTHC\Config::get('database/auth');
