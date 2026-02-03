@@ -38,7 +38,9 @@ class Create extends \OpenTHC\SSO\Controller\Base
 		$cfg = \OpenTHC\Config::get('google');
 		$data['Google']['recaptcha_public'] = $cfg['recaptcha-public'];
 
-		return $RES->getBody()->write( $this->render('account/create.php', $data) );
+		$RES->getBody()->write( $this->render('account/create.php', $data) );
+
+		return $RES;
 	}
 
 	/**

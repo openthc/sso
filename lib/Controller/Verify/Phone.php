@@ -43,7 +43,9 @@ class Phone extends \OpenTHC\SSO\Controller\Verify\Base
 
 		}
 
-		return $RES->getBody()->write( $this->render('verify/phone.php', $data) );
+		$RES->getBody()->write( $this->render('verify/phone.php', $data) );
+
+		return $RES;
 
 	}
 

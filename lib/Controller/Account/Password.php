@@ -43,7 +43,9 @@ class Password extends \OpenTHC\SSO\Controller\Base
 			}
 		}
 
-		return $RES->getBody()->write( $this->render('account/password.php', $data) );
+		$RES->getBody()->write( $this->render('account/password.php', $data) );
+
+		return $RES;
 
 	}
 
@@ -67,15 +69,15 @@ class Password extends \OpenTHC\SSO\Controller\Base
 			$p = $_POST['p0'];
 
 			if (empty($p) || empty($_POST['p1'])) {
-				return $this->redirect($RES, $ARG, 'CAP-047');
+				return $this->_redirect_internal($ARG, 'CAP-047');
 			}
 
 			if (strlen($p) < 8) {
-				return $this->redirect($RES, $ARG, 'CAP-052');
+				return $this->_redirect_internal($ARG, 'CAP-052');
 			}
 
 			if ($p != $_POST['p1']) {
-				return $this->redirect($RES, $ARG, 'CAP-062');
+				return $this->_redirect_internal($ARG, 'CAP-062');
 			}
 
 			$dbc_auth = $this->dic->get('DBC_AUTH');
@@ -101,7 +103,7 @@ class Password extends \OpenTHC\SSO\Controller\Base
 				'password' => $arg[':pw'],
 			]);
 
-			return $this->redirect($RES, $ARG, null);
+			return $this->_redirect_internal($ARG, null);
 
 			break;
 		}
@@ -139,7 +141,7 @@ class Password extends \OpenTHC\SSO\Controller\Base
 	/**
 	 * Smart Redirector from Context
 	 */
-	function redirect($RES, $act, $err)
+	function _redirect_internal($act, $err)
 	{
 		$arg = [
 			'_' => $_GET['_'],

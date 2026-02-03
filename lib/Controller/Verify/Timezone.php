@@ -27,7 +27,9 @@ class Timezone extends \OpenTHC\SSO\Controller\Verify\Base
 
 		$data['time_zone_pick'] = $_SESSION['tz'];
 
-		return $RES->getBody()->write( $this->render('verify/timezone.php', $data) );
+		$RES->getBody()->write( $this->render('verify/timezone.php', $data) );
+
+		return $RES;
 
 	}
 

@@ -68,7 +68,9 @@ class Authorize extends \OpenTHC\SSO\Controller\Base
 		$data['link_crypt'] = $link_crypt;
 		$data['link_crypt_save'] = $link_crypt_save;
 
-		return $RES->getBody()->write( $this->render('oauth2/authorize.php', $data) );
+		$RES->getBody()->write( $this->render('oauth2/authorize.php', $data) );
+
+		return $RES;
 
 	}
 

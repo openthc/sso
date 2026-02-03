@@ -31,13 +31,15 @@ class Location extends \OpenTHC\SSO\Controller\Verify\Base
 		// Pick Top Level ISO
 		if (empty($_SESSION['iso3166_1_pick'])) {
 			$data['iso3166_1_list'] = $this->_load_iso3166_list();
-			return $RES->getBody()->write( $this->render('verify/location.php', $data) );
+			$RES->getBody()->write( $this->render('verify/location.php', $data) );
+			return $RES;
 		}
 
 		// Pick Second Level ISO
 		if (empty($_SESSION['iso3166_2_pick'])) {
 			$data['iso3166_2_list'] = $this->_load_iso3166_2_list($_SESSION['iso3166_1_pick']['id']);
-			return $RES->getBody()->write( $this->render('verify/location-2.php', $data) );
+			$RES->getBody()->write( $this->render('verify/location-2.php', $data) );
+			return $RES;
 		}
 
 		return $this->redirect(sprintf('/verify?_=%s', $_GET['_']));

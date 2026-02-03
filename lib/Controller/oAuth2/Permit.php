@@ -94,7 +94,9 @@ class Permit extends \OpenTHC\SSO\Controller\Base
 		$data['Service'] = $Auth_Service;
 		$data['return_url'] = $ret;
 
-		return $RES->getBody()->write( $this->render('oauth2/permit.php', $data) );
+		$RES->getBody()->write( $this->render('oauth2/permit.php', $data) );
+
+		return $RES;
 		*/
 
 	}

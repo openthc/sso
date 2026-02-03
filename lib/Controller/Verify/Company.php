@@ -21,7 +21,9 @@ class Company extends \OpenTHC\SSO\Controller\Verify\Base
 		$data['company-email'] = $act['contact']['email'];
 		$data['company-phone'] = $act['contact']['phone'];
 
-		return $RES->getBody()->write( $this->render('verify/company.php', $data) );
+		$RES->getBody()->write( $this->render('verify/company.php', $data) );
+
+		return $RES;
 
 	}
 

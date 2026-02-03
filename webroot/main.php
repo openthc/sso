@@ -5,6 +5,8 @@
  * SPDX-License-Identifier: MIT
  */
 
+use Psr\Http\Message\ServerRequestInterface;
+
 $e0 = error_get_last();
 
 // Load Bootstrapper
@@ -14,13 +16,32 @@ require_once('../boot.php');
 // 	'hint' => '<h2>You can <a href="javascript:history.go(-1);">go back</a> and try again, or <a href="/auth/open">sign-in again</a>.</h2>'
 // ]);
 
-$cfg = [];
-// $cfg['debug'] = true;
-
 $dic = new \DI\Container();
 \Slim\Factory\AppFactory::setContainer($dic);
-
+\Slim\Factory\AppFactory::setResponseFactory(new \OpenTHC\SSO\HTTP\Response\Factory());
 $app = \Slim\Factory\AppFactory::create();
+
+// Add Error Handler
+$errorMiddleware = $app->addErrorMiddleware(
+	displayErrorDetails: true,
+	logErrors: true,
+	logErrorDetails: true
+);
+$errorMiddleware->setDefaultErrorHandler(function (
+		ServerRequestInterface $request,
+		Throwable $exception,
+		bool $displayErrorDetails
+	) use ($app) {
+		$response = $app->getResponseFactory()->createResponse(500);
+		$response->getBody()->write($exception->getMessage());
+		if ($displayErrorDetails) {
+			$response->getBody()->write("\n----\n");
+			$response->getBody()->write($exception->getTraceAsString());
+			// $p = $exception->getPrevious();
+		}
+		return $response->withHeader('content-type', 'text/plain');
+});
+
 
 // Database Connections
 $dic->set('DBC_AUTH', function() {
@@ -71,8 +92,11 @@ $app->group('/api', function($g) {
 	$g->post('/jwt/verify', 'OpenTHC\SSO\Controller\API\JWT\Verify');
 });
 
-// Profile v1
-$app->group('/profile', function($g) {
+$app->get('/profile', 'OpenTHC\SSO\Controller\Account\Profile')->add('OpenTHC\Middleware\Session');
+$app->post('/profile', 'OpenTHC\SSO\Controller\Account\Profile:post')->add('OpenTHC\Middleware\Session');
+
+// Account
+$app->group('/account', function($g) {
 
 	$g->get('', 'OpenTHC\SSO\Controller\Account\Profile');
 	$g->post('', 'OpenTHC\SSO\Controller\Account\Profile:post');

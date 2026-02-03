@@ -1,13 +1,15 @@
 <?php
 /**
- * PSR7 Reponse w/Features
+ * PSR7 Reponse w/Attributes
+ * @todo should move to setting attributes on REQ in the Middleware
+ * Set it early, then the controller runs and after that the middleware can see the modified attributes
  *
  * SPDX-License-Identifier: MIT
  */
 
-namespace OpenTHC\SSO;
+namespace OpenTHC\SSO\HTTP;
 
-class Response extends \Slim\Http\Response
+class Response extends \GuzzleHttp\Psr7\Response
 {
 	private $_attr = [];
 

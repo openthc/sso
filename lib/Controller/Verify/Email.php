@@ -26,7 +26,9 @@ class Email extends \OpenTHC\SSO\Controller\Verify\Base
 
 		$data['verify_email'] = (0 == ($data['Contact']['flag'] & Contact::FLAG_EMAIL_GOOD));
 
-		return $RES->getBody()->write( $this->render('verify/email.php', $data) );
+		$RES->getBody()->write( $this->render('verify/email.php', $data) );
+
+		return $RES;
 
 	}
 
