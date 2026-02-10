@@ -29,15 +29,16 @@ Options:
 	--filter=FILTER
 	--phpunit-config=FILE      File to use for PHPUnit XML Configuration
 	--phpunit-filter=FILTER    Filter to pass to PHPUnit
+	--phpunit-testsuite=<SUITE>  Specific Suite
 DOC;
 
 $res = \Docopt::handle($doc, [
 	'exit' => false,
-	'optionsFirst' => true,
+	'optionsFirst' => false,
 ]);
-var_dump($res);
+// var_dump($res);
 $cli_args = $res->args;
-var_dump($cli_args);
+// var_dump($cli_args);
 if ('all' == $cli_args['<command>']) {
 	$cli_args['phplint'] = true;
 	$cli_args['phpstan'] = true;
@@ -47,7 +48,7 @@ if ('all' == $cli_args['<command>']) {
 	$cli_args[$cmd] = true;
 	unset($cli_args['<command>']);
 }
-var_dump($cli_args);
+//var_dump($cli_args);
 
 
 // Test Config
@@ -90,6 +91,9 @@ if ($cli_args['phpunit']) {
 	// Filter?
 	if ( ! empty($cli_args['--filter'])) {
 		$cfg['--filter'] = $arg['--filter'];
+	}
+	if ( ! empty($cli_args['--phpunit-testsuite'])) {
+		$cfg['--testsuite'] = $cli_args['--phpunit-testsuite'];
 	}
 	$tc = new \OpenTHC\Test\Facade\PHPUnit($cfg);
 	$res = $tc->execute();
