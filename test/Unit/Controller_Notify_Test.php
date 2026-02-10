@@ -14,8 +14,8 @@ class Controller_Notify_Test extends Base
 {
 	function test_make_url()
 	{
-		$this->assertEquals('/notify?r=%2Fprofile', Notify::make_url('/profile'));
-		$this->assertEquals('/notify/test?r=%2Fprofile', Notify::make_url('/profile', 'test'));
+		$this->assertEquals('/notify?r=%2Fprofile', \OpenTHC\SSO\Controller\Notify::make_url('/profile'));
+		$this->assertEquals('/notify/test?r=%2Fprofile', \OpenTHC\SSO\Controller\Notify::make_url('/profile', 'test'));
 	}
 
 	function test_notify()
