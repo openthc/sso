@@ -20,6 +20,7 @@
 	"require-dev": {
 		"fakerphp/faker": "1.24.1",
 		"php-webdriver/webdriver": "1.15.2",
+		"phpmd/phpmd": "2.15.0",
 		"phpstan/phpstan": "2.1.38",
 		"phpunit/phpunit": "12.5.8"
 	}
