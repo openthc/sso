@@ -3,15 +3,13 @@
 	"description": "OpenTHC Single Sign On Server",
 	"license": "GPL-3.0-only",
 	"version": "420.25.084",
+	"minimum-stability": "dev",
 	"autoload": {
 		"psr-4": {
 			"OpenTHC\\SSO\\": "./lib",
 			"OpenTHC\\SSO\\Test\\": "./test",
 			"Custom\\": "./Custom"
-		},
-		"exclude-from-classmap": [
-			"vendor/erusev/parsedown-extra/test"
-		]
+		}
 	},
 	"require": {
 		"geoip2/geoip2": "2.13.0",
@@ -20,6 +18,7 @@
 	"require-dev": {
 		"fakerphp/faker": "1.24.1",
 		"php-webdriver/webdriver": "1.15.2",
+		"phpmd/phpmd": "2.15.0",
 		"phpstan/phpstan": "2.1.11",
 		"phpunit/phpunit": "9.6.22",
 		"phpunit/phpunit-selenium": "9.0.1"
