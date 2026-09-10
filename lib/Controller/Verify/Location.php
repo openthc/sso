@@ -166,28 +166,68 @@ class Location extends \OpenTHC\SSO\Controller\Verify\Base
 	 */
 	private function _load_iso3166_list()
 	{
-		$dbc = $this->_container->DBC_AUTH;
-		$res = $dbc->fetchAll("SELECT id, code2, code3, name FROM iso3166 WHERE type = 'Country' ORDER BY name");
+		$path = '/usr/share/iso-codes/json/iso_3166-1.json';
+		if (!is_file($path)) {
+			return [];
+		}
+
+		$data = file_get_contents($path);
+		$json = json_decode($data, true);
+		if (empty($json) || empty($json['3166-1'])) {
+			return [];
+		}
+
+		$res = [];
+		foreach ($json['3166-1'] as $item) {
+			$res[] = [
+				'id'    => $item['alpha_2'],
+				'code2' => $item['alpha_2'],
+				'code3' => $item['alpha_3'],
+				'name'  => $item['name']
+			];
+		}
+
+		usort($res, function($a, $b) {
+			return strcasecmp($a['name'], $b['name']);
+		});
+
 		return $res;
 	}
 
 	private function _load_iso3166_2_list($iso3166_1_pick=null)
 	{
-		$dbc = $this->_container->DBC_AUTH;
-
-		$sql = "SELECT id, code2, code3, name FROM iso3166 WHERE type != 'Country' ORDER BY name";
-		$arg = [];
-
-		// Filter?
-		if (!empty($iso3166_1_pick)) {
-			$sql = "SELECT id, code2, code3, name FROM iso3166 WHERE code2 = :c2 AND type != 'Country' ORDER BY name";
-			$arg = [ ':c2' => $iso3166_1_pick ];
+		$path = '/usr/share/iso-codes/json/iso_3166-2.json';
+		if (!is_file($path)) {
+			return [];
 		}
 
-		$res = $dbc->fetchAll($sql, $arg);
+		$data = file_get_contents($path);
+		$json = json_decode($data, true);
+		if (empty($json) || empty($json['3166-2'])) {
+			return [];
+		}
+
+		$res = [];
+		foreach ($json['3166-2'] as $item) {
+			$code2 = explode('-', $item['code'])[0];
+
+			if (!empty($iso3166_1_pick) && $code2 !== $iso3166_1_pick) {
+				continue;
+			}
+
+			$res[] = [
+				'id'    => $item['code'],
+				'code2' => $code2,
+				'code3' => null,
+				'name'  => $item['name']
+			];
+		}
+
+		usort($res, function($a, $b) {
+			return strcasecmp($a['name'], $b['name']);
+		});
 
 		return $res;
-
 	}
 
 }
