@@ -9,21 +9,22 @@ namespace OpenTHC\SSO;
 
 class Auth_Context_Ticket // extends \OpenTHC\Auth_Context_Ticket
 {
+	private $redis_key_prefix = '/sso/auth/ticket';
+
 	/**
 	 *
 	 */
-	static function get($key)
+	static function get($tok)
 	{
 		$rdb = \OpenTHC\Service\Redis::factory();
-		$ret = $rdb->get(sprintf('/auth-ticket/%s', $key));
+		$key = sprintf('%s/%s', $this->redis_key_prefix, $tok);
+		$ret = $rdb->get($key);
 		$ret = json_decode($ret, true);
 
 		// if (empty($ret)) {
-
 		// 	$sql = 'SELECT * FROM auth_context_ticket WHERE id = ?';
 		// 	$arg = array($_POST['code']);
 		// 	$res = $this->_dbc->fetchRow($sql, $arg);
-
 		// }
 
 		return $ret;
@@ -41,7 +42,8 @@ class Auth_Context_Ticket // extends \OpenTHC\Auth_Context_Ticket
 		$rdb = \OpenTHC\Service\Redis::factory();
 
 		$tok = _random_hash();
-		$res = $rdb->set(sprintf('/auth-ticket/%s', $tok), $val, [ 'ex' => $ttl ]);
+		$key = sprintf('%s/%s', $this->redis_key_prefix, $tok);
+		$res = $rdb->set($key, $val, [ 'ex' => $ttl ]);
 
 		return $tok;
 
