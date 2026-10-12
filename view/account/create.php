@@ -31,18 +31,30 @@ use OpenTHC\SSO\UI\Icon;
 			<input autocomplete="off" class="form-control" id="contact-phone" inputmode="tel" name="contact-phone" placeholder="eg: +1 202 555 1212" required type="phone">
 		</div>
 
+		<?php
+		if ($data['Google']['recaptcha_public']) {
+		?>
+			<div class="mt-4" style="min-height: 78px;">
+				<div class="g-recaptcha" data-sitekey="<?= $data['Google']['recaptcha_public'] ?>" style="margin: 0 auto; width: 304px; height: 78px;">
+					<!-- Captcha Here -->
+				</div>
+			</div>
+		<?php
+		}
+		?>
+
 	</div>
 
 	<div class="card-footer">
 		<div class="d-flex justify-content-between">
 		<div>
 			<button class="btn btn-primary" id="btn-account-create" name="a" type="submit" value="contact-next">
-				Create Account <i class="fa-solid fa-arrow-right"></i>
+				<i class="fa-solid fa-user-plus"></i> Create Account
 			</button>
 		</div>
 		<div>
 			<a class="btn btn-outline-secondary" href="/auth/open?service=<?= __h($_GET['service']) ?>">
-				Sign In <i class="fa-solid fa-arrow-right-to-bracket"></i>
+				<i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In
 			</a>
 		</div>
 		</div>
@@ -52,3 +64,5 @@ use OpenTHC\SSO\UI\Icon;
 
 </div>
 </form>
+
+<script src="https://www.google.com/recaptcha/api.js"></script>
