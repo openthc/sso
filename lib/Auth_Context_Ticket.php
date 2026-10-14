@@ -9,7 +9,8 @@ namespace OpenTHC\SSO;
 
 class Auth_Context_Ticket // extends \OpenTHC\Auth_Context_Ticket
 {
-	private $redis_key_prefix = '/sso/auth/ticket';
+	const REDIS_KEY_PREFIX = '/sso/auth/ticket';
+	// private $redis_key_prefix = '/sso/auth/ticket';
 
 	/**
 	 *
@@ -17,7 +18,7 @@ class Auth_Context_Ticket // extends \OpenTHC\Auth_Context_Ticket
 	static function get($tok)
 	{
 		$rdb = \OpenTHC\Service\Redis::factory();
-		$key = sprintf('%s/%s', $this->redis_key_prefix, $tok);
+		$key = sprintf('%s/%s', self::REDIS_KEY_PREFIX, $tok);
 		$ret = $rdb->get($key);
 		$ret = json_decode($ret, true);
 
@@ -42,7 +43,7 @@ class Auth_Context_Ticket // extends \OpenTHC\Auth_Context_Ticket
 		$rdb = \OpenTHC\Service\Redis::factory();
 
 		$tok = _random_hash();
-		$key = sprintf('%s/%s', $this->redis_key_prefix, $tok);
+		$key = sprintf('%s/%s', self::REDIS_KEY_PREFIX, $tok);
 		$res = $rdb->set($key, $val, [ 'ex' => $ttl ]);
 
 		return $tok;
