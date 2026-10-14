@@ -23,22 +23,16 @@ fi
 # Uses Environment to Create App
 /opt/openthc/sso/docker/init.php
 
-# stat /opt/openthc/sso/etc/config.php
-
-# echo "CONFIG";
-# cat /opt/openthc/sso/etc/config.php
-# echo "###"
-
-# php -l /opt/openthc/sso/etc/config.php
+php -l /opt/openthc/sso/etc/config.php
 
 #
 # Unsets All OpenTHC Environment Variables
 # Except for OPENTHC_SERVICE and OPENTHC_SERVER_NAME
-for var in $(env | cut -d= -f1 | grep OPENTHC | grep -v OPENTHC_SER)
-do
-	# echo "unset $var"
-	unset "$var"
-done
+# for var in $(env | cut -d= -f1 | grep OPENTHC | grep -v OPENTHC_SER)
+# do
+# 	# echo "unset $var"
+# 	unset "$var"
+# done
 
 
 #
