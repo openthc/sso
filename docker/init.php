@@ -4,6 +4,10 @@
  * OpenTHC Docker SSO Service Init
  */
 
+// $env_domain = getenv();
+// ksort($env_domain);
+// print_r($env_domain);
+
 _init_config();
 
 // Bootstrap OpenTHC Service
@@ -13,17 +17,21 @@ require_once("$d/boot.php");
 
 // Wait for Database
 $dsn = getenv('OPENTHC_DSN_MAIN');
-$dbc_main = _spin_wait_for_sql($dsn);
-echo "SQL Connection: MAIN\n";
+$dbc_main = new \Edoceo\Radix\DB\SQL($dsn);
 
 $dsn = getenv('OPENTHC_DSN_AUTH');
-$dbc_auth = _spin_wait_for_sql($dsn);
-echo "SQL Connection: AUTH\n";
+$dbc_auth = new \Edoceo\Radix\DB\SQL($dsn);
 
+$cfg_domain = [];
+$x = sprintf('%s/etc/domain.yaml', APP_ROOT);
+if (is_file($x)) {
+	$cfg_domain = yaml_parse_file(APP_ROOT . '/etc/domain.yaml');
+}
+
+//
 _upsert_this_service($dbc_main, $dbc_auth);
-
-_upsert_demo_contact($dbc_main, $dbc_auth);
-_upsert_demo_company($dbc_main, $dbc_auth);
+// _upsert_demo_contact($dbc_main, $dbc_auth);
+// _upsert_demo_company($dbc_main, $dbc_auth);
 
 exit(0);
 
@@ -90,7 +98,7 @@ function _init_config()
 			'origin' => getenv('OPENTHC_SSO_ORIGIN'),
 			'public' => getenv('OPENTHC_SSO_PUBLIC'),
 			'secret' => getenv('OPENTHC_SSO_SECRET'),
-			// 'client-id' => '010DEM0XXX0000SVC000000SS0',
+			// 'client-id' => '010PENTHC0SERV1CE000000SS0',
 			// 'client-sk' => 'UJWRp58-YYy4nUEFfjYdpKlikgMUHNu6GOZ5lh0jK0k',
 			// 'client-pk' => 'JEWoMtX-FpXaTI4MJLNoV7CWWWH5zdFeXETZiHpmhCo',
 			// 'test' => [
@@ -213,41 +221,4 @@ function _upsert_this_service($dbc_main, $dbc_auth)
 	// 	':sk' => $cfg['secret-key'],
 	// ]);
 
-}
-
-
-/**
- * Waits about 1 minute for the sql server to start
- */
-function _spin_wait_for_sql(string $dsn)
-{
-
-	$try = 0;
-
-	do {
-
-		$try++;
-
-		try {
-			// echo "SQL Connection: Checking\n";
-
-			$ret = new \Edoceo\Radix\DB\SQL($dsn);
-
-			return $ret;
-
-		} catch (Exception $e) {
-			// Ignore
-			// echo "SQL Connection: ";
-			// echo $e->getMessage();
-			// echo "\n";
-			// var_dump($e);
-		}
-
-		sleep(4);
-
-	} while ($try < 16);
-
-	throw new \Exception('Failed to connect to database');
-
-	exit(1);
 }
