@@ -51,7 +51,7 @@ if (empty($data['company_list'])) {
 		<tr>
 			<td>
 				<h3>
-					<a href="<?= $Company['link'] ?>" target="_blank"><?= __h($Company['main_name']) ?></a>
+					<a href="<?= $Company['link'] ?>" target="_blank"><?= __h($Company['main_name'] ?: $Company['auth_name']) ?></a>
 					<?php
 					if ($Company['profile_select']) {
 						echo '<i class="fa-solid fa-star-of-life"></i>';
@@ -108,7 +108,7 @@ if (empty($data['company_list'])) {
 				echo '<span class="text-danger">Closed</span>';
 				break;
 			default:
-				printf('<code>%s</code>', $Company['main_stat']);
+				printf('<code>%s?</code>', $Company['main_stat']);
 			}
 			echo '</td>';
 
