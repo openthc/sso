@@ -6,11 +6,9 @@
 	"autoload": {
 		"psr-4": {
 			"OpenTHC\\SSO\\": "./lib",
-			"OpenTHC\\SSO\\Test\\": "./test"
-		},
-		"exclude-from-classmap": [
-			"vendor/erusev/parsedown-extra/test"
-		]
+			"OpenTHC\\SSO\\Test\\": "./test",
+			"Custom\\": "./Custom"
+		}
 	},
 	"require": {
 		"geoip2/geoip2": "3.3.0",

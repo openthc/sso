@@ -58,6 +58,11 @@ class Create extends \OpenTHC\SSO\Controller\Base
 			return $RES->withRedirect('/account/create?e=CAC-049');
 		}
 
+		$chk = $this->_verify_captcha();
+		if (true !== $chk) {
+			return $RES->withRedirect('/account/create?e=CAC-049');
+		}
+
 		switch ($_POST['a']) {
 		case 'contact-next':
 			return $this->_create($RES);
@@ -155,6 +160,49 @@ class Create extends \OpenTHC\SSO\Controller\Base
 		]));
 
 		return $this->redirect('/done?' . http_build_query($ret_args));
+
+	}
+
+	private function _verify_captcha()
+	{
+		$sk = \OpenTHC\Config::get('google/recaptcha-secret');
+		if (empty($sk)) {
+			return true;
+		}
+
+		if (empty($_POST['g-recaptcha-response'])) {
+			return false; // RES->withRedirect('/auth/fail?e=cao290');
+		}
+
+		$url = 'https://www.google.com/recaptcha/api/siteverify';
+		$req = _curl_init($url);
+
+		$arg = [
+			'secret' => $sk,
+			'response' => $_POST['g-recaptcha-response'],
+			'remoteip' => $_SERVER['REMOTE_ADDR'],
+		];
+		curl_setopt_array($req, [
+			CURLOPT_POST => true,
+			CURLOPT_POSTFIELDS => http_build_query($arg)
+		]);
+
+		$res = curl_exec($req);
+		$inf = curl_getinfo($req);
+		if (200 != $inf['http_code']) {
+			return false;
+			return $RES->withRedirect('/auth/fail?e=cao316');
+		}
+
+		$res = json_decode($res, true);
+		if (empty($res)) {
+			return false;
+		}
+		if (empty($res['success'])) {
+			return false;
+		}
+
+		return true;
 
 	}
 
