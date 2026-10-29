@@ -94,13 +94,11 @@ $app->group('/api', function($g) {
 	$g->post('/jwt/verify', 'OpenTHC\SSO\Controller\API\JWT\Verify');
 });
 
-$app->get('/profile', 'OpenTHC\SSO\Controller\Account\Profile')->add('OpenTHC\Middleware\Session');
-$app->post('/profile', 'OpenTHC\SSO\Controller\Account\Profile:post')->add('OpenTHC\Middleware\Session');
-
 // Account
 $app->group('/account', function($g) {
 
-	// $g->get('', 'OpenTHC\SSO\Controller\API\Main');
+	$g->get('', 'OpenTHC\SSO\Controller\Account\Profile');
+	$g->post('', 'OpenTHC\SSO\Controller\Account\Profile:post');
 
 	$g->post('/company/{company_id}/invite', 'OpenTHC\SSO\Controller\API\Company\Invite')->setName('api/company/invite');
 
