@@ -98,6 +98,7 @@ $app->group('/company', function() {
 	// $this->post('/create', 'OpenTHC\SSO\Controller\Account\Company:post');
 
 	$this->get('/join', 'OpenTHC\SSO\Controller\Company\Join');
+	$this->post('/join', 'OpenTHC\SSO\Controller\Company\Join:post');
 
 })->add('OpenTHC\Middleware\Session');
 
