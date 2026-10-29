@@ -96,7 +96,7 @@ class Init extends \OpenTHC\SSO\Controller\Base
 		FROM auth_company
 		JOIN auth_company_contact ON auth_company.id = auth_company_contact.company_id
 		WHERE auth_company_contact.contact_id = :c0
-		AND auth_company_contact.stat IN (100, 200)
+		AND auth_company_contact.stat IN (100, 102, 200)
 		ORDER BY auth_company_contact.stat, flag_default DESC, auth_company.name ASC
 		SQL;
 
@@ -181,6 +181,7 @@ class Init extends \OpenTHC\SSO\Controller\Base
 				}
 
 				// Place Ping Back Token
+				// @deprecated Only used by Legacy App and WWW-COM
 				$ret = str_replace('{PING}', $ping, $ret);
 
 				break;

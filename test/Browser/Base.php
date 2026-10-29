@@ -19,13 +19,15 @@ class Base extends \OpenTHC\Test\BaseBrowser
 		parent::setUpBeforeClass();
 
 		// Visit site before setting cookie for easy domain registration in the cookie
-		self::$wd->get($_ENV['OPENTHC_TEST_ORIGIN']);
-		self::$wd->manage()->addCookie([
-			'name' => 'openthc-test',
-			'value' => \OpenTHC\Config::get('openthc/sso/test/sk'),
-			'Secure' => true,
-			'HttpOnly' => true,
-		]);
+		if ( ! empty(self::$wd)) {
+			self::$wd->get($_ENV['OPENTHC_TEST_ORIGIN']);
+			self::$wd->manage()->addCookie([
+				'name' => 'openthc-test',
+				'value' => \OpenTHC\Config::get('openthc/sso/test/sk'),
+				'Secure' => true,
+				'HttpOnly' => true,
+			]);
+		}
 
 	}
 
