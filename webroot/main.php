@@ -18,7 +18,7 @@ require_once('../boot.php');
 
 $dic = new \DI\Container();
 \Slim\Factory\AppFactory::setContainer($dic);
-\Slim\Factory\AppFactory::setResponseFactory(new \OpenTHC\SSO\HTTP\Response\Factory());
+\Slim\Factory\AppFactory::setResponseFactory(new \OpenTHC\HTTP\Response\Factory());
 $app = \Slim\Factory\AppFactory::create();
 
 // Add Error Handler

@@ -31,14 +31,15 @@ class Token extends \OpenTHC\SSO\Controller\Base
 		}
 
 		// Make the Session Token
-		$data = json_encode(array(
+		$data = array(
 			'client_id' => $this->_auth_token['client_id'],
 			'grant_type' => $_POST['grant_type'],
 			'contact_id' => $this->_auth_token['contact_id'],
 			'company_id' => $this->_auth_token['company_id'],
 			'context_list' => $this->_auth_token['scope'], // v1
 			'scope' => $this->_auth_token['scope'], // @deprecated v0
-		));
+		);
+		$data = json_encode($data);
 
 		$hash = _random_hash();
 
@@ -153,8 +154,8 @@ class Token extends \OpenTHC\SSO\Controller\Base
 		return $RES->withJSON(array(
 			'error' => $e,
 			'error_description' => $d,
-			'error_uri' => sprintf('%s/doc/oauth2', $this->_cfg['url']),
-			'state' => $_POST['state']
+			'error_uri' => sprintf('%s/doc/oauth2', $this->_cfg['origin']),
+			// 'state' => $_POST['state']
 		), $http_code);
 	}
 
