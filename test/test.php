@@ -3,7 +3,7 @@
 /**
  * OpenTHC SSO Test Runner
  *
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: GPL-3.0-only
  */
 
 require_once(dirname(__DIR__) . '/boot.php');

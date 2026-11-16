@@ -3,7 +3,7 @@
  * Set a Password
  * @todo move to auth/once/password or something?
  *
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: GPL-3.0-only
  */
 
 namespace OpenTHC\SSO\Controller\Account;

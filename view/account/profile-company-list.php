@@ -2,7 +2,7 @@
 /**
  * Show Company List
  *
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: GPL-3.0-only
  */
 
 $dir_origin = \OpenTHC\Config::get('openthc/dir/origin');

@@ -2,7 +2,7 @@
 /**
  * Base Controller for Verify
  *
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: GPL-3.0-only
  */
 
 

@@ -3,7 +3,7 @@
  * Notify Controller unit test
  * Show the user a notification, and remember where they were supposed to go.
  *
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: GPL-3.0-only
  */
 
 namespace OpenTHC\SSO\Test\Unit;

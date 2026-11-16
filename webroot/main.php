@@ -2,7 +2,7 @@
 /**
  * OpenTHC SSO Main Controller
  *
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: GPL-3.0-only
  */
 
 use Psr\Http\Message\ServerRequestInterface;

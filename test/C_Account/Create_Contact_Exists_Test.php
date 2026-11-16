@@ -4,7 +4,7 @@
  Channel record does NOT exist for the given email.
  Sign-Up sends email notification
  Sign-Up routes to Verify which fails (and should work)
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: GPL-3.0-only
  */
 
 namespace OpenTHC\SSO\Test\C_Account;

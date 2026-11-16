@@ -2,7 +2,7 @@
 /**
  * One Time Link Handler
  *
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: GPL-3.0-only
  *
  * @todo merge into the "Open" controller
  */

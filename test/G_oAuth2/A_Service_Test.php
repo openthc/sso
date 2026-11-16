@@ -2,7 +2,7 @@
 /**
  * Quick Test of oAuth via OPS
  *
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: GPL-3.0-only
  */
 
 namespace OpenTHC\SSO\Test\G_oAuth2;

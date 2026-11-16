@@ -2,7 +2,7 @@
 /**
  * Verify Phone
  *
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: GPL-3.0-only
  */
 
 namespace OpenTHC\SSO\Controller\Verify;

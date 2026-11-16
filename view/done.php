@@ -2,7 +2,7 @@
 /**
  * End of the Line
  *
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: GPL-3.0-only
  */
 
 if ( ! empty($data['error_code'])) {

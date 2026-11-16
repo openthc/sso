@@ -22,7 +22,7 @@
 		"url": "git+https://github.com/openthc/sso.git"
 	},
 	"author": "OpenTHC, Inc.",
-	"license": "MIT",
+	"license": "GPL-3.0-only",
 	"bugs": {
 		"url": "https://github.com/openthc/sso/issues"
 	},

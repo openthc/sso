@@ -2,7 +2,7 @@
 /**
  * Select the Top-Level Location
  *
- * SPDX-License-Identifier: MIT
+ * SPDX-License-Identifier: GPL-3.0-only
  */
 
 use OpenTHC\SSO\UI\Icon;
