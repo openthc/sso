@@ -149,7 +149,9 @@ class Create extends \OpenTHC\SSO\Controller\Base
 
 		$x = $RES->getAttribute('Contact');
 		unset($x['password']);
-		$this->_container->RDB->publish('openthc/sso/account/create', json_encode([
+
+		$rdb = $this->dic->get('RDB');
+		$rdb->publish('openthc/sso/account/create', json_encode([
 			'Contact' => $x,
 			'token' => $tok,
 		]));

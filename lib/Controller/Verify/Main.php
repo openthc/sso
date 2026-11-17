@@ -128,7 +128,9 @@ class Main extends \OpenTHC\SSO\Controller\Verify\Base
 
 		$x = $CT1->toArray();
 		unset($x['password']);
-		$this->_container->RDB->publish('sso', json_encode([
+
+		$rdb = $this->dic->get('RDB');
+		$rdb->publish('sso', json_encode([
 			'event' => 'account/verify/done',
 			'Contact' => $x,
 			'_SESSION' => $_SESSION,

@@ -32,7 +32,8 @@ class Join extends \OpenTHC\SSO\Controller\Base
 	 */
 	function post($REQ, $RES, $ARG)
 	{
-		$this->_container->RDB->publish('sso', json_encode([
+		$rdb = $this->dic->get('RDB');
+		$rdb->publish('sso', json_encode([
 			'event' => 'company/join',
 			'_SESSION' => $_SESSION,
 		]));

@@ -33,7 +33,7 @@ class Invite extends \OpenTHC\SSO\Controller\Base
 		$_POST['phone'] = $_POST['contact']['phone'];
 		// unset($_POST['contact']);
 
-		$subC = new \OpenTHC\SSO\Controller\API\Contact\Create($this->_container);
+		$subC = new \OpenTHC\SSO\Controller\API\Contact\Create($this->dic);
 		$resX = $subC->__invoke($REQ, $RES, $ARG);
 		// switch ($resX->getStatusCode()) {
 		// 	case 200:
