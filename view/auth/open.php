@@ -6,14 +6,14 @@
 $svc = $data['service'];
 
 $link_pwd = '/auth/open?a=password-reset';
-$link_new = '/account/create';
+$link_new = '/sign-up';
 // <?= $data['service']->id
 if ( ! empty($svc)) {
 	$link_pwd = '/auth/open?' . http_build_query([
 		'a' => 'password-reset',
 		'service' => $svc->id,
 	]);
-	$link_new = '/account/create?' . http_build_query([
+	$link_new = '/sign-up?' . http_build_query([
 		'service' => $svc->id,
 	]);
 }

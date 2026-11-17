@@ -45,12 +45,12 @@ class Base extends \OpenTHC\Controller\Base
 	/**
 	 * Sends an Failure Response
 	 */
-	protected function sendFailure($RES, $data, $code=400)
+	protected function sendFailure($RES, $data, $code=400) : \Psr\Http\Message\ResponseInterface
 	{
 		// $type_want
-		$RES = $RES->withBody(new \Slim\Http\RequestBody());
+		$RES = new \OpenTHC\HTTP\Response();
 		$RES = $RES->withStatus($code);
-		$RES = $RES->getBody()->write( $this->render('done.php', $data) );
+		$RES->getBody()->write( $this->render('done.php', $data) );
 		return $RES;
 		// if want JSON?
 		// return $RES->withJSON([

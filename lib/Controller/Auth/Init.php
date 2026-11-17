@@ -156,7 +156,7 @@ class Init extends \OpenTHC\SSO\Controller\Base
 		$ping = sprintf('%s/auth/once?_=%s', OPENTHC_SERVICE_ORIGIN, $tok);
 
 		// No Return? Load Default
-		$ret = '/account';
+		$ret = '/profile';
 		$ret = \OpenTHC\SSO\Controller\Notify::make_url($ret); // Default gets Notification redirection
 		switch ($act_data['intent']) {
 			case 'account-create':

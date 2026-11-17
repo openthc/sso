@@ -50,12 +50,12 @@ class Create extends \OpenTHC\SSO\Controller\Base
 	{
 		$chk = CSRF::verify($_POST['CSRF']);
 		if (empty($chk)) {
-			return $this->redirect('/account/create?e=CAC-049');
+			return $this->redirect('/sign-up?e=CAC-049');
 		}
 
 		$chk = $this->_verify_captcha();
 		if (true !== $chk) {
-			return $RES->withRedirect('/account/create?e=CAC-049');
+			return $RES->withRedirect('/sign-up?e=CAC-049');
 		}
 
 		switch ($_POST['a']) {
@@ -102,7 +102,7 @@ class Create extends \OpenTHC\SSO\Controller\Base
 				break;
 			case 400:
 				// Not Allowed?
-				return $this->redirect('/account/create?e=CAC-035');
+				return $this->redirect('/sign-up?e=CAC-035');
 			case 404:
 				// Excellent
 				break;

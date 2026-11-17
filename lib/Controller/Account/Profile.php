@@ -182,7 +182,7 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 					]
 				];
 				$tok = \OpenTHC\SSO\Auth_Context_Ticket::set($act);
-				return $this->redirect(sprintf('/account/password?_=%s', $tok));
+				return $this->redirect(sprintf('/auth/password?_=%s', $tok));
 				break;
 			case 'contact-phone-update':
 				$dbc_main->query('UPDATE contact SET phone = :p1 WHERE id = :c0', [
@@ -192,7 +192,7 @@ class Profile extends \OpenTHC\SSO\Controller\Base
 				break;
 		}
 
-		return $this->redirect('/account');
+		return $this->redirect('/profile');
 
 	}
 

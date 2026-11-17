@@ -43,8 +43,8 @@ class Password extends \OpenTHC\SSO\Controller\Base
 			}
 		}
 
-		// $RES->getBody()->write( $this->render('account/password.php', $data) );
-		return $RES->getBody()->write( $this->render('account/password.php', $data) );
+		$RES->getBody()->write( $this->render('account/password.php', $data) );
+		return $RES;
 
 	}
 
@@ -147,7 +147,7 @@ class Password extends \OpenTHC\SSO\Controller\Base
 			'e' => $err,
 		];
 
-		$path = '/account/password';
+		$path = '/auth/password';
 		switch ($act['intent']) {
 			case 'account-create':
 			case 'account-invite':

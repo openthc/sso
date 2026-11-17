@@ -100,7 +100,6 @@ function _init_config()
 			'test' => [
 				'sk' => getenv('OPENTHC_TEST_KEY'),
 			]
-
 		]
 	];
 

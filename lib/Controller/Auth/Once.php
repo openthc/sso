@@ -57,7 +57,7 @@ class Once extends \OpenTHC\SSO\Controller\Base
 			case 'account-invite':
 				// Make a New Token
 				$tok = \OpenTHC\SSO\Auth_Context_Ticket::set($act);
-				return $this->redirect(sprintf('/account/commit?_=%s', $tok));
+				return $this->redirect(sprintf('/sign-up/commit?_=%s', $tok));
 				break;
 			case 'email-verify':
 				$tok = \OpenTHC\SSO\Auth_Context_Ticket::set($act);
@@ -65,7 +65,7 @@ class Once extends \OpenTHC\SSO\Controller\Base
 				break;
 			case 'password-reset':
 				$tok = \OpenTHC\SSO\Auth_Context_Ticket::set($act);
-				return $this->redirect(sprintf('/account/password?_=%s', $tok));
+				return $this->redirect(sprintf('/auth/password?_=%s', $tok));
 				break;
 			case 'account-init':
 				$act['intent'] = 'account-open'; // Overwrite?

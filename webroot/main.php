@@ -41,6 +41,9 @@ $errorMiddleware->setDefaultErrorHandler(function (
 		}
 		return $response->withHeader('content-type', 'text/plain');
 });
+$errorMiddleware->setErrorHandler(\Slim\Exception\HttpNotFoundException::class, function() {
+	__exit_html_warn('<h1>Not Found [404]</h1>', 404);
+});
 
 $cfg = [];
 // $cfg['debug'] = true;
@@ -94,24 +97,7 @@ $app->group('/api', function($g) {
 	$g->post('/jwt/verify', 'OpenTHC\SSO\Controller\API\JWT\Verify');
 });
 
-// Account
-$app->group('/account', function($g) {
-
-	$g->get('', 'OpenTHC\SSO\Controller\Account\Profile');
-	$g->post('', 'OpenTHC\SSO\Controller\Account\Profile:post');
-
-	$g->post('/company/{company_id}/invite', 'OpenTHC\SSO\Controller\API\Company\Invite')->setName('api/company/invite');
-
-	$g->get('/contact', 'OpenTHC\SSO\Controller\API\Contact\Search')->setName('api/contact/search');
-
-	$g->post('/contact', 'OpenTHC\SSO\Controller\API\Contact\Create')->setName('api/contact/create');
-	$g->post('/contact/{id}', 'OpenTHC\SSO\Controller\API\Contact\Update');
-
-	$g->post('/jwt/create', 'OpenTHC\SSO\Controller\API\JWT\Create');
-	$g->post('/jwt/verify', 'OpenTHC\SSO\Controller\API\JWT\Verify');
-});
-
-// Profile v1
+// Profile
 $app->group('/profile', function($g) {
 
 	$g->get('', 'OpenTHC\SSO\Controller\Account\Profile');
@@ -122,9 +108,6 @@ $app->group('/profile', function($g) {
 	$g->get('/create', 'OpenTHC\SSO\Controller\Account\Create')->setName('account/create');
 	$g->post('/create', 'OpenTHC\SSO\Controller\Account\Create:post')->setName('account/create:post');
 
-	$g->get('/password', 'OpenTHC\SSO\Controller\Account\Password');
-	$g->post('/password', 'OpenTHC\SSO\Controller\Account\Password:post')->setName('account/password/update');
-
 })->add('OpenTHC\Middleware\Session');
 
 // Authentication Routes
@@ -134,6 +117,9 @@ $app->group('/auth', function($g) {
 	$g->post('/open', 'OpenTHC\SSO\Controller\Auth\Open:post')->setName('auth/open:post');
 
 	$g->get('/once', 'OpenTHC\SSO\Controller\Auth\Once')->setName('auth/once');
+
+	$g->get('/password', 'OpenTHC\SSO\Controller\Account\Password');
+	$g->post('/password', 'OpenTHC\SSO\Controller\Account\Password:post')->setName('account/password/update');
 
 	$g->map(['GET','POST'], '/init', 'OpenTHC\SSO\Controller\Auth\Init')->setName('auth/init');
 
@@ -172,6 +158,16 @@ $app->group('/company', function($g) {
 
 	$g->get('/join', 'OpenTHC\SSO\Controller\Company\Join');
 	$g->post('/join', 'OpenTHC\SSO\Controller\Company\Join:post');
+
+})->add('OpenTHC\Middleware\Session');
+
+// Sign Up
+$app->group('/sign-up', function($g) {
+
+	$g->get('', 'OpenTHC\SSO\Controller\Account\Create')->setName('sign-up/create');
+	$g->post('', 'OpenTHC\SSO\Controller\Account\Create:post')->setName('sign-up/create:post');
+
+	$g->get('/commit', 'OpenTHC\SSO\Controller\Account\Commit')->setName('sign-up/commit');
 
 })->add('OpenTHC\Middleware\Session');
 
