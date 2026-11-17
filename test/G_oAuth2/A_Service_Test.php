@@ -5,6 +5,8 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 
+declare(strict_types=1);
+
 namespace OpenTHC\SSO\Test\G_oAuth2;
 
 class A_Service_Test extends \OpenTHC\SSO\Test\Base
@@ -36,9 +38,9 @@ class A_Service_Test extends \OpenTHC\SSO\Test\Base
 		$res = $app_ua->get('/auth/open');
 		$this->assertValidResponse($res, 302);
 		$url = $res->getHeaderLine('location');
-		var_dump($url);
-		// $this->assertNotEmpty($url);
-		// $this->assertMatchesRegularExpression('/https:\/\/sso.openthc.+authorize.+scope.+state.+client_id/', $l);
+		// var_dump($url);
+		$this->assertNotEmpty($url);
+		$this->assertMatchesRegularExpression('/https:\/\/sso.+\/oauth2\/authorize.+scope.+state.+client_id=/', $url);
 	}
 
 	/**
@@ -46,10 +48,12 @@ class A_Service_Test extends \OpenTHC\SSO\Test\Base
 	 */
 	function test_auth_pass_b2b()
 	{
-		$sso_ua = $this->_ua();
-
 		$url = \OpenTHC\Config::get('openthc/b2b/origin');
-		$this->assertNotEmpty($url);
+		if (empty($url)) {
+			$this->markTestSkipped('No B2B Origin Configured');
+		}
+
+		$sso_ua = $this->_ua();
 
 		$b2b_ua = new \GuzzleHttp\Client(array(
 			'base_uri' => $url,
@@ -74,9 +78,13 @@ class A_Service_Test extends \OpenTHC\SSO\Test\Base
 	 */
 	function test_auth_pass_ops()
 	{
+		$url = \OpenTHC\Config::get('openthc/ops/origin');
+		if (empty($url)) {
+			$this->markTestSkipped('No OPS Origin Configured');
+		}
+
 		$sso_ua = $this->_ua();
 
-		$url = \OpenTHC\Config::get('openthc/ops/origin');
 		$ops_ua = new \GuzzleHttp\Client(array(
 			'base_uri' => $url,
 			'allow_redirects' => false,
@@ -93,7 +101,7 @@ class A_Service_Test extends \OpenTHC\SSO\Test\Base
 		$res = $ops_ua->get('/auth/open');
 		$this->assertValidResponse($res, 302);
 		$l = $res->getHeaderLine('location');
-		$this->assertMatchesRegularExpression('/https:\/\/sso.openthc.+authorize.+scope.+state.+client_id/', $l);
+		$this->assertMatchesRegularExpression('/https:\/\/sso.+authorize.+scope.+state.+client_id/', $l);
 
 
 		// Get the oAuth Authorize Page

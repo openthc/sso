@@ -5,10 +5,13 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 
+declare(strict_types=1);
+
 namespace OpenTHC\SSO\Test\C_Account;
 
 use Facebook\WebDriver\WebDriverBy;
 use Facebook\WebDriver\WebDriverSelect;
+use PHPUnit\Framework\Attributes\Depends;
 
 class B_Create_UI_Test extends \OpenTHC\SSO\Test\Browser\Base
 {
@@ -26,7 +29,7 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\Browser\Base
 	 */
 	function test_account_create()
 	{
-		self::$wd->get(sprintf('%s/account/create'
+		self::$wd->get(sprintf('%s/sign-up'
 			, $_ENV['OPENTHC_TEST_ORIGIN']
 		));
 
@@ -83,9 +86,7 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\Browser\Base
 
 	}
 
-	/**
-	 * @depends test_account_create
-	 */
+	#[Depends('test_account_create')]
 	function test_verify_password($url0)
 	{
 		$url0 = ltrim($url0, '/');
@@ -112,9 +113,7 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\Browser\Base
 
 	}
 
-	/**
-	 * @depends test_verify_password
-	 */
+	#[Depends('test_verify_password')]
 	function test_verify_location($url0)
 	{
 		$this->assertMatchesRegularExpression('/\/verify\/location.+/', $url0);
@@ -156,9 +155,7 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\Browser\Base
 
 	}
 
-	/**
-	 * @depends test_verify_location
-	 */
+	#[Depends('test_verify_location')]
 	function test_verify_timezone($url0)
 	{
 		$this->assertNotEmpty($url0);
@@ -210,9 +207,7 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\Browser\Base
 	}
 	*/
 
-	/**
-	 * @depends test_verify_timezone
-	 */
+	#[Depends('test_verify_timezone')]
 	function test_verify_company($url0)
 	{
 		$this->markTestSkipped('We do not think this is a feature that will stay around.');
@@ -229,9 +224,7 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\Browser\Base
 
 	}
 
-	/**
-	 * @depends test_verify_location
-	 */
+	#[Depends('test_verify_location')]
 	function test_sign_in_new($url0)
 	{
 		$node = $this->findElement(WebDriverBy::cssSelector("[href^='/auth/open']"));
@@ -249,9 +242,10 @@ class B_Create_UI_Test extends \OpenTHC\SSO\Test\Browser\Base
 		// #btn-auth-open
 		$node = $this->findElement('#btn-auth-open');
 		$node->click();
+		// And Wait...?
 
 		$url1 = self::$wd->getCurrentUrl();
-		$this->assertMatchesRegularExpression('/\/account/', $url1);
+		$this->assertMatchesRegularExpression('/\/profile/', $url1);
 		$src = self::$wd->getPageSource();
 		$this->assertDoesNotMatchRegularExpression('/Invalid Username or Password/', $src);
 	}

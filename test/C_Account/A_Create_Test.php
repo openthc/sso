@@ -5,7 +5,11 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 
+declare(strict_types=1);
+
 namespace OpenTHC\SSO\Test\C_Account;
+
+use PHPUnit\Framework\Attributes\Depends;
 
 class A_Create_Test extends \OpenTHC\SSO\Test\Base
 {
@@ -26,12 +30,11 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base
 	/**
 	 * Creates the Account and Sets the Password
 	 */
-	function test_account_create()
+	function test_account_create() : string
 	{
 		$c = $this->_ua();
-		$res = $c->get('/account/create');
+		$res = $c->get('/sign-up');
 		$html = $this->assertValidResponse($res);
-		syslog(LOG_DEBUG, "Create");
 
 		// $this->assertStringContainsString('TEST MODE', $html);
 		$this->assertStringContainsString('Create Account', $html);
@@ -47,7 +50,7 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base
 			'contact-email' => self::$username,
 			'contact-phone' => '1234567890',
 		];
-		$res = $c->post('/account/create', [ 'form_params' => $arg ]);
+		$res = $c->post('/sign-up', [ 'form_params' => $arg ]);
 		$this->assertValidResponse($res, 302);
 
 		// Fails cause we already have an account
@@ -120,13 +123,11 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base
 
 	}
 
-	/**
-	 * @depends test_account_create
-	 */
-	function test_account_verify($link3)
+	#[Depends('test_account_create')]
+	function test_account_verify(string $link3) : string
 	{
 		$this->assertNotEmpty($link3);
-		$this->assertMatchesRegularExpression('/^\/account\/commit/', $link3);
+		$this->assertMatchesRegularExpression('/^\/sign-up\/commit/', $link3);
 
 		// Get /account/commit?
 		$c = $this->_ua();
@@ -159,10 +160,8 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base
 
 	}
 
-	/**
-	 * @depends test_account_verify
-	 */
-	function test_verify_password($url0)
+	#[Depends('test_account_verify')]
+	function test_verify_password(string $url0) : string
 	{
 		$c = $this->_ua();
 
@@ -191,10 +190,8 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base
 		return $url2;
 	}
 
-	/**
-	 * @depends test_verify_password
-	 */
-	function test_verify_location($url0)
+	#[Depends('test_verify_password')]
+	function test_verify_location(string $url0) : string
 	{
 		$c = $this->_ua();
 
@@ -232,10 +229,8 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base
 
 	}
 
-	/**
-	 * @depends test_verify_location
-	 */
-	function test_verify_timezone($url0)
+	#[Depends('test_verify_location')]
+	function test_verify_timezone(string $url0) : string
 	{
 		$this->assertNotEmpty($url0);
 		$this->assertMatchesRegularExpression('/^\/verify\/timezone\?_=.+/', $url0);
@@ -267,9 +262,7 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base
 
 	}
 
-	/**
-	 * @depends test_verify_timezone
-	 */
+	// #[Depends('test_verify_timezone')]
 	// function test_verify_phone($url0)
 	// {
 	// 	$this->assertNotEmpty($url0);
@@ -328,10 +321,8 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base
 
 	// }
 
-	/**
-	 * @depends test_verify_timezone
-	 */
-	function test_verify_company($url0)
+	#[Depends('test_verify_timezone')]
+	function test_verify_company(string $url0) : string
 	{
 		$this->markTestSkipped('We do not think this is a feature that will stay around.');
 
@@ -361,10 +352,8 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base
 
 	}
 
-	/**
-	 * @depends test_verify_company
-	 */
-	function test_verify_license($url0)
+	#[Depends('test_verify_company')]
+	function test_verify_license(string $url0) : string
 	{
 		$this->assertNotEmpty($url0);
 		return $url0;
@@ -400,10 +389,8 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base
 
 	}
 
-	/**
-	 * @depends test_verify_company
-	 */
-	function test_account_create_done($url0)
+	#[Depends('test_verify_company')]
+	function test_account_create_done(string $url0) : void
 	{
 
 		$this->assertNotEmpty($url0);
@@ -438,10 +425,10 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base
 	 * Duplicate Email should be Rejected
 	 * @note Implicitly dependant on the Email Verification step
 	 */
-	function test_account_create_dupe_email()
+	function test_account_create_dupe_email() : void
 	{
 		$c = $this->_ua();
-		$res = $c->get('/account/create');
+		$res = $c->get('/sign-up');
 		$html = $this->assertValidResponse($res);
 
 		$this->assertMatchesRegularExpression('/Create Account/', $html);
@@ -450,7 +437,7 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base
 		$this->assertMatchesRegularExpression('/input.+id="contact\-email"/', $html);
 		$this->assertMatchesRegularExpression('/input.+id="contact\-phone"/', $html);
 
-		$res = $c->post('/account/create', [ 'form_params' => [
+		$res = $c->post('/sign-up', [ 'form_params' => [
 			'CSRF' => $this->getCSRF($html),
 			'a' => 'contact-next',
 			'contact-name' => sprintf('Test Contact %06x', $this->_pid),
@@ -475,12 +462,12 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base
 	/**
 	 *
 	 */
-	function test_account_create_fail_email()
+	function test_account_create_fail_email() : void
 	{
 		$c = $this->_ua();
 
 		// Create0/GET
-		$res = $c->get('/account/create');
+		$res = $c->get('/sign-up');
 		$html = $this->assertValidResponse($res);
 
 		$this->assertMatchesRegularExpression('/Create Account/', $html);
@@ -490,7 +477,7 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base
 		$this->assertMatchesRegularExpression('/input.+id="contact\-phone"/', $html);
 
 		// Create1/POST
-		$res = $c->post('/account/create', [ 'form_params' => [
+		$res = $c->post('/sign-up', [ 'form_params' => [
 			'CSRF' => $this->getCSRF($html),
 			'a' => 'contact-next',
 			'contact-name' => sprintf('Test Contact %06x', $this->_pid),
@@ -498,7 +485,7 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base
 		]]);
 		$this->assertValidResponse($res, 302);
 		$url1= $res->getHeaderLine('location');
-		$this->assertEquals('/account/create?e=CAC-035', $url1);
+		$this->assertEquals('/sign-up?e=CAC-035', $url1);
 
 		$res = $c->get($url1);
 		$html = $this->assertValidResponse($res);
@@ -509,7 +496,7 @@ class A_Create_Test extends \OpenTHC\SSO\Test\Base
 	/**
 	 *
 	 */
-	function test_account_password_reset()
+	function test_account_password_reset() : void
 	{
 		$c = $this->_ua();
 

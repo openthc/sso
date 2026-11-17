@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 
+declare(strict_types=1);
+
 namespace OpenTHC\SSO\Test\Core;
 
 class System_Test extends \OpenTHC\SSO\Test\Base

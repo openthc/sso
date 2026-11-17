@@ -5,7 +5,11 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 
+declare(strict_types=1);
+
 namespace OpenTHC\SSO\Test\Unit;
+
+use PHPUnit\Framework\Attributes\Depends;
 
 class Contact_API_Test extends \OpenTHC\SSO\Test\Base
 {
@@ -26,7 +30,7 @@ class Contact_API_Test extends \OpenTHC\SSO\Test\Base
 	/**
 	 * Test service connection to App
 	 */
-	function test_create()
+	function test_create() : array
 	{
 		$sso = new \OpenTHC\Service\OpenTHC('sso');
 		$res = $sso->post('/api/contact', [ 'form_params' => [
@@ -45,7 +49,7 @@ class Contact_API_Test extends \OpenTHC\SSO\Test\Base
 	/**
 	 * Test service connection to App
 	 */
-	function test_create_known_good_email()
+	function test_create_known_good_email() : void
 	{
 		$sso = new \OpenTHC\Service\OpenTHC('sso');
 		$res = $sso->post('/api/contact', [ 'form_params' => [
@@ -60,7 +64,7 @@ class Contact_API_Test extends \OpenTHC\SSO\Test\Base
 		$this->assertEquals(102, $res['data']['stat']);
 	}
 
-	function test_create_and_retry()
+	function test_create_and_retry() : void
 	{
 		$sso = new \OpenTHC\Service\OpenTHC('sso');
 		$res = $sso->post('/api/contact', [ 'form_params' => [
@@ -80,7 +84,7 @@ class Contact_API_Test extends \OpenTHC\SSO\Test\Base
 
 	}
 
-	function test_create_verify_done()
+	function test_create_verify_done() : void
 	{
 		$sso = new \OpenTHC\Service\OpenTHC('sso');
 		$res = $sso->post('/api/contact', [ 'form_params' => [
@@ -125,10 +129,8 @@ class Contact_API_Test extends \OpenTHC\SSO\Test\Base
 
 	}
 
-	/**
-	 * @depends test_create
-	 */
-	function test_update($Contact)
+	#[Depends('test_create')]
+	function test_update(array $Contact) : void
 	{
 		$sso = new \OpenTHC\Service\OpenTHC('sso');
 

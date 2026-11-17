@@ -5,6 +5,8 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 
+declare(strict_types=1);
+
 namespace OpenTHC\SSO\Test\Unit;
 
 class Location_Controller_Test extends \OpenTHC\SSO\Test\Base
@@ -14,8 +16,9 @@ class Location_Controller_Test extends \OpenTHC\SSO\Test\Base
 	 */
 	function test_load_iso3166_list()
 	{
-		$container = new \Slim\Container();
-		$controller = new \OpenTHC\SSO\Controller\Verify\Location($container);
+		// $container = new \Slim\Container();
+		$dic = new \DI\Container();
+		$controller = new \OpenTHC\SSO\Controller\Verify\Location($dic);
 
 		$ref = new \ReflectionClass($controller);
 		$method = $ref->getMethod('_load_iso3166_list');
@@ -48,8 +51,8 @@ class Location_Controller_Test extends \OpenTHC\SSO\Test\Base
 	 */
 	function test_load_iso3166_2_list()
 	{
-		$container = new \Slim\Container();
-		$controller = new \OpenTHC\SSO\Controller\Verify\Location($container);
+		$dic = new \DI\Container();
+		$controller = new \OpenTHC\SSO\Controller\Verify\Location($dic);
 
 		$ref = new \ReflectionClass($controller);
 		$method = $ref->getMethod('_load_iso3166_2_list');

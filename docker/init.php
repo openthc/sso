@@ -1,12 +1,8 @@
 #!/usr/bin/env php
 <?php
 /**
- * OpenTHC Docker SSO Service Init
+ * OpenTHC Docker Service Init
  */
-
-// $env_domain = getenv();
-// ksort($env_domain);
-// print_r($env_domain);
 
 _init_config();
 
@@ -101,9 +97,10 @@ function _init_config()
 			// 'client-id' => '010PENTHC0SERV1CE000000SS0',
 			// 'client-sk' => 'UJWRp58-YYy4nUEFfjYdpKlikgMUHNu6GOZ5lh0jK0k',
 			// 'client-pk' => 'JEWoMtX-FpXaTI4MJLNoV7CWWWH5zdFeXETZiHpmhCo',
-			// 'test' => [
-			// 	'sk' => 'M178xe6J4dPxvdxhWXJLfC8HQsBqEL_QioQT4F3L5GI',
-			// ]
+			'test' => [
+				'sk' => getenv('OPENTHC_TEST_KEY'),
+			]
+
 		]
 	];
 

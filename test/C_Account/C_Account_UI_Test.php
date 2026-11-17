@@ -5,6 +5,8 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 
+declare(strict_types=1);
+
 namespace OpenTHC\SSO\Test\C_Account;
 
 class C_Account_UI_Test extends \OpenTHC\SSO\Test\Browser\Base
@@ -32,7 +34,7 @@ class C_Account_UI_Test extends \OpenTHC\SSO\Test\Browser\Base
 		// var_dump($url0);
 
 		$this->assertNotEmpty($url0);
-		$this->assertMatchesRegularExpression('/\/account$/', $url0);
+		$this->assertMatchesRegularExpression('/\/profile$/', $url0);
 
 		$node = $this->findElement('#contact-name');
 		$val0 = $node->getAttribute('value');

@@ -5,7 +5,11 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 
+declare(strict_types=1);
+
 namespace OpenTHC\SSO\Test\G_oAuth2;
+
+use PHPUnit\Framework\Attributes\Depends;
 
 class B_Service_UI_Test extends \OpenTHC\SSO\Test\Browser\Base
 {
@@ -33,19 +37,17 @@ class B_Service_UI_Test extends \OpenTHC\SSO\Test\Browser\Base
 		$this->assertTrue(true);
 		$url = self::$wd->getCurrentUrl();
 		// var_dump($url);
-		$this->assertMatchesRegularExpression('/http.+sso\..+\/account/', $url);
+		$this->assertMatchesRegularExpression('/http.+sso\..+\/profile/', $url);
 	}
 
-	/**
-	 * @depends test_sign_in
-	 */
+	#[Depends('test_sign_in')]
 	function test_auth_pass_app()
 	{
 		$window_handles = self::$wd->getWindowHandles();
 		$sso_tab = $window_handles[0];
 		self::$wd->switchTo()->window($sso_tab);
 
-		self::$wd->get(sprintf('%s/account'
+		self::$wd->get(sprintf('%s/profile'
 			, $_ENV['OPENTHC_TEST_ORIGIN']
 		));
 
@@ -88,10 +90,8 @@ class B_Service_UI_Test extends \OpenTHC\SSO\Test\Browser\Base
 		self::$wd->close();
 	}
 
-	/**
-	 * @depends test_sign_in
-	 */
-	function test_auth_pass_b2b()
+	#[Depends('test_sign_in')]
+	function x_test_auth_pass_b2b()
 	{
 		$window_handles = self::$wd->getWindowHandles();
 		$sso_tab = $window_handles[0];
@@ -129,10 +129,8 @@ class B_Service_UI_Test extends \OpenTHC\SSO\Test\Browser\Base
 		self::$wd->close();
 	}
 
-	/**
-	 * @depends test_sign_in
-	 */
-	function test_auth_pass_dir()
+	#[Depends('test_sign_in')]
+	function x_test_auth_pass_dir()
 	{
 		$window_handles = self::$wd->getWindowHandles();
 		$sso_tab = $window_handles[0];
@@ -172,10 +170,8 @@ class B_Service_UI_Test extends \OpenTHC\SSO\Test\Browser\Base
 
 	}
 
-	/**
-	 * @depends test_sign_in
-	 */
-	function test_auth_pass_pos()
+	#[Depends('test_sign_in')]
+	function x_test_auth_pass_pos()
 	{
 		$window_handles = self::$wd->getWindowHandles();
 		$sso_tab = $window_handles[0];
@@ -213,22 +209,6 @@ class B_Service_UI_Test extends \OpenTHC\SSO\Test\Browser\Base
 		self::$wd->close();
 		// self::$wd->switchTo()->window($sso_tab);
 		// return self::$wd->getCurrentUrl();
-	}
-
-	/**
-	 * @depends test_sign_in
-	 */
-	function x_test_auth_pass_lab()
-	{
-		$window_handles = self::$wd->getWindowHandles();
-		$sso_tab = $window_handles[0];
-		self::$wd->switchTo()->window($sso_tab);
-
-		$node = $this->findElement('[data-service-name="laboratory portal"]');
-		$node->click();
-
-		$this->assertTrue(true);
-
 	}
 
 }

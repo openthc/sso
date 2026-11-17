@@ -5,6 +5,8 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 
+declare(strict_types=1);
+
 namespace OpenTHC\SSO\Test\Core;
 
 class Site_Test extends \OpenTHC\SSO\Test\Base
@@ -26,21 +28,20 @@ class Site_Test extends \OpenTHC\SSO\Test\Base
 		$res = $this->assertValidResponse($res);
 		$this->assertMatchesRegularExpression('/TEST MODE/', $res);
 
-		$res = $ghc->get('/.well-known/change-password');
-
 		// workaround because of empty mime type and
 		// cannot pass empty to assertValidResponse
 		// @todo change assertValidResponse to allow an empty mime-type?
 		// Perhaps a special case of '*' ?
 		$tmp = $this->type_expect;
 		$this->type_expect = '';
+		$res = $ghc->get('/.well-known/change-password');
 		$this->assertValidResponse($res, 302);
 		$this->type_expect = $tmp;
 
 		$res = $ghc->get('/auth/open?a=password-reset');
 		$this->assertValidResponse($res);
 
-		$res = $ghc->get('/account/create');
+		$res = $ghc->get('/sign-up');
 		$this->assertValidResponse($res);
 
 		$res = $ghc->get('/auth/shut');

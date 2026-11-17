@@ -36,9 +36,7 @@ $res = \Docopt::handle($doc, [
 	'exit' => false,
 	'optionsFirst' => false,
 ]);
-// var_dump($res);
 $cli_args = $res->args;
-// var_dump($cli_args);
 if ('all' == $cli_args['<command>']) {
 	$cli_args['phplint'] = true;
 	$cli_args['phpstan'] = true;
@@ -48,8 +46,11 @@ if ('all' == $cli_args['<command>']) {
 	$cli_args[$cmd] = true;
 	unset($cli_args['<command>']);
 }
-//var_dump($cli_args);
+// var_dump($cli_args);
 
+echo str_repeat('#', 80) . "\n";
+echo "TEST " . date('Y-m-d H:i:s') . "\n";
+echo "\n";
 
 // Test Config
 $cfg = [];
@@ -90,11 +91,13 @@ if ($cli_args['phpunit']) {
 	}
 	// Filter?
 	if ( ! empty($cli_args['--filter'])) {
-		$cfg['--filter'] = $arg['--filter'];
+		$cfg['--filter'] = $cli_args['--filter'];
 	}
 	if ( ! empty($cli_args['--phpunit-testsuite'])) {
 		$cfg['--testsuite'] = $cli_args['--phpunit-testsuite'];
 	}
+	// More Information
+	$cfg['--display-deprecations'] = '';
 	$tc = new \OpenTHC\Test\Facade\PHPUnit($cfg);
 	$res = $tc->execute();
 	var_dump($res);

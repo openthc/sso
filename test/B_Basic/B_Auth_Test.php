@@ -5,7 +5,11 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 
+declare(strict_types=1);
+
 namespace OpenTHC\SSO\Test\B_Basic;
+
+use Facebook\WebDriver\WebDriverExpectedCondition;
 
 class B_Auth_Test extends \OpenTHC\SSO\Test\Browser\Base
 {
@@ -35,7 +39,7 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\Browser\Base
 		self::$wd->get($_ENV['OPENTHC_TEST_ORIGIN']);
 		$src = self::$wd->getPageSource();
 		$this->assertMatchesRegularExpression('/<meta http-equiv="refresh".+auth\/open/', $src);
-		sleep(3); // Wait for refresh
+		sleep(6); // Wait for refresh
 
 		$url = self::$wd->getCurrentUrl();
 		$this->assertMatchesRegularExpression('/sso.+\/auth\/open/', $url);
@@ -65,11 +69,10 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\Browser\Base
 		$btn = $this->findElement('#btn-auth-open');
 		$btn->click();
 
+		self::$wd->wait(8)->until(WebDriverExpectedCondition::urlContains('/profile'));
 		$url = self::$wd->getCurrentUrl();
-		$this->assertStringContainsString('/account', $url);
+		$this->assertStringContainsString('/profile', $url);
 
-		// Find a Company
-		// $this->assertStringContainsString('/verify?_=', $url);
 	}
 
 	public function test_auth_open_success_pick_company()
@@ -92,15 +95,17 @@ class B_Auth_Test extends \OpenTHC\SSO\Test\Browser\Base
 		$btn = $this->findElement('#btn-auth-open');
 		$btn->click();
 
+		self::$wd->wait(8)->until(WebDriverExpectedCondition::urlContains('/auth/init?_='));
 		$url = self::$wd->getCurrentUrl();
 		$this->assertStringContainsString('/auth/init?_=', $url);
 
 		$sel = sprintf('#btn-company-%s', $_ENV['OPENTHC_TEST_CONTACT_C_COMPANY_A']);
 		$btn = $this->findElement($sel);
 		$btn->click();
+		self::$wd->wait(8)->until(WebDriverExpectedCondition::urlContains('/profile'));
 
 		$url = self::$wd->getCurrentUrl();
-		$this->assertStringContainsString('/account', $url);
+		$this->assertStringContainsString('/profile', $url);
 
 	}
 

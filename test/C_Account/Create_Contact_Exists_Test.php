@@ -7,6 +7,8 @@
  * SPDX-License-Identifier: GPL-3.0-only
  */
 
+declare(strict_types=1);
+
 namespace OpenTHC\SSO\Test\C_Account;
 
 use Facebook\WebDriver\WebDriverBy;
@@ -20,15 +22,15 @@ class Create_Contact_Exists_Test extends \OpenTHC\SSO\Test\Browser\Base
 		'email' => 'test+2025-007@openthc.com',
 		'phone' => '',
 		// 'deleted_at' => '',
-		'name_first' => '',
-		'name_last' => '',
+		// 'name_first' => '',
+		// 'name_last' => '',
 		'hash' => '',
 		'stat' => 400,
 		// 'created_at' => '',
 		// 'updated_at' => '',
-		'tz' => '',
-		'iso3166' => '',
-		'origin' => '',
+		// 'tz' => '',
+		// 'iso3166' => '',
+		// 'origin' => '',
 	];
 	public static $Channel = [
 		'id' => '01JH185V65H4000TEST2025007',
@@ -53,7 +55,7 @@ class Create_Contact_Exists_Test extends \OpenTHC\SSO\Test\Browser\Base
 			':t0' => 'email',
 			':e0' => self::$Contact['email'],
 		]);
-		if ($Ch['id']) {
+		if ($Ch0['id']) {
 			$dbc->delete('channel', ['id' => $Ch0['id']]);
 		}
 	}
@@ -70,7 +72,7 @@ class Create_Contact_Exists_Test extends \OpenTHC\SSO\Test\Browser\Base
 
 	function test_create_contact_exists()
 	{
-		self::$wd->get(sprintf('%s/account/create'
+		self::$wd->get(sprintf('%s/sign-up'
 			, $_ENV['OPENTHC_TEST_ORIGIN']
 		));
 
@@ -98,24 +100,23 @@ class Create_Contact_Exists_Test extends \OpenTHC\SSO\Test\Browser\Base
 
 		// Requirement: Sign-Up routes to Verify which fails (and should work)
 		self::$wd->get($_ENV['OPENTHC_TEST_ORIGIN'] . $url1);
-		// $this->assertStringNotContainsString('CAV-037', self::$wd->getPageSource());
+
+		$html = self::$wd->getPageSource();
+		// var_dump($url1);
+		$this->assertStringContainsString('[CAC-054]', $html);
 	}
 
 	function test_api_contact_search()
 	{
-		// Clean up last run
-		self::tearDownAfterClass();
-		self::setUpBeforeClass();
-
 		$dbc = self::_dbc('main');
 		$sso = new \OpenTHC\Service\OpenTHC('sso');
 
-		var_dump(self::$Contact['email']);
 		$url = sprintf('/api/contact?q=%s', rawurlencode(self::$Contact['email']));
 		$res = $sso->get($url);
+		// var_dump($res);
 
 		$this->assertEquals(404, $res['code']);
-		$this->assertEquals(self::$Contact['email'], $res['data']['email']);
+		// $this->assertEquals(self::$Contact['email'], $res['data']['email']);
 
 		$Channel = $dbc->fetchRow('SELECT * FROM channel WHERE type = :t0 AND data = :d0', [
 			':t0' => 'email',

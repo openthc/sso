@@ -16,12 +16,12 @@ class Base extends \OpenTHC\Test\Base
 	/**
 	 *
 	 */
-	function __construct($name = null, array $data = [], $dataName = '')
-	{
-		parent::__construct($name, $data, $dataName);
-		$this->_pid = getmypid();
+	// function __construct($name = null, array $data = [], $dataName = '')
+	// {
+	// 	parent::__construct($name, $data, $dataName);
+	// 	$this->_pid = getmypid();
 
-	}
+	// }
 
 	/**
 	 * Gets a User-Agent from Guzzle
